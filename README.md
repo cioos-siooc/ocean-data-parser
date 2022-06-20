@@ -1,7 +1,7 @@
 # Ocean Data Parser
 ## Installation
 With miniconda, create a new environement:
-```
+```console
 conda create --name ocean_parser 
 ````
 
@@ -14,6 +14,8 @@ Install the present package:
 pip install git+git@github.com:JessyBarrette/ocean_data_parser.git
 ```
 ## How to
-
+To parse seabird file:
+```python
+from ocean_data_parser.read import searbird
 
 
