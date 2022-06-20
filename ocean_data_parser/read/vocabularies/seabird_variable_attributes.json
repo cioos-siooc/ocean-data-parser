@@ -1,0 +1,3607 @@
+{
+    "accM": {
+        "long_name": "Acceleration",
+        "units": "m/s^2",
+        "sdn_uom_urn": "SDN:P06::MPS2",
+        "sdn_uom_name": "Metres per second squared"
+    },
+    "accF": {
+        "long_name": "Acceleration",
+        "units": "ft/s^2",
+        "sdn_uom_urn": "SDN:P06::MPS2"
+    },
+    "altM": {
+        "long_name": "Altimeter",
+        "units": "m",
+        "sdn_uom_urn": "SDN:P06::ULAA",
+        "sdn_uom_name": "Metres"
+    },
+    "altF": {
+        "long_name": "Altimeter",
+        "units": "ft"
+    },
+    "avgsvCM": {
+        "long_name": "Average Sound Velocity",
+        "units": "m/s [Chen-Millero]"
+    },
+    "avgsvCF": {
+        "long_name": "Average Sound Velocity",
+        "units": "ft/s [Chen-Millero]"
+    },
+    "avgsvDM": {
+        "long_name": "Average Sound Velocity",
+        "units": "m/s [Delgrosso]"
+    },
+    "avgsvDF": {
+        "long_name": "Average Sound Velocity",
+        "units": "ft/s [Delgrosso]"
+    },
+    "avgsvWM": {
+        "long_name": "Average Sound Velocity",
+        "units": "m/s [Wilson]"
+    },
+    "avgsvWF": {
+        "long_name": "Average Sound Velocity",
+        "units": "ft/s [Wilson]"
+    },
+    "bat": {
+        "long_name": "Beam Attenuation, Chelsea/Seatech",
+        "instrument": "Chelsea/Seatech",
+        "units": "1/m",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UPRM",
+        "sdn_uom_name": "per metre"
+    },
+    "bat1": {
+        "long_name": "Beam Attenuation, Chelsea/Seatech, 2",
+        "instrument": "Chelsea/Seatech",
+        "units": "1/m",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UPRM",
+        "sdn_uom_name": "per metre"
+    },
+    "batdiff": {
+        "long_name": "Beam Attenuation, Chelsea/Seatech/Wet Labs Cstar, Diff, 2 - 1",
+        "instrument": "Chelsea/Seatech/WET Labs CStar",
+        "units": "1/m",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::UPRM",
+        "sdn_uom_name": "per metre"
+    },
+    "wetBAttn": {
+        "long_name": "Beam Attenuation, Wet Labs Ac3",
+        "instrument": "WET Labs AC3",
+        "units": "1/m",
+        "sdn_uom_urn": "SDN:P06::UPRM",
+        "sdn_uom_name": "per metre"
+    },
+    "CStarAt0": {
+        "long_name": "Beam Attenuation, Wet Labs C-Star",
+        "instrument": "WET Labs C-Star",
+        "units": "1/m",
+        "sdn_parameter_urn": "SDN:P01::ATTNZS01",
+        "sdn_parameter_name": "Attenuation (red light wavelength) per unit length of the water body by WET Labs transmissometer and calibration to read zero in clear water",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UPRM",
+        "sdn_uom_name": "per metre"
+    },
+    "CStarAt1": {
+        "long_name": "Beam Attenuation, Wet Labs C-Star, 2",
+        "instrument": "WET Labs C-Star",
+        "units": "1/m",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UPRM",
+        "sdn_uom_name": "per metre"
+    },
+    "CStarAt2": {
+        "long_name": "Beam Attenuation, Wet Labs C-Star, 3",
+        "instrument": "WET Labs C-Star",
+        "units": "1/m",
+        "comments": "3rd sensor",
+        "sdn_uom_urn": "SDN:P06::UPRM",
+        "sdn_uom_name": "per metre"
+    },
+    "CStarAt3": {
+        "long_name": "Beam Attenuation, Wet Labs C-Star, 4",
+        "instrument": "WET Labs C-Star",
+        "units": "1/m",
+        "comments": "4th sensor",
+        "sdn_uom_urn": "SDN:P06::UPRM",
+        "sdn_uom_name": "per metre"
+    },
+    "CStarAt4": {
+        "long_name": "Beam Attenuation, Wet Labs C-Star, 5",
+        "instrument": "WET Labs C-Star",
+        "units": "1/m",
+        "comments": "5th sensor",
+        "sdn_uom_urn": "SDN:P06::UPRM",
+        "sdn_uom_name": "per metre"
+    },
+    "CStarAt5": {
+        "long_name": "Beam Attenuation, Wet Labs C-Star, 6",
+        "instrument": "WET Labs C-Star",
+        "units": "1/m",
+        "comments": "6th sensor",
+        "sdn_uom_urn": "SDN:P06::UPRM",
+        "sdn_uom_name": "per metre"
+    },
+    "CStarAtDiff": {
+        "long_name": "Beam Attenuation, Wet Labs C-Star, Diff, 2 - 1",
+        "instrument": "WET Labs C-Star",
+        "units": "1/m",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::UPRM",
+        "sdn_uom_name": "per metre"
+    },
+    "xmiss": {
+        "long_name": "Beam Transmission, Chelsea/Seatech",
+        "instrument": "Chelsea/Seatech",
+        "units": "%",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UPCT",
+        "sdn_uom_name": "Percent"
+    },
+    "xmiss1": {
+        "long_name": "Beam Transmission, Chelsea/Seatech, 2",
+        "instrument": "Chelsea/Seatech",
+        "units": "%",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UPCT",
+        "sdn_uom_name": "Percent"
+    },
+    "xmissdiff": {
+        "long_name": "Beam Transmission, Chelsea/Seatech/Wet Labs Cstar, Diff, 2 - 1",
+        "instrument": "Chelsea/Seatech/WET Labs CStar",
+        "units": "%",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::UPCT",
+        "sdn_uom_name": "Percent"
+    },
+    "wetBTrans": {
+        "long_name": "Beam Transmission, Wet Labs Ac3",
+        "instrument": "WET Labs AC3",
+        "units": "%",
+        "sdn_uom_urn": "SDN:P06::UPCT",
+        "sdn_uom_name": "Percent"
+    },
+    "CStarTr0": {
+        "long_name": "Beam Transmission, Wet Labs C-Star",
+        "instrument": "WET Labs C-Star",
+        "units": "%",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UPCT",
+        "sdn_uom_name": "Percent"
+    },
+    "CStarTr1": {
+        "long_name": "Beam Transmission, Wet Labs C-Star, 2",
+        "instrument": "WET Labs C-Star",
+        "units": "%",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UPCT",
+        "sdn_uom_name": "Percent"
+    },
+    "CStarTr2": {
+        "long_name": "Beam Transmission, Wet Labs C-Star, 3",
+        "instrument": "WET Labs C-Star",
+        "units": "%",
+        "comments": "3rd sensor",
+        "sdn_uom_urn": "SDN:P06::UPCT",
+        "sdn_uom_name": "Percent"
+    },
+    "CStarTr3": {
+        "long_name": "Beam Transmission, Wet Labs C-Star, 4",
+        "instrument": "WET Labs C-Star",
+        "units": "%",
+        "comments": "4th sensor",
+        "sdn_uom_urn": "SDN:P06::UPCT",
+        "sdn_uom_name": "Percent"
+    },
+    "CStarTr4": {
+        "long_name": "Beam Transmission, Wet Labs C-Star, 5",
+        "instrument": "WET Labs C-Star",
+        "units": "%",
+        "comments": "5th sensor",
+        "sdn_uom_urn": "SDN:P06::UPCT",
+        "sdn_uom_name": "Percent"
+    },
+    "CStarTr5": {
+        "long_name": "Beam Transmission, Wet Labs C-Star, 6",
+        "instrument": "WET Labs C-Star",
+        "units": "%",
+        "comments": "6th sensor",
+        "sdn_uom_urn": "SDN:P06::UPCT",
+        "sdn_uom_name": "Percent"
+    },
+    "CStarTrdiff": {
+        "long_name": "Beam Transmission, Wet Labs C-Star, Diff, 2 - 1",
+        "instrument": "WET Labs C-Star",
+        "units": "%",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::UPCT",
+        "sdn_uom_name": "Percent"
+    },
+    "bottle": {
+        "long_name": "Bottle Position In Carousel",
+        "sdn_parameter_urn": "SDN:P01::ROSPOSID",
+        "sdn_parameter_name": "Bottle rosette position identifier"
+    },
+    "bpos": {
+        "long_name": "Bottle Position In Carousel",
+        "sdn_parameter_urn": "SDN:P01::ROSPOSID",
+        "sdn_parameter_name": "Bottle rosette position identifier"
+    },
+    "HBBotCls": {
+        "long_name": "Bottles Closed, Hb",
+        "instrument": "HB"
+    },
+    "nbf": {
+        "long_name": "Bottles Fired"
+    },
+    "bct": {
+        "long_name": "Bottom Contact"
+    },
+    "N": {
+        "long_name": "Buoyancy",
+        "units": "cycles/hour",
+        "comments": "Calculated in SBE Data Processing's Buoyancy module"
+    },
+    "N^2": {
+        "name": "N2",
+        "long_name": "Buoyancy",
+        "units": "rad^2/s^2",
+        "comments": "Calculated in SBE Data Processing's Buoyancy module"
+    },
+    "nbytes": {
+        "long_name": "Byte Count"
+    },
+    "cdomflTC0": {
+        "long_name": "Cdom, Turner Cyclops",
+        "instrument": "Turner Cyclops",
+        "units": "ppb QS",
+        "comments": "1st sensor"
+    },
+    "cdomflTC1": {
+        "long_name": "Cdom, Turner Cyclops, 2",
+        "instrument": "Turner Cyclops",
+        "units": "ppb QS",
+        "comments": "2nd sensor"
+    },
+    "cdomflTCdiff": {
+        "long_name": "Cdom, Turner Cyclops, Diff, 2 - 1",
+        "instrument": "Turner Cyclops",
+        "units": "ppb QS",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "chloroflTC0": {
+        "long_name": "Chlorophyll, Turner Cyclops",
+        "instrument": "Turner Cyclops",
+        "units": "ug/l",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UGPL",
+        "sdn_uom_name": "Micrograms per litre"
+    },
+    "chloroflTC1": {
+        "long_name": "Chlorophyll, Turner Cyclops, 2",
+        "instrument": "Turner Cyclops",
+        "units": "ug/l",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UGPL",
+        "sdn_uom_name": "Micrograms per litre"
+    },
+    "chloroflTCdiff": {
+        "long_name": "Chlorophyll, Turner Cyclops, Diff, 2 - 1",
+        "instrument": "Turner Cyclops",
+        "units": "ug/l",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::UGPL",
+        "sdn_uom_name": "Micrograms per litre"
+    },
+    "c_S/m": {
+        "name": "c_SPerm",
+        "long_name": "Conductivity",
+        "units": "S/m",
+        "standard_name": "sea_water_electrical_conductivity",
+        "sdn_parameter_urn": "SDN:P01::CNDCST01",
+        "sdn_parameter_name": "Electrical conductivity of the water body by CTD",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::SCPM",
+        "sdn_uom_name": "Seconds per metre"
+    },
+    "c0S/m": {
+        "name": "c0SPerm",
+        "long_name": "Conductivity",
+        "units": "S/m",
+        "standard_name": "sea_water_electrical_conductivity",
+        "sdn_parameter_urn": "SDN:P01::CNDCST01",
+        "sdn_parameter_name": "Electrical conductivity of the water body by CTD",
+        "sdn_uom_urn": "SDN:P06::SCPM",
+        "sdn_uom_name": "Seconds per metre",
+        "comments": "1st sensor"
+    },
+    "cond0S/m": {
+        "name": "cond0SPerm",
+        "long_name": "Conductivity",
+        "units": "S/m",
+        "standard_name": "sea_water_electrical_conductivity",
+        "sdn_parameter_urn": "SDN:P01::CNDCST01",
+        "sdn_parameter_name": "Electrical conductivity of the water body by CTD",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::SCPM",
+        "sdn_uom_name": "Seconds per metre"
+    },
+    "c_mS/cm": {
+        "name": "c_mSPercm",
+        "long_name": "Conductivity",
+        "units": "mS/cm",
+        "standard_name": "sea_water_electrical_conductivity",
+        "sdn_parameter_urn": "SDN:P01::CNDCST01",
+        "sdn_parameter_name": "Electrical conductivity of the water body by CTD",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::MSCM",
+        "sdn_uom_name": "MilliSiemens per centimetre"
+    },
+    "c0mS/cm": {
+        "name": "c0mSPercm",
+        "long_name": "Conductivity",
+        "units": "mS/cm",
+        "standard_name": "sea_water_electrical_conductivity",
+        "sdn_parameter_urn": "SDN:P01::CNDCST01",
+        "sdn_parameter_name": "Electrical conductivity of the water body by CTD",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::MSCM",
+        "sdn_uom_name": "MilliSiemens per centimetre"
+    },
+    "cond0mS/cm": {
+        "name": "cond0mSPercm",
+        "long_name": "Conductivity",
+        "units": "mS/cm",
+        "standard_name": "sea_water_electrical_conductivity",
+        "sdn_parameter_urn": "SDN:P01::CNDCST01",
+        "sdn_parameter_name": "Electrical conductivity of the water body by CTD",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::MSCM",
+        "sdn_uom_name": "MilliSiemens per centimetre"
+    },
+    "c_uS/cm": {
+        "name": "c_uSPercm",
+        "long_name": "Conductivity",
+        "units": "uS/cm",
+        "standard_name": "sea_water_electrical_conductivity",
+        "sdn_parameter_urn": "SDN:P01::CNDCST01",
+        "sdn_parameter_name": "Electrical conductivity of the water body by CTD",
+        "comments": "1st sensor"
+    },
+    "c0uS/cm": {
+        "name": "c0uSPercm",
+        "long_name": "Conductivity",
+        "units": "uS/cm",
+        "standard_name": "sea_water_electrical_conductivity",
+        "sdn_parameter_urn": "SDN:P01::CNDCST01",
+        "sdn_parameter_name": "Electrical conductivity of the water body by CTD",
+        "comments": "1st sensor"
+    },
+    "cond0uS/cm": {
+        "name": "cond0uSPercm",
+        "long_name": "Conductivity",
+        "units": "uS/cm",
+        "standard_name": "sea_water_electrical_conductivity",
+        "sdn_parameter_urn": "SDN:P01::CNDCST01",
+        "sdn_parameter_name": "Electrical conductivity of the water body by CTD",
+        "comments": "1st sensor"
+    },
+    "c0uS/m": {
+        "name": "c0uSPerm",
+        "long_name": "Conductivity",
+        "units": "uS/m",
+        "standard_name": "sea_water_electrical_conductivity",
+        "sdn_parameter_urn": "SDN:P01::CNDCST01",
+        "sdn_parameter_name": "Electrical conductivity of the water body by CTD",
+        "comments": "1st sensor"
+    },
+    "c1S/m": {
+        "name": "c1SPerm",
+        "long_name": "Conductivity, 2",
+        "units": "S/m",
+        "standard_name": "sea_water_electrical_conductivity",
+        "sdn_parameter_urn": "SDN:P01::CNDCST02",
+        "sdn_parameter_name": "Electrical conductivity of the water body by CTD (sensor 2)",
+        "sdn_uom_urn": "SDN:P06::SCPM",
+        "sdn_uom_name": "Seconds per metre",
+        "comments": "2nd sensor"
+    },
+    "c1mS/cm": {
+        "name": "c1mSPercm",
+        "long_name": "Conductivity, 2",
+        "units": "mS/cm",
+        "standard_name": "sea_water_electrical_conductivity",
+        "sdn_parameter_urn": "SDN:P01::CNDCST02",
+        "sdn_parameter_name": "Electrical conductivity of the water body by CTD (sensor 2)",
+        "sdn_uom_urn": "SDN:P06::MSCM",
+        "sdn_uom_name": "MilliSiemens per centimetre",
+        "comments": "2nd sensor"
+    },
+    "c1uS/cm": {
+        "name": "c1uSPercm",
+        "long_name": "Conductivity, 2",
+        "units": "uS/cm",
+        "standard_name": "sea_water_electrical_conductivity",
+        "sdn_parameter_urn": "SDN:P01::CNDCST02",
+        "sdn_parameter_name": "Electrical conductivity of the water body by CTD (sensor 2)",
+        "comments": "2nd sensor"
+    },
+    "C2-C1S/m": {
+        "name": "C2-C1SPerm",
+        "long_name": "Conductivity Difference, 2 - 1",
+        "units": "S/m",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::SCPM",
+        "sdn_uom_name": "Seconds per metre"
+    },
+    "C2-C1mS/cm": {
+        "name": "C2-C1mSPercm",
+        "long_name": "Conductivity Difference, 2 - 1",
+        "units": "mS/cm",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::MSCM",
+        "sdn_uom_name": "MilliSiemens per centimetre"
+    },
+    "C2-C1uS/cm": {
+        "name": "C2-C1uSPercm",
+        "long_name": "Conductivity Difference, 2 - 1",
+        "units": "uS/cm",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "cpar": {
+        "long_name": "Cpar/Corrected Irradiance",
+        "units": "%",
+        "sdn_uom_urn": "SDN:P06::UPCT",
+        "sdn_uom_name": "Percent"
+    },
+    "croilflTC0": {
+        "long_name": "Crude Oil, Turner Cyclops",
+        "instrument": "Turner Cyclops",
+        "units": "ppb QS",
+        "comments": "1st sensor"
+    },
+    "croilflTC1": {
+        "long_name": "Crude Oil, Turner Cyclops, 2",
+        "instrument": "Turner Cyclops",
+        "units": "ppb QS",
+        "comments": "2nd sensor"
+    },
+    "croilflTCdiff": {
+        "long_name": "Crude Oil, Turner Cyclops, Diff, 2 - 1",
+        "instrument": "Turner Cyclops",
+        "units": "ppb QS",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "density00": {
+        "long_name": "Density",
+        "units": "kg/m^3 [density]",
+        "standard_name": "sea_water_density",
+        "sdn_uom_urn": "SDN:P06::UKMC",
+        "sdn_uom_name": "Kilograms per cubic metre",
+        "comments": "1st sensor"
+    },
+    "sigma-\u00ef\u00bf\u00bd00": {
+        "name": "sigma-theta00",
+        "long_name": "Density",
+        "units": "kg/m^3 [sigma-theta]",
+        "standard_name": "sea_water_sigma_theta",
+        "sdn_parameter_urn": "SDN:P01::SIGTPR01",
+        "sdn_parameter_name": "Sigma-theta of the water body by CTD and computation from salinity and potential temperature using UNESCO algorithm",
+        "sdn_uom_urn": "SDN:P06::UKMC",
+        "sdn_uom_name": "Kilograms per cubic metre",
+        "comments": "1st sensor"
+    },
+    "sigma-t00": {
+        "long_name": "Density",
+        "units": "kg/m^3 [sigma-t]",
+        "standard_name": "sea_water_sigma_t",
+        "sdn_parameter_urn": "SDN:P01::SIGTEQST",
+        "sdn_parameter_name": "Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm",
+        "sdn_uom_urn": "SDN:P06::UKMC",
+        "sdn_uom_name": "Kilograms per cubic metre",
+        "comments": "1st sensor"
+    },
+    "sigma-100": {
+        "long_name": "Density",
+        "units": "kg/m^3 [sigma-1]",
+        "comments": "1st sensor"
+    },
+    "sigma-200": {
+        "long_name": "Density",
+        "units": "kg/m^3 [sigma-2]",
+        "comments": "1st sensor"
+    },
+    "sigma-400": {
+        "long_name": "Density",
+        "units": "kg/m^3 [sigma-4]",
+        "comments": "1st sensor"
+    },
+    "density11": {
+        "long_name": "Density, 2",
+        "units": "kg/m^3 [density]",
+        "comments": "2nd sensor"
+    },
+    "sigma-\u00ef\u00bf\u00bd11": {
+        "name": "sigma-theta11",
+        "long_name": "Density, 2",
+        "units": "kg/m^3 [sigma-theta]",
+        "comments": "2nd sensor"
+    },
+    "sigma-t11": {
+        "long_name": "Density, 2",
+        "units": "kg/m^3 [sigma-t]",
+        "standard_name": "sea_water_sigma_t",
+        "sdn_parameter_urn": "SDN:P01::SIGTEQST",
+        "sdn_parameter_name": "Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm",
+        "sdn_uom_urn": "SDN:P06::UKMC",
+        "sdn_uom_name": "Kilograms per cubic metre",
+        "comments": "2nd sensor"
+    },
+    "sigma-111": {
+        "long_name": "Density, 2",
+        "units": "kg/m^3 [sigma-1]",
+        "comments": "2nd sensor"
+    },
+    "sigma-211": {
+        "long_name": "Density, 2",
+        "units": "kg/m^3 [sigma-2]",
+        "comments": "2nd sensor"
+    },
+    "sigma-411": {
+        "long_name": "Density, 2",
+        "units": "kg/m^3 [sigma-4]",
+        "comments": "2nd sensor"
+    },
+    "D2-D1,d": {
+        "long_name": "Density Difference, 2 - 1",
+        "units": "kg/m^3 [density]",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "D2-D1": {
+        "long_name": "Density Difference, 2 - 1",
+        "units": "kg/m^3 [sigma-theta]",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "D2-D1,t": {
+        "long_name": "Density Difference, 2 - 1",
+        "units": "kg/m^3 [sigma-t]",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "D2-D1,1": {
+        "long_name": "Density Difference, 2 - 1",
+        "units": "kg/m^3 [sigma-1]",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "D2-D1,2": {
+        "long_name": "Density Difference, 2 - 1",
+        "units": "kg/m^3 [sigma-2]",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "D2-D1,4": {
+        "long_name": "Density Difference, 2 - 1",
+        "units": "kg/m^3 [sigma-4]",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "depSM": {
+        "long_name": "Depth",
+        "units": "m [salt water]",
+        "standard_name": "depth",
+        "sdn_parameter_urn": "SDN:P01::DEPHPR01",
+        "sdn_parameter_name": "Depth (spatial coordinate) relative to water surface in the water body by profiling pressure sensor and conversion to seawater depth using UNESCO algorithm",
+        "sdn_uom_urn": "SDN:P06::ULAA",
+        "sdn_uom_name": "Metres"
+    },
+    "depSF": {
+        "long_name": "Depth",
+        "units": "ft [salt water]",
+        "standard_name": "depth",
+        "sdn_parameter_urn": "SDN:P01::DEPHPR01",
+        "sdn_parameter_name": "Depth (spatial coordinate) relative to water surface in the water body by profiling pressure sensor and conversion to seawater depth using UNESCO algorithm"
+    },
+    "depFM": {
+        "long_name": "Depth",
+        "units": "m [fresh water]",
+        "standard_name": "depth",
+        "sdn_parameter_urn": "SDN:P01::DEPHPR01",
+        "sdn_parameter_name": "Depth (spatial coordinate) relative to water surface in the water body by profiling pressure sensor and conversion to seawater depth using UNESCO algorithm"
+    },
+    "depFF": {
+        "long_name": "Depth",
+        "units": "ft [fresh water]",
+        "standard_name": "depth",
+        "sdn_parameter_urn": "SDN:P01::DEPHPR01",
+        "sdn_parameter_name": "Depth (spatial coordinate) relative to water surface in the water body by profiling pressure sensor and conversion to seawater depth using UNESCO algorithm"
+    },
+    "dNMEA": {
+        "long_name": "Depth, Nmea",
+        "units": "m [salt water]",
+        "sdn_parameter_urn": "SDN:P01::DEPHPR01",
+        "sdn_parameter_name": "Depth (spatial coordinate) relative to water surface in the water body by profiling pressure sensor and conversion to seawater depth using UNESCO algorithm"
+    },
+    "dz/dtM": {
+        "name": "dzPerdtM",
+        "long_name": "Descent Rate",
+        "units": "m/s",
+        "sdn_uom_urn": "SDN:P06::UVAA",
+        "sdn_uom_name": "Metres per second"
+    },
+    "dz/dtF": {
+        "name": "dzPerdtF",
+        "long_name": "Descent Rate",
+        "units": "ft/s"
+    },
+    "dm": {
+        "long_name": "Dynamic Meters",
+        "units": "10 J/kg",
+        "comments": "Calculated in SBE Data Processing's Derive module"
+    },
+    "flag": {
+        "long_name": "Flag"
+    },
+    "chConctr": {
+        "long_name": "Fluorescence, Biospherical Chl Con",
+        "instrument": "Biospherical Chl Con",
+        "comments": "Concentration"
+    },
+    "naFluor": {
+        "long_name": "Fluorescence, Biospherical Natural",
+        "instrument": "Biospherical Natural",
+        "comments": "Natural fluorescence"
+    },
+    "product": {
+        "long_name": "Fluorescence, Biospherical Production",
+        "instrument": "Biospherical Production",
+        "comments": "Production"
+    },
+    "flC": {
+        "long_name": "Fluorescence, Chelsea Aqua 3 Chl Con",
+        "instrument": "Chelsea Aqua 3 Chl Con",
+        "units": "ug/l",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UGPL",
+        "sdn_uom_name": "Micrograms per litre"
+    },
+    "flC1": {
+        "long_name": "Fluorescence, Chelsea Aqua 3 Chl Con, 2",
+        "instrument": "Chelsea Aqua 3 Chl Con",
+        "units": "ug/l",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UGPL",
+        "sdn_uom_name": "Micrograms per litre"
+    },
+    "flCdiff": {
+        "long_name": "Fluorescence, Chelsea Aqua 3 Chl Con, Diff, 2 - 1",
+        "instrument": "Chelsea Aqua 3 Chl Con",
+        "units": "ug/l",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::UGPL",
+        "sdn_uom_name": "Micrograms per litre"
+    },
+    "flCM": {
+        "long_name": "Fluorescence, Chelsea Mini Chl Con",
+        "instrument": "Chelsea Mini Chl Con",
+        "units": "ug/l",
+        "sdn_uom_urn": "SDN:P06::UGPL",
+        "sdn_uom_name": "Micrograms per litre"
+    },
+    "flCUVA": {
+        "long_name": "Fluorescence, Chelsea Uv Aquatracka",
+        "instrument": "Chelsea UV Aquatracka",
+        "units": "ug/l",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UGPL",
+        "sdn_uom_name": "Micrograms per litre"
+    },
+    "flCUVA1": {
+        "long_name": "Fluorescence, Chelsea Uv Aquatracka, 2",
+        "instrument": "Chelsea UV Aquatracka",
+        "units": "ug/l",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UGPL",
+        "sdn_uom_name": "Micrograms per litre"
+    },
+    "flCUVAdiff": {
+        "long_name": "Fluorescence, Chelsea Uv Aquatracka, Diff, 2 - 1",
+        "instrument": "Chelsea UV Aquatracka",
+        "units": "ug/l",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::UGPL",
+        "sdn_uom_name": "Micrograms per litre"
+    },
+    "haardtC": {
+        "long_name": "Fluorescence, Dr. Haardt Chlorophyll A",
+        "instrument": "Dr. Haardt Chlorophyll a"
+    },
+    "haardtP": {
+        "long_name": "Fluorescence, Dr. Haardt Phycoerythrin",
+        "instrument": "Dr. Haardt Phycoerythrin"
+    },
+    "haardtY": {
+        "long_name": "Fluorescence, Dr. Haardt Yellow Sub",
+        "instrument": "Dr. Haardt Yellow Sub"
+    },
+    "flSP": {
+        "long_name": "Fluorescence, Seapoint",
+        "instrument": "Seapoint",
+        "sdn_parameter_urn": "SDN:P01::CPHLPR01",
+        "sdn_parameter_name": "Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate >unknown phase] by in-situ chlorophyll fluorometer",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre",
+        "comments": "1st sensor"
+    },
+    "flSP1": {
+        "long_name": "Fluorescence, Seapoint, 2",
+        "instrument": "Seapoint",
+        "comments": "2nd sensor"
+    },
+    "flSPdiff": {
+        "long_name": "Fluorescence, Seapoint Diff, 2 - 1",
+        "instrument": "Seapoint Diff",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "flSPR": {
+        "long_name": "Fluorescence, Seapoint Rhodamine",
+        "instrument": "Seapoint Rhodamine"
+    },
+    "flSPuv0": {
+        "long_name": "Fluorescence, Seapoint Ultraviolet",
+        "instrument": "Seapoint Ultraviolet",
+        "sdn_parameter_urn": "SDN:P01::FLUOCDOM",
+        "sdn_parameter_name": "Fluorescence of the water body by linear-response CDOM fluorometer",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre",
+        "comments": "1st sensor"
+    },
+    "flSPuv1": {
+        "long_name": "Fluorescence, Seapoint Ultraviolet, 2",
+        "instrument": "Seapoint Ultraviolet",
+        "comments": "2nd sensor"
+    },
+    "flSPuvdiff": {
+        "long_name": "Fluorescence, Seapoint Ultraviolet, Diff, 2 - 1",
+        "instrument": "Seapoint Ultraviolet",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "flS": {
+        "long_name": "Fluorescence, Seatech",
+        "instrument": "Seatech",
+        "comments": "Sea Tech fluorometer or WET Labs Flash Lamp fluorometer"
+    },
+    "flT": {
+        "long_name": "Fluorescence, Turner 10-005",
+        "instrument": "Turner 10-005"
+    },
+    "flTAu": {
+        "long_name": "Fluorescence, Turner 10-Au-005",
+        "instrument": "Turner 10-Au-005"
+    },
+    "flSCC": {
+        "long_name": "Fluorescence, Turner Cor Chl",
+        "instrument": "Turner Cor Chl",
+        "comments": "SCUFA corrected chlorophyll; 1st sensor"
+    },
+    "flSCC1": {
+        "long_name": "Fluorescence, Turner Cor Chl, 2",
+        "instrument": "Turner Cor Chl",
+        "comments": "SCUFA corrected chlorophyll; 2nd sensor"
+    },
+    "flSCCdiff": {
+        "long_name": "Fluorescence, Turner Cor Chl, Diff, 2 - 1",
+        "instrument": "Turner Cor Chl",
+        "comments": "SCUFA corrected chlorophyll; 2nd sensor - 1st sensor"
+    },
+    "flScufa": {
+        "long_name": "Fluorescence, Turner Scufa",
+        "instrument": "Turner SCUFA",
+        "units": "[RFU]",
+        "comments": "SCUFA chlorophyll; 1st sensor"
+    },
+    "flScufa1": {
+        "long_name": "Fluorescence, Turner Scufa, 2",
+        "instrument": "Turner SCUFA",
+        "units": "[RFU]",
+        "comments": "SCUFA chlorophyll; 2nd sensor"
+    },
+    "flScufadiff": {
+        "long_name": "Fluorescence, Turner Scufa Diff, 2 - 1",
+        "instrument": "Turner SCUFA Diff",
+        "units": "[RFU]",
+        "comments": "SCUFA chlorophyll; 2nd sensor - 1st sensor"
+    },
+    "wetChAbs": {
+        "long_name": "Fluorescence, Wet Labs Ac3 Absorption",
+        "instrument": "WET Labs AC3 Absorption",
+        "units": "1/m",
+        "sdn_uom_urn": "SDN:P06::UPRM",
+        "sdn_uom_name": "per metre"
+    },
+    "wetCDOM": {
+        "long_name": "Fluorescence, Wet Labs Cdom",
+        "instrument": "WET Labs CDOM",
+        "units": "mg/m^3",
+        "sdn_parameter_urn": "SDN:P01::CCOMD002",
+        "sdn_parameter_name": "Concentration of coloured dissolved organic matter {CDOM Gelbstoff} per unit volume of the water body [dissolved plus reactive particulate phase] by in-situ WET Labs FDOM ECO fluorometer",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre",
+        "comments": "1st sensor"
+    },
+    "wetCDOM1": {
+        "long_name": "Fluorescence, Wet Labs Cdom, 2",
+        "instrument": "WET Labs CDOM",
+        "units": "mg/m^3",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "wetCDOM2": {
+        "long_name": "Fluorescence, Wet Labs Cdom, 3",
+        "instrument": "WET Labs CDOM",
+        "units": "mg/m^3",
+        "comments": "3rd sensor",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "wetCDOM3": {
+        "long_name": "Fluorescence, Wet Labs Cdom, 4",
+        "instrument": "WET Labs CDOM",
+        "units": "mg/m^3",
+        "comments": "4th sensor",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "wetCDOM4": {
+        "long_name": "Fluorescence, Wet Labs Cdom, 5",
+        "instrument": "WET Labs CDOM",
+        "units": "mg/m^3",
+        "comments": "5th sensor",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "wetCDOM5": {
+        "long_name": "Fluorescence, Wet Labs Cdom, 6",
+        "instrument": "WET Labs CDOM",
+        "units": "mg/m^3",
+        "comments": "6th sensor",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "wetCDOMdiff": {
+        "long_name": "Fluorescence, Wet Labs Cdom, Diff, 2 - 1",
+        "instrument": "WET Labs CDOM",
+        "units": "mg/m^3",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "wetChConc": {
+        "long_name": "Fluorescence, Wet Labs Chl Con",
+        "instrument": "WET Labs Chl Con",
+        "units": "mg/m^3",
+        "comments": "WET Labs AC3 chlorophyll",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "flECO-AFL": {
+        "long_name": "Fluorescence, Wet Labs Eco-Afl/Fl",
+        "instrument": "WET Labs ECO-AFL/FL",
+        "units": "mg/m^3",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "flECO-AFL1": {
+        "long_name": "Fluorescence, Wet Labs Eco-Afl/Fl, 2",
+        "instrument": "WET Labs ECO-AFL/FL",
+        "units": "mg/m^3",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "flECO-AFL2": {
+        "long_name": "Fluorescence, Wet Labs Eco-Afl/Fl, 3",
+        "instrument": "WET Labs ECO-AFL/FL",
+        "units": "mg/m^3",
+        "comments": "3rd sensor",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "flECO-AFL3": {
+        "long_name": "Fluorescence, Wet Labs Eco-Afl/Fl, 4",
+        "instrument": "WET Labs ECO-AFL/FL",
+        "units": "mg/m^3",
+        "comments": "4th sensor",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "flECO-AFL4": {
+        "long_name": "Fluorescence, Wet Labs Eco-Afl/Fl, 5",
+        "instrument": "WET Labs ECO-AFL/FL",
+        "units": "mg/m^3",
+        "comments": "5th sensor",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "flECO-AFL5": {
+        "long_name": "Fluorescence, Wet Labs Eco-Afl/Fl, 6",
+        "instrument": "WET Labs ECO-AFL/FL",
+        "units": "mg/m^3",
+        "comments": "6th sensor",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "flECO-AFLdiff": {
+        "long_name": "Fluorescence, Wet Labs Eco-Afl/Fl, Diff, 2 - 1",
+        "instrument": "WET Labs ECO-AFL/FL",
+        "units": "mg/m^3",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "flWETSeaOWLchl0": {
+        "long_name": "Fluorescence, Wet Labs Seaowl Chl",
+        "instrument": "WET Labs SeaOWL CHL",
+        "units": "ug/l",
+        "comments": "1st chlorophyll sensor",
+        "sdn_uom_urn": "SDN:P06::UGPL",
+        "sdn_uom_name": "Micrograms per litre"
+    },
+    "flWETSeaOWLchl1": {
+        "long_name": "Fluorescence, Wet Labs Seaowl Chl, 2",
+        "instrument": "WET Labs SeaOWL CHL",
+        "units": "ug/l",
+        "comments": "2nd chlorophyll sensor",
+        "sdn_uom_urn": "SDN:P06::UGPL",
+        "sdn_uom_name": "Micrograms per litre"
+    },
+    "flWETSeaOWLchldiff": {
+        "long_name": "Fluorescence, Wet Labs Seaowl Chl, Diff, 2 -1",
+        "instrument": "WET Labs SeaOWL CHL",
+        "units": "ug/l",
+        "comments": "2nd - 1st chlorophyll sensor",
+        "sdn_uom_urn": "SDN:P06::UGPL",
+        "sdn_uom_name": "Micrograms per litre"
+    },
+    "flWETSeaOWLfdom0": {
+        "long_name": "Fluorescence, Wet Labs Seaowl Fdom",
+        "instrument": "WET Labs SeaOWL FDOM",
+        "units": "ug/l",
+        "comments": "1st FDOM sensor",
+        "sdn_uom_urn": "SDN:P06::UGPL",
+        "sdn_uom_name": "Micrograms per litre"
+    },
+    "flWETSeaOWLfdom1": {
+        "long_name": "Fluorescence, Wet Labs Seaowl Fdom, 2",
+        "instrument": "WET Labs SeaOWL FDOM",
+        "units": "ug/l",
+        "comments": "2nd FDOM sensor",
+        "sdn_uom_urn": "SDN:P06::UGPL",
+        "sdn_uom_name": "Micrograms per litre"
+    },
+    "flWETSeaOWLfdomdiff": {
+        "long_name": "Fluorescence, Wet Labs Seaowl Fdom, Diff, 2 - 1",
+        "instrument": "WET Labs SeaOWL FDOM",
+        "units": "ug/l",
+        "comments": "2nd - 1st FDOM sensor",
+        "sdn_uom_urn": "SDN:P06::UGPL",
+        "sdn_uom_name": "Micrograms per litre"
+    },
+    "wetStar": {
+        "long_name": "Fluorescence, Wet Labs Wetstar",
+        "instrument": "WET Labs WETstar",
+        "units": "mg/m^3",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "wetStar1": {
+        "long_name": "Fluorescence, Wet Labs Wetstar, 2",
+        "instrument": "WET Labs WETstar",
+        "units": "mg/m^3",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "wetStar2": {
+        "long_name": "Fluorescence, Wet Labs Wetstar, 3",
+        "instrument": "WET Labs WETstar",
+        "units": "mg/m^3",
+        "comments": "3rd sensor",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "wetStar3": {
+        "long_name": "Fluorescence, Wet Labs Wetstar, 4",
+        "instrument": "WET Labs WETstar",
+        "units": "mg/m^3",
+        "comments": "4th sensor",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "wetStar4": {
+        "long_name": "Fluorescence, Wet Labs Wetstar, 5",
+        "instrument": "WET Labs WETstar",
+        "units": "mg/m^3",
+        "comments": "5th sensor",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "wetStar5": {
+        "long_name": "Fluorescence, Wet Labs Wetstar, 6",
+        "instrument": "WET Labs WETstar",
+        "units": "mg/m^3",
+        "comments": "6th sensor",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "wetStardiff": {
+        "long_name": "Fluorescence, Wet Labs Wetstar, Diff, 2 - 1",
+        "instrument": "WET Labs WETstar",
+        "units": "mg/m^3",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::UMMC",
+        "sdn_uom_name": "Milligrams per cubic metre"
+    },
+    "flflTC0": {
+        "long_name": "Fluorescein, Turner Cyclops",
+        "instrument": "Turner Cyclops",
+        "units": "ppb",
+        "comments": "1st sensor"
+    },
+    "flflTC1": {
+        "long_name": "Fluorescein, Turner Cyclops, 2",
+        "instrument": "Turner Cyclops",
+        "units": "ppb",
+        "comments": "2nd sensor"
+    },
+    "flflTCdiff": {
+        "long_name": "Fluorescein, Turner Cyclops, Diff, 2 - 1",
+        "instrument": "Turner Cyclops",
+        "units": "ppb",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "f0": {
+        "long_name": "Frequency 0",
+        "units": "Hz",
+        "comments": "1st sensor"
+    },
+    "f1": {
+        "long_name": "Frequency 1",
+        "units": "Hz",
+        "comments": "2nd sensor"
+    },
+    "f2": {
+        "long_name": "Frequency 2",
+        "units": "Hz",
+        "comments": "3rd sensor"
+    },
+    "f3": {
+        "long_name": "Frequency 3",
+        "units": "Hz",
+        "comments": "4th sensor"
+    },
+    "f4": {
+        "long_name": "Frequency 4",
+        "units": "Hz",
+        "comments": "5th sensor"
+    },
+    "f5": {
+        "long_name": "Frequency 5",
+        "units": "Hz",
+        "comments": "6th sensor"
+    },
+    "f6": {
+        "long_name": "Frequency 6",
+        "units": "Hz",
+        "comments": "7th sensor"
+    },
+    "f7": {
+        "long_name": "Frequency 7 F6 Hz",
+        "units": "Hz",
+        "comments": "8th sensor"
+    },
+    "f8": {
+        "long_name": "Frequency 8",
+        "units": "Hz",
+        "comments": "9th sensor"
+    },
+    "f9": {
+        "long_name": "Frequency 9",
+        "units": "Hz",
+        "comments": "10th sensor"
+    },
+    "f10": {
+        "long_name": "Frequency 10",
+        "units": "Hz",
+        "comments": "11th sensor"
+    },
+    "f11": {
+        "long_name": "Frequency 11",
+        "units": "Hz",
+        "comments": "12th sensor"
+    },
+    "f12": {
+        "long_name": "Frequency 12",
+        "units": "Hz",
+        "comments": "13th sensor"
+    },
+    "f13": {
+        "long_name": "Frequency 13",
+        "units": "Hz",
+        "comments": "14th sensor"
+    },
+    "f14": {
+        "long_name": "Frequency 14",
+        "units": "Hz",
+        "comments": "15th sensor"
+    },
+    "f15": {
+        "long_name": "Frequency 15",
+        "units": "Hz",
+        "comments": "16th sensor"
+    },
+    "f16": {
+        "long_name": "Frequency 16",
+        "units": "Hz",
+        "comments": "17th sensor"
+    },
+    "f17": {
+        "long_name": "Frequency 17",
+        "units": "Hz",
+        "comments": "18th sensor"
+    },
+    "f18": {
+        "long_name": "Frequency 18",
+        "units": "Hz",
+        "comments": "19th sensor"
+    },
+    "f19": {
+        "long_name": "Frequency 19",
+        "units": "Hz",
+        "comments": "20th sensor"
+    },
+    "f20": {
+        "long_name": "Frequency 20",
+        "units": "Hz",
+        "comments": "21st sensor"
+    },
+    "f21": {
+        "long_name": "Frequency 21",
+        "units": "Hz",
+        "comments": "22nd sensor"
+    },
+    "f22": {
+        "long_name": "Frequency 22",
+        "units": "Hz",
+        "comments": "23rd sensor"
+    },
+    "f23": {
+        "long_name": "Frequency 23",
+        "units": "Hz",
+        "comments": "24th sensor"
+    },
+    "f24": {
+        "long_name": "Frequency 24",
+        "units": "Hz",
+        "comments": "25th sensor"
+    },
+    "f25": {
+        "long_name": "Frequency 25",
+        "units": "Hz",
+        "comments": "26th sensor"
+    },
+    "f26": {
+        "long_name": "Frequency 26",
+        "units": "Hz",
+        "comments": "27th sensor"
+    },
+    "f27": {
+        "long_name": "Frequency 27",
+        "units": "Hz",
+        "comments": "28th sensor"
+    },
+    "f28": {
+        "long_name": "Frequency 28",
+        "units": "Hz",
+        "comments": "29th sensor"
+    },
+    "f29": {
+        "long_name": "Frequency 29",
+        "units": "Hz",
+        "comments": "30th sensor"
+    },
+    "f30": {
+        "long_name": "Frequency 30",
+        "units": "Hz",
+        "comments": "31st sensor"
+    },
+    "f31": {
+        "long_name": "Frequency 31",
+        "units": "Hz",
+        "comments": "32nd sensor"
+    },
+    "f32": {
+        "long_name": "Frequency 32",
+        "units": "Hz",
+        "comments": "33rd sensor"
+    },
+    "f33": {
+        "long_name": "Frequency 33",
+        "units": "Hz",
+        "comments": "34th sensor"
+    },
+    "f34": {
+        "long_name": "Frequency 34",
+        "units": "Hz",
+        "comments": "35th sensor"
+    },
+    "f35": {
+        "long_name": "Frequency 35",
+        "units": "Hz",
+        "comments": "36th sensor"
+    },
+    "f36": {
+        "long_name": "Frequency 36",
+        "units": "Hz",
+        "comments": "37th sensor"
+    },
+    "gpa": {
+        "long_name": "Geopotential Anomaly",
+        "units": "J/kg",
+        "comments": "Calculated in SBE Data Processing's Derive module"
+    },
+    "GTDDOP0": {
+        "long_name": "Gtd-Do Pressure",
+        "units": "mb",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UPBB",
+        "sdn_uom_name": "Millibars"
+    },
+    "GTDDOP1": {
+        "long_name": "Gtd-Do Pressure, 2",
+        "units": "mb",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UPBB",
+        "sdn_uom_name": "Millibars"
+    },
+    "GTDDOPdiff": {
+        "long_name": "Gtd-Do Pressure, Diff, 2 - 1",
+        "units": "mb",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::UPBB",
+        "sdn_uom_name": "Millibars"
+    },
+    "GTDDOT0": {
+        "long_name": "Gtd-Do Temperature",
+        "units": "deg C",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius"
+    },
+    "GTDDOT1": {
+        "long_name": "Gtd-Do Temperature, 2",
+        "units": "deg C",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius"
+    },
+    "GTDDOTdiff": {
+        "long_name": "Gtd-Do Temperature, Diff, 2 - 1",
+        "units": "deg C",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius"
+    },
+    "GTDN2P0": {
+        "long_name": "Gtd-N2 Pressure",
+        "units": "mb",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UPBB",
+        "sdn_uom_name": "Millibars"
+    },
+    "GTDN2P1": {
+        "long_name": "Gtd-N2 Pressure, 2",
+        "units": "mb",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UPBB",
+        "sdn_uom_name": "Millibars"
+    },
+    "GTDN2Pdiff": {
+        "long_name": "Gtd-N2 Pressure, Diff, 2 - 1",
+        "units": "mb",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::UPBB",
+        "sdn_uom_name": "Millibars"
+    },
+    "GTDN2T0": {
+        "long_name": "Gtd-N2 Temperature",
+        "units": "deg C",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius"
+    },
+    "GTDN2T1": {
+        "long_name": "Gtd-N2 Temperature, 2",
+        "units": "deg C",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius"
+    },
+    "GTDN2Tdiff": {
+        "long_name": "Gtd-N2 Temperature, Diff, 2 - 1",
+        "units": "deg C",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius"
+    },
+    "latitude": {
+        "long_name": "Latitude",
+        "units": "deg",
+        "standard_name": "latitude",
+        "sdn_parameter_urn": "SDN:P01::ALATZZ01",
+        "sdn_parameter_name": "Latitude north",
+        "comments": "From NMEA device"
+    },
+    "lisstBC": {
+        "long_name": "Lisst-25A, Beam C",
+        "instrument": "Beam C",
+        "units": "1/m",
+        "sdn_uom_urn": "SDN:P06::UPRM",
+        "sdn_uom_name": "per metre"
+    },
+    "lisstOT": {
+        "long_name": "Lisst-25A, Optical Transmission",
+        "units": "%",
+        "sdn_uom_urn": "SDN:P06::UPCT",
+        "sdn_uom_name": "Percent"
+    },
+    "lisstMD": {
+        "long_name": "Lisst-25A, Sauter Mean Diameter",
+        "units": "u"
+    },
+    "lisstTVC": {
+        "long_name": "Lisst-25A, Total Volume Conc.",
+        "units": "ul/l",
+        "sdn_uom_urn": "SDN:P06::UUML",
+        "sdn_uom_name": "Microlitres per litre"
+    },
+    "lisst200X-MD": {
+        "long_name": "Lisst-200X, Sauter Mean Diameter",
+        "units": "u",
+        "comments": "Microns"
+    },
+    "lisst200X-TVC": {
+        "long_name": "Lisst-299X, Total Volume Conc",
+        "units": "ppm",
+        "sdn_uom_urn": "SDN:P06::UPPM",
+        "sdn_uom_name": "Parts per million"
+    },
+    "lisstABS-PC": {
+        "long_name": "Lisst-Abs, Particle Concentration",
+        "units": "Cu or mg/l",
+        "comments": "Calibration factor = 1.0 Cu else mg/l"
+    },
+    "longitude": {
+        "long_name": "Longitude",
+        "units": "deg",
+        "standard_name": "longitude",
+        "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+        "sdn_parameter_name": "Longitude east",
+        "comments": "From NMEA device"
+    },
+    "meth": {
+        "long_name": "Methane Conc., Franatech Mets",
+        "instrument": "Franatech METS",
+        "units": "umol/l",
+        "sdn_uom_urn": "SDN:P06::UPOX",
+        "sdn_uom_name": "Micromoles per litre"
+    },
+    "methT": {
+        "long_name": "Methane Gas Temp., Franatech Mets",
+        "instrument": "Franatech METS",
+        "units": "deg C",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius"
+    },
+    "modError": {
+        "long_name": "Modulo Error Count"
+    },
+    "mod": {
+        "long_name": "Modulo Word"
+    },
+    "newpos": {
+        "long_name": "New Position"
+    },
+    "n2satML/L": {
+        "name": "n2satMLPerL",
+        "long_name": "Nitrogen Saturation",
+        "units": "ml/l",
+        "sdn_uom_urn": "SDN:P06::UMLL",
+        "sdn_uom_name": "Millilitres per litre"
+    },
+    "n2satMg/L": {
+        "name": "n2satMgPerL",
+        "long_name": "Nitrogen Saturation",
+        "units": "mg/l",
+        "sdn_uom_urn": "SDN:P06::UMGL",
+        "sdn_uom_name": "Milligrams per litre"
+    },
+    "n2satumol/kg": {
+        "name": "n2satumolPerkg",
+        "long_name": "Nitrogen Saturation",
+        "units": "umol/kg",
+        "sdn_uom_urn": "SDN:P06::KGUM",
+        "sdn_uom_name": "Micromoles per kilogram"
+    },
+    "obs": {
+        "long_name": "Obs, Backscatterance (D & A)",
+        "instrument": "Backscatterance (D & A)",
+        "units": "NTU",
+        "comments": "1st sensor"
+    },
+    "obs1": {
+        "long_name": "Obs, Backscatterance (D & A), 2",
+        "instrument": "Backscatterance (D & A)",
+        "units": "NTU",
+        "comments": "2nd sensor"
+    },
+    "obsdiff": {
+        "long_name": "Obs, Backscatterance (D & A), Diff, 2 - 1",
+        "instrument": "Backscatterance (D & A)",
+        "units": "NTU",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "nephc": {
+        "long_name": "Obs, Chelsea Nephelometer",
+        "instrument": "Chelsea Nephelometer",
+        "units": "FTU"
+    },
+    "obs3+": {
+        "long_name": "Obs, D & A 3Plus",
+        "instrument": "D & A 3plus",
+        "units": "NTU",
+        "comments": "D&A OBS 3+;1st sensor"
+    },
+    "obs3+1": {
+        "long_name": "Obs, D & A 3Plus, 2",
+        "instrument": "D & A 3plus",
+        "units": "NTU",
+        "comments": "D&A OBS 3+;2nd sensor"
+    },
+    "obs3+diff": {
+        "long_name": "Obs, D & A 3Plus, Diff, 2 - 1",
+        "instrument": "D & A 3plus",
+        "units": "NTU",
+        "comments": "D&A OBS 3+; 2nd sensor - 1st sensor"
+    },
+    "haardtT": {
+        "long_name": "Obs, Dr. Haardt Turbidity",
+        "instrument": "Dr. Haardt Turbidity"
+    },
+    "diff": {
+        "long_name": "Obs, Ifremer",
+        "instrument": "IFREMER"
+    },
+    "stLs6000": {
+        "long_name": "Obs, Seatech Ls6000",
+        "instrument": "Seatech LS6000",
+        "comments": "Sea Tech LS6000 or WET Labs LBSS; 1st sensor"
+    },
+    "stLs60001": {
+        "long_name": "Obs, Seatech Ls6000, 2",
+        "instrument": "Seatech LS6000",
+        "comments": "Sea Tech LS6000 or WET Labs LBSS; 2nd sensor"
+    },
+    "stLs6000diff": {
+        "long_name": "Obs, Seatech Ls6000, Diff, 2 - 1",
+        "instrument": "Seatech LS6000",
+        "comments": "Sea Tech LS6000 or WET Labs LBSS; 2nd sensor - 1st sensor"
+    },
+    "obsscufa": {
+        "long_name": "Obs, Turner Scufa",
+        "instrument": "Turner SCUFA",
+        "units": "NTU",
+        "comments": "1st sensor"
+    },
+    "obsscufa1": {
+        "long_name": "Obs, Turner Scufa, 2",
+        "instrument": "Turner SCUFA",
+        "units": "NTU",
+        "comments": "2nd sensor"
+    },
+    "obsscufadiff": {
+        "long_name": "Obs, Turner Scufa, Diff, 2 - 1",
+        "instrument": "Turner SCUFA",
+        "units": "NTU",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "obrflTC0": {
+        "long_name": "Optical Brighteners, Turner Cyclops",
+        "instrument": "Turner Cyclops",
+        "units": "ppb QS",
+        "comments": "1st sensor"
+    },
+    "obrflTC1": {
+        "long_name": "Optical Brighteners, Turner Cyclops, 2",
+        "instrument": "Turner Cyclops",
+        "units": "ppb QS",
+        "comments": "2nd sensor"
+    },
+    "obrflTCdiff": {
+        "long_name": "Optical Brighteners, Turner Cyclops, Diff, 2 - 1",
+        "instrument": "Turner Cyclops",
+        "units": "ppb QS",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "orp": {
+        "long_name": "Oxidation Reduction Potential",
+        "units": "mV",
+        "sdn_uom_urn": "SDN:P06::UUMV",
+        "sdn_uom_name": "Millivolts"
+    },
+    "sbeox0V": {
+        "long_name": "Oxygen Raw, Sbe 43",
+        "instrument": "SBE 43",
+        "units": "V",
+        "sdn_parameter_urn": "SDN:P01::OXYOCPVL",
+        "sdn_parameter_name": "Raw signal (voltage) of instrument output by oxygen sensor",
+        "sdn_uom_urn": "SDN:P06::UVLT",
+        "sdn_uom_name": "Volts",
+        "comments": "1st sensor"
+    },
+    "sbeox0F": {
+        "long_name": "Oxygen Raw, Sbe 43",
+        "instrument": "SBE 43",
+        "units": "Hz",
+        "comments": "1st sensor"
+    },
+    "sbeox1V": {
+        "long_name": "Oxygen Raw, Sbe 43, 2",
+        "instrument": "SBE 43",
+        "units": "V",
+        "comments": "2nd sensor"
+    },
+    "sbeox1F": {
+        "long_name": "Oxygen Raw, Sbe 43, 2",
+        "instrument": "SBE 43",
+        "units": "Hz",
+        "comments": "2nd sensor"
+    },
+    "sbeox0ML/L": {
+        "name": "sbeox0MLPerL",
+        "long_name": "Oxygen, Sbe 43",
+        "instrument": "SBE 43",
+        "units": "ml/l",
+        "standard_name": "volume_fraction_of_oxygen_in_sea_water",
+        "sdn_uom_urn": "SDN:P06::UMLL",
+        "sdn_uom_name": "Millilitres per litre",
+        "comments": "1st sensor"
+    },
+    "sbeox0Mg/L": {
+        "name": "sbeox0MgPerL",
+        "long_name": "Oxygen, Sbe 43",
+        "instrument": "SBE 43",
+        "units": "mg/l",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UMGL",
+        "sdn_uom_name": "Milligrams per litre"
+    },
+    "sbeox0PS": {
+        "long_name": "Oxygen, Sbe 43",
+        "instrument": "SBE 43",
+        "units": "% saturation",
+        "comments": "1st sensor"
+    },
+    "sbeox0Mm/Kg": {
+        "name": "sbeox0MmPerKg",
+        "long_name": "Oxygen, Sbe 43",
+        "instrument": "SBE 43",
+        "units": "umol/kg",
+        "standard_name": "moles_of_oxygen_per_unit_mass_in_sea_water",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::KGUM",
+        "sdn_uom_name": "Micromoles per kilogram"
+    },
+    "sbeox0Mm/L": {
+        "name": "sbeox0MmPerL",
+        "long_name": "Oxygen, Sbe 43",
+        "instrument": "SBE 43",
+        "units": "umol/l",
+        "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UPOX",
+        "sdn_uom_name": "Micromoles per litre"
+    },
+    "sbeox0dOV/dT": {
+        "name": "sbeox0dOVPerdT",
+        "long_name": "Oxygen, Sbe 43",
+        "instrument": "SBE 43",
+        "units": "dov/dt",
+        "comments": "1st sensor"
+    },
+    "sbeox1ML/L": {
+        "name": "sbeox1MLPerL",
+        "long_name": "Oxygen, Sbe 43, 2",
+        "instrument": "SBE 43",
+        "units": "ml/l",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UMLL",
+        "sdn_uom_name": "Millilitres per litre"
+    },
+    "sbeox1Mg/L": {
+        "name": "sbeox1MgPerL",
+        "long_name": "Oxygen, Sbe 43, 2",
+        "instrument": "SBE 43",
+        "units": "mg/l",
+        "standard_name": "volume_fraction_of_oxygen_in_sea_water",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UMGL",
+        "sdn_uom_name": "Milligrams per litre"
+    },
+    "sbeox1PS": {
+        "long_name": "Oxygen, Sbe 43, 2",
+        "instrument": "SBE 43",
+        "units": "% saturation",
+        "sdn_parameter_urn": "SDN:P01::OXYSSU01",
+        "sdn_parameter_name": "Saturation of oxygen {O2 CAS 7782-44-7} in the water body [dissolved plus reactive particulate phase] by Sea-Bird SBE 43 sensor and computation from concentration using Benson and Krause algorithm",
+        "comments": "2nd sensor"
+    },
+    "sbeox1Mm/Kg": {
+        "name": "sbeox1MmPerKg",
+        "long_name": "Oxygen, Sbe 43, 2",
+        "instrument": "SBE 43",
+        "units": "umol/kg",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::KGUM",
+        "sdn_uom_name": "Micromoles per kilogram"
+    },
+    "sbeox1Mm/L": {
+        "name": "sbeox1MmPerL",
+        "long_name": "Oxygen, Sbe 43, 2",
+        "instrument": "SBE 43",
+        "units": "umol/l",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UPOX",
+        "sdn_uom_name": "Micromoles per litre"
+    },
+    "sbeox1dOV/dT": {
+        "name": "sbeox1dOVPerdT",
+        "long_name": "Oxygen, Sbe 43, 2",
+        "instrument": "SBE 43",
+        "units": "dov/dt",
+        "comments": "2nd sensor"
+    },
+    "sbeox0ML/Ldiff": {
+        "name": "sbeox0MLPerLdiff",
+        "long_name": "Oxygen, Sbe 43, Diff, 2 - 1",
+        "instrument": "SBE 43",
+        "units": "ml/l",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::UMLL",
+        "sdn_uom_name": "Millilitres per litre"
+    },
+    "sbeox0Mg/Ldiff": {
+        "name": "sbeox0MgPerLdiff",
+        "long_name": "Oxygen, Sbe 43, Diff, 2 - 1",
+        "instrument": "SBE 43",
+        "units": "mg/l",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::UMGL",
+        "sdn_uom_name": "Milligrams per litre"
+    },
+    "sbeox0PSdiff": {
+        "long_name": "Oxygen, Sbe 43, Diff, 2 - 1",
+        "instrument": "SBE 43",
+        "units": "% saturation",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "sbeox0Mm/Kgdiff": {
+        "name": "sbeox0MmPerKgdiff",
+        "long_name": "Oxygen, Sbe 43, Diff, 2 - 1",
+        "instrument": "SBE 43",
+        "units": "umol/kg",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::KGUM",
+        "sdn_uom_name": "Micromoles per kilogram"
+    },
+    "sbeox0Mm/Ldiff": {
+        "name": "sbeox0MmPerLdiff",
+        "long_name": "Oxygen, Sbe 43, Diff, 2 - 1",
+        "instrument": "SBE 43",
+        "units": "umol/l",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::UPOX",
+        "sdn_uom_name": "Micromoles per litre"
+    },
+    "sbeoxpd": {
+        "long_name": "Oxygen Raw, Sbe 63 Phase Delay",
+        "instrument": "SBE 63 phase delay",
+        "units": "usec",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::USEC",
+        "sdn_uom_name": "Microseconds"
+    },
+    "sbeoxpdv": {
+        "long_name": "Oxygen Raw, Sbe 63 Phase Delay",
+        "instrument": "SBE 63 phase delay",
+        "units": "V",
+        "comments": "1st sensor"
+    },
+    "sbeoxpd1": {
+        "long_name": "Oxygen Raw, Sbe 63 Phase Delay, 2",
+        "instrument": "SBE 63 phase delay",
+        "units": "usec",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::USEC",
+        "sdn_uom_name": "Microseconds"
+    },
+    "sbeoxpdv1": {
+        "long_name": "Oxygen Raw, Sbe 63 Phase Delay, 2",
+        "instrument": "SBE 63 phase delay",
+        "units": "V",
+        "comments": "2nd sensor"
+    },
+    "sbeoxtv": {
+        "long_name": "Oxygen Raw, Sbe 63 Thermistor Voltage",
+        "instrument": "SBE 63 thermistor voltage",
+        "units": "V",
+        "comments": "1st sensor"
+    },
+    "sbeoxtv1": {
+        "long_name": "Oxygen Raw, Sbe 63 Thermistor Voltage, 2",
+        "instrument": "SBE 63 thermistor voltage",
+        "units": "V",
+        "comments": "2nd sensor"
+    },
+    "sbeoxTC": {
+        "long_name": "Oxygen Temperature, Sbe 63",
+        "instrument": "SBE 63",
+        "units": "deg C [ITS-90]",
+        "comments": "1st sensor"
+    },
+    "sbeoxTF": {
+        "long_name": "Oxygen Temperature, Sbe 63",
+        "instrument": "SBE 63",
+        "units": "deg F [ITS-90]",
+        "comments": "1st sensor"
+    },
+    "sbeoxTC1": {
+        "long_name": "Oxygen Temperature, Sbe 63, 2",
+        "instrument": "SBE 63",
+        "units": "deg C [ITS-90]",
+        "comments": "2nd sensor"
+    },
+    "sbeoxTF1": {
+        "long_name": "Oxygen Temperature, Sbe 63, 2",
+        "instrument": "SBE 63",
+        "units": "deg F [ITS-90]",
+        "comments": "2nd sensor"
+    },
+    "sbeopoxML/L": {
+        "name": "sbeopoxMLPerL",
+        "long_name": "Oxygen, Sbe 63",
+        "instrument": "SBE 63",
+        "units": "ml/l",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UMLL",
+        "sdn_uom_name": "Millilitres per litre"
+    },
+    "sbeopoxMg/L": {
+        "name": "sbeopoxMgPerL",
+        "long_name": "Oxygen, Sbe 63",
+        "instrument": "SBE 63",
+        "units": "mg/l",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UMGL",
+        "sdn_uom_name": "Milligrams per litre"
+    },
+    "sbeopoxPS": {
+        "long_name": "Oxygen, Sbe 63",
+        "instrument": "SBE 63",
+        "units": "% saturation",
+        "comments": "1st sensor"
+    },
+    "sbeopoxMm/Kg": {
+        "name": "sbeopoxMmPerKg",
+        "long_name": "Oxygen, Sbe 63",
+        "instrument": "SBE 63",
+        "units": "umol/kg",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::KGUM",
+        "sdn_uom_name": "Micromoles per kilogram"
+    },
+    "sbeopoxMm/L": {
+        "name": "sbeopoxMmPerL",
+        "long_name": "Oxygen, Sbe 63",
+        "instrument": "SBE 63",
+        "units": "umol/l",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UPOX",
+        "sdn_uom_name": "Micromoles per litre"
+    },
+    "sbeopoxML/L1": {
+        "name": "sbeopoxMLPerL1",
+        "long_name": "Oxygen, Sbe 63, 2",
+        "instrument": "SBE 63",
+        "units": "ml/l",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UMLL",
+        "sdn_uom_name": "Millilitres per litre"
+    },
+    "sbeopoxMg/L1": {
+        "name": "sbeopoxMgPerL1",
+        "long_name": "Oxygen, Sbe 63, 2",
+        "instrument": "SBE 63",
+        "units": "mg/l",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UMGL",
+        "sdn_uom_name": "Milligrams per litre"
+    },
+    "sbeopoxPS1": {
+        "long_name": "Oxygen, Sbe 63, 2",
+        "instrument": "SBE 63",
+        "units": "% saturation",
+        "comments": "2nd sensor"
+    },
+    "SbeopoxMm/Kg1": {
+        "name": "SbeopoxMmPerKg1",
+        "long_name": "Oxygen, Sbe 63, 2",
+        "instrument": "SBE 63",
+        "units": "umol/kg",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::KGUM",
+        "sdn_uom_name": "Micromoles per kilogram"
+    },
+    "sbeopoxMm/L1": {
+        "name": "sbeopoxMmPerL1",
+        "long_name": "Oxygen, Sbe 63, 2",
+        "instrument": "SBE 63",
+        "units": "umol/l",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UPOX",
+        "sdn_uom_name": "Micromoles per litre"
+    },
+    "opoxML/L": {
+        "name": "opoxMLPerL",
+        "long_name": "Oxygen Optode, Aanderaa",
+        "instrument": "Aanderaa",
+        "units": "ml/l",
+        "sdn_uom_urn": "SDN:P06::UMLL",
+        "sdn_uom_name": "Millilitres per litre"
+    },
+    "opoxMg/L": {
+        "name": "opoxMgPerL",
+        "long_name": "Oxygen Optode, Aanderaa",
+        "instrument": "Aanderaa",
+        "units": "mg/l",
+        "sdn_uom_urn": "SDN:P06::UMGL",
+        "sdn_uom_name": "Milligrams per litre"
+    },
+    "opoxPS": {
+        "long_name": "Oxygen Optode, Aanderaa",
+        "instrument": "Aanderaa",
+        "units": "% saturation"
+    },
+    "opoxMm/L": {
+        "name": "opoxMmPerL",
+        "long_name": "Oxygen Optode, Aanderaa",
+        "instrument": "Aanderaa",
+        "units": "umol/l",
+        "sdn_uom_urn": "SDN:P06::UPOX",
+        "sdn_uom_name": "Micromoles per litre"
+    },
+    "oxC": {
+        "long_name": "Oxygen Current, Beckman/Ysi",
+        "instrument": "Beckman/YSI",
+        "units": "uA",
+        "comments": "1st sensor"
+    },
+    "oxsC": {
+        "long_name": "Oxygen Current, Beckman/Ysi, 2",
+        "instrument": "Beckman/YSI",
+        "units": "uA",
+        "comments": "2nd sensor"
+    },
+    "oxTC": {
+        "long_name": "Oxygen Temperature, Beckman/Ysi",
+        "instrument": "Beckman/YSI",
+        "units": "deg C",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius"
+    },
+    "oxTF": {
+        "long_name": "Oxygen Temperature, Beckman/Ysi",
+        "instrument": "Beckman/YSI",
+        "units": "deg F",
+        "comments": "1st sensor"
+    },
+    "oxsTC": {
+        "long_name": "Oxygen Temperature, Beckman/Ysi, 2",
+        "instrument": "Beckman/YSI",
+        "units": "deg C",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius"
+    },
+    "oxsTF": {
+        "long_name": "Oxygen Temperature, Beckman/Ysi, 2",
+        "instrument": "Beckman/YSI",
+        "units": "deg F",
+        "comments": "2nd sensor"
+    },
+    "oxML/L": {
+        "name": "oxMLPerL",
+        "long_name": "Oxygen, Beckman/Ysi",
+        "instrument": "Beckman/YSI",
+        "units": "ml/l",
+        "standard_name": "volume_fraction_of_oxygen_in_sea_water",
+        "sdn_parameter_urn": "SDN:P01::DOXYSU01",
+        "sdn_parameter_name": "Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase] by Sea-Bird SBE 43 sensor and no calibration against sample data",
+        "sdn_uom_urn": "SDN:P06::UMLL",
+        "sdn_uom_name": "Millilitres per litre",
+        "comments": "1st sensor"
+    },
+    "oxMg/L": {
+        "name": "oxMgPerL",
+        "long_name": "Oxygen, Beckman/Ysi",
+        "instrument": "Beckman/YSI",
+        "units": "mg/l",
+        "sdn_parameter_urn": "SDN:P01::DOXYZZXX",
+        "sdn_parameter_name": "Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase]",
+        "sdn_uom_urn": "SDN:P06::UMGL",
+        "sdn_uom_name": "Milligrams per litre",
+        "comments": "1st sensor"
+    },
+    "oxPS": {
+        "long_name": "Oxygen, Beckman/Ysi",
+        "instrument": "Beckman/YSI",
+        "units": "% saturation",
+        "comments": "1st sensor"
+    },
+    "oxMm/Kg": {
+        "name": "oxMmPerKg",
+        "long_name": "Oxygen, Beckman/Ysi",
+        "instrument": "Beckman/YSI",
+        "units": "umol/kg",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::KGUM",
+        "sdn_uom_name": "Micromoles per kilogram"
+    },
+    "oxdOC/dT": {
+        "name": "oxdOCPerdT",
+        "long_name": "Oxygen, Beckman/Ysi",
+        "instrument": "Beckman/YSI",
+        "units": "doc/dt",
+        "comments": "1st sensor"
+    },
+    "oxsML/L": {
+        "name": "oxsMLPerL",
+        "long_name": "Oxygen, Beckman/Ysi, 2",
+        "instrument": "Beckman/YSI",
+        "units": "ml/l",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UMLL",
+        "sdn_uom_name": "Millilitres per litre"
+    },
+    "oxsMg/L": {
+        "name": "oxsMgPerL",
+        "long_name": "Oxygen, Beckman/Ysi, 2",
+        "instrument": "Beckman/YSI",
+        "units": "mg/l",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UMGL",
+        "sdn_uom_name": "Milligrams per litre"
+    },
+    "oxsPS": {
+        "long_name": "Oxygen, Beckman/Ysi, 2",
+        "instrument": "Beckman/YSI",
+        "units": "% saturation",
+        "comments": "2nd sensor"
+    },
+    "oxsMm/Kg": {
+        "name": "oxsMmPerKg",
+        "long_name": "Oxygen, Beckman/Ysi, 2",
+        "instrument": "Beckman/YSI",
+        "units": "umol/kg",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::KGUM",
+        "sdn_uom_name": "Micromoles per kilogram"
+    },
+    "oxsdOC/dT": {
+        "name": "oxsdOCPerdT",
+        "long_name": "Oxygen, Beckman/Ysi, 2",
+        "instrument": "Beckman/YSI",
+        "units": "doc/dt",
+        "comments": "2nd sensor"
+    },
+    "iowOxML/L": {
+        "name": "iowOxMLPerL",
+        "long_name": "Oxygen, Iow",
+        "instrument": "IOW",
+        "units": "ml/l",
+        "sdn_uom_urn": "SDN:P06::UMLL",
+        "sdn_uom_name": "Millilitres per litre"
+    },
+    "oxsolML/L": {
+        "name": "oxsolMLPerL",
+        "long_name": "Oxygen Saturation, Garcia & Gordon",
+        "instrument": "Garcia & Gordon",
+        "units": "ml/l",
+        "sdn_uom_urn": "SDN:P06::UMLL",
+        "sdn_uom_name": "Millilitres per litre"
+    },
+    "oxsolMg/L": {
+        "name": "oxsolMgPerL",
+        "long_name": "Oxygen Saturation, Garcia & Gordon",
+        "instrument": "Garcia & Gordon",
+        "units": "mg/l",
+        "sdn_uom_urn": "SDN:P06::UMGL",
+        "sdn_uom_name": "Milligrams per litre"
+    },
+    "oxsolMm/Kg": {
+        "name": "oxsolMmPerKg",
+        "long_name": "Oxygen Saturation, Garcia & Gordon",
+        "instrument": "Garcia & Gordon",
+        "units": "umol/kg",
+        "sdn_uom_urn": "SDN:P06::KGUM",
+        "sdn_uom_name": "Micromoles per kilogram"
+    },
+    "oxsatML/L": {
+        "name": "oxsatMLPerL",
+        "long_name": "Oxygen Saturation, Weiss",
+        "instrument": "Weiss",
+        "units": "ml/l",
+        "sdn_uom_urn": "SDN:P06::UMLL",
+        "sdn_uom_name": "Millilitres per litre"
+    },
+    "oxsatMg/L": {
+        "name": "oxsatMgPerL",
+        "long_name": "Oxygen Saturation, Weiss",
+        "instrument": "Weiss",
+        "units": "mg/l",
+        "sdn_uom_urn": "SDN:P06::UMGL",
+        "sdn_uom_name": "Milligrams per litre"
+    },
+    "oxsatMm/Kg": {
+        "name": "oxsatMmPerKg",
+        "long_name": "Oxygen Saturation, Weiss",
+        "instrument": "Weiss",
+        "units": "umol/kg",
+        "sdn_uom_urn": "SDN:P06::KGUM",
+        "sdn_uom_name": "Micromoles per kilogram"
+    },
+    "par": {
+        "long_name": "Par/Irradiance, Biospherical/Licor",
+        "instrument": "Biospherical/Licor",
+        "sdn_parameter_urn": "SDN:P01::DWIRRXUD",
+        "sdn_parameter_name": "Downwelling vector irradiance as energy of electromagnetic radiation (PAR wavelengths) in the water body by cosine-collector radiometer",
+        "comments": "Biospherical, Licor, or Chelsea sensor; 1st sensor"
+    },
+    "par1": {
+        "long_name": "Par/Irradiance, Biospherical/Licor, 2",
+        "instrument": "Biospherical/Licor",
+        "comments": "Biospherical, Licor, or Chelsea sensor; 2nd sensor"
+    },
+    "par/log": {
+        "name": "parPerlog",
+        "long_name": "Par/Logarithmic, Satlantic",
+        "instrument": "Satlantic"
+    },
+    "ph": {
+        "long_name": "Ph"
+    },
+    "phInt": {
+        "long_name": "Ph Internal, Seafet",
+        "instrument": "SeaFET",
+        "comments": "Satlantic SeaFET pH"
+    },
+    "phExt": {
+        "long_name": "Ph External, Seafet",
+        "instrument": "SeaFET",
+        "comments": "Satlantic SeaFET pH"
+    },
+    "phycyflTC0": {
+        "long_name": "Phycocyanin, Turner Cyclops",
+        "instrument": "Turner Cyclops",
+        "units": "RFU",
+        "comments": "1st sensor"
+    },
+    "phycyflTC1": {
+        "long_name": "Phycoc Yanin, Turner Cyclops, 2",
+        "instrument": "Turner Cyclops",
+        "units": "RFU",
+        "comments": "2nd sensor"
+    },
+    "phycyflTCdiff": {
+        "long_name": "Phycocyanin, Turner Cyclops, Diff, 2 - 1",
+        "instrument": "Turner Cyclops",
+        "units": "RFU",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "phyeryflTC0": {
+        "long_name": "Phycoerythrin, Turner Cyclops",
+        "instrument": "Turner Cyclops",
+        "units": "RFU",
+        "comments": "1st sensor"
+    },
+    "phyeryflTC1": {
+        "long_name": "Phycoerythrin, Turner Cyclops, 2",
+        "instrument": "Turner Cyclops",
+        "units": "RFU",
+        "comments": "2nd sensor"
+    },
+    "phyeryflTCdiff": {
+        "long_name": "Phycoerythrin, Turner Cyclops, Diff, 2 - 1",
+        "instrument": "Turner Cyclops",
+        "units": "RFU",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "pla": {
+        "long_name": "Plume Anomaly"
+    },
+    "potemp090C": {
+        "long_name": "Potential Temperature",
+        "units": "deg C [ITS-90]",
+        "standard_name": "sea_water_potential_temperature",
+        "sdn_parameter_urn": "SDN:P01::POTMS601",
+        "sdn_parameter_name": "Potential temperature of the water body by CTD and computation from pressure, salinity and IPTS-68 temperature using UNESCO algorithm",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius",
+        "comments": "1st sensor"
+    },
+    "potemp090F": {
+        "long_name": "Potential Temperature",
+        "units": "deg F [ITS-90]",
+        "comments": "1st sensor"
+    },
+    "potemp068C": {
+        "long_name": "Potential Temperature",
+        "units": "deg C [IPTS-68]",
+        "standard_name": "sea_water_potential_temperature",
+        "sdn_parameter_urn": "SDN:P01::POTMS601",
+        "sdn_parameter_name": "Potential temperature of the water body by CTD and computation from pressure, salinity and IPTS-68 temperature using UNESCO algorithm",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius",
+        "comments": "1st sensor"
+    },
+    "potemp068F": {
+        "long_name": "Potential Temperature",
+        "units": "deg F [IPTS-68]",
+        "comments": "1st sensor"
+    },
+    "potemp190C": {
+        "long_name": "Potential Temperature, 2",
+        "units": "deg C [ITS-90]",
+        "standard_name": "sea_water_potential_temperature",
+        "sdn_parameter_urn": "SDN:P01::POTMS601",
+        "sdn_parameter_name": "Potential temperature of the water body by CTD and computation from pressure, salinity and IPTS-68 temperature using UNESCO algorithm",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius",
+        "comments": "2nd sensor"
+    },
+    "potemp190F": {
+        "long_name": "Potential Temperature, 2",
+        "units": "deg F [ITS-90]",
+        "comments": "2nd sensor"
+    },
+    "potemp168C": {
+        "long_name": "Potential Temperature, 2",
+        "units": "deg C [IPTS-68]",
+        "standard_name": "sea_water_potential_temperature",
+        "sdn_parameter_urn": "SDN:P01::POTMS601",
+        "sdn_parameter_name": "Potential temperature of the water body by CTD and computation from pressure, salinity and IPTS-68 temperature using UNESCO algorithm",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius",
+        "comments": "2nd sensor"
+    },
+    "potemp168F": {
+        "long_name": "Potential Temperature, 2",
+        "units": "deg F [IPTS-68]",
+        "comments": "2nd sensor"
+    },
+    "potemp90Cdiff": {
+        "long_name": "Potential Temperature, Diff, 2 - 1",
+        "units": "deg C [ITS-90]",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "potemp90Fdiff": {
+        "long_name": "Potential Temperature, Diff, 2 - 1",
+        "units": "deg F [ITS-90]",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "potemp68Cdiff": {
+        "long_name": "Potential Temperature, Diff, 2 - 1",
+        "units": "deg C [IPTS-68]",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "potemp68Fdiff": {
+        "long_name": "Potential Temperature, Diff, 2 - 1",
+        "units": "deg F [IPTS-68]",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "pta090C": {
+        "long_name": "Potential Temperature Anomaly",
+        "units": "deg C [ITS-90]",
+        "comments": "1st sensor"
+    },
+    "pta090F": {
+        "long_name": "Potential Temperature Anomaly",
+        "units": "deg F [ITS-90]",
+        "comments": "1st sensor"
+    },
+    "pta068C": {
+        "long_name": "Potential Temperature Anomaly",
+        "units": "deg C [IPTS-68]",
+        "comments": "1st sensor"
+    },
+    "pta068F": {
+        "long_name": "Potential Temperature Anomaly",
+        "units": "deg F [IPTS-68]",
+        "comments": "1st sensor"
+    },
+    "pta190C": {
+        "long_name": "Potential Temperature Anomaly, 2",
+        "units": "deg C [ITS-90]",
+        "comments": "2nd sensor"
+    },
+    "pta190F": {
+        "long_name": "Potential Temperature Anomaly, 2",
+        "units": "deg F [ITS-90]",
+        "comments": "2nd sensor"
+    },
+    "pta168C": {
+        "long_name": "Potential Temperature Anomaly, 2",
+        "units": "deg C [IPTS-68]",
+        "comments": "2nd sensor"
+    },
+    "pta168F": {
+        "long_name": "Potential Temperature Anomaly, 2",
+        "units": "deg F [IPTS-68]",
+        "comments": "2nd sensor"
+    },
+    "prM": {
+        "long_name": "Pressure",
+        "units": "db",
+        "comments": "User-entry for moored pressure (instrument with no pressure sensor)",
+        "sdn_uom_urn": "SDN:P06::UDBL",
+        "sdn_uom_name": "Decibels"
+    },
+    "prE": {
+        "long_name": "Pressure",
+        "units": "psi",
+        "comments": "User-entry for moored pressure (instrument with no pressure sensor)"
+    },
+    "ptempC": {
+        "long_name": "Pressure Temperature",
+        "units": "deg C",
+        "comments": "Temperature measured by pressure sensor",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius"
+    },
+    "ptempF": {
+        "long_name": "Pressure Temperature",
+        "units": "deg F",
+        "comments": "Temperature measured by pressure sensor"
+    },
+    "prDM": {
+        "long_name": "Pressure, Digiquartz",
+        "instrument": "Digiquartz",
+        "units": "db",
+        "standard_name": "sea_water_pressure",
+        "sdn_parameter_urn": "SDN:P01::PRESPR01",
+        "sdn_parameter_name": "Pressure (spatial coordinate) exerted by the water body by profiling pressure sensor and correction to read zero at sea level",
+        "sdn_uom_urn": "SDN:P06::UDBL",
+        "sdn_uom_name": "Decibels",
+        "comments": "Digiquartz pressure sensor"
+    },
+    "prdM": {
+        "long_name": "Pressure, Strain Gauge",
+        "instrument": "Strain Gauge",
+        "units": "db",
+        "standard_name": "sea_water_pressure",
+        "sdn_parameter_urn": "SDN:P01::PRESPR01",
+        "sdn_parameter_name": "Pressure (spatial coordinate) exerted by the water body by profiling pressure sensor and correction to read zero at sea level",
+        "sdn_uom_urn": "SDN:P06::UDBL",
+        "sdn_uom_name": "Decibels",
+        "comments": "strain-gauge pressure sensor"
+    },
+    "prDE": {
+        "long_name": "Pressure, Digiquartz",
+        "instrument": "Digiquartz",
+        "units": "psi",
+        "standard_name": "sea_water_pressure",
+        "sdn_parameter_urn": "SDN:P01::PRESPR01",
+        "sdn_parameter_name": "Pressure (spatial coordinate) exerted by the water body by profiling pressure sensor and correction to read zero at sea level",
+        "comments": "Digiquartz pressure sensor"
+    },
+    "prdE": {
+        "long_name": "Pressure, Strain Gauge",
+        "instrument": "Strain Gauge",
+        "units": "psi",
+        "standard_name": "sea_water_pressure",
+        "sdn_parameter_urn": "SDN:P01::PRESPR01",
+        "sdn_parameter_name": "Pressure (spatial coordinate) exerted by the water body by profiling pressure sensor and correction to read zero at sea level",
+        "comments": "strain-gauge pressure sensor"
+    },
+    "fgp0": {
+        "long_name": "Pressure, Fgp",
+        "instrument": "FGP",
+        "units": "KPa",
+        "comments": "1st FGP pressure sensor",
+        "sdn_uom_urn": "SDN:P06::KIPA",
+        "sdn_uom_name": "Kilopascals"
+    },
+    "fgp1": {
+        "long_name": "Pressure, Fgp, 2",
+        "instrument": "FGP",
+        "units": "KPa",
+        "comments": "2nd FGP pressure sensor",
+        "sdn_uom_urn": "SDN:P06::KIPA",
+        "sdn_uom_name": "Kilopascals"
+    },
+    "fgp2": {
+        "long_name": "Pressure, Fgp, 3",
+        "instrument": "FGP",
+        "units": "KPa",
+        "comments": "3rd FGP pressure sensor",
+        "sdn_uom_urn": "SDN:P06::KIPA",
+        "sdn_uom_name": "Kilopascals"
+    },
+    "fgp3": {
+        "long_name": "Pressure, Fgp, 4",
+        "instrument": "FGP",
+        "units": "KPa",
+        "comments": "4th FGP pressure sensor",
+        "sdn_uom_urn": "SDN:P06::KIPA",
+        "sdn_uom_name": "Kilopascals"
+    },
+    "fgp4": {
+        "long_name": "Pressure, Fgp, 5",
+        "instrument": "FGP",
+        "units": "KPa",
+        "comments": "5th FGP pressure sensor",
+        "sdn_uom_urn": "SDN:P06::KIPA",
+        "sdn_uom_name": "Kilopascals"
+    },
+    "fgp5": {
+        "long_name": "Pressure, Fgp, 6",
+        "instrument": "FGP",
+        "units": "KPa",
+        "comments": "6th FGP pressure sensor",
+        "sdn_uom_urn": "SDN:P06::KIPA",
+        "sdn_uom_name": "Kilopascals"
+    },
+    "fgp6": {
+        "long_name": "Pressure, Fgp, 7",
+        "instrument": "FGP",
+        "units": "KPa",
+        "comments": "7th FGP pressure sensor",
+        "sdn_uom_urn": "SDN:P06::KIPA",
+        "sdn_uom_name": "Kilopascals"
+    },
+    "fgp7": {
+        "long_name": "Pressure, Fgp, 8",
+        "instrument": "FGP",
+        "units": "KPa",
+        "comments": "8th FGP pressure sensor",
+        "sdn_uom_urn": "SDN:P06::KIPA",
+        "sdn_uom_name": "Kilopascals"
+    },
+    "pr50M": {
+        "long_name": "Pressure, Sbe 50",
+        "instrument": "SBE 50",
+        "units": "db",
+        "comments": "1st SBE 50 pressure sensor",
+        "sdn_uom_urn": "SDN:P06::UDBL",
+        "sdn_uom_name": "Decibels"
+    },
+    "pr50E": {
+        "long_name": "Pressure, Sbe 50",
+        "instrument": "SBE 50",
+        "units": "psi",
+        "comments": "1st SBE 50 pressure sensor"
+    },
+    "pr50M1": {
+        "long_name": "Pressure, Sbe 50, 2",
+        "instrument": "SBE 50",
+        "units": "db",
+        "comments": "2nd SBE 50 pressure sensor",
+        "sdn_uom_urn": "SDN:P06::UDBL",
+        "sdn_uom_name": "Decibels"
+    },
+    "pr50E1": {
+        "long_name": "Pressure, Sbe 50, 2",
+        "instrument": "SBE 50",
+        "units": "psi",
+        "comments": "2nd SBE 50 pressure sensor"
+    },
+    "prSM": {
+        "long_name": "Pressure, Strain Gauge",
+        "instrument": "Strain Gauge",
+        "units": "db",
+        "comments": "strain-gauge pressure sensor",
+        "sdn_uom_urn": "SDN:P06::UDBL",
+        "sdn_uom_name": "Decibels"
+    },
+    "prSE": {
+        "long_name": "Pressure, Strain Gauge",
+        "instrument": "Strain Gauge",
+        "units": "psi",
+        "comments": "strain-gauge pressure sensor"
+    },
+    "pumps": {
+        "long_name": "Pump Status"
+    },
+    "rfuels0": {
+        "long_name": "Refined Fuels, Turner Cyclops",
+        "instrument": "Turner Cyclops",
+        "units": "ppb NS",
+        "comments": "1st sensor"
+    },
+    "rfuels1": {
+        "long_name": "Refined Fuels, Turner Cyclops, 2",
+        "instrument": "Turner Cyclops",
+        "units": "ppb NS",
+        "comments": "2nd sensor"
+    },
+    "rfuelsdiff": {
+        "long_name": "Refined Fuels, Turner Cyclops, Diff, 2 - 1",
+        "instrument": "Turner Cyclops",
+        "units": "ppb NS",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "rhodflTC0": {
+        "long_name": "Rhodamine, Turner Cyclops",
+        "instrument": "Turner Cyclops",
+        "units": "ppb",
+        "comments": "1st sensor"
+    },
+    "rhodflTC1": {
+        "long_name": "Rhodamine, Turner Cyclops, 2",
+        "instrument": "Turner Cyclops",
+        "units": "ppb",
+        "comments": "2nd sensor"
+    },
+    "rhodflTCdiff": {
+        "long_name": "Rhodamine, Turner Cyclops, Diff, 2 - 1",
+        "instrument": "Turner Cyclops",
+        "units": "ppb",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "wl0": {
+        "long_name": "Rs-232 Wet Labs Raw Counts 0",
+        "units": "Counts",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UCNT",
+        "sdn_uom_name": "Counts"
+    },
+    "wl1": {
+        "long_name": "Rs-232 Wet Labs Raw Counts 1",
+        "units": "Counts",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UCNT",
+        "sdn_uom_name": "Counts"
+    },
+    "wl2": {
+        "long_name": "Rs-232 Wet Labs Raw Counts 2",
+        "units": "Counts",
+        "comments": "3rd sensor",
+        "sdn_uom_urn": "SDN:P06::UCNT",
+        "sdn_uom_name": "Counts"
+    },
+    "wl3": {
+        "long_name": "Rs-232 Wet Labs Raw Counts 3",
+        "units": "Counts",
+        "comments": "4th sensor",
+        "sdn_uom_urn": "SDN:P06::UCNT",
+        "sdn_uom_name": "Counts"
+    },
+    "wl4": {
+        "long_name": "Rs-232 Wet Labs Raw Counts 4",
+        "units": "Counts",
+        "comments": "5th sensor",
+        "sdn_uom_urn": "SDN:P06::UCNT",
+        "sdn_uom_name": "Counts"
+    },
+    "wl5": {
+        "long_name": "Rs-232 Wet Labs Raw Counts 5",
+        "units": "Counts",
+        "comments": "6th sensor",
+        "sdn_uom_urn": "SDN:P06::UCNT",
+        "sdn_uom_name": "Counts"
+    },
+    "sal00": {
+        "long_name": "Salinity, Practical",
+        "units": "PSU",
+        "standard_name": "sea_water_practical_salinity",
+        "sdn_parameter_urn": "SDN:P01::PSALST01",
+        "sdn_parameter_name": "Practical salinity of the water body by CTD and computation using UNESCO 1983 algorithm",
+        "comments": "1st sensor"
+    },
+    "sal_": {
+        "long_name": "Salinity, Practical",
+        "units": "PSU",
+        "comments": "1st sensor"
+    },
+    "sal11": {
+        "long_name": "Salinity, Practical, 2",
+        "units": "PSU",
+        "standard_name": "sea_water_practical_salinity",
+        "sdn_parameter_urn": "SDN:P01::PSALST02",
+        "sdn_parameter_name": "Practical salinity of the water body by CTD (second sensor) and computation using UNESCO 1983 algorithm",
+        "comments": "2nd sensor"
+    },
+    "secS-priS": {
+        "long_name": "Salinity, Practical, Difference, 2 - 1",
+        "units": "PSU",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "scan": {
+        "long_name": "Scan Count"
+    },
+    "nbin": {
+        "long_name": "Scans Per Bin",
+        "comments": "Calculated in SBE Data Processing's Bin Average module"
+    },
+    "sfdSM": {
+        "long_name": "Seafloor Depth",
+        "units": "m [salt water]"
+    },
+    "sfdSF": {
+        "long_name": "Seafloor Depth",
+        "units": "ft [salt water]"
+    },
+    "sfdFM": {
+        "long_name": "Seafloor Depth",
+        "units": "m [fresh water]"
+    },
+    "sfdFF": {
+        "long_name": "Seafloor Depth",
+        "units": "ft [fresh water]"
+    },
+    "svCM": {
+        "long_name": "Sound Velocity",
+        "units": "m/s [Chen-Millero]",
+        "standard_name": "speed_of_sound_in_sea_water",
+        "sdn_parameter_urn": "SDN:P01::SVELCA01",
+        "sdn_parameter_name": "Sound velocity in the water body by computation from salinity and temperature using UNESCO algorithm",
+        "sdn_uom_urn": "SDN:P06::UVAA",
+        "sdn_uom_name": "Metres per second",
+        "comments": "1st sensor"
+    },
+    "svCF": {
+        "long_name": "Sound Velocity",
+        "units": "ft/s [Chen-Millero]",
+        "comments": "1st sensor"
+    },
+    "svDM": {
+        "long_name": "Sound Velocity",
+        "units": "m/s [Delgrosso]",
+        "sdn_parameter_urn": "SDN:P01::SVELCT01",
+        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by unspecified algorithm",
+        "sdn_uom_urn": "SDN:P06::UVAA",
+        "sdn_uom_name": "Metres per second",
+        "comments": "1st sensor"
+    },
+    "svDF": {
+        "long_name": "Sound Velocity",
+        "units": "ft/s [Delgrosso]",
+        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by Delgrosso algorithm",
+        "comments": "1st sensor"
+    },
+    "svWM": {
+        "long_name": "Sound Velocity",
+        "units": "m/s [Wilson]",
+        "sdn_parameter_urn": "SDN:P01::SVELCT01",
+        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by unspecified algorithm",
+        "sdn_uom_urn": "SDN:P06::UVAA",
+        "sdn_uom_name": "Metres per second",
+        "comments": "1st sensor"
+    },
+    "svWF": {
+        "long_name": "Sound Velocity",
+        "units": "ft/s [Wilson]",
+        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by Wilson algorithm",
+        "comments": "1st sensor"
+    },
+    "svCM1": {
+        "long_name": "Sound Velocity, 2",
+        "units": "m/s [Chen-Millero]",
+        "comments": "2nd sensor"
+    },
+    "svCF1": {
+        "long_name": "Sound Velocity, 2",
+        "units": "ft/s [Chen-Millero]",
+        "comments": "2nd sensor"
+    },
+    "svDM1": {
+        "long_name": "Sound Velocity, 2",
+        "units": "m/s [Delgrosso]",
+        "comments": "2nd sensor"
+    },
+    "svDF1": {
+        "long_name": "Sound Velocity, 2",
+        "units": "ft/s [Delgrosso]",
+        "comments": "2nd sensor"
+    },
+    "svWM1": {
+        "long_name": "Sound Velocity, 2",
+        "units": "m/s [Wilson]",
+        "comments": "2nd sensor"
+    },
+    "svWF1": {
+        "long_name": "Sound Velocity, 2",
+        "units": "ft/s [Wilson]",
+        "comments": "2nd sensor"
+    },
+    "iowSv": {
+        "long_name": "Sound Velocity, Iow",
+        "instrument": "IOW",
+        "units": "m/s",
+        "comments": "IOW sound velocity sensor",
+        "sdn_uom_urn": "SDN:P06::UVAA",
+        "sdn_uom_name": "Metres per second"
+    },
+    "sbeSv-iowSv": {
+        "long_name": "Sound Velocity Diff, Sbe - Iow",
+        "instrument": "SBE - IOW",
+        "units": "m/s",
+        "comments": "SBE CTD - IOW SV sensor",
+        "sdn_uom_urn": "SDN:P06::UVAA",
+        "sdn_uom_name": "Metres per second"
+    },
+    "spar": {
+        "long_name": "Spar/Surface Irradiance",
+        "comments": "Biospherical or Licor sensor"
+    },
+    "spar/sat/lin": {
+        "name": "sparPersatPerlin",
+        "long_name": "Spar/Linear, Satlantic",
+        "instrument": "Satlantic"
+    },
+    "spar/sat/log": {
+        "name": "sparPersatPerlog",
+        "long_name": "Spar/Logarithmic, Satlantic",
+        "instrument": "Satlantic"
+    },
+    "specc": {
+        "long_name": "Specific Conductance",
+        "units": "uS/cm"
+    },
+    "speccumhoscm": {
+        "long_name": "Specific Conductance",
+        "units": "umhos/cm"
+    },
+    "speccmsm": {
+        "long_name": "Specific Conductance",
+        "units": "mS/cm",
+        "sdn_uom_urn": "SDN:P06::MSCM",
+        "sdn_uom_name": "MilliSiemens per centimetre"
+    },
+    "speccmmhoscm": {
+        "long_name": "Specific Conductance",
+        "units": "mmhos/cm"
+    },
+    "sva": {
+        "long_name": "Specific Volume Anomaly",
+        "units": "10^-8 * m^3/kg"
+    },
+    "E": {
+        "long_name": "Stability",
+        "units": "rad^2/m",
+        "comments": "Calculated in SBE Data Processing's Buoyancy module"
+    },
+    "E10^-8": {
+        "long_name": "Stability",
+        "units": "10^-8 * rad^2/m",
+        "comments": "Calculated in SBE Data Processing's Buoyancy module"
+    },
+    "t090C": {
+        "long_name": "Temperature",
+        "units": "deg C [ITS-90]",
+        "standard_name": "sea_water_temperature",
+        "sdn_parameter_urn": "SDN:P01::TEMPS901",
+        "sdn_parameter_name": "Temperature (ITS-90) of the water body by CTD or STD",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius",
+        "comments": "1st sensor"
+    },
+    "t4990C": {
+        "long_name": "Temperature",
+        "units": "deg C [ITS-90]",
+        "standard_name": "sea_water_temperature",
+        "sdn_parameter_urn": "SDN:P01::TEMPS901",
+        "sdn_parameter_name": "Temperature (ITS-90) of the water body by CTD or STD",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius",
+        "comments": "1st sensor"
+    },
+    "tnc90C": {
+        "long_name": "Temperature",
+        "units": "deg C [ITS-90]",
+        "standard_name": "sea_water_temperature",
+        "sdn_parameter_urn": "SDN:P01::TEMPS901",
+        "sdn_parameter_name": "Temperature (ITS-90) of the water body by CTD or STD",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius",
+        "comments": "1st sensor"
+    },
+    "tv290C": {
+        "long_name": "Temperature",
+        "units": "deg C [ITS-90]",
+        "standard_name": "sea_water_temperature",
+        "sdn_parameter_urn": "SDN:P01::TEMPS901",
+        "sdn_parameter_name": "Temperature (ITS-90) of the water body by CTD or STD",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius",
+        "comments": "1st sensor"
+    },
+    "t090F": {
+        "long_name": "Temperature",
+        "units": "deg F [ITS-90]",
+        "comments": "1st sensor"
+    },
+    "t4990F": {
+        "long_name": "Temperature",
+        "units": "deg F [ITS-90]",
+        "comments": "1st sensor"
+    },
+    "tnc90F": {
+        "long_name": "Temperature",
+        "units": "deg F [ITS-90]",
+        "comments": "1st sensor"
+    },
+    "tv290F": {
+        "long_name": "Temperature",
+        "units": "deg F [ITS-90]",
+        "comments": "1st sensor"
+    },
+    "t068C": {
+        "long_name": "Temperature",
+        "units": "deg C [IPTS-68]",
+        "comments": "1st sensor"
+    },
+    "t4968C": {
+        "long_name": "Temperature",
+        "units": "deg C [IPTS-68]",
+        "comments": "1st sensor"
+    },
+    "tnc68C": {
+        "long_name": "Temperature",
+        "units": "deg C [IPTS-68]",
+        "comments": "1st sensor"
+    },
+    "tv268C": {
+        "long_name": "Temperature",
+        "units": "deg C [IPTS-68]",
+        "comments": "1st sensor"
+    },
+    "t068F": {
+        "long_name": "Temperature",
+        "units": "deg F [IPTS-68]",
+        "comments": "1st sensor"
+    },
+    "t4968F": {
+        "long_name": "Temperature",
+        "units": "deg F [IPTS-68]",
+        "comments": "1st sensor"
+    },
+    "tnc68F": {
+        "long_name": "Temperature",
+        "units": "deg F [IPTS-68]",
+        "comments": "1st sensor"
+    },
+    "tv268F": {
+        "long_name": "Temperature",
+        "units": "deg F [IPTS-68]",
+        "comments": "1st sensor"
+    },
+    "t190C": {
+        "long_name": "Temperature, 2",
+        "units": "deg C [ITS-90]",
+        "standard_name": "sea_water_temperature",
+        "sdn_parameter_urn": "SDN:P01::TEMPS902",
+        "sdn_parameter_name": "Temperature (ITS-90) of the water body by CTD or STD (second sensor)",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius",
+        "comments": "2nd sensor"
+    },
+    "tnc290C": {
+        "long_name": "Temperature, 2",
+        "units": "deg C [ITS-90]",
+        "standard_name": "sea_water_temperature",
+        "sdn_parameter_urn": "SDN:P01::TEMPS902",
+        "sdn_parameter_name": "Temperature (ITS-90) of the water body by CTD or STD (second sensor)",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius",
+        "comments": "2nd sensor"
+    },
+    "t190F": {
+        "long_name": "Temperature, 2",
+        "units": "deg F [ITS-90]",
+        "standard_name": "sea_water_temperature",
+        "sdn_parameter_urn": "SDN:P01::TEMPS902",
+        "sdn_parameter_name": "Temperature (ITS-90) of the water body by CTD or STD (second sensor)",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius",
+        "comments": "2nd sensor"
+    },
+    "tnc290F": {
+        "long_name": "Temperature, 2",
+        "units": "deg F [ITS-90]",
+        "standard_name": "sea_water_temperature",
+        "sdn_parameter_urn": "SDN:P01::TEMPS902",
+        "sdn_parameter_name": "Temperature (ITS-90) of the water body by CTD or STD (second sensor)",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius",
+        "comments": "2nd sensor"
+    },
+    "t168C": {
+        "long_name": "Temperature, 2",
+        "units": "deg C [IPTS-68]",
+        "comments": "2nd sensor"
+    },
+    "tnc268C": {
+        "long_name": "Temperature, 2",
+        "units": "deg C [IPTS-68]",
+        "comments": "2nd sensor"
+    },
+    "t168F": {
+        "long_name": "Temperature, 2",
+        "units": "deg F [IPTS-68]",
+        "comments": "2nd sensor"
+    },
+    "tnc268F": {
+        "long_name": "Temperature, 2",
+        "units": "deg F [IPTS-68]",
+        "comments": "2nd sensor"
+    },
+    "T2-T190C": {
+        "long_name": "Temperature Difference, 2 - 1",
+        "units": "deg C [ITS-90]",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "T2-T190F": {
+        "long_name": "Temperature Difference, 2 - 1",
+        "units": "deg F [ITS-90]",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "T2-T168C": {
+        "long_name": "Temperature Difference, 2 - 1",
+        "units": "deg C [IPTS-68]",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "T2-T168F": {
+        "long_name": "Temperature Difference, 2 - 1",
+        "units": "deg F [IPTS-68]",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "t3890C": {
+        "long_name": "Temperature, Sbe 38",
+        "instrument": "SBE 38",
+        "units": "deg C [ITS-90]",
+        "comments": "1st sensor"
+    },
+    "t38_90C": {
+        "long_name": "Temperature, Sbe 38",
+        "instrument": "SBE 38",
+        "units": "deg C [ITS-90]",
+        "comments": "1st sensor"
+    },
+    "t3890F": {
+        "long_name": "Temperature, Sbe 38",
+        "instrument": "SBE 38",
+        "units": "deg F [ITS-90]",
+        "comments": "1st sensor"
+    },
+    "t38_90F": {
+        "long_name": "Temperature, Sbe 38",
+        "instrument": "SBE 38",
+        "units": "deg F [ITS-90]",
+        "comments": "1st sensor"
+    },
+    "t3868C": {
+        "long_name": "Temperature, Sbe 38",
+        "instrument": "SBE 38",
+        "units": "deg C [IPTS-68]",
+        "comments": "1st sensor"
+    },
+    "t38_68C": {
+        "long_name": "Temperature, Sbe 38",
+        "instrument": "SBE 38",
+        "units": "deg C [IPTS-68]",
+        "comments": "1st sensor"
+    },
+    "t3868F": {
+        "long_name": "Temperature, Sbe 38",
+        "instrument": "SBE 38",
+        "units": "deg F [IPTS-68]",
+        "comments": "1st sensor"
+    },
+    "t38_68F": {
+        "long_name": "Temperature, Sbe 38",
+        "instrument": "SBE 38",
+        "units": "deg F [IPTS-68]",
+        "comments": "1st sensor"
+    },
+    "t3890C1": {
+        "long_name": "Temperature, Sbe 38, 2",
+        "instrument": "SBE 38",
+        "units": "deg C [ITS-90]",
+        "comments": "2nd sensor"
+    },
+    "t3890F1": {
+        "long_name": "Temperature, Sbe 38, 2",
+        "instrument": "SBE 38",
+        "units": "deg F [ITS-90]",
+        "comments": "2nd sensor"
+    },
+    "t3868C1": {
+        "long_name": "Temperature, Sbe 38, 2",
+        "instrument": "SBE 38",
+        "units": "deg C [IPTS-68]",
+        "comments": "2nd sensor"
+    },
+    "t3868F1": {
+        "long_name": "Temperature, Sbe 38, 2",
+        "instrument": "SBE 38",
+        "units": "deg F [IPTS-68]",
+        "comments": "2nd sensor"
+    },
+    "tsa": {
+        "long_name": "Thermosteric Anomaly",
+        "units": "10^-8 * m^3/kg"
+    },
+    "timeS": {
+        "long_name": "Time, Elapsed",
+        "units": "seconds",
+        "comments": "Elapsed time (seconds) based on first scan in data file and sample rate (profiling) or sample interval (moorings); sample rate is defined by configuration (.con or .xmlcon) file.",
+        "sdn_uom_urn": "SDN:P06::UTBB",
+        "sdn_uom_name": "Seconds"
+    },
+    "timeM": {
+        "long_name": "Time, Elapsed",
+        "units": "minutes",
+        "comments": "Elapsed time (minutes) based on first scan in data file and sample rate (profiling) or sample interval (moorings); sample rate or interval is as defined by configuration (.con or .xmlcon) file.",
+        "sdn_uom_urn": "SDN:P06::UMIN",
+        "sdn_uom_name": "Minutes"
+    },
+    "timeH": {
+        "long_name": "Time, Elapsed",
+        "units": "hours",
+        "comments": "Elapsed time (hours) based on first scan in data file and sample rate (profiling) or sample interval (moorings); sample rate or interval is as defined by configuration (.con or .xmlcon) file.",
+        "sdn_uom_urn": "SDN:P06::UHOR",
+        "sdn_uom_name": "Hours"
+    },
+    "timeJ": {
+        "long_name": "Julian Days",
+        "units": "julian days",
+        "comments": "Elapsed time (Julian days) based on first scan in data file and sample rate (profiling) or sample interval (moorings); sample rate or interval is as defined by configuration (.con or .xmlcon) file."
+    },
+    "timeN": {
+        "long_name": "Time, Nmea",
+        "units": "seconds",
+        "comments": "From NMEA device: Seconds since January 1, 1970; only for SBE 45",
+        "sdn_uom_urn": "SDN:P06::UTBB",
+        "sdn_uom_name": "Seconds"
+    },
+    "timeQ": {
+        "long_name": "Time, Nmea",
+        "units": "seconds",
+        "comments": "From NMEA device: Seconds since January 1, 2000; everything but SBE 45",
+        "sdn_uom_urn": "SDN:P06::UTBB",
+        "sdn_uom_name": "Seconds"
+    },
+    "timeK": {
+        "long_name": "Time, Instrument",
+        "units": "seconds",
+        "comments": "Seconds since January 1, 2000, based on time stamp in 16plus V2 or 19plus V2 (in moored mode).",
+        "sdn_uom_urn": "SDN:P06::UTBB",
+        "sdn_uom_name": "Seconds"
+    },
+    "timeJV2": {
+        "long_name": "Time, Instrument",
+        "units": "julian days",
+        "comments": "Julian days, based on time stamp in 16plus V2 or 19plus V2 (in moored mode)."
+    },
+    "timeSCP": {
+        "long_name": "Time, Seacat Plus",
+        "instrument": "Seacat plus",
+        "units": "julian days",
+        "comments": "Julian days, based on time stamp in 16plus or 19plus (in moored mode). Not applicable to V2 versions."
+    },
+    "timeY": {
+        "long_name": "Time, System",
+        "units": "seconds",
+        "comments": "Computer time (seconds) since January 1, 1970, appended by Seasave V7 if 'Scan time added' selected in configuration (.con or .xmlcon) file.",
+        "sdn_uom_urn": "SDN:P06::UTBB",
+        "sdn_uom_name": "Seconds"
+    },
+    "seaTurbMtr": {
+        "long_name": "Turbidity, Seapoint",
+        "instrument": "Seapoint",
+        "units": "FTU",
+        "comments": "1st sensor"
+    },
+    "seaTurbMtr1": {
+        "long_name": "Turbidity, Seapoint, 2",
+        "instrument": "Seapoint",
+        "units": "FTU",
+        "comments": "2nd sensor"
+    },
+    "seaTurbMtrdiff": {
+        "long_name": "Turbidity, Seapoint, Diff, 2 - 1",
+        "instrument": "Seapoint",
+        "units": "FTU",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "turbflTC0": {
+        "long_name": "Turbidity, Turner Cyclops",
+        "instrument": "Turner Cyclops",
+        "units": "NTU",
+        "comments": "1st sensor"
+    },
+    "turbflTC1": {
+        "long_name": "Turbidity, Turner Cyclops, 2",
+        "instrument": "Turner Cyclops",
+        "units": "NTU",
+        "comments": "2nd sensor"
+    },
+    "turbflTCdiff": {
+        "long_name": "Turbidity, Turner Cyclops, Diff, 2 - 1",
+        "instrument": "Turner Cyclops",
+        "units": "NTU",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "turbWETbb0": {
+        "long_name": "Turbidity, Wet Labs Eco Bb",
+        "instrument": "WET Labs ECO BB",
+        "units": "m^-1/sr",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::PMSR",
+        "sdn_uom_name": "per metre per steradian"
+    },
+    "turbWETbb1": {
+        "long_name": "Turbidity, Wet Labs Eco Bb, 2",
+        "instrument": "WET Labs ECO BB",
+        "units": "m^-1/sr",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::PMSR",
+        "sdn_uom_name": "per metre per steradian"
+    },
+    "turbWETbb2": {
+        "long_name": "Turbidity, Wet Labs Eco Bb, 3",
+        "instrument": "WET Labs ECO BB",
+        "units": "m^-1/sr",
+        "comments": "3rd sensor",
+        "sdn_uom_urn": "SDN:P06::PMSR",
+        "sdn_uom_name": "per metre per steradian"
+    },
+    "turbWETbb3": {
+        "long_name": "Turbidity, Wet Labs Eco Bb, 4",
+        "instrument": "WET Labs ECO BB",
+        "units": "m^-1/sr",
+        "comments": "4th sensor",
+        "sdn_uom_urn": "SDN:P06::PMSR",
+        "sdn_uom_name": "per metre per steradian"
+    },
+    "turbWETbb4": {
+        "long_name": "Turbidity, Wet Labs Eco Bb, 5",
+        "instrument": "WET Labs ECO BB",
+        "units": "m^-1/sr",
+        "comments": "5th sensor",
+        "sdn_uom_urn": "SDN:P06::PMSR",
+        "sdn_uom_name": "per metre per steradian"
+    },
+    "turbWETbbdiff": {
+        "long_name": "Turbidity, Wet Labs Eco Bb, Diff, 2 - 1",
+        "instrument": "WET Labs ECO BB",
+        "units": "m^-1/sr",
+        "comments": "2nd sensor - 1st sensor",
+        "sdn_uom_urn": "SDN:P06::PMSR",
+        "sdn_uom_name": "per metre per steradian"
+    },
+    "turbWETntu0": {
+        "long_name": "Turbidity, Wet Labs Eco",
+        "instrument": "WET Labs ECO",
+        "units": "NTU",
+        "comments": "1st sensor"
+    },
+    "turbWETntu1": {
+        "long_name": "Turbidity, Wet Labs Eco, 2",
+        "instrument": "WET Labs ECO",
+        "units": "NTU",
+        "comments": "2nd sensor"
+    },
+    "turbWETntu2": {
+        "long_name": "Turbidity, Wet Labs Eco, 3",
+        "instrument": "WET Labs ECO",
+        "units": "NTU",
+        "comments": "3rd sensor"
+    },
+    "turbWETntu3": {
+        "long_name": "Turbidity, Wet Labs Eco, 4",
+        "instrument": "WET Labs ECO",
+        "units": "NTU",
+        "comments": "4th sensor"
+    },
+    "turbWETntu4": {
+        "long_name": "Turbidity, Wet Labs Eco, 5",
+        "instrument": "WET Labs ECO",
+        "units": "NTU",
+        "comments": "5th sensor"
+    },
+    "turbWETntu5": {
+        "long_name": "Turbidity, Wet Labs Eco, 6",
+        "instrument": "WET Labs ECO",
+        "units": "NTU",
+        "comments": "6th sensor"
+    },
+    "turbWETntudiff": {
+        "long_name": "Turbidity, Wet Labs Eco, Diff, 2 - 1",
+        "instrument": "WET Labs ECO",
+        "units": "NTU",
+        "comments": "2nd sensor - 1st sensor"
+    },
+    "turbWET\nSeaOWLbb0": {
+        "long_name": "Turbidity, Wet Labs Seaowl Bb",
+        "instrument": "WET Labs SeaOWL BB",
+        "units": "m-1sr -1",
+        "comments": "1st turbidity sensor"
+    },
+    "turbWET\nSeaOWLbb1": {
+        "long_name": "Turbidity, Wet Labs Seaowl Bb, 2",
+        "instrument": "WET Labs SeaOWL BB",
+        "units": "m-1sr -1",
+        "comments": "2nd turbidity sensor"
+    },
+    "turbWET\nSeaOWLbbdiff": {
+        "long_name": "Turbidity, Wet Labs Seaowl Bb, 2 - 1",
+        "instrument": "WET Labs SeaOWL BB",
+        "units": "m-1sr -1",
+        "comments": "2nd - 1st turbidity sensor"
+    },
+    "user1": {
+        "long_name": "User Defined Variable",
+        "comments": "1st sensor; user selects variable name for file imported to ASCII In"
+    },
+    "user2": {
+        "long_name": "User Defined Variable, 2",
+        "comments": "2nd sensor; user selects variable name for file imported to ASCII In"
+    },
+    "user3": {
+        "long_name": "User Defined Variable, 3",
+        "comments": "3rd sensor; user selects variable name for file imported to ASCII In"
+    },
+    "user4": {
+        "long_name": "User Defined Variable, 4",
+        "comments": "4th sensor; user selects variable name for file imported to ASCII In"
+    },
+    "user5": {
+        "long_name": "User Defined Variable, 5",
+        "comments": "5th sensor; user selects variable name for file imported to ASCII In"
+    },
+    "uexpo0": {
+        "long_name": "User Exponential",
+        "comments": "1st user exponential sensor"
+    },
+    "uexpo1": {
+        "long_name": "User Exponential, 2",
+        "comments": "2nd user exponential sensor"
+    },
+    "uexpo2": {
+        "long_name": "User Exponential, 3",
+        "comments": "3rd user exponential sensor"
+    },
+    "upoly0": {
+        "long_name": "User Polynomial",
+        "comments": "1st user polynomial sensor"
+    },
+    "upoly1": {
+        "long_name": "User Polynomial, 2",
+        "comments": "2nd user polynomial sensor"
+    },
+    "upoly2": {
+        "long_name": "User Polynomial, 3",
+        "comments": "3rd user polynomial sensor"
+    },
+    "v0": {
+        "long_name": "Voltage 0",
+        "units": "V",
+        "comments": "1st voltage sensor"
+    },
+    "v1": {
+        "long_name": "Voltage 1",
+        "units": "V",
+        "comments": "2nd voltage sensor"
+    },
+    "v2": {
+        "long_name": "Voltage 2",
+        "units": "V",
+        "comments": "3rd voltage sensor"
+    },
+    "v3": {
+        "long_name": "Voltage 3",
+        "units": "V",
+        "comments": "4th voltage sensor"
+    },
+    "v4": {
+        "long_name": "Voltage 4",
+        "units": "V",
+        "comments": "5th voltage sensor"
+    },
+    "v5": {
+        "long_name": "Voltage 5",
+        "units": "V",
+        "comments": "6th voltage sensor"
+    },
+    "v6": {
+        "long_name": "Voltage 6",
+        "units": "V",
+        "sdn_uom_urn": "SDN:P06::UVLT",
+        "sdn_uom_name": "Volts",
+        "comments": "7th voltage sensor"
+    },
+    "v7": {
+        "long_name": "Voltage 7",
+        "units": "V",
+        "comments": "8th voltage sensor"
+    },
+    "v8": {
+        "long_name": "Voltage 8",
+        "units": "V",
+        "comments": "9th voltage sensor"
+    },
+    "v9": {
+        "long_name": "Voltage 9",
+        "units": "V",
+        "comments": "10th voltage sensor"
+    },
+    "v10": {
+        "long_name": "Voltage 10",
+        "units": "V",
+        "comments": "11th voltage sensor"
+    },
+    "v11": {
+        "long_name": "Voltage 11",
+        "units": "V",
+        "comments": "12th voltage sensor"
+    },
+    "v12": {
+        "long_name": "Voltage 12",
+        "units": "V",
+        "comments": "13th voltage sensor"
+    },
+    "v13": {
+        "long_name": "Voltage 13",
+        "units": "V",
+        "comments": "14th voltage sensor"
+    },
+    "v14": {
+        "long_name": "Voltage 14",
+        "units": "V",
+        "comments": "15th voltage sensor"
+    },
+    "v15": {
+        "long_name": "Voltage 15",
+        "units": "V",
+        "comments": "16th voltage sensor"
+    },
+    "zaps": {
+        "long_name": "Zaps",
+        "units": "nmol"
+    },
+    "gsw_saA0": {
+        "long_name": "Absolute Salinity",
+        "units": "g/kg",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UGKG",
+        "sdn_uom_name": "Grams per kilogram"
+    },
+    "gsw_saA1": {
+        "long_name": "Absolute Salinity, 2",
+        "units": "g/kg",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UGKG",
+        "sdn_uom_name": "Grams per kilogram"
+    },
+    "gsw_deltasaA0": {
+        "long_name": "Absolute Salinity Anomaly",
+        "units": "g/kg",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UGKG",
+        "sdn_uom_name": "Grams per kilogram"
+    },
+    "gsw_deltasaA1": {
+        "long_name": "Absolute Salinity Anomaly, 2",
+        "units": "g/kg",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UGKG",
+        "sdn_uom_name": "Grams per kilogram"
+    },
+    "gsw_adlr0A": {
+        "long_name": "Adiabatic Lapse Rate",
+        "units": "K/Pa",
+        "comments": "1st sensor"
+    },
+    "gsw_adlr1A": {
+        "long_name": "Adiabatic Lapse Rate, 2",
+        "units": "K/Pa",
+        "comments": "2nd sensor"
+    },
+    "gsw_ctA0": {
+        "long_name": "Conservative Temperature",
+        "units": "deg C [TS-90]",
+        "comments": "1st sensor"
+    },
+    "gsw_ctA1": {
+        "long_name": "Conservative Temperature, 2",
+        "units": "deg C [ITS-90]",
+        "comments": "2nd sensor"
+    },
+    "gsw_ctfA0": {
+        "long_name": "Conservative Temperature Freezing",
+        "units": "deg C [ITS-90]",
+        "comments": "1st sensor"
+    },
+    "gsw_ctfA1": {
+        "long_name": "Conservative Temperature Freezing, 2",
+        "units": "deg C [ITS-90]",
+        "comments": "2nd sensor"
+    },
+    "gsw_densityA0": {
+        "long_name": "Density, Teos-10",
+        "units": "kg/m^3 [density]",
+        "comments": "1st sensor"
+    },
+    "gsw_sigma0A0": {
+        "long_name": "Density, Teos-10",
+        "units": "kg/m^3 [sigma-0]",
+        "comments": "1st sensor"
+    },
+    "gsw_sigma1A0": {
+        "long_name": "Density, Teos-10",
+        "units": "kg/m^3 [sigma-1]",
+        "comments": "1st sensor"
+    },
+    "gsw_sigma2A0": {
+        "long_name": "Density, Teos-10",
+        "units": "kg/m^3 [sigma-2]",
+        "comments": "1st sensor"
+    },
+    "gsw_sigma3A0": {
+        "long_name": "Density, Teos-10",
+        "units": "kg/m^3 [sigma-3]",
+        "comments": "1st sensor"
+    },
+    "gsw_sigma4A0": {
+        "long_name": "Density, Teos-10",
+        "units": "kg/m^3 [sigma-4]",
+        "comments": "1st sensor"
+    },
+    "gsw_densityA1": {
+        "long_name": "Density, Teos-10, 2",
+        "units": "kg/m^3 [density]",
+        "comments": "2nd sensor"
+    },
+    "gsw_sigma0A1": {
+        "long_name": "Density, Teos-10, 2",
+        "units": "kg/m^3 [sigma-0]",
+        "comments": "2nd sensor"
+    },
+    "gsw_sigma1A1": {
+        "long_name": "Density, Teos-10, 2",
+        "units": "kg/m^3 [sigma-1]",
+        "comments": "2nd sensor"
+    },
+    "gsw_sigma2A1": {
+        "long_name": "Density, Teos-10, 2",
+        "units": "kg/m^3 [sigma-2]",
+        "comments": "2nd sensor"
+    },
+    "gsw_sigma3A1": {
+        "long_name": "Density, Teos-10, 2",
+        "units": "kg/m^3 [sigma-3]",
+        "comments": "2nd sensor"
+    },
+    "gsw_sigma4A1": {
+        "long_name": "Density, Teos-10, 2",
+        "units": "kg/m^3 [sigma-4]",
+        "comments": "2nd sensor"
+    },
+    "gsw_dynenthA0": {
+        "long_name": "Dynamic Enthalpy",
+        "units": "J/kg",
+        "comments": "1st sensor"
+    },
+    "gsw_dynenthA1": {
+        "long_name": "Dynamic Enthalpy, 2",
+        "units": "J/kg",
+        "comments": "2nd sensor"
+    },
+    "gsw_enthalpyA0": {
+        "long_name": "Enthalpy",
+        "units": "J/kg",
+        "comments": "1st sensor"
+    },
+    "gsw_enthalpyA1": {
+        "long_name": "Enthalpy, 2",
+        "units": "J/kg",
+        "comments": "2nd sensor"
+    },
+    "gsw_entropyA0": {
+        "long_name": "Entropy",
+        "units": "J/kg/K",
+        "comments": "1st sensor"
+    },
+    "gsw_entropyA1": {
+        "long_name": "Entropy, 2",
+        "units": "J/kg/K",
+        "comments": "2nd sensor"
+    },
+    "gsw_gravA": {
+        "long_name": "Gravity",
+        "units": "m/s^2",
+        "sdn_uom_urn": "SDN:P06::MPS2",
+        "sdn_uom_name": "Metres per second squared"
+    },
+    "gsw_ieA0": {
+        "long_name": "Internal Energy",
+        "units": "J/kg",
+        "comments": "1st sensor"
+    },
+    "gsw_ieA1": {
+        "long_name": "Internal Energy, 2",
+        "units": "J/kg",
+        "comments": "2nd sensor"
+    },
+    "gsw_icA0": {
+        "long_name": "Isentropic Compressibility",
+        "units": "1/Pa",
+        "comments": "1st sensor"
+    },
+    "gsw_icA1": {
+        "long_name": "Isentropic Compressibility, 2",
+        "units": "1/Pa",
+        "comments": "2nd sensor"
+    },
+    "gsw_lheA0": {
+        "long_name": "Latent Heat Of Evaporation",
+        "units": "J/kg",
+        "comments": "1st sensor"
+    },
+    "gsw_lheA1": {
+        "long_name": "Latent Heat Of Evaporation, 2",
+        "units": "J/kg",
+        "comments": "2nd sensor"
+    },
+    "gsw_lhmA0": {
+        "long_name": "Latent Heat Of Melting",
+        "units": "J/kg",
+        "comments": "1st sensor"
+    },
+    "gsw_lhmA1": {
+        "long_name": "Latent Heat Of Melting, 2",
+        "units": "J/kg",
+        "comments": "2nd sensor"
+    },
+    "gsw_ptA0": {
+        "long_name": "Potential Temperature",
+        "units": "deg C [ITS-90]",
+        "comments": "1st sensor"
+    },
+    "gsw_ptA1": {
+        "long_name": "Potential Temperature, 2",
+        "units": "deg C [ITS-90]",
+        "comments": "2nd sensor"
+    },
+    "gsw_sstarA0": {
+        "long_name": "Preformed Salinity",
+        "units": "g/kg",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UGKG",
+        "sdn_uom_name": "Grams per kilogram"
+    },
+    "gsw_sstarA1": {
+        "long_name": "Preformed Salinity, 2",
+        "units": "g/kg",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UGKG",
+        "sdn_uom_name": "Grams per kilogram"
+    },
+    "gsw_srA0": {
+        "long_name": "Reference Salinity",
+        "units": "g/kg",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UGKG",
+        "sdn_uom_name": "Grams per kilogram"
+    },
+    "gsw_srA1": {
+        "long_name": "Reference Salinity, 2",
+        "units": "g/kg",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UGKG",
+        "sdn_uom_name": "Grams per kilogram"
+    },
+    "gsw_betaA0": {
+        "long_name": "Saline Contraction Coefficient",
+        "units": "kg/g",
+        "comments": "1st sensor"
+    },
+    "gsw_betaA1": {
+        "long_name": "Saline Contraction Coefficient, 2",
+        "units": "kg/g",
+        "comments": "2nd sensor"
+    },
+    "gsw_ssA0": {
+        "long_name": "Sound Speed, Teos-10",
+        "units": "m/s",
+        "comments": "1st sensor",
+        "sdn_uom_urn": "SDN:P06::UVAA",
+        "sdn_uom_name": "Metres per second"
+    },
+    "gsw_ssA1": {
+        "long_name": "Sound Speed, Teos-10, 2",
+        "units": "m/s",
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UVAA",
+        "sdn_uom_name": "Metres per second"
+    },
+    "gsw_specvolA0": {
+        "long_name": "Specific Volume, Teos-10",
+        "units": "m^3/kg",
+        "comments": "1st sensor"
+    },
+    "gsw_specvolA1": {
+        "long_name": "Specific Volume, Teos-10, 2",
+        "units": "m^3/kg",
+        "comments": "2nd sensor"
+    },
+    "gsw_svolanomA0": {
+        "long_name": "Specific Volume Anomaly, Teos-10",
+        "units": "m^3/kg",
+        "comments": "1st sensor"
+    },
+    "gsw_svolanomA1": {
+        "long_name": "Specific Volume Anomaly, Teos-10, 2",
+        "units": "m^3/kg",
+        "comments": "2nd sensor"
+    },
+    "gsw_tfA0": {
+        "long_name": "Temperature Freezing",
+        "units": "deg C [ITS-90]",
+        "comments": "1st sensor"
+    },
+    "gsw_tfA1": {
+        "long_name": "Temperature Freezing, 2",
+        "units": "deg C [ITS-90]",
+        "comments": "2nd sensor"
+    },
+    "gsw_alphaA0": {
+        "long_name": "Thermal Expansion Coefficient",
+        "units": "1/K",
+        "comments": "1st sensor"
+    },
+    "gsw_alphaA1": {
+        "long_name": "Thermal Expansion Coefficient, 2",
+        "units": "1/K",
+        "comments": "2nd sensor"
+    },
+    "t090C_sdev": {
+        "long_name": "Nan",
+        "sdn_parameter_urn": "SDN:P01::TEMPSD01",
+        "sdn_parameter_name": "Temperature (ITS-90) standard deviation of the water body",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius"
+    },
+    "t190C_sdev": {
+        "long_name": "Nan",
+        "sdn_parameter_urn": "SDN:P01::TEMPSD02",
+        "sdn_parameter_name": "Temperature (ITS-90) standard deviation of the water body by second sensor",
+        "sdn_uom_urn": "SDN:P06::UPAA",
+        "sdn_uom_name": "Degrees Celsius"
+    }
+}

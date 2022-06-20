@@ -1,0 +1,16 @@
+.idea
+.ipynb_checkpoints
+__pycache__
+build/
+dist/
+*.egg-info/
+/notebooks/*.nc
+/notebooks/*.csv
+/notebooks/*.cnv
+/notebooks/*.png
+/pycurrents
+.DS_Store
+
+.vscode/launch.json
+
+.vscode/settings.json
