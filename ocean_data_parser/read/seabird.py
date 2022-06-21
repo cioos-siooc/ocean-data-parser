@@ -26,8 +26,6 @@ def add_seabird_vocabulary(variable_attributes):
     for var in variable_attributes.keys():
         if var in seabird_variable_attributes:
             variable_attributes[var].update(seabird_variable_attributes[var])
-        elif var.endswith("_sdev") and var[:-5] in seabird_variable_attributes:
-            variable_attributes[var].update(seabird_variable_attributes[var[:-5]])
         else:
             logger.warning(f"Variable {var} is missing from vocabulary dictionary")
     return variable_attributes
@@ -49,14 +47,20 @@ def cnv(file_path, output="xarray"):
 def btl(file_path, output="xarray"):
     with open(file_path) as f:
         header = parse_seabird_file_header(f)
-    
-        # Retrieve variables from bottle header and lower the first letter of each variable
-        bottle_variables = [var[0].lower() + var[1:] for var in header["bottle_columns"]]
-        bottle_variables += ["stats"] 
+        if header["variables"]:
+            header["variables"] = add_seabird_vocabulary(header["variables"])
+        else:
+            # Retrieve variables from bottle header and lowwer the first letter of each variable
+            header["variables"] = add_seabird_vocabulary(
+                {var[0].lower() + var[1:]: {} for var in header["bottle_columns"]}
+            )
+        # parse column header with fix width
+        variable_list = list(header["variables"].keys())
+        variable_list += ["stats"]
         df = pd.read_fwf(
             f,
             widths=[10, 12] + [11] * (len(header["bottle_columns"]) - 1),
-            names=bottle_variables,
+            names=variable_list,
         )
 
     # Split statistical data info separate dateframes
@@ -67,17 +71,12 @@ def btl(file_path, output="xarray"):
     for stats in df.query("stats!='avg'")["stats"].drop_duplicates().to_list():
         df_grouped = df_grouped.join(df.query("stats==@stats").add_suffix(f"_{stats}"))
     df = df_grouped
-    
     # Generate time variable
     df["time"] = pd.to_datetime(df.filter(like="date").apply(" ".join, axis="columns"))
 
     # Ignore extra variables
     drop_columns = [col for col in df if re.search("^date|^stats|^bottle_", col)]
     df = df.drop(columns=drop_columns)
-    
-    # Retrieve seabird vocabulary associated with each variables
-    header_variables = {var: header['variables'][var] if var in header['variables'] else {} for var in df.columns}
-    header["variables"] = add_seabird_vocabulary(header_variables)
 
     # Improve metadata
     n_scan_per_bottle = int(header["datcnv_scans_per_bottle"])
@@ -90,13 +89,14 @@ def btl(file_path, output="xarray"):
 
     # Add attributes to std variables and add cell_method
     for var in ds:
-        if var.endswith('_sdev'):
-            ds[var].attrs = ds[var].attrs
-            ds[var].attrs[
+        var_std = var + "_sdev"
+        if var_std in ds:
+            ds[var_std].attrs = ds[var].attrs
+            ds[var_std].attrs[
                 "cell_method"
             ] = f"scan: standard_deviation (previous {n_scan_per_bottle} scans)"
             # TODO confirm that seabird uses the previous records from this timestamp
-        elif var not in ["time", "bottle"]:
+        if var not in ["time", "bottle"]:
             ds[var].attrs[
                 "cell_method"
             ] = f"scan: mean (previous {n_scan_per_bottle} scans)"
