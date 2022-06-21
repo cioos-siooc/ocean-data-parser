@@ -6,9 +6,12 @@ import xmltodict
 import json
 import os
 
+from datetime import datetime
 import argparse
 
-SBE_TIME_FORMAT = "%B %d %Y %H:%m:%s"  # Jun 23 2016 13:51:30
+from .utils import standardize_dateset
+SBE_TIME_FORMAT = "%b %d %Y %H:%M:%S"  # Jun 23 2016 13:51:30
+sbe_time = re.compile("(?P<time>\w\w\w\s+\d{1,2}\s+\d{1,4}\s+\d\d\:\d\d\:\d\d)(?P<comment>.*)")
 logger = logging.getLogger(__name__)
 
 reference_vocabulary_path = os.path.join(
@@ -47,7 +50,8 @@ def cnv(file_path, output="xarray"):
 
     if output == "dataframe":
         return df, header
-    return _convert_sbe_dataframe_to_dataset(df, header)
+    ds = _convert_sbe_dataframe_to_dataset(df, header)
+    return standardize_dateset(ds)
 
 
 def btl(file_path, output="xarray"):
@@ -102,7 +106,7 @@ def btl(file_path, output="xarray"):
                 "cell_method"
             ] = f"scan: mean (previous {n_scan_per_bottle} scans)"
 
-    return ds
+    return standardize_dateset(ds)
 
 
 def _convert_sbe_dataframe_to_dataset(df, header):
@@ -130,7 +134,7 @@ def _parse_seabird_file_header(f):
         logger.warning(f"Unknown line format: {line}")
 
     def standardize_attribute(attribute):
-        return attribute.strip().replace(" ", "_").lower()
+        return re.sub(" |\|\)|\/", "_", attribute.strip()).lower()
 
     def read_comments(line):
         if re.match("\*\* .*(\:|\=).*", line):
@@ -243,6 +247,19 @@ def _parse_seabird_file_header(f):
     }
     header["variables"] = variables
 
+    # Convert time attributes to datetime 
+    new_attributes = {}
+    for key,value in header.items():
+        if type(value) is not str:
+            continue
+        time_attr = sbe_time.match(value)
+        if time_attr:
+            header[key] = datetime.strptime(time_attr['time'],SBE_TIME_FORMAT)
+            if "comment" in time_attr.groupdict() and time_attr['comment'] is not "":
+                new_attributes[key + '_comment'] = time_attr["comment"].strip()
+    header.update(new_attributes)
+    #    header = {key: datetime.strptime(value,SBE_TIME_FORMAT) if sbe_time.match(value) else value for key, value in header.items()}
+
     # btl header row
     if "Bottle" in line:
         var_columns = line[22:-1]
@@ -269,8 +286,15 @@ def _generate_seabird_cf_history(attrs, drop_processing_attrs=False):
             continue
 
         date_line = step_attrs.pop("date")
-        date_str, extra = date_line.split(",", 1)
-        iso_date_str = pd.to_datetime(date_str).isoformat()
+        if type(date_line) is datetime:
+            iso_date_str = date_line.isoformat()
+            if step + "_comment" in attrs:
+                extra  = attrs.pop(step+ "_comment")
+            else:
+                extra = None
+        else:
+            date_str, extra = date_line.split(",", 1)
+            iso_date_str = pd.to_datetime(date_str).isoformat()
         if extra:
             extra = re.search(
                 "^\s(?P<software_version>[\d\.]+)\s*(?P<date_extra>.*)", extra

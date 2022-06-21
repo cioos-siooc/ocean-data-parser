@@ -1,6 +1,7 @@
 import logging
-import xarray as xr
-import pandas as pd
+import json
+from datetime import datetime
+from pandas import Timestamp
 
 logger = logging.getLogger(__name__)
 
@@ -15,3 +16,21 @@ def test_parsed_dataset(ds):
     # time
     if "time" not in ds:
         logger.warning("Missing time variable")
+
+def standardize_dateset(ds):
+    # Globals
+    for att in ds.attrs.keys():
+        # Convert dictionaries attributes to json strings
+        if type(ds.attrs[att]) is dict:
+            ds.attrs[att] = json.dumps(ds.attrs[att])
+        elif type(ds.attrs[att]) in (datetime, Timestamp):
+            ds.attrs[att] = ds.attrs[att].isoformat()
+
+    # TODO Specify encoding for some variables (ex time variables)
+    for var in ds:
+        ds.encoding[var] = {}
+        if 'datetime' in ds[var].dtype.name:
+            ds.encoding[var].update({"units":'seconds since 1970-01-01T00:00:00'})
+            if 'tz' in ds[var].dtype.name:
+                ds.encoding[var]["units"] += "Z"
+    return ds
