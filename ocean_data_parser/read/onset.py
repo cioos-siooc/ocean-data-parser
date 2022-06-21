@@ -53,6 +53,8 @@ def parse_onset_time(time, timezone="UTC"):
         time_format = None
     elif re.match(r"\d\d\/\d\d\/\d\d\s+\d\d\:\d\d\:\d\d\s+\w\w", time):
         time_format = r"%m/%d/%y %I:%M:%S %p"
+    elif re.match(r"\d\d\d\d\/\d\d\/\d\d\s+\d\d\:\d\d\:\d\d\s+\w\w", time):
+        time_format = r"%Y/%m/%d %I:%M:%S %p"
     elif re.match(r"\d\d\/\d\d\/\d\d\s+\d\d\:\d\d", time):
         time_format = r"%m/%d/%y %H:%M"
     elif re.match(r"\d+\/\d+\/\d\d\s+\d\d\:\d\d", time):
