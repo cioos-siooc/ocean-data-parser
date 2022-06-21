@@ -265,7 +265,7 @@ def _parse_seabird_file_header(f):
         time_attr = sbe_time.match(value)
         if time_attr:
             header[key] = datetime.strptime(time_attr["time"], SBE_TIME_FORMAT)
-            if "comment" in time_attr.groupdict() and time_attr["comment"] is not "":
+            if "comment" in time_attr.groupdict() and time_attr["comment"] != "":
                 new_attributes[key + "_comment"] = time_attr["comment"].strip()
     header.update(new_attributes)
     #    header = {key: datetime.strptime(value,SBE_TIME_FORMAT) if sbe_time.match(value) else value for key, value in header.items()}
