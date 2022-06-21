@@ -17,6 +17,9 @@ reference_vocabulary_path = os.path.join(
 with open(reference_vocabulary_path) as f:
     seabird_variable_attributes = json.load(f)
 
+    # Make it non case sensitive by lowering all keys
+    seabird_variable_attributes = {key.lower():attrs for key,attrs in seabird_variable_attributes.items()}
+
 
 def _convert_to_netcdf_var_name(var_name):
     return var_name.replace("/", "Per")
@@ -24,8 +27,11 @@ def _convert_to_netcdf_var_name(var_name):
 
 def _add_seabird_vocabulary(variable_attributes):
     for var in variable_attributes.keys():
-        if var in seabird_variable_attributes:
-            variable_attributes[var].update(seabird_variable_attributes[var])
+        var_lower = var.lower()
+        if var_lower in seabird_variable_attributes:
+            variable_attributes[var].update(seabird_variable_attributes[var_lower])
+        elif var.endswith("_sdev") and var_lower[:-5] in seabird_variable_attributes.keys():
+            variable_attributes[var].update(seabird_variable_attributes[var_lower[:-5]])
         else:
             logger.warning(f"Variable {var} is missing from vocabulary dictionary")
     return variable_attributes
@@ -47,16 +53,9 @@ def cnv(file_path, output="xarray"):
 def btl(file_path, output="xarray"):
     with open(file_path) as f:
         header = _parse_seabird_file_header(f)
-        if header["variables"]:
-            header["variables"] = _add_seabird_vocabulary(header["variables"])
-        else:
-            # Retrieve variables from bottle header and lowwer the first letter of each variable
-            header["variables"] = _add_seabird_vocabulary(
-                {var[0].lower() + var[1:]: {} for var in header["bottle_columns"]}
-            )
-        # parse column header with fix width
-        variable_list = list(header["variables"].keys())
-        variable_list += ["stats"]
+
+        # Retrieve variables from bottle header and lower the first letter of each variable
+        variable_list = [var[0].lower() + var[1:] for var in header["bottle_columns"]] + ["stats"]
         df = pd.read_fwf(
             f,
             widths=[10, 12] + [11] * (len(header["bottle_columns"]) - 1),
@@ -84,10 +83,14 @@ def btl(file_path, output="xarray"):
     if output == "dataframe":
         return df, header
 
+    # Retrieve vocabulary associated with each variables
+    header['variables'] = {var: header['variables'].get(var,{}) for var in df.columns}
+    header["variables"] = _add_seabird_vocabulary(header["variables"])
+
     # Convert to xarray
     ds = _convert_sbe_dataframe_to_dataset(df, header)
 
-    # Add attributes to std variables and add cell_method
+    # Add cell_method attribute
     for var in ds:
         if var.endswith("_sdev") and var[:-5] in ds:
             ds[var].attrs[
