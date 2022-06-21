@@ -1542,7 +1542,7 @@
         "sdn_uom_name": "Millivolts"
     },
     "sbeox0V": {
-        "long_name": "Oxygen Raw, Sbe 43",
+        "long_name": "Oxygen Raw, SBE 43",
         "instrument": "SBE 43",
         "units": "V",
         "sdn_parameter_urn": "SDN:P01::OXYOCPVL",
@@ -1552,26 +1552,26 @@
         "comments": "1st sensor"
     },
     "sbeox0F": {
-        "long_name": "Oxygen Raw, Sbe 43",
+        "long_name": "Oxygen Raw, SBE 43",
         "instrument": "SBE 43",
         "units": "Hz",
         "comments": "1st sensor"
     },
     "sbeox1V": {
-        "long_name": "Oxygen Raw, Sbe 43, 2",
+        "long_name": "Oxygen Raw, SBE 43, 2",
         "instrument": "SBE 43",
         "units": "V",
         "comments": "2nd sensor"
     },
     "sbeox1F": {
-        "long_name": "Oxygen Raw, Sbe 43, 2",
+        "long_name": "Oxygen Raw, SBE 43, 2",
         "instrument": "SBE 43",
         "units": "Hz",
         "comments": "2nd sensor"
     },
     "sbeox0ML/L": {
         "name": "sbeox0MLPerL",
-        "long_name": "Oxygen, Sbe 43",
+        "long_name": "Oxygen, SBE 43",
         "instrument": "SBE 43",
         "units": "ml/l",
         "standard_name": "volume_fraction_of_oxygen_in_sea_water",
@@ -1581,7 +1581,7 @@
     },
     "sbeox0Mg/L": {
         "name": "sbeox0MgPerL",
-        "long_name": "Oxygen, Sbe 43",
+        "long_name": "Oxygen, SBE 43",
         "instrument": "SBE 43",
         "units": "mg/l",
         "comments": "1st sensor",
@@ -1589,14 +1589,14 @@
         "sdn_uom_name": "Milligrams per litre"
     },
     "sbeox0PS": {
-        "long_name": "Oxygen, Sbe 43",
+        "long_name": "Oxygen, SBE 43",
         "instrument": "SBE 43",
         "units": "% saturation",
         "comments": "1st sensor"
     },
     "sbeox0Mm/Kg": {
         "name": "sbeox0MmPerKg",
-        "long_name": "Oxygen, Sbe 43",
+        "long_name": "Oxygen, SBE 43",
         "instrument": "SBE 43",
         "units": "umol/kg",
         "standard_name": "moles_of_oxygen_per_unit_mass_in_sea_water",
@@ -1606,7 +1606,7 @@
     },
     "sbeox0Mm/L": {
         "name": "sbeox0MmPerL",
-        "long_name": "Oxygen, Sbe 43",
+        "long_name": "Oxygen, SBE 43",
         "instrument": "SBE 43",
         "units": "umol/l",
         "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
@@ -1616,14 +1616,14 @@
     },
     "sbeox0dOV/dT": {
         "name": "sbeox0dOVPerdT",
-        "long_name": "Oxygen, Sbe 43",
+        "long_name": "Oxygen, SBE 43",
         "instrument": "SBE 43",
         "units": "dov/dt",
         "comments": "1st sensor"
     },
     "sbeox1ML/L": {
         "name": "sbeox1MLPerL",
-        "long_name": "Oxygen, Sbe 43, 2",
+        "long_name": "Oxygen, SBE 43, 2",
         "instrument": "SBE 43",
         "units": "ml/l",
         "comments": "2nd sensor",
@@ -1632,7 +1632,7 @@
     },
     "sbeox1Mg/L": {
         "name": "sbeox1MgPerL",
-        "long_name": "Oxygen, Sbe 43, 2",
+        "long_name": "Oxygen, SBE 43, 2",
         "instrument": "SBE 43",
         "units": "mg/l",
         "standard_name": "volume_fraction_of_oxygen_in_sea_water",
@@ -1641,7 +1641,7 @@
         "sdn_uom_name": "Milligrams per litre"
     },
     "sbeox1PS": {
-        "long_name": "Oxygen, Sbe 43, 2",
+        "long_name": "Oxygen, SBE 43, 2",
         "instrument": "SBE 43",
         "units": "% saturation",
         "sdn_parameter_urn": "SDN:P01::OXYSSU01",
@@ -1650,7 +1650,7 @@
     },
     "sbeox1Mm/Kg": {
         "name": "sbeox1MmPerKg",
-        "long_name": "Oxygen, Sbe 43, 2",
+        "long_name": "Oxygen, SBE 43, 2",
         "instrument": "SBE 43",
         "units": "umol/kg",
         "comments": "2nd sensor",
@@ -1659,7 +1659,7 @@
     },
     "sbeox1Mm/L": {
         "name": "sbeox1MmPerL",
-        "long_name": "Oxygen, Sbe 43, 2",
+        "long_name": "Oxygen, SBE 43, 2",
         "instrument": "SBE 43",
         "units": "umol/l",
         "comments": "2nd sensor",
@@ -1668,14 +1668,14 @@
     },
     "sbeox1dOV/dT": {
         "name": "sbeox1dOVPerdT",
-        "long_name": "Oxygen, Sbe 43, 2",
+        "long_name": "Oxygen, SBE 43, 2",
         "instrument": "SBE 43",
         "units": "dov/dt",
         "comments": "2nd sensor"
     },
     "sbeox0ML/Ldiff": {
         "name": "sbeox0MLPerLdiff",
-        "long_name": "Oxygen, Sbe 43, Diff, 2 - 1",
+        "long_name": "Oxygen, SBE 43, Diff, 2 - 1",
         "instrument": "SBE 43",
         "units": "ml/l",
         "comments": "2nd sensor - 1st sensor",
@@ -1684,7 +1684,7 @@
     },
     "sbeox0Mg/Ldiff": {
         "name": "sbeox0MgPerLdiff",
-        "long_name": "Oxygen, Sbe 43, Diff, 2 - 1",
+        "long_name": "Oxygen, SBE 43, Diff, 2 - 1",
         "instrument": "SBE 43",
         "units": "mg/l",
         "comments": "2nd sensor - 1st sensor",
@@ -1692,14 +1692,14 @@
         "sdn_uom_name": "Milligrams per litre"
     },
     "sbeox0PSdiff": {
-        "long_name": "Oxygen, Sbe 43, Diff, 2 - 1",
+        "long_name": "Oxygen, SBE 43, Diff, 2 - 1",
         "instrument": "SBE 43",
         "units": "% saturation",
         "comments": "2nd sensor - 1st sensor"
     },
     "sbeox0Mm/Kgdiff": {
         "name": "sbeox0MmPerKgdiff",
-        "long_name": "Oxygen, Sbe 43, Diff, 2 - 1",
+        "long_name": "Oxygen, SBE 43, Diff, 2 - 1",
         "instrument": "SBE 43",
         "units": "umol/kg",
         "comments": "2nd sensor - 1st sensor",
@@ -1708,7 +1708,7 @@
     },
     "sbeox0Mm/Ldiff": {
         "name": "sbeox0MmPerLdiff",
-        "long_name": "Oxygen, Sbe 43, Diff, 2 - 1",
+        "long_name": "Oxygen, SBE 43, Diff, 2 - 1",
         "instrument": "SBE 43",
         "units": "umol/l",
         "comments": "2nd sensor - 1st sensor",
@@ -1716,7 +1716,7 @@
         "sdn_uom_name": "Micromoles per litre"
     },
     "sbeoxpd": {
-        "long_name": "Oxygen Raw, Sbe 63 Phase Delay",
+        "long_name": "Oxygen Raw, SBE 63 Phase Delay",
         "instrument": "SBE 63 phase delay",
         "units": "usec",
         "comments": "1st sensor",
@@ -1724,13 +1724,13 @@
         "sdn_uom_name": "Microseconds"
     },
     "sbeoxpdv": {
-        "long_name": "Oxygen Raw, Sbe 63 Phase Delay",
+        "long_name": "Oxygen Raw, SBE 63 Phase Delay",
         "instrument": "SBE 63 phase delay",
         "units": "V",
         "comments": "1st sensor"
     },
     "sbeoxpd1": {
-        "long_name": "Oxygen Raw, Sbe 63 Phase Delay, 2",
+        "long_name": "Oxygen Raw, SBE 63 Phase Delay, 2",
         "instrument": "SBE 63 phase delay",
         "units": "usec",
         "comments": "2nd sensor",
@@ -1738,50 +1738,50 @@
         "sdn_uom_name": "Microseconds"
     },
     "sbeoxpdv1": {
-        "long_name": "Oxygen Raw, Sbe 63 Phase Delay, 2",
+        "long_name": "Oxygen Raw, SBE 63 Phase Delay, 2",
         "instrument": "SBE 63 phase delay",
         "units": "V",
         "comments": "2nd sensor"
     },
     "sbeoxtv": {
-        "long_name": "Oxygen Raw, Sbe 63 Thermistor Voltage",
+        "long_name": "Oxygen Raw, SBE 63 Thermistor Voltage",
         "instrument": "SBE 63 thermistor voltage",
         "units": "V",
         "comments": "1st sensor"
     },
     "sbeoxtv1": {
-        "long_name": "Oxygen Raw, Sbe 63 Thermistor Voltage, 2",
+        "long_name": "Oxygen Raw, SBE 63 Thermistor Voltage, 2",
         "instrument": "SBE 63 thermistor voltage",
         "units": "V",
         "comments": "2nd sensor"
     },
     "sbeoxTC": {
-        "long_name": "Oxygen Temperature, Sbe 63",
+        "long_name": "Oxygen Temperature, SBE 63",
         "instrument": "SBE 63",
         "units": "deg C [ITS-90]",
         "comments": "1st sensor"
     },
     "sbeoxTF": {
-        "long_name": "Oxygen Temperature, Sbe 63",
+        "long_name": "Oxygen Temperature, SBE 63",
         "instrument": "SBE 63",
         "units": "deg F [ITS-90]",
         "comments": "1st sensor"
     },
     "sbeoxTC1": {
-        "long_name": "Oxygen Temperature, Sbe 63, 2",
+        "long_name": "Oxygen Temperature, SBE 63, 2",
         "instrument": "SBE 63",
         "units": "deg C [ITS-90]",
         "comments": "2nd sensor"
     },
     "sbeoxTF1": {
-        "long_name": "Oxygen Temperature, Sbe 63, 2",
+        "long_name": "Oxygen Temperature, SBE 63, 2",
         "instrument": "SBE 63",
         "units": "deg F [ITS-90]",
         "comments": "2nd sensor"
     },
     "sbeopoxML/L": {
         "name": "sbeopoxMLPerL",
-        "long_name": "Oxygen, Sbe 63",
+        "long_name": "Oxygen, SBE 63",
         "instrument": "SBE 63",
         "units": "ml/l",
         "comments": "1st sensor",
@@ -1790,7 +1790,7 @@
     },
     "sbeopoxMg/L": {
         "name": "sbeopoxMgPerL",
-        "long_name": "Oxygen, Sbe 63",
+        "long_name": "Oxygen, SBE 63",
         "instrument": "SBE 63",
         "units": "mg/l",
         "comments": "1st sensor",
@@ -1798,14 +1798,14 @@
         "sdn_uom_name": "Milligrams per litre"
     },
     "sbeopoxPS": {
-        "long_name": "Oxygen, Sbe 63",
+        "long_name": "Oxygen, SBE 63",
         "instrument": "SBE 63",
         "units": "% saturation",
         "comments": "1st sensor"
     },
     "sbeopoxMm/Kg": {
         "name": "sbeopoxMmPerKg",
-        "long_name": "Oxygen, Sbe 63",
+        "long_name": "Oxygen, SBE 63",
         "instrument": "SBE 63",
         "units": "umol/kg",
         "comments": "1st sensor",
@@ -1814,7 +1814,7 @@
     },
     "sbeopoxMm/L": {
         "name": "sbeopoxMmPerL",
-        "long_name": "Oxygen, Sbe 63",
+        "long_name": "Oxygen, SBE 63",
         "instrument": "SBE 63",
         "units": "umol/l",
         "comments": "1st sensor",
@@ -1823,7 +1823,7 @@
     },
     "sbeopoxML/L1": {
         "name": "sbeopoxMLPerL1",
-        "long_name": "Oxygen, Sbe 63, 2",
+        "long_name": "Oxygen, SBE 63, 2",
         "instrument": "SBE 63",
         "units": "ml/l",
         "comments": "2nd sensor",
@@ -1832,7 +1832,7 @@
     },
     "sbeopoxMg/L1": {
         "name": "sbeopoxMgPerL1",
-        "long_name": "Oxygen, Sbe 63, 2",
+        "long_name": "Oxygen, SBE 63, 2",
         "instrument": "SBE 63",
         "units": "mg/l",
         "comments": "2nd sensor",
@@ -1840,14 +1840,14 @@
         "sdn_uom_name": "Milligrams per litre"
     },
     "sbeopoxPS1": {
-        "long_name": "Oxygen, Sbe 63, 2",
+        "long_name": "Oxygen, SBE 63, 2",
         "instrument": "SBE 63",
         "units": "% saturation",
         "comments": "2nd sensor"
     },
-    "SbeopoxMm/Kg1": {
-        "name": "SbeopoxMmPerKg1",
-        "long_name": "Oxygen, Sbe 63, 2",
+    "SBEopoxMm/Kg1": {
+        "name": "SBEopoxMmPerKg1",
+        "long_name": "Oxygen, SBE 63, 2",
         "instrument": "SBE 63",
         "units": "umol/kg",
         "comments": "2nd sensor",
@@ -1856,7 +1856,7 @@
     },
     "sbeopoxMm/L1": {
         "name": "sbeopoxMmPerL1",
-        "long_name": "Oxygen, Sbe 63, 2",
+        "long_name": "Oxygen, SBE 63, 2",
         "instrument": "SBE 63",
         "units": "umol/l",
         "comments": "2nd sensor",
@@ -2391,7 +2391,7 @@
         "sdn_uom_name": "Kilopascals"
     },
     "pr50M": {
-        "long_name": "Pressure, Sbe 50",
+        "long_name": "Pressure, SBE 50",
         "instrument": "SBE 50",
         "units": "db",
         "comments": "1st SBE 50 pressure sensor",
@@ -2399,13 +2399,13 @@
         "sdn_uom_name": "Decibels"
     },
     "pr50E": {
-        "long_name": "Pressure, Sbe 50",
+        "long_name": "Pressure, SBE 50",
         "instrument": "SBE 50",
         "units": "psi",
         "comments": "1st SBE 50 pressure sensor"
     },
     "pr50M1": {
-        "long_name": "Pressure, Sbe 50, 2",
+        "long_name": "Pressure, SBE 50, 2",
         "instrument": "SBE 50",
         "units": "db",
         "comments": "2nd SBE 50 pressure sensor",
@@ -2413,7 +2413,7 @@
         "sdn_uom_name": "Decibels"
     },
     "pr50E1": {
-        "long_name": "Pressure, Sbe 50, 2",
+        "long_name": "Pressure, SBE 50, 2",
         "instrument": "SBE 50",
         "units": "psi",
         "comments": "2nd SBE 50 pressure sensor"
@@ -2646,7 +2646,7 @@
         "sdn_uom_name": "Metres per second"
     },
     "sbeSv-iowSv": {
-        "long_name": "Sound Velocity Diff, Sbe - Iow",
+        "long_name": "Sound Velocity Diff, SBE - Iow",
         "instrument": "SBE - IOW",
         "units": "m/s",
         "comments": "SBE CTD - IOW SV sensor",
@@ -2880,73 +2880,73 @@
         "comments": "2nd sensor - 1st sensor"
     },
     "t3890C": {
-        "long_name": "Temperature, Sbe 38",
+        "long_name": "Temperature, SBE 38",
         "instrument": "SBE 38",
         "units": "deg C [ITS-90]",
         "comments": "1st sensor"
     },
     "t38_90C": {
-        "long_name": "Temperature, Sbe 38",
+        "long_name": "Temperature, SBE 38",
         "instrument": "SBE 38",
         "units": "deg C [ITS-90]",
         "comments": "1st sensor"
     },
     "t3890F": {
-        "long_name": "Temperature, Sbe 38",
+        "long_name": "Temperature, SBE 38",
         "instrument": "SBE 38",
         "units": "deg F [ITS-90]",
         "comments": "1st sensor"
     },
     "t38_90F": {
-        "long_name": "Temperature, Sbe 38",
+        "long_name": "Temperature, SBE 38",
         "instrument": "SBE 38",
         "units": "deg F [ITS-90]",
         "comments": "1st sensor"
     },
     "t3868C": {
-        "long_name": "Temperature, Sbe 38",
+        "long_name": "Temperature, SBE 38",
         "instrument": "SBE 38",
         "units": "deg C [IPTS-68]",
         "comments": "1st sensor"
     },
     "t38_68C": {
-        "long_name": "Temperature, Sbe 38",
+        "long_name": "Temperature, SBE 38",
         "instrument": "SBE 38",
         "units": "deg C [IPTS-68]",
         "comments": "1st sensor"
     },
     "t3868F": {
-        "long_name": "Temperature, Sbe 38",
+        "long_name": "Temperature, SBE 38",
         "instrument": "SBE 38",
         "units": "deg F [IPTS-68]",
         "comments": "1st sensor"
     },
     "t38_68F": {
-        "long_name": "Temperature, Sbe 38",
+        "long_name": "Temperature, SBE 38",
         "instrument": "SBE 38",
         "units": "deg F [IPTS-68]",
         "comments": "1st sensor"
     },
     "t3890C1": {
-        "long_name": "Temperature, Sbe 38, 2",
+        "long_name": "Temperature, SBE 38, 2",
         "instrument": "SBE 38",
         "units": "deg C [ITS-90]",
         "comments": "2nd sensor"
     },
     "t3890F1": {
-        "long_name": "Temperature, Sbe 38, 2",
+        "long_name": "Temperature, SBE 38, 2",
         "instrument": "SBE 38",
         "units": "deg F [ITS-90]",
         "comments": "2nd sensor"
     },
     "t3868C1": {
-        "long_name": "Temperature, Sbe 38, 2",
+        "long_name": "Temperature, SBE 38, 2",
         "instrument": "SBE 38",
         "units": "deg C [IPTS-68]",
         "comments": "2nd sensor"
     },
     "t3868F1": {
-        "long_name": "Temperature, Sbe 38, 2",
+        "long_name": "Temperature, SBE 38, 2",
         "instrument": "SBE 38",
         "units": "deg F [IPTS-68]",
         "comments": "2nd sensor"
