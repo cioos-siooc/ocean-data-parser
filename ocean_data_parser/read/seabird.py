@@ -18,11 +18,11 @@ with open(reference_vocabulary_path) as f:
     seabird_variable_attributes = json.load(f)
 
 
-def convert_to_netcdf_var_name(var_name):
+def _convert_to_netcdf_var_name(var_name):
     return var_name.replace("/", "Per")
 
 
-def add_seabird_vocabulary(variable_attributes):
+def _add_seabird_vocabulary(variable_attributes):
     for var in variable_attributes.keys():
         if var in seabird_variable_attributes:
             variable_attributes[var].update(seabird_variable_attributes[var])
@@ -33,25 +33,25 @@ def add_seabird_vocabulary(variable_attributes):
 
 def cnv(file_path, output="xarray"):
     with open(file_path) as f:
-        header = parse_seabird_file_header(f)
-        header["variables"] = add_seabird_vocabulary(header["variables"])
+        header = _parse_seabird_file_header(f)
+        header["variables"] = _add_seabird_vocabulary(header["variables"])
         df = pd.read_csv(f, delimiter="\s+", names=header["variables"].keys())
 
-    header = generate_seabird_cf_history(header)
+    header = _generate_seabird_cf_history(header)
 
     if output == "dataframe":
         return df, header
-    return convert_sbe_dataframe_to_dataset(df, header)
+    return _convert_sbe_dataframe_to_dataset(df, header)
 
 
 def btl(file_path, output="xarray"):
     with open(file_path) as f:
-        header = parse_seabird_file_header(f)
+        header = _parse_seabird_file_header(f)
         if header["variables"]:
-            header["variables"] = add_seabird_vocabulary(header["variables"])
+            header["variables"] = _add_seabird_vocabulary(header["variables"])
         else:
             # Retrieve variables from bottle header and lowwer the first letter of each variable
-            header["variables"] = add_seabird_vocabulary(
+            header["variables"] = _add_seabird_vocabulary(
                 {var[0].lower() + var[1:]: {} for var in header["bottle_columns"]}
             )
         # parse column header with fix width
@@ -80,12 +80,12 @@ def btl(file_path, output="xarray"):
 
     # Improve metadata
     n_scan_per_bottle = int(header["datcnv_scans_per_bottle"])
-    header = generate_seabird_cf_history(header)
+    header = _generate_seabird_cf_history(header)
     if output == "dataframe":
         return df, header
 
     # Convert to xarray
-    ds = convert_sbe_dataframe_to_dataset(df, header)
+    ds = _convert_sbe_dataframe_to_dataset(df, header)
 
     # Add attributes to std variables and add cell_method
     for var in ds:
@@ -102,11 +102,11 @@ def btl(file_path, output="xarray"):
     return ds
 
 
-def convert_sbe_dataframe_to_dataset(df, header):
+def _convert_sbe_dataframe_to_dataset(df, header):
     # Convert column names to netcdf compatible format
-    df.columns = [convert_to_netcdf_var_name(var) for var in df.columns]
+    df.columns = [_convert_to_netcdf_var_name(var) for var in df.columns]
     header["variables"] = {
-        convert_to_netcdf_var_name(var): attrs
+        _convert_to_netcdf_var_name(var): attrs
         for var, attrs in header["variables"].items()
     }
     ds = df.to_xarray()
@@ -119,7 +119,7 @@ def convert_sbe_dataframe_to_dataset(df, header):
     return ds
 
 
-def parse_seabird_file_header(f):
+def _parse_seabird_file_header(f):
     def unknown_line(line):
         if line in ("* S>\n"):
             return
@@ -253,7 +253,7 @@ def parse_seabird_file_header(f):
     return header
 
 
-def generate_seabird_cf_history(attrs, drop_processing_attrs=False):
+def _generate_seabird_cf_history(attrs, drop_processing_attrs=False):
     sbe_processing_steps = ("datcnv", "bottlesum")
     history = []
     for step in sbe_processing_steps:
