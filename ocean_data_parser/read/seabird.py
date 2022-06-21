@@ -89,14 +89,12 @@ def btl(file_path, output="xarray"):
 
     # Add attributes to std variables and add cell_method
     for var in ds:
-        var_std = var + "_sdev"
-        if var_std in ds:
-            ds[var_std].attrs = ds[var].attrs
-            ds[var_std].attrs[
+        if var.endswith("_sdev") and var[:-5] in ds:
+            ds[var].attrs[
                 "cell_method"
             ] = f"scan: standard_deviation (previous {n_scan_per_bottle} scans)"
             # TODO confirm that seabird uses the previous records from this timestamp
-        if var not in ["time", "bottle"]:
+        elif var not in ["time", "bottle"]:
             ds[var].attrs[
                 "cell_method"
             ] = f"scan: mean (previous {n_scan_per_bottle} scans)"
