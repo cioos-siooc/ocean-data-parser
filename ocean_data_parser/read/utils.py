@@ -17,6 +17,7 @@ def test_parsed_dataset(ds):
     if "time" not in ds:
         logger.warning("Missing time variable")
 
+
 def standardize_dateset(ds):
     # Globals
     for att in ds.attrs.keys():
@@ -29,8 +30,8 @@ def standardize_dateset(ds):
     # TODO Specify encoding for some variables (ex time variables)
     for var in ds:
         ds.encoding[var] = {}
-        if 'datetime' in ds[var].dtype.name:
-            ds.encoding[var].update({"units":'seconds since 1970-01-01T00:00:00'})
-            if 'tz' in ds[var].dtype.name:
+        if "datetime" in ds[var].dtype.name:
+            ds.encoding[var].update({"units": "seconds since 1970-01-01T00:00:00"})
+            if "tz" in ds[var].dtype.name:
                 ds.encoding[var]["units"] += "Z"
     return ds

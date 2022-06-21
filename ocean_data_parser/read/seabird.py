@@ -10,8 +10,11 @@ from datetime import datetime
 import argparse
 
 from .utils import standardize_dateset
+
 SBE_TIME_FORMAT = "%b %d %Y %H:%M:%S"  # Jun 23 2016 13:51:30
-sbe_time = re.compile("(?P<time>\w\w\w\s+\d{1,2}\s+\d{1,4}\s+\d\d\:\d\d\:\d\d)(?P<comment>.*)")
+sbe_time = re.compile(
+    "(?P<time>\w\w\w\s+\d{1,2}\s+\d{1,4}\s+\d\d\:\d\d\:\d\d)(?P<comment>.*)"
+)
 logger = logging.getLogger(__name__)
 
 reference_vocabulary_path = os.path.join(
@@ -21,7 +24,9 @@ with open(reference_vocabulary_path) as f:
     seabird_variable_attributes = json.load(f)
 
     # Make it non case sensitive by lowering all keys
-    seabird_variable_attributes = {key.lower():attrs for key,attrs in seabird_variable_attributes.items()}
+    seabird_variable_attributes = {
+        key.lower(): attrs for key, attrs in seabird_variable_attributes.items()
+    }
 
 
 def _convert_to_netcdf_var_name(var_name):
@@ -33,7 +38,10 @@ def _add_seabird_vocabulary(variable_attributes):
         var_lower = var.lower()
         if var_lower in seabird_variable_attributes:
             variable_attributes[var].update(seabird_variable_attributes[var_lower])
-        elif var.endswith("_sdev") and var_lower[:-5] in seabird_variable_attributes.keys():
+        elif (
+            var.endswith("_sdev")
+            and var_lower[:-5] in seabird_variable_attributes.keys()
+        ):
             variable_attributes[var].update(seabird_variable_attributes[var_lower[:-5]])
         else:
             logger.warning(f"Variable {var} is missing from vocabulary dictionary")
@@ -59,7 +67,9 @@ def btl(file_path, output="xarray"):
         header = _parse_seabird_file_header(f)
 
         # Retrieve variables from bottle header and lower the first letter of each variable
-        variable_list = [var[0].lower() + var[1:] for var in header["bottle_columns"]] + ["stats"]
+        variable_list = [
+            var[0].lower() + var[1:] for var in header["bottle_columns"]
+        ] + ["stats"]
         df = pd.read_fwf(
             f,
             widths=[10, 12] + [11] * (len(header["bottle_columns"]) - 1),
@@ -88,7 +98,7 @@ def btl(file_path, output="xarray"):
         return df, header
 
     # Retrieve vocabulary associated with each variables
-    header['variables'] = {var: header['variables'].get(var,{}) for var in df.columns}
+    header["variables"] = {var: header["variables"].get(var, {}) for var in df.columns}
     header["variables"] = _add_seabird_vocabulary(header["variables"])
 
     # Convert to xarray
@@ -247,16 +257,16 @@ def _parse_seabird_file_header(f):
     }
     header["variables"] = variables
 
-    # Convert time attributes to datetime 
+    # Convert time attributes to datetime
     new_attributes = {}
-    for key,value in header.items():
+    for key, value in header.items():
         if type(value) is not str:
             continue
         time_attr = sbe_time.match(value)
         if time_attr:
-            header[key] = datetime.strptime(time_attr['time'],SBE_TIME_FORMAT)
-            if "comment" in time_attr.groupdict() and time_attr['comment'] is not "":
-                new_attributes[key + '_comment'] = time_attr["comment"].strip()
+            header[key] = datetime.strptime(time_attr["time"], SBE_TIME_FORMAT)
+            if "comment" in time_attr.groupdict() and time_attr["comment"] is not "":
+                new_attributes[key + "_comment"] = time_attr["comment"].strip()
     header.update(new_attributes)
     #    header = {key: datetime.strptime(value,SBE_TIME_FORMAT) if sbe_time.match(value) else value for key, value in header.items()}
 
@@ -289,7 +299,7 @@ def _generate_seabird_cf_history(attrs, drop_processing_attrs=False):
         if type(date_line) is datetime:
             iso_date_str = date_line.isoformat()
             if step + "_comment" in attrs:
-                extra  = attrs.pop(step+ "_comment")
+                extra = attrs.pop(step + "_comment")
             else:
                 extra = None
         else:
