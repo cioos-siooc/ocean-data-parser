@@ -1436,83 +1436,83 @@
         "sdn_uom_name": "Micromoles per kilogram"
     },
     "obs": {
-        "long_name": "Obs, Backscatterance (D & A)",
+        "long_name": "OBS, Backscatterance (D & A)",
         "instrument": "Backscatterance (D & A)",
         "units": "NTU",
         "comments": "1st sensor"
     },
     "obs1": {
-        "long_name": "Obs, Backscatterance (D & A), 2",
+        "long_name": "OBS, Backscatterance (D & A), 2",
         "instrument": "Backscatterance (D & A)",
         "units": "NTU",
         "comments": "2nd sensor"
     },
     "obsdiff": {
-        "long_name": "Obs, Backscatterance (D & A), Diff, 2 - 1",
+        "long_name": "OBS, Backscatterance (D & A), Diff, 2 - 1",
         "instrument": "Backscatterance (D & A)",
         "units": "NTU",
         "comments": "2nd sensor - 1st sensor"
     },
     "nephc": {
-        "long_name": "Obs, Chelsea Nephelometer",
+        "long_name": "OBS, Chelsea Nephelometer",
         "instrument": "Chelsea Nephelometer",
         "units": "FTU"
     },
     "obs3+": {
-        "long_name": "Obs, D & A 3Plus",
+        "long_name": "OBS, D & A 3Plus",
         "instrument": "D & A 3plus",
         "units": "NTU",
         "comments": "D&A OBS 3+;1st sensor"
     },
     "obs3+1": {
-        "long_name": "Obs, D & A 3Plus, 2",
+        "long_name": "OBS, D & A 3Plus, 2",
         "instrument": "D & A 3plus",
         "units": "NTU",
         "comments": "D&A OBS 3+;2nd sensor"
     },
     "obs3+diff": {
-        "long_name": "Obs, D & A 3Plus, Diff, 2 - 1",
+        "long_name": "OBS, D & A 3Plus, Diff, 2 - 1",
         "instrument": "D & A 3plus",
         "units": "NTU",
         "comments": "D&A OBS 3+; 2nd sensor - 1st sensor"
     },
     "haardtT": {
-        "long_name": "Obs, Dr. Haardt Turbidity",
+        "long_name": "OBS, Dr. Haardt Turbidity",
         "instrument": "Dr. Haardt Turbidity"
     },
     "diff": {
-        "long_name": "Obs, Ifremer",
+        "long_name": "OBS, Ifremer",
         "instrument": "IFREMER"
     },
     "stLs6000": {
-        "long_name": "Obs, Seatech Ls6000",
+        "long_name": "OBS, Seatech Ls6000",
         "instrument": "Seatech LS6000",
         "comments": "Sea Tech LS6000 or WET Labs LBSS; 1st sensor"
     },
     "stLs60001": {
-        "long_name": "Obs, Seatech Ls6000, 2",
+        "long_name": "OBS, Seatech Ls6000, 2",
         "instrument": "Seatech LS6000",
         "comments": "Sea Tech LS6000 or WET Labs LBSS; 2nd sensor"
     },
     "stLs6000diff": {
-        "long_name": "Obs, Seatech Ls6000, Diff, 2 - 1",
+        "long_name": "OBS, Seatech Ls6000, Diff, 2 - 1",
         "instrument": "Seatech LS6000",
         "comments": "Sea Tech LS6000 or WET Labs LBSS; 2nd sensor - 1st sensor"
     },
     "obsscufa": {
-        "long_name": "Obs, Turner Scufa",
+        "long_name": "OBS, Turner Scufa",
         "instrument": "Turner SCUFA",
         "units": "NTU",
         "comments": "1st sensor"
     },
     "obsscufa1": {
-        "long_name": "Obs, Turner Scufa, 2",
+        "long_name": "OBS, Turner Scufa, 2",
         "instrument": "Turner SCUFA",
         "units": "NTU",
         "comments": "2nd sensor"
     },
     "obsscufadiff": {
-        "long_name": "Obs, Turner Scufa, Diff, 2 - 1",
+        "long_name": "OBS, Turner Scufa, Diff, 2 - 1",
         "instrument": "Turner SCUFA",
         "units": "NTU",
         "comments": "2nd sensor - 1st sensor"
