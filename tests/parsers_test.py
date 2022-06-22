@@ -54,3 +54,9 @@ class SunburstParserTests(unittest.TestCase):
         paths = glob("tests/parsers_test_files/sunburst/*pCO2_notes*.txt")
         for path in paths:
             read.sunburst.superCO2_notes(path)
+
+
+class BoomLabParserTest(unittest.TestCase):
+    def test_winlker_tritration_json_parser(self):
+        paths = glob("tests/parsers_test_files/boomlab/*.json")
+        read.boomlab.winkler_titration_json(paths)

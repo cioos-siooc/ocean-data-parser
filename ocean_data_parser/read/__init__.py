@@ -5,3 +5,4 @@ from . import onset
 from . import seabird
 from . import utils
 from . import sunburst
+from . import boomlab
