@@ -1,6 +1,8 @@
-import pandas as pd
-import re
 import logging
+import re
+
+import pandas as pd
+
 from .utils import standardize_dateset
 
 logger = logging.getLogger(__name__)

@@ -1,7 +1,9 @@
-import pandas as pd
 import json
-import re
 import logging
+import re
+
+import pandas as pd
+
 from .utils import test_parsed_dataset
 
 logger = logging.getLogger(__name__)

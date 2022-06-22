@@ -1,6 +1,7 @@
-from ocean_data_parser import read
 import unittest
 from glob import glob
+
+from ocean_data_parser import read
 
 
 class PMEParserTests(unittest.TestCase):

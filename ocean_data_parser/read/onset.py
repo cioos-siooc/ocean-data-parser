@@ -1,12 +1,13 @@
-import pandas as pd
-import numpy as np
-import re
-from datetime import datetime
-from csv import reader
 import logging
-from .utils import test_parsed_dataset
+import re
+from csv import reader
+from datetime import datetime
 
+import numpy as np
+import pandas as pd
 from dateutil.parser._parser import ParserError
+
+from .utils import test_parsed_dataset
 
 logger = logging.getLogger(__name__)
 onset_variables_mapping = {
