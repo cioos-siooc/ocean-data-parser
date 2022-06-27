@@ -26,7 +26,7 @@ class VanEssenParserTests(unittest.TestCase):
     def test_mon_parser(self):
         paths = glob("tests/parsers_test_files/van_essen_instruments/ctd_divers/*.MON")
         for path in paths:
-            read.van_essen_instruments.MON(path)
+            read.van_essen_instruments.mon(path)
 
 
 class OnsetParserTests(unittest.TestCase):
