@@ -1,3 +1,8 @@
+"""
+This module regroup a set of tools used to convert the Seabird Electronic different
+formats to a CF compliant xarray format.
+"""
+
 import argparse
 import json
 import logging
@@ -13,15 +18,17 @@ from .utils import standardize_dateset
 
 SBE_TIME_FORMAT = "%b %d %Y %H:%M:%S"  # Jun 23 2016 13:51:30
 sbe_time = re.compile(
-    "(?P<time>\w\w\w\s+\d{1,2}\s+\d{1,4}\s+\d\d\:\d\d\:\d\d)(?P<comment>.*)"
+    r"(?P<time>\w\w\w\s+\d{1,2}\s+\d{1,4}\s+\d\d\:\d\d\:\d\d)(?P<comment>.*)"
 )
 logger = logging.getLogger(__name__)
 
 reference_vocabulary_path = os.path.join(
     os.path.dirname(__file__), "vocabularies", "seabird_variable_attributes.json"
 )
-with open(reference_vocabulary_path) as f:
-    seabird_variable_attributes = json.load(f)
+
+# Read vocabulary file
+with open(reference_vocabulary_path, encoding="UTF-8") as vocabulary_file:
+    seabird_variable_attributes = json.load(vocabulary_file)
 
     # Make it non case sensitive by lowering all keys
     seabird_variable_attributes = {
@@ -30,6 +37,7 @@ with open(reference_vocabulary_path) as f:
 
 
 def _convert_to_netcdf_var_name(var_name):
+    """Convert seabird variable name to a netcdf compatible format."""
     return var_name.replace("/", "Per")
 
 
@@ -44,15 +52,16 @@ def _add_seabird_vocabulary(variable_attributes):
         ):
             variable_attributes[var].update(seabird_variable_attributes[var_lower[:-5]])
         else:
-            logger.warning(f"Variable {var} is missing from vocabulary dictionary")
+            logger.warning("Variable %s is missing from vocabulary dictionary", var)
     return variable_attributes
 
 
-def cnv(file_path, output="xarray"):
-    with open(file_path) as f:
+def cnv(file_path, output="xarray", encoding="UTF-8"):
+    """Import Seabird cnv format as an xarray dataset."""
+    with open(file_path, encoding=encoding) as f:
         header = _parse_seabird_file_header(f)
         header["variables"] = _add_seabird_vocabulary(header["variables"])
-        df = pd.read_csv(f, delimiter="\s+", names=header["variables"].keys())
+        df = pd.read_csv(f, delimiter=r"\s+", names=header["variables"].keys())
 
     header = _generate_seabird_cf_history(header)
 
@@ -62,8 +71,9 @@ def cnv(file_path, output="xarray"):
     return standardize_dateset(ds)
 
 
-def btl(file_path, output="xarray"):
-    with open(file_path) as f:
+def btl(file_path, output="xarray", encoding="UTF-8"):
+    """Import Seabird btl format as an xarray dataset."""
+    with open(file_path, encoding=encoding) as f:
         header = _parse_seabird_file_header(f)
 
         # Retrieve variables from bottle header and lower the first letter of each variable
@@ -78,7 +88,7 @@ def btl(file_path, output="xarray"):
 
     # Split statistical data info separate dateframes
     df["bottle"] = df["bottle"].ffill().astype(int)
-    df["stats"] = df["stats"].str.extract("\((.*)\)")
+    df["stats"] = df["stats"].str.extract(r"\((.*)\)")
     df = df.set_index("bottle")
     df_grouped = df.query("stats=='avg'")
     for stats in df.query("stats!='avg'")["stats"].drop_duplicates().to_list():
@@ -120,6 +130,7 @@ def btl(file_path, output="xarray"):
 
 
 def _convert_sbe_dataframe_to_dataset(df, header):
+    """Convert Parsed DataFrame to a dataset"""
     # Convert column names to netcdf compatible format
     df.columns = [_convert_to_netcdf_var_name(var) for var in df.columns]
     header["variables"] = {
@@ -137,19 +148,21 @@ def _convert_sbe_dataframe_to_dataset(df, header):
 
 
 def _parse_seabird_file_header(f):
+    """Parsed seabird file headers"""
+
     def unknown_line(line):
         if line in ("* S>\n"):
             return
-        header["history"] += [re.sub("\*\s|\n", "", line)]
-        logger.warning(f"Unknown line format: {line}")
+        header["history"] += [re.sub(r"\*\s|\n", "", line)]
+        logger.warning("Unknown line format: %s", line)
 
     def standardize_attribute(attribute):
-        return re.sub(" |\|\)|\/", "_", attribute.strip()).lower()
+        return re.sub(r" |\|\)|\/", "_", attribute.strip()).lower()
 
     def read_comments(line):
-        if re.match("\*\* .*(\:|\=).*", line):
-            r = re.match("\*\* (?P<key>.*)(\:|\=)(?P<value>.*)", line)
-            header[r["key"].strip()] = r["value"].strip()
+        if re.match(r"\*\* .*(\:|\=).*", line):
+            result = re.match(r"\*\* (?P<key>.*)(\:|\=)(?P<value>.*)", line)
+            header[result["key"].strip()] = result["value"].strip()
         else:
             header["comments"] += [line[2:]]
 
@@ -157,16 +170,16 @@ def _parse_seabird_file_header(f):
         if " = " in line:
             attr, value = line[2:].split("=", 1)
             header[standardize_attribute(attr)] = value.strip()
-        elif line.startswith(("* Sea-Bird", "* SBE ")):
+        elif line.startswith((r"* Sea-Bird", r"* SBE ")):
             instrument_type = re.search(
-                "\* Sea-Bird (.*) Data File\:|\* SBE (.*)", line
+                r"\* Sea-Bird (.*) Data File\:|\* SBE (.*)", line
             ).groups()
             header["instrument_type"] += "".join(
                 [item for item in instrument_type if item]
             )
         elif re.match(r"\* Software version .*", line, re.IGNORECASE):
             header["software_version"] = re.search(
-                "\* Software version (.*)", line, re.IGNORECASE
+                r"\* Software version (.*)", line, re.IGNORECASE
             )[1]
         else:
             unknown_line(line)
@@ -174,14 +187,15 @@ def _parse_seabird_file_header(f):
     def read_number_line(line):
         if line.startswith("# name"):
             attrs = re.search(
-                "\# name (?P<id>\d+) = (?P<sbe_variable>[^\s]+)\: (?P<long_name>.*)( \[(?P<units>.*)\](?P<comments>.*))*",
+                r"\# name (?P<id>\d+) = (?P<sbe_variable>[^\s]+)\: (?P<long_name>.*)"
+                + r"( \[(?P<units>.*)\](?P<comments>.*))*",
                 line,
             ).groupdict()
             header["variables"][int(attrs["id"])] = attrs
         elif line.startswith("# span"):
-            span = re.search("\# span (?P<id>\d+) = (?P<span>.*)", line)
+            span = re.search(r"\# span (?P<id>\d+) = (?P<span>.*)", line)
             values = [
-                float(value) if re.search(".|e", value) else int(value)
+                float(value) if re.search(r".|e", value) else int(value)
                 for value in span["span"].split(",")
             ]
             header["variables"][int(span["id"])].update(
@@ -208,13 +222,13 @@ def _parse_seabird_file_header(f):
 
         # Ignore empty lines or last header line
         if (
-            re.match("^\*\s*$", line)
+            re.match(r"^\*\s*$", line)
             or "*END*" in line
-            or re.match("^\s*Bottle .*", line)
+            or re.match(r"^\s*Bottle .*", line)
         ):
             continue
 
-        if re.match("(\*|\#)\s*\<", line):
+        if re.match(r"(\*|\#)\s*\<", line):
             # Load XML header
             # Retriveve the whole block of XML header
             xml_section = ""
@@ -224,7 +238,7 @@ def _parse_seabird_file_header(f):
                 or re.match(f"^\{first_character}\s*$", line)
                 or line.startswith("** ")
                 or line.startswith("* cast")
-                or re.search("\>\s*$", line)
+                or re.search(r"\>\s*$", line)
             ):
                 if "**" in line:
                     read_comments(line)
@@ -260,7 +274,7 @@ def _parse_seabird_file_header(f):
     # Convert time attributes to datetime
     new_attributes = {}
     for key, value in header.items():
-        if type(value) is not str:
+        if not isinstance(value, str):
             continue
         time_attr = sbe_time.match(value)
         if time_attr:
@@ -268,7 +282,8 @@ def _parse_seabird_file_header(f):
             if "comment" in time_attr.groupdict() and time_attr["comment"] != "":
                 new_attributes[key + "_comment"] = time_attr["comment"].strip()
     header.update(new_attributes)
-    #    header = {key: datetime.strptime(value,SBE_TIME_FORMAT) if sbe_time.match(value) else value for key, value in header.items()}
+    #    header = {key: datetime.strptime(value,SBE_TIME_FORMAT)
+    # if sbe_time.match(value) else value for key, value in header.items()}
 
     # btl header row
     if "Bottle" in line:
@@ -284,6 +299,7 @@ def _parse_seabird_file_header(f):
 
 
 def _generate_seabird_cf_history(attrs, drop_processing_attrs=False):
+    """Generate CF standard history from Seabird parsed attributes"""
     sbe_processing_steps = ("datcnv", "bottlesum")
     history = []
     for step in sbe_processing_steps:
@@ -296,18 +312,15 @@ def _generate_seabird_cf_history(attrs, drop_processing_attrs=False):
             continue
 
         date_line = step_attrs.pop("date")
-        if type(date_line) is datetime:
+        if isinstance(date_line, datetime):
             iso_date_str = date_line.isoformat()
-            if step + "_comment" in attrs:
-                extra = attrs.pop(step + "_comment")
-            else:
-                extra = None
+            extra = attrs.pop(step + "_comment") if f"{step}_comment" in attrs else None
         else:
             date_str, extra = date_line.split(",", 1)
             iso_date_str = pd.to_datetime(date_str).isoformat()
         if extra:
             extra = re.search(
-                "^\s(?P<software_version>[\d\.]+)\s*(?P<date_extra>.*)", extra
+                r"^\s(?P<software_version>[\d\.]+)\s*(?P<date_extra>.*)", extra
             )
             step_attrs.update(extra.groupdict())
         history += [f"{iso_date_str} - {step_attrs}"]
@@ -323,6 +336,8 @@ def _generate_seabird_cf_history(attrs, drop_processing_attrs=False):
             attrs.pop(key)
     return attrs
 
+
+# TODO add method to include instrument variables compatible iwth IOOS 1.2 to file.
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

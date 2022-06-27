@@ -8,7 +8,6 @@ from .utils import test_parsed_dataset
 
 logger = logging.getLogger(__name__)
 
-header_end = "[Data]\n"
 van_essen_variable_mapping = {
     "PRESSURE": "pressure",
     "TEMPERATURE": "temperature",
@@ -17,7 +16,7 @@ van_essen_variable_mapping = {
 }
 
 
-def MON(
+def mon(
     file_path,
     output=None,
     standardize_variable_names=True,
@@ -49,8 +48,8 @@ def MON(
         while not line.startswith(header_end):
             # Read line by line
             line = fid.readline()
-            if re.match("\[.+\]", line):
-                section = re.search("\[(.+)\]", line)[1]
+            if re.match(r"\[.+\]", line):
+                section = re.search(r"\[(.+)\]", line)[1]
                 if section not in info:
                     info[section] = {}
             elif re.match(r"\s*(?P<key>[\w\s]+)(\=|\:)(?P<value>.+)", line):
@@ -62,10 +61,10 @@ def MON(
         # Regroup channels
         info["Channel"] = {}
         for key, items in info.items():
-            id = re.search(r"Channel (\d+) from data header", key)
-            if id:
+            chan_id = re.search(r"Channel (\d+) from data header", key)
+            if chan_id:
                 info["Channel"][items["Identification"]] = items
-                info["Channel"][items["Identification"]]["id"] = int(id[1])
+                info["Channel"][items["Identification"]]["id"] = int(chan_id[1])
 
         # Define column names
         channel_names = ["time"] + [
@@ -77,7 +76,7 @@ def MON(
 
         # Retrieve timezone
         timezone = (
-            re.search("UTC([\-\+]*\d+)", info["Series settings"]["Instrument number"])[
+            re.search(r"UTC([\-\+]*\d+)", info["Series settings"]["Instrument number"])[
                 1
             ]
             + ":00"
@@ -88,7 +87,7 @@ def MON(
             fid,
             names=channel_names,
             header=None,
-            sep="\s\s+",
+            sep=r"\s\s+",
             skipfooter=1,
             engine="python",
             comment="END OF DATA FILE OF DATALOGGER FOR WINDOWS",
@@ -105,7 +104,7 @@ def MON(
     ds = df.to_xarray()
 
     # Ignore column number in variable names
-    ds = ds.rename({var: re.sub("^\d+\:\s*", "", var) for var in ds})
+    ds = ds.rename({var: re.sub(r"^\d+\:\s*", "", var) for var in ds})
 
     # IF PRESSURE in cm, convert to meter
     if "PRESSURE" in ds and "cm" in info["Channel"]["PRESSURE"]["Range"]:
@@ -153,8 +152,10 @@ def MON(
 def specific_conductivity_to_conductivity(
     spec_cond, temp, theta=1.91 / 100, temp_ref=25
 ):
+    """Apply Van Essen' specific conductivity to conductivity conversion"""
     return (100 + theta * (temp - temp_ref)) / 100 * spec_cond
 
 
 def conductivity_to_specific_conductivity(cond, temp, theta=1.91 / 100, temp_ref=25):
+    """Apply Van Essen' conductivity to specific conductivity conversion"""
     return 100 / (100 + theta * (temp - temp_ref)) * cond

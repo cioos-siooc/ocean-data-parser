@@ -1,3 +1,7 @@
+"""
+Set of tools used to parsed RBR manufacturer proprieatary data formats to an
+xarray data structure.
+"""
 import re
 
 import pandas as pd
@@ -43,18 +47,18 @@ def rtext(file_path, encoding="UTF-8", output=None):
 
                 else:
                     metadata[key] = item.strip()
-            elif re.match("^\s+$", line):
+            elif re.match(r"^\s+$", line):
                 continue
             else:
                 print(f"Ignored: {line}")
         # Read NumberOFSamples line
-        metadata["NumberOfSamples"] = int(line.rsplit("=")[1])
+        metadata["number_of_samples"] = int(line.rsplit("=")[1])
 
         # Read data
-        df = pd.read_csv(fid, sep="\s\s+", engine="python")
+        df = pd.read_csv(fid, sep=r"\s\s+", engine="python")
 
         # Make sure that line count is good
-        if len(df) != metadata["NumberOfSamples"]:
+        if len(df) != metadata["number_of_samples"]:
             raise RuntimeError("Data length do not match expected Number of Samples")
 
         # Convert to datset
@@ -63,7 +67,7 @@ def rtext(file_path, encoding="UTF-8", output=None):
         ds.attrs["instrument_manufacturer"] = "RBR"
         ds.attrs["instrument_model"] = metadata["Model"]
         ds.attrs["instrument_sn"] = metadata["Serial"]
-        
+
         # Test parsed data
         test_parsed_dataset(ds)
 
