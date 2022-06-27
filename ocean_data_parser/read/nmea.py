@@ -1,3 +1,5 @@
+"""Set of tools used to parsed an NMEA string feed from a file."""
+
 import logging
 
 import numpy as np
@@ -73,12 +75,11 @@ def file(path, encoding="UTF-8"):
     # Convert NMEA to a dataframe
     df = pd.DataFrame(nmea).astype(object).replace(np.nan, None)
     df = generate_gps_variables(df)
-
-    
     return df
 
 
 def generate_gps_variables(df):
+    """Generate standardized variables from the different variables available"""
     # Generate variables
     df["nmea_type"] = df["talker"] + df["sentence_type"].fillna("manufacturer")
     df["gps_time"] = df.apply(_get_gps_time, axis=1)
