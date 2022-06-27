@@ -1,3 +1,4 @@
+""" Parse Onset Propriatery format to an xarray dataset.    """
 import logging
 import re
 from csv import reader
@@ -10,7 +11,7 @@ from dateutil.parser._parser import ParserError
 from .utils import test_parsed_dataset
 
 logger = logging.getLogger(__name__)
-onset_variables_mapping = {
+_onset_variables_mapping = {
     "#": "record_number",
     "Date Time": "time",
     "Temp": "temperature",
@@ -27,7 +28,7 @@ onset_variables_mapping = {
     "Water Level": "water_level",
 }
 
-ignored_variables = [
+_ignored_variables = [
     "record_number",
     "time",
     "button_up",
@@ -49,8 +50,8 @@ ignored_variables = [
 ]
 
 
-def parse_onset_time(time, timezone="UTC"):
-    if type(time) is np.datetime64:
+def _parse_onset_time(time, timezone="UTC"):
+    if isinstance(time, np.datetime64):
         time_format = None
     elif re.match(r"\d\d\/\d\d\/\d\d\s+\d\d\:\d\d\:\d\d\s+\w\w", time):
         time_format = r"%m/%d/%y %I:%M:%S %p"
@@ -79,42 +80,52 @@ def parse_onset_time(time, timezone="UTC"):
             .tz_convert("UTC")
         )
     except ParserError:
-        logging.error(f"Failed to convert to timestamp: {time}", exc_info=True)
+        logging.error("Failed to convert to timestamp: %s", time, exc_info=True)
         return pd.NaT
 
 
-def parse_onset_csv_header(header_lines):
+def _parse_onset_csv_header(header_lines):
 
     full_header = "\n".join(header_lines)
     header = {
         "instrument_manufacturer": "Onset",
         "history": "",
-        "timezone": re.search("GMT\s*([\-\+\d\:]*)", full_header),
-        "plot_title": re.search("Plot Title\: (\w*)\,+", full_header),
-        "logger_sn": ",".join(set(re.findall("LGR S\/N\: (\d*)", full_header))),
-        "sensor_sn": ",".join(set(re.findall("SEN S\/N\: (\d*)", full_header))),
+        "timezone": re.search(r"GMT\s*([\-\+\d\:]*)", full_header),
+        "plot_title": re.search(r"Plot Title\: (\w*)\,+", full_header),
+        "logger_sn": ",".join(set(re.findall(r"LGR S\/N\: (\d*)", full_header))),
+        "sensor_sn": ",".join(set(re.findall(r"SEN S\/N\: (\d*)", full_header))),
         "instrument_sn": ",".join(
-            set(re.findall("(?:SEN S\/N|LGR S\/N|Serial Number):\s*(\d+)", full_header))
+            set(
+                re.findall(r"(?:SEN S\/N|LGR S\/N|Serial Number):\s*(\d+)", full_header)
+            )
         ),
-        "lbl": ",".join(set(re.findall("lbl: (\d*)", full_header))),
+        "lbl": ",".join(set(re.findall(r"lbl: (\d*)", full_header))),
     }
 
+    header = {
+        key: value[1] if isinstance(value, re.Match) else value
+        for key, value in header.items()
+    }
     # Handle Columns
     original_columns = list(reader([header_lines[-1]], delimiter=",", quotechar='"'))[0]
     variables = {}
     for col in original_columns:
+        # Ignore plot title from column names
+        if header["plot_title"]:
+            col = col.replace(header["plot_title"], "")
+
         column_with_units = re.sub(
-            f"\s*\(*(LGR|SEN) S\/N\: .*|[^\(]*{header['plot_title']}|\(LBL\:\w*",
+            r"\s*\(*(LGR S\/N|SEN S\/N|LBL): .*",
             "",
             col,
         )
-        column = re.split("\,|\(|\)", column_with_units)[0].strip()
+        column = re.split(r"\,|\(|\)", column_with_units)[0].strip()
         variables[column] = {
             "original_name": col,
-            "units": re.split("\,|\(", column_with_units.replace(")", "").strip())[
+            "units": re.split(r"\,|\(", column_with_units.replace(")", "").strip())[
                 -1
             ].strip()
-            if re.search("\,|\(", column_with_units)
+            if re.search(r"\,|\(", column_with_units)
             else None,
         }
 
@@ -124,26 +135,21 @@ def parse_onset_csv_header(header_lines):
         logger.warning("No Timezone available within this file. UTC will be assumed.")
         header["timezone"] = "UTC"
 
-    header = {
-        key: value[1] if type(value) is re.Match else value
-        for key, value in header.items()
-    }
-
     return header, variables
 
 
-def standardized_variable_mapping(vars):
+def _standardized_variable_mapping(variables):
+    """Standardize onset variable names"""
     return {
-        var: onset_variables_mapping[var]
-        if var in onset_variables_mapping
+        var: _onset_variables_mapping[var]
+        if var in _onset_variables_mapping
         else var.lower().replace(" ", "_")
-        for var in vars
+        for var in variables
     }
 
 
 def csv(
     path,
-    output: str = "xarray",
     convert_units_to_si: bool = True,
     input_read_csv_kwargs: dict = None,
     standardize_variable_names: bool = True,
@@ -171,7 +177,7 @@ def csv(
         raw_header += [f.readline()]
 
     # Parse onset header
-    header, variables = parse_onset_csv_header(raw_header)
+    header, variables = _parse_onset_csv_header(raw_header)
 
     # Inputs to pd.read_csv
     column_names = [var for var in list(variables.keys()) if var]
@@ -180,7 +186,7 @@ def csv(
         "infer_datetime_format": True,
         "parse_dates": header["time_variables"],
         "converters": {
-            header["time_variables"][0]: lambda col: parse_onset_time(
+            header["time_variables"][0]: lambda col: _parse_onset_time(
                 col, header["timezone"]
             )
         },
@@ -201,21 +207,22 @@ def csv(
         ds[var].attrs = variables[var]
 
     if standardize_variable_names:
-        ds = ds.rename_vars(standardized_variable_mapping(ds))
+        ds = ds.rename_vars(_standardized_variable_mapping(ds))
         # Detect instrument type based on variables available
-        ds.attrs["instrument_type"] = detect_instrument_type(ds)
+        ds.attrs["instrument_type"] = _detect_instrument_type(ds)
 
     # # Review units and convert SI system
     if convert_units_to_si and standardize_variable_names:
         if "temperature" in ds and ("C" not in ds["temperature"].attrs["units"]):
-            string_comment = f"Convert temperature ({ds['temperature'].attrs['units']}) to degree Celsius [(degF-32)/1.8000]"
+            temp_units = ds["temperature"].attrs["units"]
+            string_comment = f"Convert temperature ({temp_units}) to degree Celsius [(degF-32)/1.8000]"
             logger.warning(string_comment)
             ds["temperature"] = (ds["temperature"] - 32.0) / 1.8000
             ds["temperature"].attrs["units"] = "degC"
             ds.attrs["history"] += f"{datetime.now()} {string_comment}"
         if "conductivity" in ds and "uS/cm" not in ds["conductivity"].attrs["units"]:
             logger.warning(
-                f"Unknown conductivity units ({ds['conductivity'].attrs['units']})"
+                "Unknown conductivity units (%s)", ds["conductivity"].attrs["units"]
             )
     elif convert_units_to_si:
         logger.warning(
@@ -224,23 +231,17 @@ def csv(
 
     # Test dataset
     test_parsed_dataset(ds)
-
-    if output == "xarray":
-        return ds
-    df = ds.to_dataframe()
-    # Include instrument information within the dataframe
-    for var in ["instrument_manufacturer", "instrument_type", "instrument_sn"][::-1]:
-        df.insert(0, var, ds.attrs[var])
-    return df
+    return ds
 
 
-def detect_instrument_type(ds):
+def _detect_instrument_type(ds):
     """Detect instrument type based on variables available in the dataset."""
-    # Try to match instrument type based on variables available (this information is unfortnately not available withint the CSV)
+    # Try to match instrument type based on variables available (this information is
+    # unfortnately not available withint the CSV)
     vars_of_interest = {
         var
         for var in ds
-        if var not in ignored_variables and not var.startswith("unnamed")
+        if var not in _ignored_variables and not var.startswith("unnamed")
     }
 
     if vars_of_interest == {"temperature", "light_intensity"}:
@@ -278,6 +279,6 @@ def detect_instrument_type(ds):
     else:
         instrument_type = "unknown"
         logger.warning(
-            f"Unknown Hobo instrument type with variables: {vars_of_interest}"
+            "Unknown Hobo instrument type with variables: %s", vars_of_interest
         )
     return instrument_type
