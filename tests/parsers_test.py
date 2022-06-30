@@ -1,6 +1,6 @@
 import unittest
 from glob import glob
-
+import xarray as xr
 from ocean_data_parser import read
 
 
@@ -55,3 +55,16 @@ class SunburstParserTests(unittest.TestCase):
         paths = glob("tests/parsers_test_files/sunburst/*pCO2_notes*.txt")
         for path in paths:
             read.sunburst.superCO2_notes(path)
+
+
+class AmundsenParserTests(unittest.TestCase):
+    def test_amundsen_int_parser(self):
+        paths = glob("tests/parsers_test_files/amundsen/**/*.int", recursive=True)
+        for path in paths:
+            read.amundsen.int_format(path)
+
+    def test_amundsen_int_parser_to_netcdf(self):
+        paths = glob("tests/parsers_test_files/amundsen/**/*.int", recursive=True)
+        for path in paths:
+            ds = read.amundsen.int_format(path)
+            ds.to_netcdf(f"{path}_test.nc")
