@@ -91,7 +91,7 @@ def _parse_onset_csv_header(header_lines):
         "instrument_manufacturer": "Onset",
         "history": "",
         "timezone": re.search(r"GMT\s*([\-\+\d\:]*)", full_header),
-        "plot_title": re.search(r"Plot Title\: (\w*)\,+", full_header),
+        "plot_title": re.search(r"Plot Title\: (\w*),+", full_header),
         "logger_sn": ",".join(set(re.findall(r"LGR S\/N\: (\d*)", full_header))),
         "sensor_sn": ",".join(set(re.findall(r"SEN S\/N\: (\d*)", full_header))),
         "instrument_sn": ",".join(
