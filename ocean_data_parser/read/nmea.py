@@ -8,6 +8,112 @@ import pynmea2
 
 logger = logging.getLogger(__name__)
 
+nmea_dtype_mapping = {
+    "row": "Int64",
+    "prefix": str,
+    "talker": str,
+    "sentence_type": str,
+    "subtype": str,
+    "manufacturer": str,
+    "b_pressure_inch": float,
+    "inches": str,
+    "b_pressure_bar": float,
+    "bars": str,
+    "air_temp": float,
+    "a_celsius": str,
+    "water_temp": float,
+    "w_celsius": str,
+    "rel_humidity": float,
+    "abs_humidity": float,
+    "dew_point": float,
+    "d_celsius": str,
+    "direction_true": float,
+    "true": str,
+    "direction_magnetic": float,
+    "magnetic": str,
+    "wind_speed_knots": float,
+    "knots": str,
+    "wind_speed_meters": float,
+    "meters": str,
+    "datestamp": str,
+    "timestamp": str,
+    "status": str,
+    "lat": str,
+    "lat_dir": str,
+    "lon": str,
+    "lon_dir": str,
+    "mag_variation": float,
+    "mag_var_dir": str,
+    "heading": float,
+    "hdg_true": str,
+    "wind_angle": float,
+    "reference": str,
+    "wind_speed": float,
+    "wind_speed_units": str,
+    "day": "Int64",
+    "month": "Int64",
+    "year": "Int64",
+    "local_zone": str,
+    "local_zone_minutes": "Int64",
+    "gps_qual": "Int64",
+    "num_sats": "Int64",
+    "horizontal_dil": float,
+    "altitude": float,
+    "altitude_units": str,
+    "geo_sep": float,
+    "geo_sep_units": str,
+    "age_gps_data": float,
+    "ref_station_id": str,
+    "true_track": float,
+    "true_track_sym": str,
+    "mag_track": float,
+    "mag_track_sym": str,
+    "spd_over_grnd_kts": float,
+    "spd_over_grnd_kts_sym": str,
+    "spd_over_grnd_kmph": float,
+    "spd_over_grnd_kmph_sym": str,
+    "faa_mode": str,
+    "spd_over_grnd": float,
+    "true_course": float,
+    "_r": str,
+    "true_heading": float,
+    "is_true_heading": bool,
+    "roll": float,
+    "pitch": float,
+    "roll_accuracy": str,
+    "pitch_accuracy": str,
+    "heading_accuracy": str,
+    "aiding_status": str,
+    "imu_status": str,
+    "num_messages": "Int64",
+    "msg_num": "Int64",
+    "num_sv_in_view": float,
+    "sv_prn_num_1": float,
+    "elevation_deg_1": float,
+    "azimuth_1": float,
+    "snr_1": "Int64",
+    "sv_prn_num_2": float,
+    "elevation_deg_2": float,
+    "azimuth_2": float,
+    "snr_2": "Int64",
+    "sv_prn_num_3": float,
+    "elevation_deg_3": float,
+    "azimuth_3": float,
+    "snr_3": "Int64",
+    "sv_prn_num_4": float,
+    "elevation_deg_4": float,
+    "azimuth_4": float,
+    "snr_4": "Int64",
+    "deviation": float,
+    "dev_dir": str,
+    "variation": float,
+    "var_dir": str,
+    "gps_time": None,
+    "nmea_type": str,
+    "latitude_degrees_north": float,
+    "longitude_degrees_east": float,
+}
+
 
 def _get_gps_time(self):
     """Generate pandas Timestamp object from VTG and GGA NMEA information"""
@@ -91,8 +197,23 @@ def file(path, encoding="UTF-8", nmea_delimiter="$"):
                 logger.error("Failed to retrieve atribue", exc_info=True)
 
     # Convert NMEA to a dataframe
-    df = pd.DataFrame(nmea).astype(object).replace(np.nan, None)
+    df = pd.DataFrame(nmea).replace({np.nan: None, "": None})
     df = _generate_gps_variables(df)
+
+    # Cast variables to the appropriate type
+    for col in df:
+        if col not in nmea_dtype_mapping:
+            logger.warning(
+                "nmea column '%s' do not have a correspinding data type", col
+            )
+            continue
+        if nmea_dtype_mapping[col] is None:
+            continue
+        try:
+            df[col] = df[col].astype(nmea_dtype_mapping[col])
+        except ValueError:
+            logger.error("Failed to convert %s to %s", col, nmea_dtype_mapping[col])
+    df = df.replace({"None": None})
 
     # Convert to xarray
     ds = df.to_xarray()
