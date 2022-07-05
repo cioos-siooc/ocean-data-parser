@@ -35,17 +35,18 @@ def _get_gps_time(self):
 def _get_latitude(self):
     """Generate latitude in degree north from GGA/RMC/GLL information"""
     if self.get("lat"):
-        return (-1 if "lat_dir" == "S" else 1) * (
-            float(self["lat"][:2]) + float(self["lat"][3:]) / 60
+        return (-1 if self.lat_dir == "S" else 1) * (
+            float(self.lat[:2]) + float(self.lat[2:]) / 60
         )
 
 
 def _get_longitude(self):
     """Generate longitude in degree north from GGA/RMC/GLL information"""
     if self.get("lon"):
-        return (-1 if "lon_dir" == "W" else 1) * (
-            float(self["lon"][:3]) + float(self["lon"][4:]) / 60
+        return (-1 if self.lon_dir == "W" else 1) * (
+            float(self.lon[:3]) + float(self.lon[3:]) / 60
         )
+
 
 def _generate_gps_variables(df):
     """Generate standardized variables from the different variables available"""
@@ -55,6 +56,7 @@ def _generate_gps_variables(df):
     df["latitude_degrees_north"] = df.apply(_get_latitude, axis=1)
     df["longitude_degrees_east"] = df.apply(_get_longitude, axis=1)
     return df
+
 
 def file(path, encoding="UTF-8", nmea_delimiter="$"):
     """Parse a file containing NMEA information into a pandas dataframe"""
