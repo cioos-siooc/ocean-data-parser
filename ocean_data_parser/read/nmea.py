@@ -8,6 +8,13 @@ import pynmea2
 
 logger = logging.getLogger(__name__)
 
+variable_mapping = {
+    ("Heave", "heading"): (
+        "Heave",
+        "heave",
+    )  # fix in https://github.com/Knio/pynmea2/pull/129 but not included in pipy yet
+}
+
 nmea_dtype_mapping = {
     "row": "Int64",
     "prefix": str,
@@ -108,10 +115,12 @@ nmea_dtype_mapping = {
     "dev_dir": str,
     "variation": float,
     "var_dir": str,
-    "gps_time": None,
+    "gps_datetime": None,
     "nmea_type": str,
     "latitude_degrees_north": float,
     "longitude_degrees_east": float,
+    "wind_speed_relative_to_platform_knots": float,
+    "wind_direction_relative_to_platform": float,
 }
 
 
@@ -154,43 +163,108 @@ def _get_longitude(self):
         )
 
 
-def _generate_gps_variables(df):
-    """Generate standardized variables from the different variables available"""
-    # Generate variables
-    df["nmea_type"] = df["talker"] + df["sentence_type"].fillna("manufacturer")
-    df["gps_time"] = df.apply(_get_gps_time, axis=1)
-    df["latitude_degrees_north"] = df.apply(_get_latitude, axis=1)
-    df["longitude_degrees_east"] = df.apply(_get_longitude, axis=1)
-    return df
+def _generate_extra_terms(nmea):
+    """Generate extra terms from NMEA information
+    Output is a dictionary with the keys following the convention:
+    Args: pynmea2 object
+    Return {
+        (long_name, short_name):value,
+        ...
+    }
+    """
+    extra = {}
+    if nmea["sentence_type"] in ("GGA", "RMC", "GLL"):
+        extra.update(
+            {
+                ("Latitude", "latitude_degrees_north"): (
+                    -1 if nmea["lat_dir"] == "S" else 1
+                )
+                * (float(nmea["lat"][:2]) + float(nmea["lat"][2:]) / 60),
+                ("Longitude", "longitude_degrees_east"): (
+                    -1 if nmea["lon_dir"] == "W" else 1
+                )
+                * (float(nmea["lon"][:3]) + float(nmea["lon"][3:]) / 60),
+            }
+        )
+    if nmea["sentence_type"] == "ZDA":
+        extra[("GPS Time", "gps_datetime")] = pd.to_datetime(
+            f"{nmea['year']}-{nmea['month']}-{nmea['day']}T{nmea['timestamp']}",
+            format=f"%Y-%m-%dT%H%M%S{'.%f' if len(nmea['timestamp'])>6 else''}",
+            utc=True,
+        )
+    if nmea["sentence_type"] == "RMC":
+        extra[("GPS Time", "gps_datetime")] = pd.to_datetime(
+            f"{nmea['datestamp']}T{nmea['timestamp']}",
+            format=f"%d%m%yT%H%M%S{'.%f' if len(nmea['timestamp'])>6 else''}",
+            utc=True,
+        )
+
+    if nmea["sentence_type"] == "MWV" and nmea["reference"] == "R":
+        if nmea["wind_speed_units"] == "N":
+            units = ("knots", "knots")
+        elif nmea["wind_speed_units"] == "M":
+            units = ("m/s", "m_s")
+        elif nmea["wind_speed_units"] == "K":
+            units = ("km/h", "km_h")
+        else:
+            logger.error("unknown units for MWV: %s", nmea["wind_speed_units"])
+        extra.update(
+            {
+                (
+                    f"Wind Speed Relative To Platform [{units[0]}]",
+                    f"wind_speed_relative_to_platform_{units[1]}",
+                ): nmea["wind_speed"],
+                (
+                    "Wind Direction Relative To Platform",
+                    "wind_direction_relative_to_platform",
+                ): nmea["wind_angle"],
+            }
+        )
+    return extra
 
 
 def file(path, encoding="UTF-8", nmea_delimiter="$"):
     """Parse a file containing NMEA information into a pandas dataframe"""
+
+    def rename_variable(name):
+        """Rename variable based on variable mapping dictionary or return name"""
+        return variable_mapping[name] if name in variable_mapping else name
+
     nmea = []
+    long_names = {}
     with open(path, encoding=encoding) as f:
 
         for row, line in enumerate(f):
             try:
                 prefix, nmea_string = line.split(nmea_delimiter)
                 parsed_line = pynmea2.parse(nmea_delimiter + nmea_string)
-                parsed_items = parsed_line.__dict__
-                nmea += [
-                    {
-                        "row": row,
-                        "prefix": prefix,
-                        "talker": parsed_items.get("talker"),
-                        "sentence_type": parsed_items.get("sentence_type"),
-                        "subtype": parsed_items.get("subtype"),
-                        "manufacturer": parsed_items.get("manufacturer"),
-                        **{
-                            field[1]: value
-                            for field, value in zip(
-                                parsed_line.fields, parsed_line.data
-                            )
-                        },
-                    }
-                ]
 
+                # Retrieve long_names from nmea fields
+                long_names.update({field[1]: field[0] for field in parsed_line.fields})
+                parsed_items = parsed_line.__dict__
+                parsed_dict = {
+                    "row": row,
+                    "prefix": prefix,
+                    "talker": parsed_items.get("talker"),
+                    "sentence_type": parsed_items.get("sentence_type"),
+                    "subtype": parsed_items.get("subtype"),
+                    "manufacturer": parsed_items.get("manufacturer"),
+                    **{
+                        rename_variable(field[1]): value
+                        for field, value in zip(parsed_line.fields, parsed_line.data)
+                    },
+                }
+                # Get extra fields
+                extra = _generate_extra_terms(parsed_dict)
+                if extra:
+                    long_names.update(
+                        {short_name: long_names for long_names, short_name in extra}
+                    )
+                    # add extra fields
+                    parsed_dict.update(
+                        {short_name: value for (_, short_name), value in extra.items()}
+                    )
+                nmea += [parsed_dict]
             except pynmea2.ParseError:
                 logger.error("Unable to parse line: %s", line, exc_info=True)
             except AttributeError:
@@ -198,7 +272,6 @@ def file(path, encoding="UTF-8", nmea_delimiter="$"):
 
     # Convert NMEA to a dataframe
     df = pd.DataFrame(nmea).replace({np.nan: None, "": None})
-    df = _generate_gps_variables(df)
 
     # Cast variables to the appropriate type
     for col in df:
@@ -217,8 +290,12 @@ def file(path, encoding="UTF-8", nmea_delimiter="$"):
 
     # Convert to xarray
     ds = df.to_xarray()
-    # TODO Apply vocabulary
 
+    # Add attributes
+    # TODO Apply vocabulary
+    for var in ds:
+        if var in long_names:
+            ds[var].attrs["long_name"] = long_names[var]
     return ds
 
 
