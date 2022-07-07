@@ -11,7 +11,7 @@ conda activate ocean_parser
 ```
 Install the present package:
 ```console
-pip install git+git@github.com:JessyBarrette/ocean_data_parser.git
+pip install git+https://github.com/HakaiInstitute/ocean-data-parser.git
 ```
 ## How to
 To parse seabird file:
