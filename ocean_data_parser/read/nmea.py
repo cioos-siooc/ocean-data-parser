@@ -235,6 +235,8 @@ def file(path, encoding="UTF-8", nmea_delimiter="$"):
     with open(path, encoding=encoding) as f:
 
         for row, line in enumerate(f):
+            if not line:
+                continue
             try:
                 prefix, nmea_string = line.split(nmea_delimiter)
                 parsed_line = pynmea2.parse(nmea_delimiter + nmea_string)
@@ -267,8 +269,8 @@ def file(path, encoding="UTF-8", nmea_delimiter="$"):
                 nmea += [parsed_dict]
             except pynmea2.ParseError:
                 logger.error("Unable to parse line: %s", line, exc_info=True)
-            except AttributeError:
-                logger.error("Failed to retrieve atribue", exc_info=True)
+            except (AttributeError, ValueError):
+                logger.error("Failed to retrieve atribute", exc_info=True)
 
     # Convert NMEA to a dataframe
     df = pd.DataFrame(nmea).replace({np.nan: None, "": None})
