@@ -1,0 +1,5 @@
+2022/07/03 23:03:40  184.960890
+Front panel parameter change:
+Smpl_Intrvl  1st_std_delay  File_duration  Std_time1 num_Stds  min_btw_stds  Std_duration  stds_flow  smpl_flow
+2.000000 120.000000 90.000000 4.000000 90.000000 240.000000
+
