@@ -8,6 +8,7 @@ import warnings
 from datetime import datetime
 
 import pandas as pd
+import xarray as xr
 
 from ..convert.oxygen import O2ctoO2s
 
@@ -34,16 +35,25 @@ vars_rename = {
 }
 
 
-def minidot_txt(path, output="xarray"):
+def minidot_txt(path, read_csv_kwargs=None):
     """
     minidot_txt parses the txt format provided by the PME Minidot instruments.
     """
+    # Default read_csv_kwargs
+    if read_csv_kwargs is None:
+        read_csv_kwargs = {}
+
     # Read MiniDot
-    with open(path, "r") as f:
+    with open(
+        path,
+        "r",
+        encoding=read_csv_kwargs.get("encoding", "utf-8"),
+        errors=read_csv_kwargs.get("encoding_errors"),
+    ) as f:
         # Read the headre
         serial_number = f.readline().replace("\n", "")
         metadata = re.search(
-            "OS REV: (?P<software_version>\d+\.\d+) Sensor Cal: (?P<instrument_calibration>\d*)",
+            r"OS REV: (?P<software_version>\d+\.\d+) Sensor Cal: (?P<instrument_calibration>\d*)",
             f.readline(),
         )
 
@@ -58,6 +68,7 @@ def minidot_txt(path, output="xarray"):
             parse_dates=[0],
             infer_datetime_format=True,
             date_parser=lambda x: pd.to_datetime(x, unit="s", utc=True),
+            **read_csv_kwargs,
         ).to_xarray()
 
     # Strip whitespaces from variables names
@@ -90,21 +101,8 @@ def minidot_txt(path, output="xarray"):
     ds = ds.rename_vars(vars_rename)
     ds.attrs[
         "history"
-    ] += f"\n{datetime.now().isoformat()} Apply variable rename: {vars_rename}"
-
-    # Output
-    if output == "xarray":
-        return ds
-    elif output == "dataframe":
-        df = ds.to_dataframe()
-        add_attributes = [
-            "instrument_sn",
-            "instrument_model",
-            "instrument_manufacturer",
-        ]
-        for att in add_attributes:
-            df.insert(0, att, ds.attrs[att])
-        return df
+    ] += f"\n{datetime.now().isoformat()} Rename variables: {vars_rename}"
+    return ds
 
 
 def minidot_txts(paths: list or str):
@@ -117,24 +115,25 @@ def minidot_txts(paths: list or str):
     if type(paths) is str:
         paths = [paths]
 
-    df = pd.DataFrame()
+    datasets = []
     for path in paths:
         # Ignore concatenated Cat.TXT files or not TXT file
         if path.endswith("Cat.TXT") or not path.endswith(("TXT", "txt")):
             print(f"Ignore {path}")
             continue
         # Read txt file
-        df = df.append(minidot_txt(path, output="dataframe"))
+        datasets += minidot_txt(path)
 
-    return df
+    return xr.merge(datasets)
 
 
-def minidot_cat(path):
+def minidot_cat(path, read_csv_kwargs=None):
     """
     cat reads PME MiniDot concatenated CAT files
     """
-
-    with open(path, "r") as f:
+    if read_csv_kwargs is None:
+        read_csv_kwargs = {}
+    with open(path, "r", encoding=read_csv_kwargs.get("encoding", "utf8")) as f:
         header = f.readline()
 
         if header != "MiniDOT Logger Concatenated Data File\n":
@@ -148,7 +147,7 @@ def minidot_cat(path):
         names = columns[0].replace("\n", "").split(",")
         units = columns[1].replace("\n", "")
 
-        ds = pd.read_csv(f, names=names).to_xarray()
+        ds = pd.read_csv(f, names=names, **read_csv_kwargs).to_xarray()
 
     # Include units
     for name, units in zip(names, units):
@@ -158,10 +157,10 @@ def minidot_cat(path):
     # Extract metadata from header
     ds.attrs = re.search(
         (
-            "Sensor:\s*(?P<instrument_sn>.*)\n"
-            + "Concatenation Date:\s*(?P<concatenation_date>.*)\n\n"
-            + "DO concentration compensated for salinity:\s*(?P<reference_salinity>.*)\n"
-            + "Saturation computed at elevation:\s*(?P<elevation>.*)\n"
+            r"Sensor:\s*(?P<instrument_sn>.*)\n"
+            + r"Concatenation Date:\s*(?P<concatenation_date>.*)\n\n"
+            + r"DO concentration compensated for salinity:\s*(?P<reference_salinity>.*)\n"
+            + r"Saturation computed at elevation:\s*(?P<elevation>.*)\n"
         ),
         "".join(header),
     ).groupdict()
@@ -182,7 +181,7 @@ def retrieve_oxygen_saturation_percent(
         do_conc = 31.2512 * do_conc
         units = "umol/l"
     if units != "umol/l":
-        logger.error(f"Uncompatble units: {units}")
+        logger.error("Uncompatble units: %s", units)
         return
 
     return O2ctoO2s(do_conc, temp, salinity, pressure)

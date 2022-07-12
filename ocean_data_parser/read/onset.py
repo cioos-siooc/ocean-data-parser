@@ -51,6 +51,7 @@ _ignored_variables = [
 
 
 def _parse_onset_time(time, timezone="UTC"):
+    """Convert onset timestamps to pd.Timestamp objects"""
     if isinstance(time, np.datetime64):
         time_format = None
     elif re.match(r"\d\d\/\d\d\/\d\d\s+\d\d\:\d\d\:\d\d\s+\w\w", time):
@@ -151,7 +152,7 @@ def _standardized_variable_mapping(variables):
 def csv(
     path,
     convert_units_to_si: bool = True,
-    input_read_csv_kwargs: dict = None,
+    read_csv_kwargs: dict = None,
     standardize_variable_names: bool = True,
 ):
 
@@ -161,12 +162,14 @@ def csv(
         df: data in pandas dataframe
         metadata: metadata dictionary
     """
-    if input_read_csv_kwargs is None:
-        input_read_csv_kwargs = {}
-    encoding = input_read_csv_kwargs.get("encoding", "UTF-8")
-    encoding_errors = input_read_csv_kwargs.get("encoding_errors")
+    if read_csv_kwargs is None:
+        read_csv_kwargs = {}
     raw_header = []
-    with open(path, "r", encoding=encoding, errors=encoding_errors) as f:
+    with open(
+        path,
+        encoding=read_csv_kwargs.get("encoding", "UTF-8"),
+        errors=read_csv_kwargs.get("encoding_errors"),
+    ) as f:
         raw_header += [f.readline().replace("\n", "")]
         header_lines = 1
         if "Serial Number:" in raw_header[0]:
@@ -181,24 +184,23 @@ def csv(
 
     # Inputs to pd.read_csv
     column_names = [var for var in list(variables.keys()) if var]
-    read_csv_kwargs = {
-        "na_values": [" "],
-        "infer_datetime_format": True,
-        "parse_dates": header["time_variables"],
-        "converters": {
+    df = pd.read_csv(
+        path,
+        na_values=[" "],
+        infer_datetime_format=True,
+        parse_dates=header["time_variables"],
+        converters={
             header["time_variables"][0]: lambda col: _parse_onset_time(
                 col, header["timezone"]
             )
         },
-        "sep": ",",
-        "header": header_lines,
-        "memory_map": True,
-        "encoding": encoding,
-        "names": column_names,
-        "usecols": [id for id, name in enumerate(column_names)],
-    }
-    read_csv_kwargs.update(input_read_csv_kwargs)
-    df = pd.read_csv(path, **read_csv_kwargs)
+        sep=",",
+        header=header_lines,
+        memory_map=True,
+        names=column_names,
+        usecols=[id for id, name in enumerate(column_names)],
+        **read_csv_kwargs,
+    )
 
     # Convert to dataset
     ds = df.to_xarray()
@@ -212,22 +214,23 @@ def csv(
         ds.attrs["instrument_type"] = _detect_instrument_type(ds)
 
     # # Review units and convert SI system
-    if convert_units_to_si and standardize_variable_names:
-        if "temperature" in ds and ("C" not in ds["temperature"].attrs["units"]):
-            temp_units = ds["temperature"].attrs["units"]
-            string_comment = f"Convert temperature ({temp_units}) to degree Celsius [(degF-32)/1.8000]"
-            logger.warning(string_comment)
-            ds["temperature"] = (ds["temperature"] - 32.0) / 1.8000
-            ds["temperature"].attrs["units"] = "degC"
-            ds.attrs["history"] += f"{datetime.now()} {string_comment}"
-        if "conductivity" in ds and "uS/cm" not in ds["conductivity"].attrs["units"]:
+    if convert_units_to_si:
+        if standardize_variable_names:
+            if "temperature" in ds and ("C" not in ds["temperature"].attrs["units"]):
+                temp_units = ds["temperature"].attrs["units"]
+                string_comment = f"Convert temperature ({temp_units}) to degree Celsius [(degF-32)/1.8000]"
+                logger.warning(string_comment)
+                ds["temperature"] = (ds["temperature"] - 32.0) / 1.8000
+                ds["temperature"].attrs["units"] = "degC"
+                ds.attrs["history"] += f"{datetime.now()} {string_comment}"
+            if "conductivity" in ds and "uS/cm" not in ds["conductivity"].attrs["units"]:
+                logger.warning(
+                    "Unknown conductivity units (%s)", ds["conductivity"].attrs["units"]
+                )
+        else:
             logger.warning(
-                "Unknown conductivity units (%s)", ds["conductivity"].attrs["units"]
+                "Unit conversion is not supported if standardize_variable_names=False"
             )
-    elif convert_units_to_si:
-        logger.warning(
-            "Unit conversion is not supported if standardize_variable_names=False"
-        )
 
     # Test dataset
     test_parsed_dataset(ds)

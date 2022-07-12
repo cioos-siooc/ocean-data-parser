@@ -1,3 +1,4 @@
+"""Van Essen Instrument Data Format Parser"""
 import json
 import logging
 import re
@@ -23,10 +24,11 @@ van_essen_vocabulary = {
     },
 }
 
+
 def mon(
     file_path,
     standardize_variable_names=True,
-    kwargs_input_read_csv=None,
+    read_csv_kwargs=None,
     convert_pressure_to_dbar=True,
 ):
     """
@@ -37,16 +39,16 @@ def mon(
     :return: metadata dictionary dataframe
     """
     header_end = "[Data]\n"
+    if read_csv_kwargs is None:
+        read_csv_kwargs = {}
 
     def date_parser(time):
         return pd.to_datetime(f"{time} {timezone}", utc=True)
 
-    if kwargs_input_read_csv is None:
-        kwargs_input_read_csv = {}
     with open(
         file_path,
-        encoding=kwargs_input_read_csv.get("encoding"),
-        errors=kwargs_input_read_csv.get("encoding_errors"),
+        encoding=read_csv_kwargs.get("encoding"),
+        errors=read_csv_kwargs.get("encoding_errors"),
     ) as fid:
         line = ""
         section = "header_info"
@@ -99,6 +101,7 @@ def mon(
             comment="END OF DATA FILE OF DATALOGGER FOR WINDOWS",
             parse_dates=["time"],
             date_parser=date_parser,
+            **read_csv_kwargs,
         )
 
     # If there's less data then expected send a warning
@@ -163,7 +166,7 @@ def mon(
         )
 
     # Add vocabulary
-    for var , attrs in van_essen_vocabulary.items():
+    for var, attrs in van_essen_vocabulary.items():
         ds[var].attrs.update(attrs)
 
     # Standardize variables names
@@ -172,7 +175,6 @@ def mon(
 
     # Run tests on parsed data
     test_parsed_dataset(ds)
-
     return ds
 
 
