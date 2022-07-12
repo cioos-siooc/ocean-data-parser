@@ -15,12 +15,19 @@ van_essen_variable_mapping = {
     "SPEC.COND.": "specific_conductance",
 }
 
+van_essen_vocabulary = {
+    "PRESSURE": {"standard_name": "sea_water_pressure"},
+    "TEMPERATURE": {"standard_name": "sea_water_temperature"},
+    "CONDUCTIVITY": {
+        "standard_name": "sea_water_electrical_conductivity",
+    },
+}
 
 def mon(
     file_path,
-    output=None,
     standardize_variable_names=True,
     kwargs_input_read_csv=None,
+    convert_pressure_to_dbar=True,
 ):
     """
     Read MON file format from Van Essen Instrument format.
@@ -29,7 +36,6 @@ def mon(
     :param file_path: path to file to read
     :return: metadata dictionary dataframe
     """
-    # MON File Header end
     header_end = "[Data]\n"
 
     def date_parser(time):
@@ -61,10 +67,10 @@ def mon(
         # Regroup channels
         info["Channel"] = {}
         for key, items in info.items():
-            chan_id = re.search(r"Channel (\d+) from data header", key)
-            if chan_id:
+            channel_number = re.search(r"Channel (\d+) from data header", key)
+            if channel_number:
                 info["Channel"][items["Identification"]] = items
-                info["Channel"][items["Identification"]]["id"] = int(chan_id[1])
+                info["Channel"][items["Identification"]]["id"] = int(channel_number[1])
 
         # Define column names
         channel_names = ["time"] + [
@@ -103,13 +109,46 @@ def mon(
     # Convert to xarray
     ds = df.to_xarray()
 
-    # Ignore column number in variable names
+    # Generate global_attributes
+    ds.attrs = {
+        "instrument_manufacturer": "Van Essen Instruments",
+        "instrument_type": info["Logger settings"]["Instrument type"],
+        "instrument_sn": info["Logger settings"]["Serial number"],
+        "time_coverage_resolution": info["Logger settings"]["Sample period"],
+        "original_metadata": json.dumps(info),
+    }
+
+    # Define variable attributes
+    for var, attrs in info["Channel"].items():
+        ds[var].attrs = {
+            attr.lower().replace(" ", "_"): value
+            for attr, value in attrs.items()
+            if attr not in ["Identification", "id"]
+        }
+        reference_units = attrs["Reference level"].rsplit(" ", 1)[1]
+        range_units = attrs["Reference level"].rsplit(" ", 1)[1]
+        if range_units == reference_units:
+            ds[var].attrs["units"] = reference_units
+        else:
+            logger.error("Failed to retrieve %s units from attributes %s", var, attrs)
+
+    # Drop column number in variable names
     ds = ds.rename({var: re.sub(r"^\d+\:\s*", "", var) for var in ds})
 
-    # IF PRESSURE in cm, convert to meter
-    if "PRESSURE" in ds and "cm" in info["Channel"]["PRESSURE"]["Range"]:
-        logger.warning("Convert Pressure from cm to m")
-        ds["PRESSURE"] = ds["PRESSURE"] / 100
+    # Add H2O to PRESSURE units [m, cm]
+    if "PRESSURE" in ds:
+        if ds["PRESSURE"].attrs["units"] in ["m", "cm"]:
+            ds["PRESSURE"].attrs["units"] += "H2O"
+
+        # IF PRESSURE in cm, convert to meter
+        if ds["PRESSURE"].attrs["units"] == "cmH2O":
+            logger.warning("Convert Pressure from cm to m")
+            ds["PRESSURE"] = ds["PRESSURE"] / 100
+            ds["PRESSURE"].attrs["units"] = "mH2O"
+
+        if convert_pressure_to_dbar:
+            ds["PRESSURE"] = ds["PRESSURE"] / 0.980665
+            ds["PRESSURE"].attrs["units"] = "dbar"
 
     # Add Conductivity if missing
     if "CONDUCTIVITY" not in ds and "SPEC.COND." in ds:
@@ -123,39 +162,27 @@ def mon(
             ds["CONDUCTIVITY"], ds["TEMPERATURE"]
         )
 
-    # Reformat metadata to CF/ACDD standard
-    ds.attrs = {
-        "instrument_manufacturer": "Van Essen Instruments",
-        "instrument_type": info["Logger settings"]["Instrument type"],
-        "instrument_sn": info["Logger settings"]["Serial number"],
-        "time_coverage_resolution": info["Logger settings"]["Sample period"],
-        "original_metadata": json.dumps(info),
-    }
-    # Standardize variables
+    # Add vocabulary
+    for var , attrs in van_essen_vocabulary.items():
+        ds[var].attrs.update(attrs)
+
+    # Standardize variables names
     if standardize_variable_names:
         ds = ds.rename(van_essen_variable_mapping)
 
     # Run tests on parsed data
     test_parsed_dataset(ds)
 
-    # Output
-    if output == "dataframe":
-        df = ds.to_pandas()
-        for var in ["instrument_manufacturer", "instrument_type", "instrument_sn"][
-            ::-1
-        ]:
-            df.insert(0, var, ds.attrs[var])
-        return df
     return ds
 
 
 def specific_conductivity_to_conductivity(
     spec_cond, temp, theta=1.91 / 100, temp_ref=25
 ):
-    """Apply Van Essen' specific conductivity to conductivity conversion"""
+    """Apply specific_conductivity conversion to conductivity based on the manufacturer equation."""
     return (100 + theta * (temp - temp_ref)) / 100 * spec_cond
 
 
 def conductivity_to_specific_conductivity(cond, temp, theta=1.91 / 100, temp_ref=25):
-    """Apply Van Essen' conductivity to specific conductivity conversion"""
+    """Apply conductivity conversion to specific_conductivity based on the manufacturer equation."""
     return 100 / (100 + theta * (temp - temp_ref)) * cond
