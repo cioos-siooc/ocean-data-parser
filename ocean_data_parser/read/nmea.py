@@ -1,6 +1,7 @@
 """Set of tools used to parsed an NMEA string feed from a file."""
 
 import logging
+from datetime import datetime
 
 import numpy as np
 import pandas as pd
@@ -124,45 +125,6 @@ nmea_dtype_mapping = {
 }
 
 
-def _get_gps_time(self):
-    """Generate pandas Timestamp object from VTG and GGA NMEA information"""
-    if self.get("timestamp") is None:
-        return pd.NaT
-
-    # Review time format
-    time_format = "%H%M%S" if len(self["timestamp"]) == 6 else "%H%M%S.%f"
-    # Convert to timestamp
-    if self.get("datestamp"):
-
-        return pd.to_datetime(
-            f"{self['datestamp']}T{self['timestamp']}",
-            format=f"%d%m%yT{time_format}",
-            utc=True,
-        )
-    elif self.get("year") and self.get("month") and self.get("day"):
-        return pd.to_datetime(
-            f"{self['year']}-{self['month']}-{self['day']} {self['timestamp']}",
-            format=f"%Y-%m-%d {time_format}",
-            utc=True,
-        )
-
-
-def _get_latitude(self):
-    """Generate latitude in degree north from GGA/RMC/GLL information"""
-    if self.get("lat"):
-        return (-1 if self.lat_dir == "S" else 1) * (
-            float(self.lat[:2]) + float(self.lat[2:]) / 60
-        )
-
-
-def _get_longitude(self):
-    """Generate longitude in degree north from GGA/RMC/GLL information"""
-    if self.get("lon"):
-        return (-1 if self.lon_dir == "W" else 1) * (
-            float(self.lon[:3]) + float(self.lon[3:]) / 60
-        )
-
-
 def _generate_extra_terms(nmea):
     """Generate extra terms from NMEA information
     Output is a dictionary with the keys following the convention:
@@ -187,16 +149,14 @@ def _generate_extra_terms(nmea):
             }
         )
     if nmea["sentence_type"] == "ZDA":
-        extra[("GPS Time", "gps_datetime")] = pd.to_datetime(
-            f"{nmea['year']}-{nmea['month']}-{nmea['day']}T{nmea['timestamp']}",
-            format=f"%Y-%m-%dT%H%M%S{'.%f' if len(nmea['timestamp'])>6 else''}",
-            utc=True,
+        extra[("GPS Time", "gps_datetime")] = datetime.strptime(
+            f"{nmea['year']}-{nmea['month']}-{nmea['day']}T{nmea['timestamp']} UTC",
+            f"%Y-%m-%dT%H%M%S{'.%f' if len(nmea['timestamp'])>6 else''} %Z",
         )
     if nmea["sentence_type"] == "RMC":
-        extra[("GPS Time", "gps_datetime")] = pd.to_datetime(
-            f"{nmea['datestamp']}T{nmea['timestamp']}",
-            format=f"%d%m%yT%H%M%S{'.%f' if len(nmea['timestamp'])>6 else''}",
-            utc=True,
+        extra[("GPS Time", "gps_datetime")] = datetime.strptime(
+            f"{nmea['datestamp']}T{nmea['timestamp']} UTC",
+            f"%d%m%yT%H%M%S{'.%f' if len(nmea['timestamp'])>6 else''} %Z",
         )
 
     if nmea["sentence_type"] == "MWV" and nmea["reference"] == "R":
@@ -299,13 +259,3 @@ def file(path, encoding="UTF-8", nmea_delimiter="$"):
         if var in long_names:
             ds[var].attrs["long_name"] = long_names[var]
     return ds
-
-
-def _generate_gps_variables(df):
-    """Generate standardized variables from the different variables available"""
-    # Generate variables
-    df["nmea_type"] = df["talker"] + df["sentence_type"].fillna("manufacturer")
-    df["gps_time"] = df.apply(_get_gps_time, axis=1)
-    df["latitude_degrees_north"] = df.apply(_get_latitude, axis=1)
-    df["longitude_degrees_east"] = df.apply(_get_longitude, axis=1)
-    return df
