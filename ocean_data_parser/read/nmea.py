@@ -216,7 +216,7 @@ def file(path, encoding="UTF-8", nmea_delimiter="$"):
         for row, line in enumerate(f):
             if not line:
                 continue
-            elif nmea_delimiter not in line:
+            elif nmea_delimiter and nmea_delimiter not in line:
                 logger.warning(
                     "Missing NMEA deliminter %s - ignore line %s", nmea_delimiter, line
                 )
@@ -252,7 +252,7 @@ def file(path, encoding="UTF-8", nmea_delimiter="$"):
                     )
                 nmea += [parsed_dict]
             except pynmea2.ParseError:
-                logger.error("Unable to parse line: %s", line, exc_info=True)
+                logger.error("Unable to parse line: %s", line)
             except (AttributeError, ValueError):
                 logger.error("Failed to retrieve atribute", exc_info=True)
 
