@@ -53,7 +53,9 @@ nmea_dtype_mapping = {
     "mag_variation": float,
     "mag_var_dir": str,
     "heading": float,
-    "hdg_true": str,
+    "heading_true": float,
+    "heading_magnetic": float,
+    "" "hdg_true": str,
     "wind_angle": float,
     "reference": str,
     "wind_speed": float,
@@ -122,6 +124,23 @@ nmea_dtype_mapping = {
     "longitude_degrees_east": float,
     "wind_speed_relative_to_platform_knots": float,
     "wind_direction_relative_to_platform": float,
+    "deg_r": float,
+    "l_r": str,
+    "wind_speed_kn": float,
+    "unit_knots": str,
+    "wind_speed_ms": float,
+    "unit_ms": str,
+    "wind_speed_km": float,
+    "unit_km": str,
+    "mode_indicator": str,
+    "hdop": str,
+    "diferential": str,
+    "water_speed_knots": float,
+    "water_speed_km": float,
+    "kilometers": str,
+    "source": str,
+    "engine_no": str,
+    "speed": float,
 }
 
 
@@ -197,8 +216,13 @@ def file(path, encoding="UTF-8", nmea_delimiter="$"):
         for row, line in enumerate(f):
             if not line:
                 continue
+            elif nmea_delimiter not in line:
+                logger.warning(
+                    "Missing NMEA deliminter %s - ignore line %s", nmea_delimiter, line
+                )
+                continue
             try:
-                prefix, nmea_string = line.split(nmea_delimiter)
+                prefix, nmea_string = line.split(nmea_delimiter, 1)
                 parsed_line = pynmea2.parse(nmea_delimiter + nmea_string)
 
                 # Retrieve long_names from nmea fields
@@ -239,15 +263,34 @@ def file(path, encoding="UTF-8", nmea_delimiter="$"):
     for col in df:
         if col not in nmea_dtype_mapping:
             logger.warning(
-                "nmea column '%s' do not have a correspinding data type", col
+                "nmea column '%s' do not have a corresponding data type", col
             )
-            continue
-        if nmea_dtype_mapping[col] is None:
-            continue
-        try:
-            df[col] = df[col].astype(nmea_dtype_mapping[col])
-        except ValueError:
-            logger.error("Failed to convert %s to %s", col, nmea_dtype_mapping[col])
+    try:
+        df = df.astype(
+            {var: dtype for var, dtype in nmea_dtype_mapping.items() if var in df}
+        )
+    except ValueError:
+        # Go columne at the time
+        for var in [
+            col
+            for col in df.columns
+            if col in nmea_dtype_mapping and nmea_dtype_mapping[col]
+        ]:
+            try:
+                df[var] = df[var].astype(nmea_dtype_mapping[var])
+            except ValueError:
+                if df[var].dtype == object and nmea_dtype_mapping[var] == float:
+                    df[var] = df[var].str.extract(r"(\d+\.*\d*)").astype(float)
+                elif df[var].dtype == object and nmea_dtype_mapping[var] == int:
+                    df[var] = df[var].str.extract(r"(\d+)").astype(float)
+                else:
+                    logger.error(
+                        "Failed to convert NMEA variable %s to %s",
+                        var,
+                        nmea_dtype_mapping[var],
+                        exc_info=True,
+                    )
+
     df = df.replace({"None": None})
 
     # Convert to xarray
