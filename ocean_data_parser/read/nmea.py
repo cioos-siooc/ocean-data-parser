@@ -187,18 +187,20 @@ def _generate_extra_terms(nmea):
             units = ("km/h", "km_h")
         else:
             logger.error("unknown units for MWV: %s", nmea["wind_speed_units"])
-        extra.update(
-            {
-                (
-                    f"Wind Speed Relative To Platform [{units[0]}]",
-                    f"wind_speed_relative_to_platform_{units[1]}",
-                ): nmea["wind_speed"],
-                (
-                    "Wind Direction Relative To Platform",
-                    "wind_direction_relative_to_platform",
-                ): nmea["wind_angle"],
-            }
-        )
+            units = None
+        if units:
+            extra.update(
+                {
+                    (
+                        f"Wind Speed Relative To Platform [{units[0]}]",
+                        f"wind_speed_relative_to_platform_{units[1]}",
+                    ): nmea["wind_speed"],
+                    (
+                        "Wind Direction Relative To Platform",
+                        "wind_direction_relative_to_platform",
+                    ): nmea["wind_angle"],
+                }
+            )
     return extra
 
 
@@ -218,7 +220,9 @@ def file(path, encoding="UTF-8", nmea_delimiter="$"):
                 continue
             elif nmea_delimiter and nmea_delimiter not in line:
                 logger.warning(
-                    "Missing NMEA deliminter %s - ignore line %s", nmea_delimiter, line
+                    "Missing NMEA deliminter %s - ignore line %s",
+                    nmea_delimiter,
+                    line[:-1],
                 )
                 continue
             try:
@@ -251,10 +255,8 @@ def file(path, encoding="UTF-8", nmea_delimiter="$"):
                         {short_name: value for (_, short_name), value in extra.items()}
                     )
                 nmea += [parsed_dict]
-            except pynmea2.ParseError:
-                logger.error("Unable to parse line: %s", line)
-            except (AttributeError, ValueError):
-                logger.error("Failed to retrieve atribute", exc_info=True)
+            except (pynmea2.ParseError,AttributeError, ValueError, KeyError):
+                logger.error("Unable to parse line: %s", line[:-1])
 
     # Convert NMEA to a dataframe
     df = pd.DataFrame(nmea).replace({np.nan: None, "": None})
