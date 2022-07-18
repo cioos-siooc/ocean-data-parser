@@ -79,6 +79,8 @@ def int_format(path, encoding="Windows-1252"):
                 r"(?P<long_name>[^\[]+)(\[(?P<units>.*)\]){0,1}",
                 metadata.pop(column[0].upper() + column[1:]),
             ).groupdict()
+            if column[0].upper() + column[1:] in metadata
+            else {}
             for column in df
         }
 
