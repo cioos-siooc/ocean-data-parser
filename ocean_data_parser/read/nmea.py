@@ -118,7 +118,7 @@ nmea_dtype_mapping = {
     "dev_dir": str,
     "variation": float,
     "var_dir": str,
-    "gps_datetime": None,
+    "gps_datetime": datetime,
     "nmea_type": str,
     "latitude_degrees_north": float,
     "longitude_degrees_east": float,
@@ -255,7 +255,7 @@ def file(path, encoding="UTF-8", nmea_delimiter="$"):
                         {short_name: value for (_, short_name), value in extra.items()}
                     )
                 nmea += [parsed_dict]
-            except (pynmea2.ParseError,AttributeError, ValueError, KeyError):
+            except (pynmea2.ParseError, AttributeError, ValueError, KeyError):
                 logger.error("Unable to parse line: %s", line[:-1])
 
     # Convert NMEA to a dataframe
@@ -267,16 +267,33 @@ def file(path, encoding="UTF-8", nmea_delimiter="$"):
             logger.warning(
                 "nmea column '%s' do not have a corresponding data type", col
             )
+    # Convert datetime columns
+    datetime_cols = [
+        var
+        for var, dtype in nmea_dtype_mapping.items()
+        if var in df and dtype in [datetime]
+    ]
+    for col in datetime_cols:
+        df[col] = (
+            pd.to_datetime(df[col], utc=True).dt.tz_convert(None).dt.to_pydatetime()
+        )
+
     try:
         df = df.astype(
-            {var: dtype for var, dtype in nmea_dtype_mapping.items() if var in df}
+            {
+                var: dtype
+                for var, dtype in nmea_dtype_mapping.items()
+                if var in df and var not in datetime_cols
+            }
         )
     except ValueError:
-        # Go columne at the time
+        # Go one column at the time
         for var in [
             col
             for col in df.columns
-            if col in nmea_dtype_mapping and nmea_dtype_mapping[col]
+            if col in nmea_dtype_mapping
+            and nmea_dtype_mapping[col]
+            and col not in datetime_cols
         ]:
             try:
                 df[var] = df[var].astype(nmea_dtype_mapping[var])
