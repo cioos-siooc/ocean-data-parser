@@ -1,5 +1,7 @@
 import re
 import logging
+import os
+import json
 
 import pandas as pd
 from .utils import standardize_dateset
@@ -7,6 +9,18 @@ from .utils import standardize_dateset
 logger = logging.getLogger(__name__)
 
 string_attributes = ["Cruise_Number", "Cruise_Name", "Station"]
+
+reference_vocabulary_path = os.path.join(
+    os.path.dirname(__file__), "vocabularies", "amundsen_variable_attributes.json"
+)
+# Read vocabulary file
+with open(reference_vocabulary_path, encoding="UTF-8") as vocabulary_file:
+    amundsen_variable_attributes = json.load(vocabulary_file)
+
+    # Make it non case sensitive by lowering all keys
+    amundsen_variable_attributes = {
+        key.lower(): attrs for key, attrs in amundsen_variable_attributes.items()
+    }
 
 
 def _standardize_attribute_name(name: str) -> str:
@@ -48,6 +62,8 @@ def _standardize_attribute_value(value: str, name: str = None):
 
 
 def int_format(path, encoding="Windows-1252"):
+    """Parse INT format developed and distributed by ArcticNet
+    and the Amundsen groups over the years."""
     metadata = {}
     line = "%"
     with open(path, encoding=encoding) as f:
@@ -99,7 +115,11 @@ def int_format(path, encoding="Windows-1252"):
         ds.attrs = metadata
         for var in ds:
             ds[var].attrs = variables[var]
+            # Include variable attribues from the vocabulary
+            if var in amundsen_variable_attributes:
+                ds[var].attrs.update(amundsen_variable_attributes[var])
+            else:
+                logger.warning("No vocabulary is available for variable '%s'", var)
 
-        # TODO add vocabulary
         ds = standardize_dateset(ds)
         return ds

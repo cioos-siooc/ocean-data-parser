@@ -1,0 +1,105 @@
+{
+    "Pres": {
+        "long_name": "Sea Pressure (sea surface -0)",
+        "units": "decibars",
+        "standard_name": "sea_water_pressure"
+    },
+    "Temp": {
+        "long_name": "Temperature",
+        "units": "degree_celsius",
+        "standard_name": "sea_water_temperature"
+    },
+    "Trans": {
+        "long_name": "Light Transmission",
+        "units": "%"
+    },
+    "Fluo": {
+        "long_name": "Fluorescence",
+        "units": "mg/m^3",
+        "standard_name": "mass_concentration_of_chlorophyll_in_sea_water"
+    },
+    "Sal": {
+        "long_name": "Salinity",
+        "units": "1e-3",
+        "standard_name": "sea_water_salinity"
+    },
+    "Dens": {
+        "long_name": "Density",
+        "units": "kg/m^3",
+        "standard_name": "sea_water_density"
+    },
+    "Svan": {
+        "long_name": "Specific Volumne Anomaly",
+        "units": "m^3/kg"
+    },
+    "N2": {
+        "long_name": "Brunt-Vaisala Frequency",
+        "units": "s^-2",
+        "standard_name": "square_of_brunt_vaisala_frequency_in_sea_water"
+    },
+    "Sigt": {
+        "long_name": "Sigma-0 ",
+        "units": "kg/m^3",
+        "standard_name": "sea_water_sigma_t"
+    },
+    "Theta": {
+        "long_name": "Potential Temperature ",
+        "units": "deg C",
+        "standard_name": "sea_water_potential_temperature"
+    },
+    "Sigthe": {
+        "long_name": "Sigma-Theta ",
+        "units": "kg/m^3",
+        "standard_name": "sea_water_sigma_theta"
+    },
+    "FreezT": {
+        "long_name": "Freezing Temperature ",
+        "units": "deg C",
+        "standard_name": "freezing_temperature_of_sea_water"
+    },
+    "O2": {
+        "long_name": "Dissolved Oxygen ",
+        "units": "ml/l",
+        "standard_name": "volume_fraction_of_oxygen_in_sea_water"
+    },
+    "Cdom": {
+        "long_name": "Fluorescence of CDOM (Colored Dissolved Organic Matter) ",
+        "units": "mg/m^3",
+        "standard_name": "concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate"
+    },
+    "NO3": {
+        "long_name": "Nitrate (NO3-N) Content ",
+        "units": "mmol/m^3",
+        "standard_name": "mole_ratio_of_nitrate_to_phosphate_in_sea_water"
+    },
+    "Par": {
+        "long_name": "Photosynthetic Active Radiation ",
+        "units": "uEinsteins/s/m^2",
+        "standard_name": "downwelling_photosynthetic_photon_flux_in_sea_water"
+    },
+    "SPar": {
+        "long_name": "Surface Photosynthetic Active Radiation ",
+        "units": "uEinsteins/s/m^2",
+        "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_air"
+    },
+    "Asal": {
+        "long_name": "Absolute Salinity TEOS-10 ",
+        "units": "g/kg",
+        "standard_name": "sea_water_absolute_salinity"
+    },
+    "Cont": {
+        "long_name": "Conservative Temperature TEOS-10 ",
+        "units": "deg C",
+        "standard_name": "sea_water_conservative_temperature"
+    },
+    "D_ct": {
+        "long_name": "Density TEOS-10 ((s, t, p) - 1000) ",
+        "units": "kg/m^3",
+        "standard_name": "sea_water_sigma_t"
+    },
+    "D0ct": {
+        "long_name": "Density TEOS-10 (s, t,0)",
+        "units": "kg/m^3",
+        "standard_name": "sea_water_potential_density"
+    }
+}
