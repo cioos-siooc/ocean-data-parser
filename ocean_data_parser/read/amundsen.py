@@ -116,8 +116,8 @@ def int_format(path, encoding="Windows-1252"):
         for var in ds:
             ds[var].attrs = variables[var]
             # Include variable attribues from the vocabulary
-            if var in amundsen_variable_attributes:
-                ds[var].attrs.update(amundsen_variable_attributes[var])
+            if var.lower() in amundsen_variable_attributes:
+                ds[var].attrs.update(amundsen_variable_attributes[var.lower()])
             else:
                 logger.warning("No vocabulary is available for variable '%s'", var)
 

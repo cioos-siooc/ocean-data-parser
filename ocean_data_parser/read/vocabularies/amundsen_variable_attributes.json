@@ -101,5 +101,9 @@
         "long_name": "Density TEOS-10 (s, t,0)",
         "units": "kg/m^3",
         "standard_name": "sea_water_potential_density"
+    },
+    "pH": {
+        "long_name": "pH",
+        "standard_name": "sea_water_ph_reported_on_total_scale"
     }
 }
