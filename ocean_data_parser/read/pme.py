@@ -93,7 +93,7 @@ def minidot_txt(path, read_csv_kwargs=None):
         ds.attrs[
             "history"
         ] += f"\n{datetime.now().isoformat()} Retrieve Oxygen Saturation Percentage values from 'DO (mg/l)' and 'T (deg C)' by assuming 0 salinity and at surface (pressure=0)"
-        ds["po2"] = retrieve_oxygen_saturation_percent(
+        ds["po2"] = retrieve_po2(
             ds["DO (mg/l)"], ds["T (deg C)"], salinity=0, pressure=0, units="mg/l"
         )
         ds.attrs[
