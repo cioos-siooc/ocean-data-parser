@@ -10,7 +10,7 @@ from datetime import datetime
 import pandas as pd
 import xarray as xr
 
-from ..convert.oxygen import O2ctoO2s
+from ..convert.oxygen import O2ctoO2p, O2ctoO2s
 
 logger = logging.getLogger(__name__)
 vars_attributes = {
@@ -93,6 +93,12 @@ def minidot_txt(path, read_csv_kwargs=None):
         ds.attrs[
             "history"
         ] += f"\n{datetime.now().isoformat()} Retrieve Oxygen Saturation Percentage values from 'DO (mg/l)' and 'T (deg C)' by assuming 0 salinity and at surface (pressure=0)"
+        ds["po2"] = retrieve_oxygen_saturation_percent(
+            ds["DO (mg/l)"], ds["T (deg C)"], salinity=0, pressure=0, units="mg/l"
+        )
+        ds.attrs[
+            "history"
+        ] += f"\n{datetime.now().isoformat()} Retrieve Partial Pressure of Oxygen values from 'DO (mg/l)' and 'T (deg C)' by assuming 0 salinity and at surface (pressure=0)"
 
     # Add attributes to the dataset and rename variables to mapped names.
     for var in ds:
@@ -144,8 +150,8 @@ def minidot_cat(path, read_csv_kwargs=None):
         header = [f.readline() for _ in range(6)]
         columns = [f.readline() for _ in range(2)]
 
-        names = columns[0].replace("\n", "").split(",")
-        units = columns[1].replace("\n", "")
+        names = columns[0].replace(r"\n", "").split(",")
+        units = columns[1].replace(r"\n", "")
 
         ds = pd.read_csv(f, names=names, **read_csv_kwargs).to_xarray()
 
@@ -185,3 +191,22 @@ def retrieve_oxygen_saturation_percent(
         return
 
     return O2ctoO2s(do_conc, temp, salinity, pressure)
+
+
+def retrieve_po2(
+    do_conc,
+    temp,
+    pressure=0,
+    salinity=0,
+    units="mg/l",
+):
+    """Convert minidot raw oxygen concentration corrected for temperature and add fix salinity and pressure to saturation percent."""
+    # Convert mg/l to umol/l concentration
+    if units == "mg/l":
+        do_conc = 31.2512 * do_conc
+        units = "umol/l"
+    if units != "umol/l":
+        logger.error("Uncompatble units: %s", units)
+        return
+
+    return O2ctoO2p(do_conc, temp, salinity, pressure)
