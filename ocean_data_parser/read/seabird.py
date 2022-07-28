@@ -17,6 +17,14 @@ import xmltodict
 from .utils import standardize_dateset
 
 SBE_TIME_FORMAT = "%b %d %Y %H:%M:%S"  # Jun 23 2016 13:51:30
+var_dtypes = {
+    "date": str,
+    "bottle": str,
+    "Flag": int,
+    "flag": int,
+    "stats": str,
+    "scan": int,
+}
 sbe_time = re.compile(
     r"(?P<time>\w\w\w\s+\d{1,2}\s+\d{1,4}\s+\d\d\:\d\d\:\d\d)(?P<comment>.*)"
 )
@@ -56,22 +64,27 @@ def _add_seabird_vocabulary(variable_attributes):
     return variable_attributes
 
 
-def cnv(file_path, output="xarray", encoding="UTF-8"):
+def cnv(file_path, encoding="UTF-8"):
     """Import Seabird cnv format as an xarray dataset."""
     with open(file_path, encoding=encoding) as f:
         header = _parse_seabird_file_header(f)
         header["variables"] = _add_seabird_vocabulary(header["variables"])
-        df = pd.read_csv(f, delimiter=r"\s+", names=header["variables"].keys())
+        df = pd.read_csv(
+            f,
+            delimiter=r"\s+",
+            names=header["variables"].keys(),
+            dtype={
+                var: var_dtypes.get(var, float) for var in header["variables"].keys()
+            },
+        )
 
     header = _generate_seabird_cf_history(header)
 
-    if output == "dataframe":
-        return df, header
     ds = _convert_sbe_dataframe_to_dataset(df, header)
     return standardize_dateset(ds)
 
 
-def btl(file_path, output="xarray", encoding="UTF-8"):
+def btl(file_path, encoding="UTF-8"):
     """Import Seabird btl format as an xarray dataset."""
     with open(file_path, encoding=encoding) as f:
         header = _parse_seabird_file_header(f)
@@ -84,6 +97,7 @@ def btl(file_path, output="xarray", encoding="UTF-8"):
             f,
             widths=[10, 12] + [11] * (len(header["bottle_columns"]) - 1),
             names=variable_list,
+            dtype={var: var_dtypes.get(var, float) for var in variable_list},
         )
 
     # Split statistical data info separate dateframes
@@ -94,6 +108,7 @@ def btl(file_path, output="xarray", encoding="UTF-8"):
     for stats in df.query("stats!='avg'")["stats"].drop_duplicates().to_list():
         df_grouped = df_grouped.join(df.query("stats==@stats").add_suffix(f"_{stats}"))
     df = df_grouped
+
     # Generate time variable
     df["time"] = pd.to_datetime(df.filter(like="date").apply(" ".join, axis="columns"))
 
@@ -104,8 +119,6 @@ def btl(file_path, output="xarray", encoding="UTF-8"):
     # Improve metadata
     n_scan_per_bottle = int(header["datcnv_scans_per_bottle"])
     header = _generate_seabird_cf_history(header)
-    if output == "dataframe":
-        return df, header
 
     # Retrieve vocabulary associated with each variables
     header["variables"] = {var: header["variables"].get(var, {}) for var in df.columns}
@@ -137,6 +150,7 @@ def _convert_sbe_dataframe_to_dataset(df, header):
         _convert_to_netcdf_var_name(var): attrs
         for var, attrs in header["variables"].items()
     }
+
     ds = df.to_xarray()
     variable_attributes = header.pop("variables")
     for var, attrs in variable_attributes.items():
