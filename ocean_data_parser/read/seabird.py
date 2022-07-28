@@ -64,8 +64,10 @@ def _add_seabird_vocabulary(variable_attributes):
     return variable_attributes
 
 
-def cnv(file_path, encoding="UTF-8"):
+def cnv(file_path, encoding="UTF-8", kwargs_read_csv=None):
     """Import Seabird cnv format as an xarray dataset."""
+    if kwargs_read_csv is None:
+        kwargs_read_csv = {}
     with open(file_path, encoding=encoding) as f:
         header = _parse_seabird_file_header(f)
         header["variables"] = _add_seabird_vocabulary(header["variables"])
@@ -76,6 +78,8 @@ def cnv(file_path, encoding="UTF-8"):
             dtype={
                 var: var_dtypes.get(var, float) for var in header["variables"].keys()
             },
+            na_values=["-1.#IO", "-9.99E-29"],
+            **kwargs_read_csv,
         )
 
     header = _generate_seabird_cf_history(header)
@@ -84,8 +88,11 @@ def cnv(file_path, encoding="UTF-8"):
     return standardize_dateset(ds)
 
 
-def btl(file_path, encoding="UTF-8"):
+def btl(file_path, encoding="UTF-8", kwargs_read_fwf=None):
     """Import Seabird btl format as an xarray dataset."""
+    if kwargs_read_fwf is None:
+        kwargs_read_fwf = {}
+
     with open(file_path, encoding=encoding) as f:
         header = _parse_seabird_file_header(f)
 
@@ -98,6 +105,7 @@ def btl(file_path, encoding="UTF-8"):
             widths=[10, 12] + [11] * (len(header["bottle_columns"]) - 1),
             names=variable_list,
             dtype={var: var_dtypes.get(var, float) for var in variable_list},
+            **kwargs_read_fwf,
         )
 
     # Split statistical data info separate dateframes
