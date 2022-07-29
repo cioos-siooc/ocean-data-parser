@@ -2,7 +2,7 @@ import json
 import logging
 from datetime import datetime
 
-from pandas import Timestamp
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 
@@ -20,13 +20,25 @@ def test_parsed_dataset(ds):
 
 
 def standardize_dateset(ds):
+    """Standardize dataset to be easily serializable to netcdf and compatible with ERDDAP"""
     # Globals
     for att in ds.attrs.keys():
         # Convert dictionaries attributes to json strings
-        if type(ds.attrs[att]) is dict:
+        if isinstance(ds.attrs[att], dict):
             ds.attrs[att] = json.dumps(ds.attrs[att])
-        elif type(ds.attrs[att]) in (datetime, Timestamp):
+        elif type(ds.attrs[att]) in (datetime, pd.Timestamp):
             ds.attrs[att] = ds.attrs[att].isoformat()
+    # Drop empty attributes
+    ds.attrs = {
+        attr: value for attr, value in ds.attrs.items() if value and pd.notnull(value)
+    }
+    # Drop empty variable attributes
+    for var in ds:
+        ds[var].attrs = {
+            attr: value
+            for attr, value in ds[var].attrs.items()
+            if value and pd.notnull(value)
+        }
 
     # TODO Specify encoding for some variables (ex time variables)
     for var in ds:
