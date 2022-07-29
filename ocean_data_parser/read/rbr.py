@@ -6,6 +6,7 @@ import re
 
 import pandas as pd
 from ocean_data_parser.read.utils import test_parsed_dataset
+import pyrsktools
 
 
 def rtext(file_path, encoding="UTF-8", output=None):
@@ -79,3 +80,36 @@ def rtext(file_path, encoding="UTF-8", output=None):
                 df.insert(0, var, ds.attrs[var])
             return df
         return ds
+
+
+def rsk(path):
+    # Read rsk with pyrsktools
+    data = pyrsktools.open(path)
+
+    ds = pd.DataFrame(data.npsamples()).to_xarray()
+
+    # Add variable attributes
+    for name, chan in data.channels.items():
+        if name in ds:
+            ds[name].attrs = {
+                "rbr_short_name": chan.key,
+                "long_name": chan.name,
+                "units": chan.units,
+                "derived": chan.derived,
+            }
+    # Global attributes
+    ds.attrs = {
+        "instrument_model": data.instrument.model,
+        "instrument_sn": data.instrument.serial,
+        "instrument_firmware_version": data.instrument.firmware_version,
+        "instrument_firmware_type": data.instrument.firmware_version,
+        "deployment_id": data.deployment.id,
+        "comments": data.deployment.comment,
+        "logger_status": data.deployment.logger_status,
+        "logger_time_drift": data.deployment.logger_time_drift,
+        "logger_download_time": data.deployment.download_time,
+        "original_file_name": data.deployment.name,
+        "sample_size": data.deployment.sample_size,
+    }
+
+    return ds

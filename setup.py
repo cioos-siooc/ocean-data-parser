@@ -19,6 +19,7 @@ setup(
         "tqdm",
         "pytz",
         "NetCDF4",
+        "pyrsktools",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

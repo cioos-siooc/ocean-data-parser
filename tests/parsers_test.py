@@ -42,6 +42,11 @@ class RBRParserTests(unittest.TestCase):
         for path in paths:
             read.rbr.rtext(path)
 
+    def test_rsk_parser(self):
+        paths = glob("tests/parsers_test_files/rbr/*.rsk")
+        for path in paths:
+            read.rbr.rsk(path)
+
 
 class SunburstParserTests(unittest.TestCase):
     def test_sunburst_pCO2_parser(self):
