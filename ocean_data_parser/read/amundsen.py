@@ -17,11 +17,6 @@ reference_vocabulary_path = os.path.join(
 with open(reference_vocabulary_path, encoding="UTF-8") as vocabulary_file:
     amundsen_variable_attributes = json.load(vocabulary_file)
 
-    # Make it non case sensitive by lowering all keys
-    amundsen_variable_attributes = {
-        key.lower(): attrs for key, attrs in amundsen_variable_attributes.items()
-    }
-
 
 def _standardize_attribute_name(name: str) -> str:
     """
@@ -61,7 +56,7 @@ def _standardize_attribute_value(value: str, name: str = None):
         return value
 
 
-def int_format(path, encoding="Windows-1252", map_to_vocabulary=False):
+def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
     """Parse INT format developed and distributed by ArcticNet
     and the Amundsen groups over the years."""
     metadata = {"unknown": []}
@@ -130,16 +125,48 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=False):
 
         # Add Global attributes
         ds.attrs = metadata
+        variables_to_rename = {}
         for var in ds:
             ds[var].attrs = variables[var]
             if "long_name" in ds[var].attrs:
-                ds[var].attrs["long_name"] = ds[var].attrs["long_name"].title().strip()
+                ds[var].attrs["long_name"] = ds[var].attrs["long_name"].strip()
+
             # Include variable attributes from the vocabulary
-            if map_to_vocabulary:
-                if var.lower() in amundsen_variable_attributes:
-                    ds[var].attrs.update(amundsen_variable_attributes[var.lower()])
-                else:
-                    logger.warning("No vocabulary is available for variable '%s'", var)
+            if not map_to_vocabulary:
+                continue
+            elif var not in amundsen_variable_attributes:
+                logger.warning("No vocabulary is available for variable '%s'", var)
+
+            # Match vocabulary
+            var_units = ds[var].attrs.get("units")
+
+            # If no unit is specified assume the first one in the vocabulary
+            if var_units is None:
+                ds[var].attrs = amundsen_variable_attributes[var][0]
+                continue
+            matched = False
+            for item in amundsen_variable_attributes[var]:
+                accepted_units = item.get("accepted_units")
+                rename = item.get("rename")
+                if rename:
+                    variables_to_rename[var] = rename
+
+                if var_units == item.get("units") or (
+                    accepted_units and re.match(accepted_units, var_units)
+                ):
+                    ds[var].attrs = {
+                        key: value
+                        for key, value in item.items()
+                        if key not in ["accepted_units", "rename"]
+                    }
+                    matched = True
+                    continue
+            # If it made it to here no vocabulary exist
+            if matched == False:
+                logger.warning(
+                    "No Vocabulary available for %s: %s", var, str(ds[var].attrs)
+                )
 
         ds = standardize_dateset(ds)
+        ds = ds.rename(variables_to_rename)
         return ds
