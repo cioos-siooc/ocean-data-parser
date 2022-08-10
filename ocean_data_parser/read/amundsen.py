@@ -49,7 +49,7 @@ def _standardize_attribute_value(value: str, name: str = None):
     Returns:
         [str,float,int,pd.Timestamp]: cast attribute value according to the right format.
     """
-    if name in string_attributes:
+    if name in string_attributes or not isinstance(value, str):
         return value
     elif re.match(r"\d\d-\w\w\w-\d\d\d\d \d\d\:\d\d\:\d\d\.\d+", value):
         return pd.to_datetime(value, utc=(name and "utc" in name))
@@ -61,33 +61,50 @@ def _standardize_attribute_value(value: str, name: str = None):
         return value
 
 
-def int_format(path, encoding="Windows-1252"):
+def int_format(path, encoding="Windows-1252", map_to_vocabulary=False):
     """Parse INT format developed and distributed by ArcticNet
     and the Amundsen groups over the years."""
-    metadata = {}
+    metadata = {"unknown": []}
     line = "%"
-    with open(path, encoding=encoding) as f:
+    logger.warning("Read %s", path)
+    with open(path, encoding=encoding) as file:
         # Parse header
-        while line.startswith("%"):
-            line = f.readline()
+        for line in file:
             line = line.replace("\n", "")
-            if not line.startswith("%"):
+            if not re.match(r"\s*%", line) and line:
                 break
-            elif line in ("%\n"):
+            elif re.match(r"^%\s*$", line) or not line:
                 continue
+            elif ":" in line:
+                key, value = line.strip()[1:].split(":", 1)
+                metadata[key.strip()] = value.strip()
+            elif re.match(r"% .* \[.+\]", line):
+                logger.warning(
+                    "Line with missing variable mapping will be saved in unknown: %s",
+                    line,
+                )
+                metadata["unknown"] += line
 
-            key, value = line[1:].split(":", 1)
-            metadata[key.strip()] = value.strip()
+            else:
+                logger.warning("Unknown line format: %s", line)
 
-        # Parse data
-        column_names = [item for item in line.split(" ") if item]
-
-        # skip ----- line
-        delimiter_line = f.readline()
+        # Parse Columne Header by capital letters
+        column_name_line = line
+        delimiter_line = file.readline()
         if not re.match(r"[\s\-]", delimiter_line):
             logger.error("Delimiter line below the column names isn't the expected one")
 
-        df = pd.read_csv(f, sep=r"\s+", names=column_names)
+        # Parse column names based on delimiter line below
+        delimited_segments = re.findall(r"\s*\-+", delimiter_line)
+        start_segment = 0
+        column_names = []
+        for segment in delimited_segments:
+            column_names += [
+                column_name_line[start_segment : start_segment + len(segment)].strip()
+            ]
+            start_segment = start_segment + len(segment)
+        # Parse data
+        df = pd.read_csv(file, sep=r"\s+", names=column_names)
 
         # Sort column attributes
         variables = {
@@ -115,11 +132,14 @@ def int_format(path, encoding="Windows-1252"):
         ds.attrs = metadata
         for var in ds:
             ds[var].attrs = variables[var]
-            # Include variable attribues from the vocabulary
-            if var.lower() in amundsen_variable_attributes:
-                ds[var].attrs.update(amundsen_variable_attributes[var.lower()])
-            else:
-                logger.warning("No vocabulary is available for variable '%s'", var)
+            if "long_name" in ds[var].attrs:
+                ds[var].attrs["long_name"] = ds[var].attrs["long_name"].title().strip()
+            # Include variable attributes from the vocabulary
+            if map_to_vocabulary:
+                if var.lower() in amundsen_variable_attributes:
+                    ds[var].attrs.update(amundsen_variable_attributes[var.lower()])
+                else:
+                    logger.warning("No vocabulary is available for variable '%s'", var)
 
         ds = standardize_dateset(ds)
         return ds
