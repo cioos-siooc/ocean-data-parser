@@ -1,0 +1,48 @@
+Amundsen Bioness data processing
+Amundsen_2013001
+Year: 2013
+Leg: 1
+Processing date: 12-Mar-2015
+
+/////////// Limits and Thresholds Settings ///////////
+
+B1:     -10.00 db - Minimum pressure
+B1:    7000.00 db - Maximum pressure
+B1:      -3.00 ¡C - Minimum temperature
+B1:      30.00 ¡C - Maximum temperature
+B1:       2.00 mS/cm - Minimum conductivity
+B1:      75.00 mS/cm - Maximum conductivity
+B2:       0.00 ¡C/m - Temperature limit spike (4Hz)
+B2:       0.01 mS/cm - Conductivity limit spike (4Hz)
+B6:      81.00 % - Net input flow ratio
+
+
+/////////// Processing ///////////
+
+
+------ Inter-comparison------ 
+
+
+C1: Bias applied on Salinity
+     Constant bias correction:     0.000 psu 
+C1: Bias applied on Temperature
+     Constant bias correction:     0.000 ¡C 
+
+
+ ////// Cast List //////
+
+ Cast                                File_name             Date     Hour        Lat        Lon   Max_depth
+    1     ArcticNet2013_St633_(30_07_2013).DAT      31-Jul-2013 02:16:11   57.60733  -61.88900       163.4
+    2         ArNet2013_St176_(09_08_2013).DAT      09-Aug-2013 07:22:05   69.59650  -65.79633       176.1
+    3        ArNet2013_St.172_(10_08_2013).DAT      10-Aug-2013 05:33:34   71.18783  -71.07883       344.2
+    4        ArNet2013_St.170_(10_08_2013).DAT      10-Aug-2013 14:53:45   71.38050  -70.07383       226.5
+    5         ArNet2013_St323_(14_08_2013).DAT      14-Aug-2013 02:23:42   74.15433  -80.46500       757.7
+    6         ArNet2013_St101_(15_08_2013).DAT      15-Aug-2013 16:56:29   76.35000  -77.47467       361.9
+    7         ArNet2013_St108_(17_08_2013).DAT      17-Aug-2013 10:20:50   76.25533  -74.54467       429.0
+    8         ArNet2013_St115_(18_08_2013).DAT      18-Aug-2013 22:40:19   76.43083  -71.38867       499.1
+    9         Arnet2013_St132_(20_08_2013).DAT      20-Aug-2013 06:15:31   78.99167  -72.19350       210.6
+   10         Arnet2013_St250_(22_08_2013).DAT      22-Aug-2013 08:13:00   81.29117  -62.25833       350.9
+   11        ArNet2013_St253a_(25_08_2013).DAT      25-Aug-2013 05:44:25   79.29117  -71.30817       173.1
+   12         Arnet2013_St126_(27_08_2013).DAT      27-Aug-2013 08:59:43   77.34050  -73.42683       320.4
+   13         ArNet2013_St117_(29_08_2013).DAT      29-Aug-2013 00:22:48   77.31517  -77.01867       465.5
+   14         ArNet2013_St304_(31_08_2013).DAT      31-Aug-2013 09:34:08   74.25983  -91.46417       309.5

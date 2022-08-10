@@ -1,0 +1,31 @@
+% Cruise_Number: Amundsen_2013001
+% Section_Number: 2013001
+% Cast_Number: 11
+% Original_Filename: ArNet2013_St253a_(25_08_2013).DAT
+% Start_Date_Time [UTC]: 25-Aug-2013 05:44:25
+% Initial_Latitude [deg]: 79.2912
+% Initial_Longitude [deg]: -71.3082
+% Min_Depth [m]: 1.98
+% Max_Depth [m]: 173.08
+%
+% Net: Net number
+% Pres_open: Net open pressure [db]
+% Pres_close: Net close pressure [db]
+% Duration: Sample duration [s]
+% Volume: Sample volume [m^3]
+% Tem_mean: Mean Temperature (ITS-90) [degrees C]
+% Tem_std: Standard deviation Temperature (ITS-90) [degrees C]
+% Sal_mean: Mean Salinity (PSS-78) [psu]
+% Sal_std: Standard deviation Salinity (PSS-78) [psu]
+%
+   Net  Pres_open Pres_close   Duration     Volume   Tem_mean    Tem_std   Sal_mean    Sal_std
+  ----    -------    -------    -------    -------    -------    -------    -------    -------
+  1.00     174.66     163.05         41       0.00      -0.17       0.04      33.85       0.02
+  2.00     162.94     142.33         67       0.00      -0.38       0.07      33.75       0.04
+  3.00     142.26     121.97         69       0.00      -0.55       0.04      33.63       0.04
+  4.00     121.91     101.56         62       0.00      -0.69       0.06      33.48       0.06
+  5.00     101.47      81.03         58       0.00      -0.88       0.04      33.23       0.06
+  6.00      81.33      61.36         58       0.00      -1.08       0.09      32.88       0.19
+  7.00      61.57      40.76         65       0.00      -1.21       0.08      32.14       0.21
+  8.00      41.05      21.36         58     230.57      -0.75       0.32      31.39       0.22
+  9.00      21.25       1.52         67       0.00      -0.81       0.22      30.13       0.51

@@ -1,0 +1,31 @@
+% Cruise_Number: Amundsen_2010003
+% Section_Number: 2010003
+% Cast_Number: 2
+% Original_Filename: ArNet2010.st.602-24.10.2010.txt
+% Start_Date_Time [UTC]: 24-Oct-2010 18:26:10
+% Initial_Latitude [deg]: 59.0572
+% Initial_Longitude [deg]: -63.8339
+% Min_Depth [m]: 1.98
+% Max_Depth [m]: 136.66
+%
+% Net: Net number
+% Pres_open: Net open pressure [db]
+% Pres_close: Net close pressure [db]
+% Duration: Sample duration [s]
+% Volume: Sample volume [m^3]
+% Tem_mean: Mean Temperature (ITS-90) [degrees C]
+% Tem_std: Standard deviation Temperature (ITS-90) [degrees C]
+% Sal_mean: Mean Salinity (PSS-78) [psu]
+% Sal_std: Standard deviation Salinity (PSS-78) [psu]
+%
+   Net  Pres_open Pres_close   Duration     Volume   Tem_mean    Tem_std   Sal_mean    Sal_std
+  ----    -------    -------    -------    -------    -------    -------    -------    -------
+  1.00     137.50     101.00        116      14.76      -1.60       0.02      32.56       0.01
+  2.00     101.00      51.50         73      20.02      -1.25       0.27      32.40       0.11
+  3.00      51.50       1.80        106      20.10       1.22       1.10      31.65       0.51
+  4.00       2.00       1.80         10       0.08        NaN        NaN        NaN        NaN
+  5.00       2.10       2.00         11       0.04       2.31       0.00      30.10       0.00
+  6.00       2.20       2.00         11       0.08       2.31       0.00      30.10       0.00
+  7.00       2.20       2.10         11       0.04        NaN        NaN        NaN        NaN
+  8.00       2.30       2.10         11       0.08        NaN        NaN        NaN        NaN
+  9.00       2.40       2.20         18       0.08        NaN        NaN        NaN        NaN

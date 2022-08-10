@@ -1,0 +1,31 @@
+% Cruise_Number: Amundsen_2005002
+% Section_Number: 2005002
+% Cast_Number: 6
+% Original_Filename: 101305_StAN01-05.DAT
+% Start_Date_Time [UTC]: 14-Oct-2005 06:00:28
+% Initial_Latitude [deg]: 58.7781
+% Initial_Longitude [deg]: -94.1980
+% Min_Depth [m]: 1.98
+% Max_Depth [m]: 88.15
+%
+% Net: Net number
+% Pres_open: Net open pressure [db]
+% Pres_close: Net close pressure [db]
+% Duration: Sample duration [s]
+% Volume: Sample volume [m^3]
+% Tem_mean: Mean Temperature (ITS-90) [degrees C]
+% Tem_std: Standard deviation Temperature (ITS-90) [degrees C]
+% Sal_mean: Mean Salinity (PSS-78) [psu]
+% Sal_std: Standard deviation Salinity (PSS-78) [psu]
+%
+   Net  Pres_open Pres_close   Duration     Volume   Tem_mean    Tem_std   Sal_mean    Sal_std
+  ----    -------    -------    -------    -------    -------    -------    -------    -------
+  1.00      87.80      77.97         62    5686.11      -1.73       0.00      33.32       0.01
+  2.00      78.20      69.73         79    7076.99      -1.72       0.01      33.28       0.02
+  3.00      70.64      59.05        106    8379.97      -1.69       0.01      33.14       0.05
+  4.00      59.58      49.16         75    5457.00      -1.63       0.02      32.98       0.06
+  5.00      49.41      39.02         98    8035.83      -1.35       0.22      32.71       0.15
+  6.00      39.04      28.33         96    7046.56      -0.35       0.28      32.06       0.19
+  7.00      28.83      18.13         83    5553.49       1.84       1.00      30.74       0.61
+  8.00      18.19       9.60         67    6343.45       4.20       0.18      28.73       0.31
+  9.00       9.78       1.50        118    9761.35       4.29       0.01      28.54       0.02

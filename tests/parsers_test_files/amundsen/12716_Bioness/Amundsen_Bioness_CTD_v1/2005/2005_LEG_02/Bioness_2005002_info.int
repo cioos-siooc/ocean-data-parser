@@ -1,0 +1,41 @@
+Amundsen Bioness data processing
+Amundsen_2005002
+Year: 2005
+Leg: 2
+Processing date: 28-Apr-2015
+
+/////////// Limits and Thresholds Settings ///////////
+
+B1:     -10.00 db - Minimum pressure
+B1:    7000.00 db - Maximum pressure
+B1:      -3.00 ¡C - Minimum temperature
+B1:      30.00 ¡C - Maximum temperature
+B1:       2.00 mS/cm - Minimum conductivity
+B1:      75.00 mS/cm - Maximum conductivity
+B2:       0.00 ¡C/m - Temperature limit spike (4Hz)
+B2:       0.01 mS/cm - Conductivity limit spike (4Hz)
+B6:      81.00 % - Net input flow ratio
+
+
+/////////// Processing ///////////
+
+
+------ Inter-comparison------ 
+
+
+C1: Bias applied on Salinity
+     Constant bias correction:     0.000 psu 
+C1: Bias applied on Temperature
+     Constant bias correction:     0.000 ¡C 
+
+
+ ////// Cast List //////
+
+ Cast                                File_name             Date     Hour        Lat        Lon   Max_depth
+    1                          092805_st18.DAT      28-Sep-2005 08:37:33   60.12734  -79.13144        97.1
+    2                    0930051_StAN03-05.DAT      01-Oct-2005 02:48:19   55.30388  -77.89002        47.6
+    3                         100205_St21E.DAT      02-Oct-2005 23:13:15   54.70986  -80.71614        78.3
+    4                          100605_st22.DAT      07-Oct-2005 21:43:22   55.53271  -84.94801        88.2
+    5                     121009_StAn02-05.DAT      13-Oct-2005 18:50:22   59.04120  -94.04144        67.4
+    6                     101305_StAN01-05.DAT      14-Oct-2005 06:00:28   58.77808  -94.19804        88.2
+    7                        101605_St27.2.DAT      17-Oct-2005 15:59:01   62.64540  -79.34904        90.1
