@@ -136,6 +136,7 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
                 continue
             elif var not in amundsen_variable_attributes:
                 logger.warning("No vocabulary is available for variable '%s'", var)
+                continue
 
             # Match vocabulary
             var_units = ds[var].attrs.get("units")

@@ -390,11 +390,40 @@
             "standard_name": "sea_water_sigma_theta"
         }
     ],
-    "svan": [],
-    "sigt": [],
-    "theta": [],
-    "FreezT-": [],
-    "FLUOV": [],
+    "svan": [
+        {
+            "long_name": "Specific Volume Anomaly",
+            "units": "m^3/kg"
+        }
+    ],
+    "sigt": [
+        {
+            "long_name": "Density TEOS-10 ((S, T, P) - 1000)",
+            "units": "kg/m^3",
+            "standard_name": "sea_water_sigma_t"
+        }
+    ],
+    "theta": [
+        {
+            "long_name": "Sigma-Theta (Rho(S, Theta, 0)-1000)",
+            "units": "kg/m^3",
+            "standard_name": "sea_water_sigma_theta"
+        }
+    ],
+    "FreezT-": [
+        {
+            "long_name": "Freezing Temperature",
+            "units": "deg C",
+            "standard_name": "freezing_temperature_of_sea_water"
+        }
+    ],
+    "FLUOV": [
+        {
+            "long_name": "Fluorescence Of CDOM (Colored Dissolved Organic Matter)",
+            "units": "mg/m^3",
+            "standard_name": "concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate"
+        }
+    ],
     "Heading": [
         {
             "long_name": "Vessel Heading",
