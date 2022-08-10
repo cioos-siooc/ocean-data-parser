@@ -14,3 +14,4 @@ dist/
 .vscode/launch.json
 
 .vscode/settings.json
+/**/local_tests/*
