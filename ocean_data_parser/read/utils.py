@@ -40,16 +40,11 @@ def standardize_dateset(ds):
             if value and pd.notnull(value)
         }
 
-    # TODO Specify encoding for some variables (ex time variables)
+    # Specify encoding for some variables (ex time variables)
     for var in ds:
         ds.encoding[var] = {}
         if "datetime" in ds[var].dtype.name:
             ds.encoding[var].update({"units": "seconds since 1970-01-01T00:00:00"})
             if "tz" in ds[var].dtype.name:
                 ds.encoding[var]["units"] += "Z"
-
-    # Drop Empty Attributes
-    ds.attrs = {attr: value for attr, value in ds.attrs.items() if value}
-    for var in ds:
-        ds[var].attrs = {attr: value for attr, value in ds[var].attrs.items() if value}
     return ds
