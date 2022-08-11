@@ -240,8 +240,9 @@
     "Sal-TSG": [
         {
             "long_name": "Salinity From Thermo-Salinometer",
-            "units": "PSU",
-            "standard_name": "sea_surface_salinity"
+            "units": "1e-3",
+            "standard_name": "sea_surface_salinity",
+            "accepted_units": "PSU|psu|1e-3"
         }
     ],
     "Vel": [
@@ -475,7 +476,9 @@
     "GPS": [
         {
             "long_name": "GPS Source",
-            "comments": "=1 for POS-MV and =0 for CNAV"
+            "units": null,
+            "comments": "=1 for POS-MV and =0 for CNAV",
+            "accepted_units": "=1 for POS-MV and =0 for CNAV"
         }
     ],
     "Depth": [
