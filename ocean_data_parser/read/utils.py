@@ -30,14 +30,19 @@ def standardize_dateset(ds):
             ds.attrs[att] = ds.attrs[att].isoformat()
     # Drop empty attributes
     ds.attrs = {
-        attr: value for attr, value in ds.attrs.items() if value and pd.notnull(value)
+        attr: value
+        for attr, value in ds.attrs.items()
+        if type(value) in (dict, list) or (value and pd.notnull(value))
     }
     # Drop empty variable attributes
     for var in ds:
         ds[var].attrs = {
             attr: value
             for attr, value in ds[var].attrs.items()
-            if value and pd.notnull(value)
+            if type(value) in (dict, list)
+            or value
+            and pd.notnull(value)
+            and not isinstance(value, list)
         }
 
     # TODO Specify encoding for some variables (ex time variables)
