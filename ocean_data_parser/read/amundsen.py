@@ -1,3 +1,5 @@
+"""Module use to handle int file format generated historically ArcticNet and the Amundsen inc."""
+
 import re
 import logging
 import os
@@ -65,7 +67,7 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
     with open(path, encoding=encoding) as file:
         # Parse header
         for line in file:
-            line = line.replace("\n", "")
+            line = line.replace(r"\n", "")
             if not re.match(r"\s*%", line) and line:
                 break
             elif re.match(r"^%\s*$", line) or not line:
@@ -163,7 +165,7 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
                     matched = True
                     continue
             # If it made it to here no vocabulary exist
-            if matched == False:
+            if matched is False:
                 logger.warning(
                     "No Vocabulary available for %s: %s", var, str(ds[var].attrs)
                 )

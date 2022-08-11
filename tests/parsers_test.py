@@ -59,6 +59,7 @@ class SunburstParserTests(unittest.TestCase):
 
 class AmundsenParserTests(unittest.TestCase):
     def test_amundsen_int_parser(self):
+        """Test conversion of int files to xarray."""
         paths = glob("tests/parsers_test_files/amundsen/**/*.int", recursive=True)
         for path in paths:
             if path.endswith("info.int"):
@@ -66,6 +67,7 @@ class AmundsenParserTests(unittest.TestCase):
             read.amundsen.int_format(path)
 
     def test_amundsen_int_parser_to_netcdf(self):
+        """Test conversion of int files to xarray and netcdf files."""
         paths = glob("tests/parsers_test_files/amundsen/**/*.int", recursive=True)
         for path in paths:
             if path.endswith("info.int"):
@@ -74,6 +76,7 @@ class AmundsenParserTests(unittest.TestCase):
             ds.to_netcdf(f"{path}_test.nc")
 
     def test_amundsen_trajectory_int_parser_to_netcdf(self):
+        """Test conversion of trajectory int files to xarray and netcdf files."""
         paths = glob(
             "tests/parsers_test_files/amundsen/*trajectory/**/*.int", recursive=True
         )
