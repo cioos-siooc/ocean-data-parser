@@ -49,7 +49,7 @@ def standardize_dateset(ds):
     for var in ds:
         ds.encoding[var] = {}
         if "datetime" in ds[var].dtype.name:
-            ds.encoding[var].update({"units": "seconds since 1970-01-01T00:00:00"})
+            ds[var].encoding.update({"units": "seconds since 1970-01-01  00:00:00"})
             if "tz" in ds[var].dtype.name:
-                ds.encoding[var]["units"] += "Z"
+                ds[var].encoding["units"] += "Z"
     return ds
