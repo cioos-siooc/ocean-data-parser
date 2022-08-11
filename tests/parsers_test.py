@@ -72,3 +72,13 @@ class AmundsenParserTests(unittest.TestCase):
                 continue
             ds = read.amundsen.int_format(path)
             ds.to_netcdf(f"{path}_test.nc")
+
+    def test_amundsen_trajectory_int_parser_to_netcdf(self):
+        paths = glob(
+            "tests/parsers_test_files/amundsen/*trajectory/**/*.int", recursive=True
+        )
+        for path in paths:
+            if path.endswith("info.int"):
+                continue
+            ds = read.amundsen.int_format(path)
+            ds.to_netcdf(f"{path}_test.nc")

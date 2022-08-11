@@ -168,6 +168,13 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
                     "No Vocabulary available for %s: %s", var, str(ds[var].attrs)
                 )
 
+        # Derive time from Date and Hour variables
+        if "Date" in ds and "Hour" in ds:
+            ds["time"] = (
+                ds["Date"].dims,
+                pd.to_datetime(ds["Date"] + "T" + ds["Hour"]),
+            )
+
         ds = standardize_dateset(ds)
         ds = ds.rename(variables_to_rename)
         return ds
