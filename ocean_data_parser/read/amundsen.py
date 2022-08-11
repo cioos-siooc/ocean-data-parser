@@ -172,7 +172,7 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
         if "Date" in ds and "Hour" in ds:
             ds["time"] = (
                 ds["Date"].dims,
-                pd.to_datetime(ds["Date"] + "T" + ds["Hour"]),
+                pd.to_datetime(ds["Date"] + "T" + ds["Hour"]).to_pydatetime(),
             )
 
         ds = standardize_dateset(ds)
