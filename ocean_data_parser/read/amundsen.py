@@ -64,7 +64,7 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
     metadata = {"unknown": []}
     line = "%"
 
-    if path.endswith("info.txt"):
+    if path.endswith("_info.int"):
         logger.warning("Ignore info.int files: %s", path)
         return
 
