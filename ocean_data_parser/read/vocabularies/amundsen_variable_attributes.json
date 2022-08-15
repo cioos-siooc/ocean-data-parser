@@ -335,6 +335,14 @@
             "long_name": "Fluorescence Of CDOM (Colored Dissolved Organic Matter)",
             "units": "mg/m^3",
             "standard_name": "concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate"
+        },
+    ],
+    "CDOM": [
+        {
+            "long_name": "Fluorescence Of CDOM (Colored Dissolved Organic Matter)",
+            "units": "mg/m^3",
+            "standard_name": "concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate",
+            "rename": "CDOM"
         }
     ],
     "NO3": [
@@ -348,7 +356,7 @@
         {
             "long_name": "Photosynthetic Active Radiation",
             "units": "uEinsteins/s/m^2",
-            "accepted_units": "\u00b5einsteins/s/m^2",
+            "accepted_units": "\u00b5einsteins/s/m^2|µeinsteins/s/m^2",
             "standard_name": "downwelling_photosynthetic_photon_flux_in_sea_water"
         }
     ],
@@ -356,7 +364,7 @@
         {
             "long_name": "Surface Photosynthetic Active Radiation",
             "units": "uEinsteins/s/m^2",
-            "accepted_units": "\u00b5einsteins/s/m^2",
+            "accepted_units": "\u00b5einsteins/s/m^2|µeinsteins/s/m^2",
             "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_sea_water"
         }
     ],
