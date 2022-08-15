@@ -3,6 +3,10 @@ from glob import glob
 import xarray as xr
 from ocean_data_parser import read
 
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger()
 
 class PMEParserTests(unittest.TestCase):
     def test_txt_parser(self):
