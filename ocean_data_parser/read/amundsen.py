@@ -85,6 +85,10 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
             else:
                 logger.warning("Unknown line format: %s", line)
 
+        # Review metadata
+        if metadata == {"unknown": []}:
+            logger.warning("No metadata was captured in the header of the INT file.")
+
         # Parse Columne Header by capital letters
         column_name_line = line
         delimiter_line = file.readline()
@@ -175,6 +179,16 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
             ds["time"] = (
                 ds["Date"].dims,
                 pd.to_datetime(ds["Date"] + "T" + ds["Hour"]).to_pydatetime(),
+            )
+
+        # Review rename variables
+        already_existing_variables = {
+            var: rename for var, rename in variables_to_rename.items() if rename in ds
+        }
+        if already_existing_variables:
+            logger.error(
+                "Can't rename variable %s since it already exist",
+                already_existing_variables,
             )
 
         ds = standardize_dateset(ds)
