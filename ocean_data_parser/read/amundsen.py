@@ -67,11 +67,11 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
     with open(path, encoding=encoding) as file:
         # Parse header
         for line in file:
-            line = line.replace(r"\n", "")
-            if not re.match(r"\s*%", line) and line:
-                break
-            elif re.match(r"^%\s*$", line) or not line:
+            line = line.replace("\n", "")
+            if re.match(r"^%\s*$", line) or not line:
                 continue
+            elif not re.match(r"\s*%", line) and line:
+                break
             elif ":" in line:
                 key, value = line.strip()[1:].split(":", 1)
                 metadata[key.strip()] = value.strip()
@@ -88,7 +88,7 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
         # Parse Columne Header by capital letters
         column_name_line = line
         delimiter_line = file.readline()
-        if not re.match(r"[\s\-]", delimiter_line):
+        if not re.match(r"^[\s\-]+$", delimiter_line):
             logger.error("Delimiter line below the column names isn't the expected one")
 
         # Parse column names based on delimiter line below
