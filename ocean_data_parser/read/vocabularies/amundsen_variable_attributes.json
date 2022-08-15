@@ -181,7 +181,7 @@
             "long_name": "Fluorescence",
             "units": "ug/L",
             "standard_name": "mass_concentration_of_chlorophyll_in_sea_water",
-            "accepted_units": "ug/L|mg/m^3"
+            "accepted_units": "ug\/L|mg\/m\\^3"
         }
     ],
     "O2": [
@@ -215,7 +215,7 @@
     ],
     "D_CT": [
         {
-            "long_name": "In Situ Density Teos10 ((S, T, P) - 1000)",
+            "long_name": "In Situ Density TEOS-10 ((S, T, P) - 1000)",
             "units": "kg/m^3",
             "standard_name": "sea_water_sigma_t",
             "rename": "sigma_t"
@@ -223,7 +223,7 @@
     ],
     "D0CT": [
         {
-            "long_name": "Potential Density Teos10 ((S, T, 0) - 1000)",
+            "long_name": "Potential Density TEOS-10 ((S, T, 0) - 1000)",
             "units": "kg/m^3",
             "standard_name": "sea_water_sigma_theta",
             "rename": "sigma_theta"
@@ -286,13 +286,6 @@
             "standard_name": "sea_water_sigma_t"
         }
     ],
-    "Svan": [
-        {
-            "long_name": "Specific Volume Anomaly",
-            "units": "m^3/kg",
-            "rename": "svan"
-        }
-    ],
     "N2": [
         {
             "long_name": "Brunt-Vaisala Frequency",
@@ -308,11 +301,27 @@
             "rename": "sigma_t"
         }
     ],
+    "sigt": [
+        {
+            "long_name": "Density TEOS-10 ((S, T, P) - 1000)",
+            "units": "kg/m^3",
+            "standard_name": "sea_water_sigma_t",
+            "rename": "sigma_t"
+        }
+    ],
     "Theta": [
         {
             "long_name": "Potential Temperature",
             "units": "deg C",
             "standard_name": "sea_water_potential_temperature"
+        }
+    ],
+    "theta": [
+        {
+            "long_name": "Sigma-Theta (Rho(S, Theta, 0)-1000)",
+            "units": "kg/m^3",
+            "standard_name": "sea_water_sigma_theta",
+            "rename": "sigma_theta"
         }
     ],
     "sigthe": [
@@ -323,11 +332,26 @@
             "rename": "sigma_theta"
         }
     ],
-    "FreezT": [
+    "Sigthe": [
         {
-            "long_name": "Freezing Temperature",
-            "units": "deg C",
-            "standard_name": "freezing_temperature_of_sea_water"
+            "long_name": "Sigma-Theta (Rho(S, Theta, 0)-1000)",
+            "units": "kg/m^3",
+            "standard_name": "sea_water_sigma_theta",
+            "rename": "sigma_theta"
+        }
+    ],
+    "D_ct": [
+        {
+            "long_name": "Density TEOS-10 ((S, T, P) - 1000)",
+            "units": "kg/m^3",
+            "standard_name": "sea_water_sigma_t"
+        }
+    ],
+    "D0ct": [
+        {
+            "long_name": "Density TEOS-10 (S, T, 0)",
+            "units": "kg/m^3",
+            "standard_name": "sea_water_sigma_theta"
         }
     ],
     "CDOM": [
@@ -337,7 +361,7 @@
             "standard_name": "concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate"
         }
     ],
-    "CDOM": [
+    "Cdom": [
         {
             "long_name": "Fluorescence Of CDOM (Colored Dissolved Organic Matter)",
             "units": "mg/m^3",
@@ -352,11 +376,19 @@
             "standard_name": "mole_concentration_of_nitrate_in_sea_water"
         }
     ],
+    "FLUOV": [
+        {
+            "long_name": "Fluorescence Of CDOM (Colored Dissolved Organic Matter)",
+            "units": "mg/m^3",
+            "standard_name": "concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate",
+            "rename": "CDOM"
+        }
+    ],
     "Par": [
         {
             "long_name": "Photosynthetic Active Radiation",
             "units": "uEinsteins/s/m^2",
-            "accepted_units": "\u00b5einsteins/s/m^2|µeinsteins/s/m^2",
+            "accepted_units": "\u00b5einsteins/s/m\\^2|µeinsteins/s/m\\^2",
             "standard_name": "downwelling_photosynthetic_photon_flux_in_sea_water"
         }
     ],
@@ -364,7 +396,7 @@
         {
             "long_name": "Surface Photosynthetic Active Radiation",
             "units": "uEinsteins/s/m^2",
-            "accepted_units": "\u00b5einsteins/s/m^2|µeinsteins/s/m^2",
+            "accepted_units": "\u00b5einsteins/s/m\\^2|µeinsteins/s/m\\^2",
             "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_sea_water"
         }
     ],
@@ -384,50 +416,24 @@
             "rename": "conservative_temperature"
         }
     ],
-    "D_ct": [
-        {
-            "long_name": "Density TEOS-10 ((S, T, P) - 1000)",
-            "units": "kg/m^3",
-            "standard_name": "sea_water_sigma_t",
-            "rename": "sigma_t"
-        }
-    ],
-    "D0ct": [
-        {
-            "long_name": "Density TEOS-10 (S, T, 0)",
-            "units": "kg/m^3",
-            "standard_name": "sea_water_sigma_theta",
-            "rename": "sigma_theta"
-        }
-    ],
-    "Sigthe": [
-        {
-            "long_name": "Sigma-Theta (Rho(S, Theta, 0)-1000)",
-            "units": "kg/m^3",
-            "standard_name": "sea_water_sigma_theta",
-            "rename": "sigma_theta"
-        }
-    ],
     "svan": [
         {
             "long_name": "Specific Volume Anomaly",
             "units": "m^3/kg"
         }
     ],
-    "sigt": [
+    "Svan": [
         {
-            "long_name": "Density TEOS-10 ((S, T, P) - 1000)",
-            "units": "kg/m^3",
-            "standard_name": "sea_water_sigma_t",
-            "rename": "sigma_t"
+            "long_name": "Specific Volume Anomaly",
+            "units": "m^3/kg",
+            "rename": "svan"
         }
     ],
-    "theta": [
+    "FreezT": [
         {
-            "long_name": "Sigma-Theta (Rho(S, Theta, 0)-1000)",
-            "units": "kg/m^3",
-            "standard_name": "sea_water_sigma_theta",
-            "rename": "sigma_theta"
+            "long_name": "Freezing Temperature",
+            "units": "deg C",
+            "standard_name": "freezing_temperature_of_sea_water"
         }
     ],
     "FreezT-": [
@@ -436,14 +442,6 @@
             "units": "deg C",
             "standard_name": "freezing_temperature_of_sea_water",
             "rename": "FreezT"
-        }
-    ],
-    "FLUOV": [
-        {
-            "long_name": "Fluorescence Of CDOM (Colored Dissolved Organic Matter)",
-            "units": "mg/m^3",
-            "standard_name": "concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate",
-            "rename": "CDOM"
         }
     ],
     "Heading": [
@@ -499,6 +497,12 @@
         {
             "long_name": "pH",
             "standard_name": "sea_water_ph_reported_on_total_scale"
+        }
+    ],
+    "PresPar": [
+        {
+            "long_name": "Pressure Par",
+            "units": "dbar"
         }
     ]
 }
