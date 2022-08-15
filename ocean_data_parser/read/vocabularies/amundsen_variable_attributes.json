@@ -335,7 +335,7 @@
             "long_name": "Fluorescence Of CDOM (Colored Dissolved Organic Matter)",
             "units": "mg/m^3",
             "standard_name": "concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate"
-        },
+        }
     ],
     "CDOM": [
         {

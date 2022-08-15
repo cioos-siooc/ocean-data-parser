@@ -45,7 +45,11 @@ def fgdc_to_acdd(url=None, xml=None):
         "time_coverage_start": pd.to_datetime(
             info["metadata"]["idinfo"]["timeperd"]["timeinfo"]["rngdates"]["begdate"]
         ).isoformat(),
-        "time_coverage_end": None if info["metadata"]["idinfo"]["timeperd"]["timeinfo"]["rngdates"]["enddate"].startswith('9999') else pd.to_datetime(
+        "time_coverage_end": None
+        if info["metadata"]["idinfo"]["timeperd"]["timeinfo"]["rngdates"][
+            "enddate"
+        ].startswith("9999")
+        else pd.to_datetime(
             info["metadata"]["idinfo"]["timeperd"]["timeinfo"]["rngdates"]["enddate"]
         ).isoformat(),
         "keywords": ", ".join(
