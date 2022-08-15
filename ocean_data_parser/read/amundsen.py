@@ -63,7 +63,12 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
     and the Amundsen groups over the years."""
     metadata = {"unknown": []}
     line = "%"
-    logger.warning("Read %s", path)
+
+    if path.endswith("info.txt"):
+        logger.warning("Ignore info.int files: %s", path)
+        return
+
+    logger.debug("Read %s", path)
     with open(path, encoding=encoding) as file:
         # Parse header
         for line in file:
