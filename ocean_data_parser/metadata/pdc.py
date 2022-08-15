@@ -1,8 +1,6 @@
 import pandas as pd
 import xmltodict
 import requests
-import json
-
 
 # def fgdc_to_acdd(xml)
 def fgdc_to_acdd(url=None, xml=None):
