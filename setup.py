@@ -19,6 +19,7 @@ setup(
         "tqdm",
         "pytz",
         "NetCDF4",
+        "pynmea2",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

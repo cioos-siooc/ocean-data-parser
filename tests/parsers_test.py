@@ -60,6 +60,13 @@ class SunburstParserTests(unittest.TestCase):
         for path in paths:
             read.sunburst.superCO2_notes(path)
 
+class NMEAParserTest(unittest.TestCase):
+    def test_all_files_in_nmea(self):
+        paths = glob("tests/parsers_test_files/nmea/*.*")
+        for path in paths:
+            read.nmea.file(path)
+
+
 
 class AmundsenParserTests(unittest.TestCase):
     def test_amundsen_int_parser(self):
