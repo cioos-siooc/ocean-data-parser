@@ -11,7 +11,7 @@ def fgdc_to_acdd(url=None, xml=None):
             xml = f.text
     # Convert xml to python dictionary
     info = xmltodict.parse(xml)
-    return {
+    metadata = {
         "title": info["metadata"]["idinfo"]["citation"]["citeinfo"]["title"],
         "summary": info["metadata"]["idinfo"]["descript"]["abstract"],
         "comment": info["metadata"]["idinfo"]["descript"]["supplinf"],
@@ -58,3 +58,4 @@ def fgdc_to_acdd(url=None, xml=None):
         "metadata_link": info["metadata"]["idinfo"]["citation"]["citeinfo"]["onlink"],
         "reference": info["metadata"]["idinfo"]["citation"]["citeinfo"]["onlink"],
     }
+    return {key: value for key, value in metadata.items() if value}
