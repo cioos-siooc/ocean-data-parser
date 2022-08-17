@@ -170,6 +170,13 @@
             "standard_name": "speed_of_sound_in_sea_water"
         }
     ],
+    "Vel": [
+        {
+            "long_name": "Sound Velocity From Velocity Sensor",
+            "units": "m/s",
+            "standard_name": "speed_of_sound_in_sea_water"
+        }
+    ],
     "Trans": [
         {
             "long_name": "Light Transmission",
@@ -202,7 +209,14 @@
             "long_name": "Absolute Salinity (TEOS-10)",
             "units": "g/kg",
             "standard_name": "sea_water_absolute_salinity",
-            "rename": "absolute_salinity"
+        }
+    ],
+    "Asal": [
+        {
+            "long_name": "Absolute Salinity TEOS-10",
+            "units": "g/kg",
+            "standard_name": "sea_water_absolute_salinity",
+            "rename": "ASAL"
         }
     ],
     "CONT": [
@@ -213,20 +227,26 @@
             "rename": "conservative_temperature"
         }
     ],
+    "Cont": [
+        {
+            "long_name": "Conservative Temperature TEOS-10",
+            "units": "deg C",
+            "standard_name": "sea_water_conservative_temperature",
+            "rename": "CONT"
+        }
+    ],
     "D_CT": [
         {
             "long_name": "In Situ Density TEOS-10 ((S, T, P) - 1000)",
             "units": "kg/m^3",
-            "standard_name": "sea_water_sigma_t",
-            "rename": "sigma_t"
+            "standard_name": "sea_water_sigma_t"
         }
     ],
     "D0CT": [
         {
             "long_name": "Potential Density TEOS-10 ((S, T, 0) - 1000)",
             "units": "kg/m^3",
-            "standard_name": "sea_water_sigma_theta",
-            "rename": "sigma_theta"
+            "standard_name": "sea_water_sigma_theta"
         }
     ],
     "Tem-TSG": [
@@ -243,14 +263,6 @@
             "units": "1e-3",
             "standard_name": "sea_surface_salinity",
             "accepted_units": "PSU|psu|1e-3"
-        }
-    ],
-    "Vel": [
-        {
-            "long_name": "Sound Velocity From Velocity Sensor",
-            "units": "m/s",
-            "standard_name": "speed_of_sound_in_sea_water",
-            "rename": "SV"
         }
     ],
     "Speed": [
@@ -298,30 +310,36 @@
             "long_name": "Sigma-T (Rho(S, T, 0)-1000)",
             "units": "kg/m^3",
             "standard_name": "sea_water_sigma_t",
-            "rename": "sigma_t"
+            "rename": "sigt"
         }
     ],
     "sigt": [
         {
             "long_name": "Density TEOS-10 ((S, T, P) - 1000)",
             "units": "kg/m^3",
-            "standard_name": "sea_water_sigma_t",
-            "rename": "sigma_t"
+            "standard_name": "sea_water_sigma_t"
+        }
+    ],
+    "D_ct": [
+        {
+            "long_name": "Density TEOS-10 ((S, T, P) - 1000)",
+            "units": "kg/m^3",
+            "standard_name": "sea_water_sigma_t"
         }
     ],
     "Theta": [
         {
             "long_name": "Potential Temperature",
             "units": "deg C",
-            "standard_name": "sea_water_potential_temperature"
+            "standard_name": "sea_water_potential_temperature",
+            "rename": "sea_water_potential_temperature"
         }
     ],
     "theta": [
         {
-            "long_name": "Sigma-Theta (Rho(S, Theta, 0)-1000)",
-            "units": "kg/m^3",
-            "standard_name": "sea_water_sigma_theta",
-            "rename": "sigma_theta"
+            "long_name": "Potential Temperature",
+            "units": "deg C",
+            "standard_name": "sea_water_potential_temperature"
         }
     ],
     "sigthe": [
@@ -338,13 +356,6 @@
             "units": "kg/m^3",
             "standard_name": "sea_water_sigma_theta",
             "rename": "sigma_theta"
-        }
-    ],
-    "D_ct": [
-        {
-            "long_name": "Density TEOS-10 ((S, T, P) - 1000)",
-            "units": "kg/m^3",
-            "standard_name": "sea_water_sigma_t"
         }
     ],
     "D0ct": [
@@ -369,19 +380,17 @@
             "rename": "CDOM"
         }
     ],
+    "CDOMV": [
+        {}
+    ],
+    "FLUOV": [
+        {}
+    ],
     "NO3": [
         {
             "long_name": "Nitrate (NO3-N) Content",
             "units": "mmol/m^3",
             "standard_name": "mole_concentration_of_nitrate_in_sea_water"
-        }
-    ],
-    "FLUOV": [
-        {
-            "long_name": "Fluorescence Of CDOM (Colored Dissolved Organic Matter)",
-            "units": "mg/m^3",
-            "standard_name": "concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate",
-            "rename": "CDOM"
         }
     ],
     "Par": [
@@ -398,22 +407,6 @@
             "units": "uEinsteins/s/m^2",
             "accepted_units": "\u00b5einsteins/s/m\\^2|µeinsteins/s/m\\^2",
             "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_sea_water"
-        }
-    ],
-    "Asal": [
-        {
-            "long_name": "Absolute Salinity TEOS-10",
-            "units": "g/kg",
-            "standard_name": "sea_water_absolute_salinity",
-            "rename": "absolute_salinity"
-        }
-    ],
-    "Cont": [
-        {
-            "long_name": "Conservative Temperature TEOS-10",
-            "units": "deg C",
-            "standard_name": "sea_water_conservative_temperature",
-            "rename": "conservative_temperature"
         }
     ],
     "svan": [
