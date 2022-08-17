@@ -4,10 +4,11 @@ import logging
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
-class PDC_Metadata_Tests(unittest.TestCase):
+class PDCMetadataTests(unittest.TestCase):
     def test_fgdc_to_acdd_on_profiles(self):
         ccins = [12477, 12715, 12518]
         for ccin in ccins:
+            logger.debug("ccin=%s",ccin)
             fgdc_metadata_url = (
                 f"https://www.polardata.ca/pdcsearch/xml/fgdc/{ccin}_fgdc.xml"
             )
