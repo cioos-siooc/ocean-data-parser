@@ -208,7 +208,7 @@
         {
             "long_name": "Absolute Salinity (TEOS-10)",
             "units": "g/kg",
-            "standard_name": "sea_water_absolute_salinity",
+            "standard_name": "sea_water_absolute_salinity"
         }
     ],
     "Asal": [
