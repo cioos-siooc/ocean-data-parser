@@ -1,6 +1,11 @@
+import logging
+import re
+
 import pandas as pd
-import xmltodict
 import requests
+import xmltodict
+
+logger = logging.getLogger(__name__)
 
 # def fgdc_to_acdd(xml)
 def fgdc_to_acdd(url=None, xml=None):
@@ -28,6 +33,9 @@ def fgdc_to_acdd(url=None, xml=None):
         "publisher_email": info["metadata"]["distinfo"]["distrib"]["cntinfo"][
             "cntemail"
         ],
+        "doi": re.search(r"(http:\/\/doi\.org\/[^\s]+)", xml)[1]
+        if "http://doi.org" in xml
+        else None,
         "geospatial_lat_min": float(
             info["metadata"]["idinfo"]["spdom"]["bounding"]["southbc"]
         ),
