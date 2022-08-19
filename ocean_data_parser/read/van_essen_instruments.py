@@ -150,7 +150,7 @@ def mon(
             ds["PRESSURE"].attrs["units"] = "mH2O"
 
         if convert_pressure_to_dbar:
-            ds["PRESSURE"] = ds["PRESSURE"] / 0.980665
+            ds["PRESSURE"] = ds["PRESSURE"] * 0.980665
             ds["PRESSURE"].attrs["units"] = "dbar"
 
     # Add Conductivity if missing
