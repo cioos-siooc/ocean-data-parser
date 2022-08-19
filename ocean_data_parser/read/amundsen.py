@@ -181,10 +181,22 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
 
         # Derive time from Date and Hour variables
         if "Date" in ds and "Hour" in ds:
+            timestamps = ds["Date"] + "T" + ds["Hour"]
+            is60seconds = timestamps.to_series().str.contains(":60$").to_xarray()
+            any60seconds = is60seconds.any()
+            if any60seconds:
+                timestamps[is60seconds] = (
+                    timestamps[is60seconds]
+                    .to_series()
+                    .str.replace(":60$", ":00")
+                    .to_xarray()
+                )
             ds["time"] = (
                 ds["Date"].dims,
-                pd.to_datetime(ds["Date"] + "T" + ds["Hour"]).to_pydatetime(),
+                pd.to_datetime(timestamps).to_pydatetime(),
             )
+            if any60seconds:
+                ds["time"].loc[is60seconds] += pd.Timedelta(seconds=60)
 
         # Review rename variables
         already_existing_variables = {
