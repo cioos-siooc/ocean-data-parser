@@ -151,30 +151,23 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
 
             # Match vocabulary
             var_units = ds[var].attrs.get("units")
-
-            # If no unit is specified assume the first one in the vocabulary
-            if var_units is None:
-                ds[var].attrs = amundsen_variable_attributes[var][0]
-                continue
-            matched = False
             for item in amundsen_variable_attributes[var]:
                 accepted_units = item.get("accepted_units")
-                rename = item.get("rename")
-                if rename:
-                    variables_to_rename[var] = rename
-
-                if var_units == item.get("units") or (
-                    accepted_units and re.match(accepted_units, var_units)
+                if (
+                    var_units is None  # Consider first if no units
+                    or var_units == item.get("units")
+                    or (accepted_units and re.match(accepted_units, var_units))
                 ):
+                    if "rename" in item:
+                        variables_to_rename[var] = item["rename"]
+
                     ds[var].attrs = {
                         key: value
                         for key, value in item.items()
                         if key not in ["accepted_units", "rename"]
                     }
-                    matched = True
-                    continue
-            # If it made it to here no vocabulary exist
-            if matched is False:
+                    break
+            else:
                 logger.warning(
                     "No Vocabulary available for %s: %s", var, str(ds[var].attrs)
                 )
