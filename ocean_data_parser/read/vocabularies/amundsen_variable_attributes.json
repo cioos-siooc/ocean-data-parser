@@ -224,7 +224,6 @@
             "long_name": "Conservative Temperature (TEOS-10)",
             "units": "deg C",
             "standard_name": "sea_water_conservative_temperature",
-            "rename": "conservative_temperature"
         }
     ],
     "Cont": [
@@ -332,7 +331,7 @@
             "long_name": "Potential Temperature",
             "units": "deg C",
             "standard_name": "sea_water_potential_temperature",
-            "rename": "sea_water_potential_temperature"
+            "rename": "theta"
         }
     ],
     "theta": [
@@ -346,8 +345,7 @@
         {
             "long_name": "Sigma-Theta (Rho(S, Theta, 0)-1000)",
             "units": "kg/m^3",
-            "standard_name": "sea_water_sigma_theta",
-            "rename": "sigma_theta"
+            "standard_name": "sea_water_sigma_theta"
         }
     ],
     "Sigthe": [
@@ -355,7 +353,7 @@
             "long_name": "Sigma-Theta (Rho(S, Theta, 0)-1000)",
             "units": "kg/m^3",
             "standard_name": "sea_water_sigma_theta",
-            "rename": "sigma_theta"
+            "rename": "sigthe"
         }
     ],
     "D0ct": [
