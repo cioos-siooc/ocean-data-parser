@@ -61,7 +61,7 @@ def _standardize_attribute_value(value: str, name: str = None):
 def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
     """Parse INT format developed and distributed by ArcticNet
     and the Amundsen groups over the years."""
-    metadata = {"unknown": []}
+    metadata = {"unknown_variables_information": ""}
     line = "%"
 
     if path.endswith("_info.int"):
@@ -82,16 +82,16 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
                 metadata[key.strip()] = value.strip()
             elif re.match(r"% .* \[.+\]", line):
                 logger.warning(
-                    "Line with missing variable mapping will be saved in unknown: %s",
+                    "Line with missing variable mapping will be saved in unknown_variables_information attribute: %s",
                     line,
                 )
-                metadata["unknown"] += line
+                metadata["unknown_variables_information"] += line + "\n"
 
             else:
                 logger.warning("Unknown line format: %s", line)
 
         # Review metadata
-        if metadata == {"unknown": []}:
+        if metadata == {"unknown_variables": []}:
             logger.warning("No metadata was captured in the header of the INT file.")
 
         # Parse Columne Header by capital letters

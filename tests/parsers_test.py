@@ -8,6 +8,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
 
+
 class PMEParserTests(unittest.TestCase):
     def test_txt_parser(self):
         paths = glob("tests/parsers_test_files/pme")
@@ -60,12 +61,12 @@ class SunburstParserTests(unittest.TestCase):
         for path in paths:
             read.sunburst.superCO2_notes(path)
 
+
 class NMEAParserTest(unittest.TestCase):
     def test_all_files_in_nmea(self):
         paths = glob("tests/parsers_test_files/nmea/*.*")
         for path in paths:
             read.nmea.file(path)
-
 
 
 class AmundsenParserTests(unittest.TestCase):
@@ -84,7 +85,7 @@ class AmundsenParserTests(unittest.TestCase):
             if path.endswith("info.int"):
                 continue
             ds = read.amundsen.int_format(path)
-            ds.to_netcdf(f"{path}_test.nc")
+            ds.to_netcdf(f"{path}_test.nc", format="NETCDF4_CLASSIC")
 
     def test_amundsen_trajectory_int_parser_to_netcdf(self):
         """Test conversion of trajectory int files to xarray and netcdf files."""
@@ -95,4 +96,4 @@ class AmundsenParserTests(unittest.TestCase):
             if path.endswith("info.int"):
                 continue
             ds = read.amundsen.int_format(path)
-            ds.to_netcdf(f"{path}_test.nc")
+            ds.to_netcdf(f"{path}_test.nc", format="NETCDF4_CLASSIC")
