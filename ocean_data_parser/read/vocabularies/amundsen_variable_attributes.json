@@ -54,7 +54,7 @@
             "long_name": "Mean Salinity (PSS-78)",
             "units": "1e-3",
             "accepted_units": "PSU|psu|1e-3",
-            "standard_name": "sea_water_salinity"
+            "standard_name": "sea_water_practical_salinity"
         }
     ],
     "Sal_std": [
@@ -62,7 +62,7 @@
             "long_name": "Standard Deviation Salinity (PSS-78)",
             "units": "1e-3",
             "accepted_units": "PSU|psu|1e-3",
-            "standard_name": "sea_water_salinity"
+            "standard_name": "sea_water_practical_salinity"
         }
     ],
     "Pres": [
@@ -85,7 +85,7 @@
             "long_name": "Practical Salinity (PSS-78)",
             "units": "1e-3",
             "accepted_units": "PSU|psu|1e-3",
-            "standard_name": "sea_water_salinity"
+            "standard_name": "sea_water_practical_salinity"
         }
     ],
     "Date": [
@@ -261,7 +261,7 @@
         {
             "long_name": "Salinity From Thermo-Salinometer",
             "units": "1e-3",
-            "standard_name": "sea_surface_salinity",
+            "standard_name": "sea_surface_practical_salinity",
             "accepted_units": "PSU|psu|1e-3"
         }
     ],
