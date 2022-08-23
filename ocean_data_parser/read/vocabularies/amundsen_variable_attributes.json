@@ -223,7 +223,7 @@
         {
             "long_name": "Conservative Temperature (TEOS-10)",
             "units": "deg C",
-            "standard_name": "sea_water_conservative_temperature",
+            "standard_name": "sea_water_conservative_temperature"
         }
     ],
     "Cont": [
