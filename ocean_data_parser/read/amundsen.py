@@ -1,4 +1,5 @@
 """Module use to handle int file format generated historically ArcticNet and the Amundsen inc."""
+__version__ = "0.1.0"
 
 import re
 import logging
@@ -6,15 +7,14 @@ import os
 import json
 
 import pandas as pd
-from .utils import standardize_dateset
+from .utils import standardize_dateset, get_history_handler
 
 logger = logging.getLogger(__name__)
-
 string_attributes = ["Cruise_Number", "Cruise_Name", "Station"]
-
 reference_vocabulary_path = os.path.join(
     os.path.dirname(__file__), "vocabularies", "amundsen_variable_attributes.json"
 )
+
 # Read vocabulary file
 with open(reference_vocabulary_path, encoding="UTF-8") as vocabulary_file:
     amundsen_variable_attributes = json.load(vocabulary_file)
@@ -61,7 +61,14 @@ def _standardize_attribute_value(value: str, name: str = None):
 def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
     """Parse INT format developed and distributed by ArcticNet
     and the Amundsen groups over the years."""
-    metadata = {"unknown_variables_information": ""}
+    nc_logger, nc_handler = get_history_handler()
+    logger.addHandler(nc_handler)
+
+    logger.info(
+        "Convert INT file format with python package ocean_data_parser.amundsen.int_format V%s",
+        __version__,
+    )
+    metadata = {"unknown_variables_information": "", "history": ""}
     line = "%"
 
     if path.endswith("_info.int"):
@@ -201,6 +208,12 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
                 already_existing_variables,
             )
 
+        if variables_to_rename:
+            logger.info("Rename variables: %s", variables_to_rename)
+            ds = ds.rename(variables_to_rename)
+
         ds = standardize_dateset(ds)
-        ds = ds.rename(variables_to_rename)
+
+        ds.attrs["history"] += nc_logger.getvalue()
+        nc_logger.trucncate(0)
         return ds

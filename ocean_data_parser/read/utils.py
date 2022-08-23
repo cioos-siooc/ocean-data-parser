@@ -1,6 +1,7 @@
 import json
 import logging
 from datetime import datetime
+from io import StringIO
 
 import pandas as pd
 
@@ -17,6 +18,20 @@ def test_parsed_dataset(ds):
     # time
     if "time" not in ds:
         logger.warning("Missing time variable")
+
+
+def get_history_handler():
+    """Generate a history handler to be use to generate a CF History attribute"""
+    nc_logger = StringIO()
+    nc_handler = logging.StreamHandler(nc_logger)
+    nc_handler.setFormatter(
+        logging.Formatter(
+            fmt="%(asctime)s %(levelname)s %(message)s",
+            datefmt="%Y-%m-%dT%H:%M:%S%z",
+        )
+    )
+    nc_handler.setLevel(logging.INFO)
+    return nc_logger, nc_handler
 
 
 def standardize_dateset(ds):
