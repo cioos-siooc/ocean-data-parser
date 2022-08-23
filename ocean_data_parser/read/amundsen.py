@@ -58,6 +58,16 @@ def _standardize_attribute_value(value: str, name: str = None):
         return value
 
 
+def date_parser(time_str):
+    if time_str.endswith(":60"):
+        time_str = time_str.replace(":60", ":00")
+        add_time = pd.Timedelta(seconds=60)
+    else:
+        add_time = pd.Timedelta(seconds=0)
+
+    return (pd.to_datetime(time_str) + add_time).to_pydatetime()
+
+
 def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
     """Parse INT format developed and distributed by ArcticNet
     and the Amundsen groups over the years."""
@@ -116,8 +126,22 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
                 column_name_line[start_segment : start_segment + len(segment)].strip()
             ]
             start_segment = start_segment + len(segment)
+
+        # Time variable
+        if "Date" in column_names and "Hour" in column_names:
+            logger.info("Generate a time variable from Date and Hour variables")
+            parse_dates = {"time": ["Date", "Hour"]}
+        else:
+            parse_dates = None
+
         # Parse data
-        df = pd.read_csv(file, sep=r"\s+", names=column_names)
+        df = pd.read_csv(
+            file,
+            sep=r"\s+",
+            names=column_names,
+            parse_dates=parse_dates,
+            date_parser=date_parser,
+        )
 
         # Sort column attributes
         variables = {
@@ -178,25 +202,6 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
                 logger.warning(
                     "No Vocabulary available for %s: %s", var, str(ds[var].attrs)
                 )
-
-        # Derive time from Date and Hour variables
-        if "Date" in ds and "Hour" in ds:
-            timestamps = ds["Date"] + "T" + ds["Hour"]
-            is60seconds = timestamps.to_series().str.contains(":60$").to_xarray()
-            any60seconds = is60seconds.any()
-            if any60seconds:
-                timestamps[is60seconds] = (
-                    timestamps[is60seconds]
-                    .to_series()
-                    .str.replace(":60$", ":00")
-                    .to_xarray()
-                )
-            ds["time"] = (
-                ds["Date"].dims,
-                pd.to_datetime(timestamps).to_pydatetime(),
-            )
-            if any60seconds:
-                ds["time"].loc[is60seconds] += pd.Timedelta(seconds=60)
 
         # Review rename variables
         already_existing_variables = {
