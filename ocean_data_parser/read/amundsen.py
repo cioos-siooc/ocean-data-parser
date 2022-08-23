@@ -78,7 +78,9 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
         "Convert INT file format with python package ocean_data_parser.amundsen.int_format V%s",
         __version__,
     )
+
     metadata = {"unknown_variables_information": "", "history": ""}
+    initial_metadata = metadata.copy()
     line = "%"
 
     if path.endswith("_info.int"):
@@ -108,7 +110,7 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
                 logger.warning("Unknown line format: %s", line)
 
         # Review metadata
-        if metadata == {"unknown_variables": []}:
+        if metadata == initial_metadata:
             logger.warning("No metadata was captured in the header of the INT file.")
 
         # Parse Columne Header by capital letters
@@ -157,7 +159,7 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
         # Convert to xarray object
         ds = df.to_xarray()
 
-        # Standardize metadata
+        # Standardize global attributes
         metadata = {
             _standardize_attribute_name(name): _standardize_attribute_value(
                 value, name=name
@@ -217,8 +219,9 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
             logger.info("Rename variables: %s", variables_to_rename)
             ds = ds.rename(variables_to_rename)
 
-        ds = standardize_dateset(ds)
-
+        # Generate history
         ds.attrs["history"] += nc_logger.getvalue()
-        nc_logger.trucncate(0)
+
+        # Standardize dataset to be compatible with ERDDAP and NetCDF Classic
+        ds = standardize_dateset(ds)
         return ds
