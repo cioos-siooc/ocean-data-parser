@@ -495,5 +495,19 @@
             "long_name": "Pressure Par",
             "units": "dbar"
         }
+    ],
+    "time": [
+        {
+            "long_name": "Measurement Time",
+            "source": "Generated from Date Time variables",
+            "standard_name": "time"
+        }
+    ],
+    "instrument_depth": [
+        {
+            "long_name": "Instrument Depth",
+            "units": "m",
+            "standard_name": "depth"
+        }
     ]
 }

@@ -20,6 +20,7 @@ setup(
         "pytz",
         "NetCDF4",
         "pynmea2",
+        "gsw",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

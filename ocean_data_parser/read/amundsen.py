@@ -7,6 +7,7 @@ import os
 import json
 
 import pandas as pd
+from gsw import z_from_p
 from .utils import standardize_dateset, get_history_handler
 
 logger = logging.getLogger(__name__)
@@ -166,11 +167,25 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
             )
             for name, value in metadata.items()
         }
-
-        # Add Global attributes
         ds.attrs = metadata
+
+        # Generate instrument_depth variable
+        if "Pres" in ds and ("Lat" in ds or "initial_latitude_deg" in ds.attrs):
+            latitude = (
+                ds["Latitude"] if "Lat" in ds else ds.attrs["initial_latitude_deg"]
+            )
+            logger.info(
+                "Generate instrument_depth variable from: -1 * gsw.z_from_p(ds['Pres'], %s)",
+                "ds['Lat']" if "Lat" in ds else "ds.attrs['initial_latitude_deg']",
+            )
+            ds["instrument_depth"] = -z_from_p(ds["Pres"], latitude)
+
+        # Map varibles to vocabulary
         variables_to_rename = {}
         for var in ds:
+            if var not in variables:
+                continue
+
             ds[var].attrs = variables[var]
             if "long_name" in ds[var].attrs:
                 ds[var].attrs["long_name"] = ds[var].attrs["long_name"].strip()
