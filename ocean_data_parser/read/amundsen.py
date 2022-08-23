@@ -20,6 +20,8 @@ reference_vocabulary_path = os.path.join(
 with open(reference_vocabulary_path, encoding="UTF-8") as vocabulary_file:
     amundsen_variable_attributes = json.load(vocabulary_file)
 
+default_global_attributes = {"unknown_variables_information": "", "history": ""}
+
 
 def _standardize_attribute_name(name: str) -> str:
     """
@@ -60,6 +62,7 @@ def _standardize_attribute_value(value: str, name: str = None):
 
 
 def date_parser(time_str):
+    """Amundsen INT Date + Hour time parser"""
     if time_str.endswith(":60"):
         time_str = time_str.replace(":60", ":00")
         add_time = pd.Timedelta(seconds=60)
@@ -69,7 +72,9 @@ def date_parser(time_str):
     return (pd.to_datetime(time_str) + add_time).to_pydatetime()
 
 
-def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
+def int_format(
+    path, encoding="Windows-1252", map_to_vocabulary=True, generate_depth=True
+):
     """Parse INT format developed and distributed by ArcticNet
     and the Amundsen groups over the years."""
     nc_logger, nc_handler = get_history_handler()
@@ -79,13 +84,11 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
         "Convert INT file format with python package ocean_data_parser.amundsen.int_format V%s",
         __version__,
     )
+    metadata = default_global_attributes.copy()
 
-    metadata = {"unknown_variables_information": "", "history": ""}
-    initial_metadata = metadata.copy()
-    line = "%"
-
+    # Ignore info.int files
     if path.endswith("_info.int"):
-        logger.warning("Ignore info.int files: %s", path)
+        logger.warning("Ignore *_info.int files: %s", path)
         return
 
     logger.debug("Read %s", path)
@@ -96,13 +99,14 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
             if re.match(r"^%\s*$", line) or not line:
                 continue
             elif not re.match(r"\s*%", line) and line:
+                last_line = line
                 break
             elif ":" in line:
                 key, value = line.strip()[1:].split(":", 1)
                 metadata[key.strip()] = value.strip()
             elif re.match(r"% .* \[.+\]", line):
                 logger.warning(
-                    "Line with missing variable mapping will be saved in unknown_variables_information attribute: %s",
+                    "Unknown variable name will be saved to unknown_variables_information: %s",
                     line,
                 )
                 metadata["unknown_variables_information"] += line + "\n"
@@ -111,11 +115,11 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
                 logger.warning("Unknown line format: %s", line)
 
         # Review metadata
-        if metadata == initial_metadata:
+        if metadata == default_global_attributes:
             logger.warning("No metadata was captured in the header of the INT file.")
 
         # Parse Columne Header by capital letters
-        column_name_line = line
+        column_name_line = last_line
         delimiter_line = file.readline()
         if not re.match(r"^[\s\-]+$", delimiter_line):
             logger.error("Delimiter line below the column names isn't the expected one")
@@ -170,12 +174,12 @@ def int_format(path, encoding="Windows-1252", map_to_vocabulary=True):
         ds.attrs = metadata
 
         # Generate instrument_depth variable
-        if "Pres" in ds and ("Lat" in ds or "initial_latitude_deg" in ds.attrs):
+        if generate_depth and "Pres" in ds and ("Lat" in ds or "initial_latitude_deg" in ds.attrs):
             latitude = (
                 ds["Latitude"] if "Lat" in ds else ds.attrs["initial_latitude_deg"]
             )
             logger.info(
-                "Generate instrument_depth variable from: -1 * gsw.z_from_p(ds['Pres'], %s)",
+                "Generate instrument_depth from TEOS-10: -1 * gsw.z_from_p(ds['Pres'], %s)",
                 "ds['Lat']" if "Lat" in ds else "ds.attrs['initial_latitude_deg']",
             )
             ds["instrument_depth"] = -z_from_p(ds["Pres"], latitude)
