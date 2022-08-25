@@ -17,3 +17,5 @@ dist/
 /**/local_tests/*
 /tests/**/*_test.nc
 pdc-amundsen-conversion.log
+
+tests/parsers_test_files/amundsen/12713/**/*
