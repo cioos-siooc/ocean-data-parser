@@ -3,7 +3,7 @@ import re
 
 import pandas as pd
 
-from .utils import standardize_dateset
+from .utils import standardize_dataset
 
 logger = logging.getLogger(__name__)
 
@@ -98,7 +98,7 @@ def superCO2(path, output=None):
     ds = df.to_xarray()
     ds.attrs = global_attributes
 
-    return standardize_dateset(ds)
+    return standardize_dataset(ds)
 
 
 def superCO2_notes(path):

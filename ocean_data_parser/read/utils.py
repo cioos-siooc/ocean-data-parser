@@ -19,7 +19,7 @@ def test_parsed_dataset(ds):
         logger.warning("Missing time variable")
 
 
-def standardize_dateset(ds):
+def standardize_dataset(ds):
     """Standardize dataset to be easily serializable to netcdf and compatible with ERDDAP"""
     # Globals
     for att in ds.attrs.keys():
