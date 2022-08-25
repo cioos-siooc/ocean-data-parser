@@ -98,7 +98,7 @@ def superCO2(path, output=None):
     ds = df.to_xarray()
     ds.attrs = global_attributes
 
-    return standardize_dataset(ds)
+    return standardize_dateset(ds)
 
 
 def superCO2_notes(path):

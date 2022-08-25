@@ -34,7 +34,7 @@ def get_history_handler():
     return nc_logger, nc_handler
 
 
-def standardize_dateset(ds):
+def standardize_dataset(ds):
     """Standardize dataset to be easily serializable to netcdf and compatible with ERDDAP"""
     # Globals
     for att in ds.attrs.keys():
