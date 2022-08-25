@@ -98,7 +98,7 @@ def int_format(
             line = line.replace("\n", "")
             if re.match(r"^%\s*$", line) or not line:
                 continue
-            elif not re.match(r"\s*%", line) and line:
+            elif line and not re.match(r"\s*%", line) and line[0] == " ":
                 last_line = line
                 break
             elif ":" in line:
@@ -174,7 +174,11 @@ def int_format(
         ds.attrs = metadata
 
         # Generate instrument_depth variable
-        if generate_depth and "Pres" in ds and ("Lat" in ds or "initial_latitude_deg" in ds.attrs):
+        if (
+            generate_depth
+            and "Pres" in ds
+            and ("Lat" in ds or "initial_latitude_deg" in ds.attrs)
+        ):
             latitude = (
                 ds["Latitude"] if "Lat" in ds else ds.attrs["initial_latitude_deg"]
             )
