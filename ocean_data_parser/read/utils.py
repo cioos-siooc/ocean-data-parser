@@ -43,12 +43,16 @@ def standardize_dateset(ds):
             ds.attrs[att] = json.dumps(ds.attrs[att])
         elif type(ds.attrs[att]) in (datetime, pd.Timestamp):
             ds.attrs[att] = ds.attrs[att].isoformat()
+        elif type(ds.attrs[att]) in (bool,):
+            ds.attrs[att] = str(ds.attrs[att])
+
     # Drop empty attributes
     ds.attrs = {
         attr: value
         for attr, value in ds.attrs.items()
         if type(value) in (dict, list) or (value and pd.notnull(value))
     }
+
     # Drop empty variable attributes
     for var in ds:
         ds[var].attrs = {
@@ -67,4 +71,6 @@ def standardize_dateset(ds):
             ds[var].encoding.update({"units": "seconds since 1970-01-01  00:00:00"})
             if "tz" in ds[var].dtype.name:
                 ds[var].encoding["units"] += "Z"
+        elif ds[var].dtype.name == "object":
+            ds[var].encoding["dtype"] = "str"
     return ds

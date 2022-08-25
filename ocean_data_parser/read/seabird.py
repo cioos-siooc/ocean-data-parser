@@ -14,7 +14,7 @@ import pandas as pd
 import xarray as xr
 import xmltodict
 
-from .utils import standardize_dateset
+from .utils import standardize_dataset
 
 SBE_TIME_FORMAT = "%b %d %Y %H:%M:%S"  # Jun 23 2016 13:51:30
 var_dtypes = {
@@ -85,7 +85,7 @@ def cnv(file_path, encoding="UTF-8", kwargs_read_csv=None):
     header = _generate_seabird_cf_history(header)
 
     ds = _convert_sbe_dataframe_to_dataset(df, header)
-    return standardize_dateset(ds)
+    return standardize_dataset(ds)
 
 
 def btl(file_path, encoding="UTF-8", kwargs_read_fwf=None):
@@ -147,7 +147,7 @@ def btl(file_path, encoding="UTF-8", kwargs_read_fwf=None):
                 "cell_method"
             ] = f"scan: mean (previous {n_scan_per_bottle} scans)"
 
-    return standardize_dateset(ds)
+    return standardize_dataset(ds)
 
 
 def _convert_sbe_dataframe_to_dataset(df, header):
