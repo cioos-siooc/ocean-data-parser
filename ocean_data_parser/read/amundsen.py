@@ -8,7 +8,7 @@ import json
 
 import pandas as pd
 from gsw import z_from_p
-from .utils import standardize_dateset, get_history_handler
+from .utils import standardize_dataset, get_history_handler
 
 logger = logging.getLogger(__name__)
 string_attributes = ["Cruise_Number", "Cruise_Name", "Station"]
@@ -246,5 +246,5 @@ def int_format(
         ds.attrs["history"] += nc_logger.getvalue()
 
         # Standardize dataset to be compatible with ERDDAP and NetCDF Classic
-        ds = standardize_dateset(ds)
+        ds = standardize_dataset(ds)
         return ds
