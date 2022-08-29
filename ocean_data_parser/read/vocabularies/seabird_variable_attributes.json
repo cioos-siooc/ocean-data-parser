@@ -497,7 +497,7 @@
     },
     "sigma-t00": {
         "long_name": "Density",
-        "bodc_alternative_label": "Sigma-T"
+        "bodc_alternative_label": "Sigma-T",
         "units": "kg/m^3",
         "standard_name": "sea_water_sigma_t",
         "sdn_parameter_urn": "SDN:P01::SIGTEQST",
@@ -1343,7 +1343,7 @@
     },
     "latitude": {
         "long_name": "Latitude",
-        "bodc_alternative_label": "Lat"
+        "bodc_alternative_label": "Lat",
         "units": "degree north",
         "standard_name": "latitude",
         "sdn_parameter_urn": "SDN:P01::ALATZZ01",
@@ -1391,7 +1391,7 @@
     },
     "longitude": {
         "long_name": "Longitude",
-        "bodc_alternative_label": "Lon"
+        "bodc_alternative_label": "Lon",
         "units": "deg east",
         "standard_name": "longitude",
         "sdn_parameter_urn": "SDN:P01::ALONZZ01",
@@ -2819,7 +2819,7 @@
     "t190C": {
         "long_name": "Temperature, 2",
         "units": "deg C",
-        "bodc_alternative_label": "CTDTmp90_2"
+        "bodc_alternative_label": "CTDTmp90_2",
         "standard_name": "sea_water_temperature",
         "sdn_parameter_urn": "SDN:P01::TEMPS902",
         "sdn_parameter_name": "Temperature (ITS-90) of the water body by CTD or STD (second sensor)",
