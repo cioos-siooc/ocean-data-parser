@@ -16,11 +16,18 @@ def fgdc_to_acdd(url=None, xml=None):
             xml = f.text
     # Convert xml to python dictionary
     info = xmltodict.parse(xml)
+    ccin = (
+        int(
+            info["metadata"]["idinfo"]["citation"]["citeinfo"]["onlink"].rsplit(
+                "doi_id="
+            )[1]
+        ),
+    )
     metadata = {
         "title": info["metadata"]["idinfo"]["citation"]["citeinfo"]["title"],
         "summary": info["metadata"]["idinfo"]["descript"]["abstract"],
         "comment": info["metadata"]["idinfo"]["descript"]["supplinf"],
-        "institution": "",
+        "institution": None,
         "creator_name": ", ".join(
             set(info["metadata"]["idinfo"]["citation"]["citeinfo"]["origin"])
         ),
@@ -33,7 +40,10 @@ def fgdc_to_acdd(url=None, xml=None):
         "publisher_email": info["metadata"]["distinfo"]["distrib"]["cntinfo"][
             "cntemail"
         ],
-        "doi": re.search(r"(http:\/\/doi\.org\/[^\s]+)", xml)[1]
+        "ccin": ccin,
+        "id": ccin,
+        "naming_authority": "ca.polardata.ccin",
+        "doi": re.search(r"(http:\/\/doi\.org\/[0-9a-zA-Z\/\.]+)", xml)[1]
         if "http://doi.org" in xml
         else None,
         "geospatial_lat_min": float(
@@ -66,4 +76,11 @@ def fgdc_to_acdd(url=None, xml=None):
         "metadata_link": info["metadata"]["idinfo"]["citation"]["citeinfo"]["onlink"],
         "reference": info["metadata"]["idinfo"]["citation"]["citeinfo"]["onlink"],
     }
+
+    # Review instution
+    if re.search("Amundsen|CFL|CASES|ArcticNet", metadata["title"]):
+        metadata["institution"] = "Amundsen Sciences"
+    else:
+        logger.warning("Uknown institution for dataset Title: %s", metadata["title"])
+
     return {key: value for key, value in metadata.items() if value}

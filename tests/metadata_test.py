@@ -6,7 +6,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
 class PDCMetadataTests(unittest.TestCase):
     def test_fgdc_to_acdd_on_profiles(self):
-        ccins = [12477, 12715, 12518]
+        ccins = [80, 12713, 12715, 12518]
         for ccin in ccins:
             logger.debug("ccin=%s",ccin)
             fgdc_metadata_url = (
