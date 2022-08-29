@@ -311,6 +311,7 @@
         "name": "c0SPerm",
         "long_name": "Conductivity",
         "units": "S/m",
+        "bodc_alternative_label": "CTDCond",
         "standard_name": "sea_water_electrical_conductivity",
         "sdn_parameter_urn": "SDN:P01::CNDCST01",
         "sdn_parameter_name": "Electrical conductivity of the water body by CTD",
@@ -496,7 +497,8 @@
     },
     "sigma-t00": {
         "long_name": "Density",
-        "units": "kg/m^3 [sigma-t]",
+        "bodc_alternative_label": "Sigma-T"
+        "units": "kg/m^3",
         "standard_name": "sea_water_sigma_t",
         "sdn_parameter_urn": "SDN:P01::SIGTEQST",
         "sdn_parameter_name": "Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm",
@@ -520,7 +522,7 @@
         "comments": "1st sensor"
     },
     "density11": {
-        "long_name": "Density, 2",
+        "long_name": "Density 2",
         "units": "kg/m^3 [density]",
         "comments": "2nd sensor"
     },
@@ -531,7 +533,7 @@
         "comments": "2nd sensor"
     },
     "sigma-t11": {
-        "long_name": "Density, 2",
+        "long_name": "Density 2",
         "units": "kg/m^3 [sigma-t]",
         "standard_name": "sea_water_sigma_t",
         "sdn_parameter_urn": "SDN:P01::SIGTEQST",
@@ -541,7 +543,7 @@
         "comments": "2nd sensor"
     },
     "sigma-111": {
-        "long_name": "Density, 2",
+        "long_name": "Density 2",
         "units": "kg/m^3 [sigma-1]",
         "comments": "2nd sensor"
     },
@@ -726,6 +728,8 @@
     "flSP": {
         "long_name": "Fluorescence, Seapoint",
         "instrument": "Seapoint",
+        "units": "mg/m^3",
+        "bodc_alternative_label": "chl-a_water_ISfluor",
         "sdn_parameter_urn": "SDN:P01::CPHLPR01",
         "sdn_parameter_name": "Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate >unknown phase] by in-situ chlorophyll fluorometer",
         "sdn_uom_urn": "SDN:P06::UMMC",
@@ -822,6 +826,7 @@
         "long_name": "Fluorescence, Wet Labs Cdom",
         "instrument": "WET Labs CDOM",
         "units": "mg/m^3",
+        "bodc_alternative_label": "CDOM_fluor_WETLabs",
         "sdn_parameter_urn": "SDN:P01::CCOMD002",
         "sdn_parameter_name": "Concentration of coloured dissolved organic matter {CDOM Gelbstoff} per unit volume of the water body [dissolved plus reactive particulate phase] by in-situ WET Labs FDOM ECO fluorometer",
         "sdn_uom_urn": "SDN:P06::UMMC",
@@ -1338,7 +1343,8 @@
     },
     "latitude": {
         "long_name": "Latitude",
-        "units": "deg",
+        "bodc_alternative_label": "Lat"
+        "units": "degree north",
         "standard_name": "latitude",
         "sdn_parameter_urn": "SDN:P01::ALATZZ01",
         "sdn_parameter_name": "Latitude north",
@@ -1385,7 +1391,8 @@
     },
     "longitude": {
         "long_name": "Longitude",
-        "units": "deg",
+        "bodc_alternative_label": "Lon"
+        "units": "deg east",
         "standard_name": "longitude",
         "sdn_parameter_urn": "SDN:P01::ALONZZ01",
         "sdn_parameter_name": "Longitude east",
@@ -1545,6 +1552,7 @@
         "long_name": "Oxygen Raw, SBE 43",
         "instrument": "SBE 43",
         "units": "V",
+        "bodc_alternative_label": "Oxy_output_V",
         "sdn_parameter_urn": "SDN:P01::OXYOCPVL",
         "sdn_parameter_name": "Raw signal (voltage) of instrument output by oxygen sensor",
         "sdn_uom_urn": "SDN:P06::UVLT",
@@ -2075,7 +2083,9 @@
     },
     "par": {
         "long_name": "Par/Irradiance, Biospherical/Licor",
+        "units": "µeinsteins/s/m^2",
         "instrument": "Biospherical/Licor",
+        "bodc_alternative_label": "SubSurDWVectPAR",
         "sdn_parameter_urn": "SDN:P01::DWIRRXUD",
         "sdn_parameter_name": "Downwelling vector irradiance as energy of electromagnetic radiation (PAR wavelengths) in the water body by cosine-collector radiometer",
         "comments": "Biospherical, Licor, or Chelsea sensor; 1st sensor"
@@ -2289,12 +2299,13 @@
     "prDM": {
         "long_name": "Pressure, Digiquartz",
         "instrument": "Digiquartz",
-        "units": "db",
+        "units": "dbar",
+        "bodc_alternative_label": "Pres_Z",
         "standard_name": "sea_water_pressure",
         "sdn_parameter_urn": "SDN:P01::PRESPR01",
         "sdn_parameter_name": "Pressure (spatial coordinate) exerted by the water body by profiling pressure sensor and correction to read zero at sea level",
-        "sdn_uom_urn": "SDN:P06::UDBL",
-        "sdn_uom_name": "Decibels",
+        "sdn_uom_urn": "SDN:P06::UPBL",
+        "sdn_uom_name": "Decibar",
         "comments": "Digiquartz pressure sensor"
     },
     "prdM": {
@@ -2516,6 +2527,7 @@
     "sal00": {
         "long_name": "Salinity, Practical",
         "units": "PSU",
+        "bodc_alternative_label": "P_sal_CTD",
         "standard_name": "sea_water_practical_salinity",
         "sdn_parameter_urn": "SDN:P01::PSALST01",
         "sdn_parameter_name": "Practical salinity of the water body by CTD and computation using UNESCO 1983 algorithm",
@@ -2527,8 +2539,9 @@
         "comments": "1st sensor"
     },
     "sal11": {
-        "long_name": "Salinity, Practical, 2",
+        "long_name": "Salinity, Practical, 2 TEST",
         "units": "PSU",
+        "bodc_alternative_label": "P_sal_CTD2",
         "standard_name": "sea_water_practical_salinity",
         "sdn_parameter_urn": "SDN:P01::PSALST02",
         "sdn_parameter_name": "Practical salinity of the water body by CTD (second sensor) and computation using UNESCO 1983 algorithm",
@@ -2564,39 +2577,41 @@
     },
     "svCM": {
         "long_name": "Sound Velocity",
-        "units": "m/s [Chen-Millero]",
+        "units": "m/s",
+        "bodc_alternative_label": "CTD_Sound_Vel",
         "standard_name": "speed_of_sound_in_sea_water",
         "sdn_parameter_urn": "SDN:P01::SVELCA01",
-        "sdn_parameter_name": "Sound velocity in the water body by computation from salinity and temperature using UNESCO algorithm",
+        "sdn_parameter_name": "Sound velocity in the water body by computation from salinity and temperature using UNESCO algorithm [Chen-Millero]",
         "sdn_uom_urn": "SDN:P06::UVAA",
         "sdn_uom_name": "Metres per second",
         "comments": "1st sensor"
     },
     "svCF": {
         "long_name": "Sound Velocity",
-        "units": "ft/s [Chen-Millero]",
+        "units": "ft/s",
         "comments": "1st sensor"
     },
     "svDM": {
         "long_name": "Sound Velocity",
-        "units": "m/s [Delgrosso]",
+        "units": "m/s",
+        "bodc_alternative_label": "CTD_Sound_Vel",
         "sdn_parameter_urn": "SDN:P01::SVELCT01",
-        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by unspecified algorithm",
+        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by unspecified algorithm [Delgrosso]",
         "sdn_uom_urn": "SDN:P06::UVAA",
         "sdn_uom_name": "Metres per second",
         "comments": "1st sensor"
     },
     "svDF": {
         "long_name": "Sound Velocity",
-        "units": "ft/s [Delgrosso]",
-        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by Delgrosso algorithm",
+        "units": "ft/s",
+        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by Delgrosso algorithm [Delgrosso]",
         "comments": "1st sensor"
     },
     "svWM": {
         "long_name": "Sound Velocity",
-        "units": "m/s [Wilson]",
+        "units": "m/s",
         "sdn_parameter_urn": "SDN:P01::SVELCT01",
-        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by unspecified algorithm",
+        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by unspecified algorithm [Wilson]",
         "sdn_uom_urn": "SDN:P06::UVAA",
         "sdn_uom_name": "Metres per second",
         "comments": "1st sensor"
@@ -2604,22 +2619,22 @@
     "svWF": {
         "long_name": "Sound Velocity",
         "units": "ft/s [Wilson]",
-        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by Wilson algorithm",
+        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by Wilson algorithm [Wilson]",
         "comments": "1st sensor"
     },
     "svCM1": {
         "long_name": "Sound Velocity, 2",
-        "units": "m/s [Chen-Millero]",
+        "units": "m/s",
         "comments": "2nd sensor"
     },
     "svCF1": {
         "long_name": "Sound Velocity, 2",
-        "units": "ft/s [Chen-Millero]",
+        "units": "ft/s",
         "comments": "2nd sensor"
     },
     "svDM1": {
         "long_name": "Sound Velocity, 2",
-        "units": "m/s [Delgrosso]",
+        "units": "m/s",
         "comments": "2nd sensor"
     },
     "svDF1": {
@@ -2701,7 +2716,8 @@
     },
     "t090C": {
         "long_name": "Temperature",
-        "units": "deg C [ITS-90]",
+        "bodc_alternative_label": "CTDTmp90",
+        "units": "deg C",
         "standard_name": "sea_water_temperature",
         "sdn_parameter_urn": "SDN:P01::TEMPS901",
         "sdn_parameter_name": "Temperature (ITS-90) of the water body by CTD or STD",
@@ -2709,6 +2725,7 @@
         "sdn_uom_name": "Degrees Celsius",
         "comments": "1st sensor"
     },
+    
     "t4990C": {
         "long_name": "Temperature",
         "units": "deg C [ITS-90]",
@@ -2801,7 +2818,8 @@
     },
     "t190C": {
         "long_name": "Temperature, 2",
-        "units": "deg C [ITS-90]",
+        "units": "deg C",
+        "bodc_alternative_label": "CTDTmp90_2"
         "standard_name": "sea_water_temperature",
         "sdn_parameter_urn": "SDN:P01::TEMPS902",
         "sdn_parameter_name": "Temperature (ITS-90) of the water body by CTD or STD (second sensor)",
@@ -3592,6 +3610,7 @@
     },
     "t090C_sdev": {
         "long_name": "Nan",
+        "bodc_alternative_label": "Temp_ITS90_StdDev",
         "sdn_parameter_urn": "SDN:P01::TEMPSD01",
         "sdn_parameter_name": "Temperature (ITS-90) standard deviation of the water body",
         "sdn_uom_urn": "SDN:P06::UPAA",
@@ -3599,6 +3618,7 @@
     },
     "t190C_sdev": {
         "long_name": "Nan",
+        "bodc_alternative_label": "Temp_ITS90_StdDev_Sensor2",
         "sdn_parameter_urn": "SDN:P01::TEMPSD02",
         "sdn_parameter_name": "Temperature (ITS-90) standard deviation of the water body by second sensor",
         "sdn_uom_urn": "SDN:P06::UPAA",
