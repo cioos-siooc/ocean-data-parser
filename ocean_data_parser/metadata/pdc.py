@@ -48,7 +48,7 @@ def fgdc_to_acdd(url=None, xml=None):
             "cntperp"
         ]["cntorg"],
         "contributor_name": "; ".join(
-            set(info["metadata"]["idinfo"]["citation"]["citeinfo"]["origin"])
+            list(info["metadata"]["idinfo"]["citation"]["citeinfo"]["origin"])
         ),
         "contributor_role": "original creators",
         "publisher_name": info["metadata"]["distinfo"]["distrib"]["cntinfo"]["cntperp"][
