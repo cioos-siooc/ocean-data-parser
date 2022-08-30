@@ -16,23 +16,41 @@ def fgdc_to_acdd(url=None, xml=None):
             xml = f.text
     # Convert xml to python dictionary
     info = xmltodict.parse(xml)
-    ccin = (
-        int(
-            info["metadata"]["idinfo"]["citation"]["citeinfo"]["onlink"].rsplit(
-                "doi_id="
-            )[1]
-        ),
+    ccin = int(info["metadata"]["distinfo"]["resdesc"])
+    contact_string = info["metadata"]["metainfo"]["metc"]["cntinfo"]["cntperp"][
+        "cntper"
+    ]
+    doi = (
+        re.search(r"(http:\/\/doi\.org\/[0-9a-zA-Z\/\.]+)", xml)
+        if "http://doi.org" in xml
+        else None
     )
+
     metadata = {
         "title": info["metadata"]["idinfo"]["citation"]["citeinfo"]["title"],
         "summary": info["metadata"]["idinfo"]["descript"]["abstract"],
-        "comment": info["metadata"]["idinfo"]["descript"]["supplinf"],
+        "comment": "Purpose: %s \n\n Supplementary information: %s"
+        % (
+            info["metadata"]["idinfo"]["descript"]["purpose"],
+            info["metadata"]["idinfo"]["descript"]["supplinf"],
+        ),
         "institution": None,
-        "creator_name": ", ".join(
+        "date_created": pd.to_datetime(
+            info["metadata"]["metainfo"]["metd"]
+        ).isoformat(),
+        "creator_name": contact_string.split(":")[1]
+        if ":" in contact_string
+        else contact_string,
+        "creator_role": contact_string.split(":")[0] if ":" in contact_string else None,
+        "creator_type": "person",
+        "creator_email": info["metadata"]["metainfo"]["metc"]["cntinfo"]["cntemail"],
+        "creator_institution": info["metadata"]["metainfo"]["metc"]["cntinfo"][
+            "cntperp"
+        ]["cntorg"],
+        "contributor_name": "; ".join(
             set(info["metadata"]["idinfo"]["citation"]["citeinfo"]["origin"])
         ),
-        "creator_type": "group",
-        "creator_email": "email",
+        "contributor_role": "original creators",
         "publisher_name": info["metadata"]["distinfo"]["distrib"]["cntinfo"]["cntperp"][
             "cntper"
         ],
@@ -40,12 +58,13 @@ def fgdc_to_acdd(url=None, xml=None):
         "publisher_email": info["metadata"]["distinfo"]["distrib"]["cntinfo"][
             "cntemail"
         ],
+        "publisher_institution": info["metadata"]["distinfo"]["distrib"]["cntinfo"][
+            "cntperp"
+        ]["cntorg"],
         "ccin": ccin,
         "id": ccin,
         "naming_authority": "ca.polardata.ccin",
-        "doi": re.search(r"(http:\/\/doi\.org\/[0-9a-zA-Z\/\.]+)", xml)[1]
-        if "http://doi.org" in xml
-        else None,
+        "doi": doi,
         "geospatial_lat_min": float(
             info["metadata"]["idinfo"]["spdom"]["bounding"]["southbc"]
         ),
@@ -70,11 +89,12 @@ def fgdc_to_acdd(url=None, xml=None):
         else pd.to_datetime(
             info["metadata"]["idinfo"]["timeperd"]["timeinfo"]["rngdates"]["enddate"]
         ).isoformat(),
-        "keywords": ", ".join(
-            info["metadata"]["idinfo"]["keywords"]["theme"]["themekey"]
-        ),
+        "keywords": info["metadata"]["idinfo"]["keywords"]["theme"]["themekey"]
+        + [info["metadata"]["idinfo"]["keywords"]["place"]["placekt"]],
         "metadata_link": info["metadata"]["idinfo"]["citation"]["citeinfo"]["onlink"],
-        "reference": info["metadata"]["idinfo"]["citation"]["citeinfo"]["onlink"],
+        "infoUrl": info["metadata"]["idinfo"]["citation"]["citeinfo"]["onlink"],
+        "reference": doi
+        or info["metadata"]["idinfo"]["citation"]["citeinfo"]["onlink"],
     }
 
     # Review instution
