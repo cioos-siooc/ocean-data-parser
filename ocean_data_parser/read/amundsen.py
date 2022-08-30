@@ -51,7 +51,7 @@ def _standardize_attribute_value(value: str, name: str = None):
     """
     if name in string_attributes or not isinstance(value, str):
         return value
-    elif re.match(r"\d\d-\w\w\w-\d\d\d\d \d\d\:\d\d\:\d\d\.\d+", value):
+    elif re.match(r"\d\d-\w\w\w-\d\d\d\d \d\d\:\d\d\:\d\d", value):
         return pd.to_datetime(value, utc=(name and "utc" in name))
     elif re.match(r"^-{0,1}\d+\.\d+$", value):
         return float(value)
@@ -59,17 +59,6 @@ def _standardize_attribute_value(value: str, name: str = None):
         return int(value)
     else:
         return value
-
-
-def date_parser(time_str):
-    """Amundsen INT Date + Hour time parser"""
-    if time_str.endswith(":60"):
-        time_str = time_str.replace(":60", ":00")
-        add_time = pd.Timedelta(seconds=60)
-    else:
-        add_time = pd.Timedelta(seconds=0)
-
-    return (pd.to_datetime(time_str) + add_time).to_pydatetime()
 
 
 def int_format(
@@ -134,20 +123,13 @@ def int_format(
             ]
             start_segment = start_segment + len(segment)
 
-        # Time variable
-        if "Date" in column_names and "Hour" in column_names:
-            logger.info("Generate a time variable from Date and Hour variables")
-            parse_dates = {"time": ["Date", "Hour"]}
-        else:
-            parse_dates = None
-
         # Parse data
         df = pd.read_csv(
             file,
             sep=r"\s+",
             names=column_names,
-            parse_dates=parse_dates,
-            date_parser=date_parser,
+            # parse_dates=parse_dates,
+            # date_parser=date_parser,
         )
 
         # Sort column attributes
@@ -160,6 +142,13 @@ def int_format(
             else {}
             for column in df
         }
+        if "Date" in df and "Hour" in df:
+            is_60 = df["Hour"].str.contains(":60$")
+            df.loc[is_60, "Hour"] = df.loc[is_60, "Hour"].str.replace(
+                ":60$", ":00", regex=True
+            )
+            df["time"] = pd.to_datetime(df["Date"] + "T" + df["Hour"], utc=True)
+            df.loc[is_60, "time"] += pd.Timedelta(seconds=60)
 
         # Convert to xarray object
         ds = df.to_xarray()
