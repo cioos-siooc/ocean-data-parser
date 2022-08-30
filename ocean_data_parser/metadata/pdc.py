@@ -21,7 +21,7 @@ def fgdc_to_acdd(url=None, xml=None):
         "cntper"
     ]
     doi = (
-        re.search(r"(http:\/\/doi\.org\/[0-9a-zA-Z\/\.]+)", xml)
+        re.search(r"(http:\/\/doi\.org\/[0-9a-zA-Z\/\.]+)", xml)[1]
         if "http://doi.org" in xml
         else None
     )
@@ -89,8 +89,10 @@ def fgdc_to_acdd(url=None, xml=None):
         else pd.to_datetime(
             info["metadata"]["idinfo"]["timeperd"]["timeinfo"]["rngdates"]["enddate"]
         ).isoformat(),
-        "keywords": info["metadata"]["idinfo"]["keywords"]["theme"]["themekey"]
-        + [info["metadata"]["idinfo"]["keywords"]["place"]["placekt"]],
+        "keywords": "; ".join(
+            info["metadata"]["idinfo"]["keywords"]["theme"]["themekey"]
+            + [info["metadata"]["idinfo"]["keywords"]["place"]["placekt"]]
+        ),
         "metadata_link": info["metadata"]["idinfo"]["citation"]["citeinfo"]["onlink"],
         "infoUrl": info["metadata"]["idinfo"]["citation"]["citeinfo"]["onlink"],
         "reference": doi
