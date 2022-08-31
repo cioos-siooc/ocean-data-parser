@@ -163,9 +163,10 @@ def int_format(
         ds.attrs = metadata
 
         # Generate instrument_depth variable
+        pressure = [var for var in ds if var in ("Pres", "PRES")]
         if (
             generate_depth
-            and "Pres" in ds
+            and pressure
             and ("Lat" in ds or "initial_latitude_deg" in ds.attrs)
         ):
             latitude = (
@@ -175,7 +176,7 @@ def int_format(
                 "Generate instrument_depth from TEOS-10: -1 * gsw.z_from_p(ds['Pres'], %s)",
                 "ds['Lat']" if "Lat" in ds else "ds.attrs['initial_latitude_deg']",
             )
-            ds["instrument_depth"] = -z_from_p(ds["Pres"], latitude)
+            ds["instrument_depth"] = -z_from_p(ds[pressure[0]], latitude)
 
         # Map varibles to vocabulary
         variables_to_rename = {}
