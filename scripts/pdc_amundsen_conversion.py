@@ -72,7 +72,7 @@ ccinNum = [
     "11922",
     "11923",
     "11924",
-    "11926", 
+    "11926",
     "11943",
     "12447",
     "12518",
@@ -87,15 +87,21 @@ test = ["12713"]
 
 
 for ccin in test:
-    PATH = (
-        f"./tests/parsers_test_files/amundsen/{ccin}/**/*[!_info].int"
-    )
+    PATH = f"./tests/parsers_test_files/amundsen/{ccin}/**/*[!_info].int"
     fgdc_metadata_url = f"https://www.polardata.ca/pdcsearch/xml/fgdc/{ccin}_fgdc.xml"
+    ccin_metadata = pdc.fgdc_to_acdd(url=fgdc_metadata_url)
+    # Ignore geospatial and time attributes which are dataset specific
+    ccin_metadata = {
+        attr: value
+        for attr, value in ccin_metadata.items()
+        if not attr.startswith(("geospatial_", "time_coverage_"))
+    }
+
     paths = glob(PATH, recursive=True)
     for path in tqdm(paths):
         try:
             ds = amundsen.int_format(path)
-            ds.attrs.update(pdc.fgdc_to_acdd(url=fgdc_metadata_url))
+            ds.attrs.update(ccin_metadata)
             ds.to_netcdf(f"{path}.nc", format="NETCDF4_CLASSIC")
         except:
             logging.error("Failed to convert ccin %s, path %s", ccin, path)
