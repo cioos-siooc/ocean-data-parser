@@ -1,6 +1,7 @@
-import unittest
-from ocean_data_parser.metadata import pdc
 import logging
+import unittest
+
+from ocean_data_parser import metadata
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
@@ -12,5 +13,5 @@ class PDCMetadataTests(unittest.TestCase):
             fgdc_metadata_url = (
                 f"https://www.polardata.ca/pdcsearch/xml/fgdc/{ccin}_fgdc.xml"
             )
-            pdc.fgdc_to_acdd(fgdc_metadata_url)
+            metadata.pdc.fgdc_to_acdd(fgdc_metadata_url)
             
