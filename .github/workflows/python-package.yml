@@ -32,10 +32,5 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Test with pytest
         run: pytest
-      - name: Run benchmark 
+      - name: Run benchmark
         run: pytest tests/run_benchmark.py  --benchmark-json output.json
-      - name: Store benchmark result
-        uses: benchmark-action/github-action-benchmark@v1
-        with:
-          tool: 'pytest'
-          output-file-path: output.json
