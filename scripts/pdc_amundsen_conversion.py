@@ -1,3 +1,9 @@
+"""This script is used to convert the different INT files 
+available within the different datasets maintained by PDC to a NetCDF format.
+
+Those NetCDFs are then served by the PDC Hyrax and CIOOS ERDAP servers
+"""
+
 from glob import glob
 import logging
 
