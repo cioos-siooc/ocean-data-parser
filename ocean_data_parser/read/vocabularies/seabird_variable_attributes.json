@@ -1344,7 +1344,7 @@
     "latitude": {
         "long_name": "Latitude",
         "bodc_alternative_label": "Lat",
-        "units": "degree north",
+        "units": "degrees_north",
         "standard_name": "latitude",
         "sdn_parameter_urn": "SDN:P01::ALATZZ01",
         "sdn_parameter_name": "Latitude north",
@@ -1392,7 +1392,7 @@
     "longitude": {
         "long_name": "Longitude",
         "bodc_alternative_label": "Lon",
-        "units": "deg east",
+        "units": "degrees_east",
         "standard_name": "longitude",
         "sdn_parameter_urn": "SDN:P01::ALONZZ01",
         "sdn_parameter_name": "Longitude east",
