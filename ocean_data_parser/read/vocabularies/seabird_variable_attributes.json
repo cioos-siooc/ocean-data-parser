@@ -2539,7 +2539,7 @@
         "comments": "1st sensor"
     },
     "sal11": {
-        "long_name": "Salinity, Practical, 2 TEST",
+        "long_name": "Salinity, Practical, 2",
         "units": "PSU",
         "bodc_alternative_label": "P_sal_CTD2",
         "standard_name": "sea_water_practical_salinity",
