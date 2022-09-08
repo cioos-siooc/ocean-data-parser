@@ -513,7 +513,7 @@
         "sdn_uom_name": "Kilograms per cubic metre",
         "comments": "1st sensor",
         "bodc_alternative_label": "SigTheta",
-        "definition": "This is the preferred term for this definition.    Alternative term SIGTPR02 is included to cover cases where there are two sensors of the same type contributing to the data set and referential integrity considerations prevent a usage of a single code."
+        "definition": "This is the preferred term for this definition. Alternative term SIGTPR02 is included to cover cases where there are two sensors of the same type contributing to the data set and referential integrity considerations prevent a usage of a single code."
     },
     "sigma-t00": {
         "long_name": "Density",
@@ -1789,32 +1789,28 @@
         "comments": "2nd sensor"
     },
     "sbeoxTC": {
-        "long_name": "Oxygen Temperature, SBE 63",
+        "long_name": "Oxygen Temperature, SBE 63 [ITS-90]",
         "instrument": "SBE 63",
         "units": "deg C",
-        "comments": "1st sensor",
-        "scale": "ITS-90"
+        "comments": "1st sensor"
     },
     "sbeoxTF": {
-        "long_name": "Oxygen Temperature, SBE 63",
+        "long_name": "Oxygen Temperature, SBE 63 [ITS-90]",
         "instrument": "SBE 63",
         "units": "deg F",
-        "comments": "1st sensor",
-        "scale": "ITS-90"
+        "comments": "1st sensor"
     },
     "sbeoxTC1": {
-        "long_name": "Oxygen Temperature, SBE 63, 2",
+        "long_name": "Oxygen Temperature, SBE 63, 2 [ITS-90]",
         "instrument": "SBE 63",
         "units": "deg C",
-        "comments": "2nd sensor",
-        "scale": "ITS-90"
+        "comments": "2nd sensor"
     },
     "sbeoxTF1": {
-        "long_name": "Oxygen Temperature, SBE 63, 2",
+        "long_name": "Oxygen Temperature, SBE 63, 2 [ITS-90]",
         "instrument": "SBE 63",
         "units": "deg F",
-        "comments": "2nd sensor",
-        "scale": "ITS-90"
+        "comments": "2nd sensor"
     },
     "sbeopoxML/L": {
         "name": "sbeopoxMLPerL",
@@ -2186,7 +2182,7 @@
         "long_name": "Plume Anomaly"
     },
     "potemp090C": {
-        "long_name": "Potential Temperature",
+        "long_name": "Potential Temperature [ITS-90]",
         "units": "deg C",
         "standard_name": "sea_water_potential_temperature",
         "sdn_parameter_urn": "SDN:P01::POTMS601",
@@ -2195,17 +2191,15 @@
         "sdn_uom_name": "Degrees Celsius",
         "comments": "1st sensor",
         "bodc_alternative_label": "Potemp_ipts68",
-        "definition": "Computed from CTD temperature data calibrated against IPTS-68 scale",
-        "scale": "ITS-90"
+        "definition": "Computed from CTD temperature data calibrated against IPTS-68 scale"
     },
     "potemp090F": {
-        "long_name": "Potential Temperature",
+        "long_name": "Potential Temperature [ITS-90]",
         "units": "deg F",
-        "comments": "1st sensor",
-        "scale": "ITS-90"
+        "comments": "1st sensor"
     },
     "potemp068C": {
-        "long_name": "Potential Temperature",
+        "long_name": "Potential Temperature [IPTS-68]",
         "units": "deg C",
         "standard_name": "sea_water_potential_temperature",
         "sdn_parameter_urn": "SDN:P01::POTMS601",
@@ -2214,17 +2208,15 @@
         "sdn_uom_name": "Degrees Celsius",
         "comments": "1st sensor",
         "bodc_alternative_label": "Potemp_ipts68",
-        "definition": "Computed from CTD temperature data calibrated against IPTS-68 scale",
-        "scale": "IPTS-68"
+        "definition": "Computed from CTD temperature data calibrated against IPTS-68 scale"
     },
     "potemp068F": {
-        "long_name": "Potential Temperature",
+        "long_name": "Potential Temperature [IPTS-68]",
         "units": "deg F",
-        "comments": "1st sensor",
-        "scale": "IPTS-68"
+        "comments": "1st sensor"
     },
     "potemp190C": {
-        "long_name": "Potential Temperature, 2",
+        "long_name": "Potential Temperature, 2 [ITS-90]",
         "units": "deg C",
         "standard_name": "sea_water_potential_temperature",
         "sdn_parameter_urn": "SDN:P01::POTMS601",
@@ -2233,17 +2225,15 @@
         "sdn_uom_name": "Degrees Celsius",
         "comments": "2nd sensor",
         "bodc_alternative_label": "Potemp_ipts68",
-        "definition": "Computed from CTD temperature data calibrated against IPTS-68 scale",
-        "scale": "ITS-90"
+        "definition": "Computed from CTD temperature data calibrated against IPTS-68 scale"
     },
     "potemp190F": {
-        "long_name": "Potential Temperature, 2",
+        "long_name": "Potential Temperature, 2 [ITS-90]",
         "units": "deg F",
-        "comments": "2nd sensor",
-        "scale": "ITS-90"
+        "comments": "2nd sensor"
     },
     "potemp168C": {
-        "long_name": "Potential Temperature, 2",
+        "long_name": "Potential Temperature, 2 [IPTS-68]",
         "units": "deg C",
         "standard_name": "sea_water_potential_temperature",
         "sdn_parameter_urn": "SDN:P01::POTMS601",
@@ -2252,86 +2242,72 @@
         "sdn_uom_name": "Degrees Celsius",
         "comments": "2nd sensor",
         "bodc_alternative_label": "Potemp_ipts68",
-        "definition": "Computed from CTD temperature data calibrated against IPTS-68 scale",
-        "scale": "IPTS-68"
+        "definition": "Computed from CTD temperature data calibrated against IPTS-68 scale"
     },
     "potemp168F": {
-        "long_name": "Potential Temperature, 2",
+        "long_name": "Potential Temperature, 2 [IPTS-68]",
         "units": "deg F",
-        "comments": "2nd sensor",
-        "scale": "IPTS-68"
+        "comments": "2nd sensor"
     },
     "potemp90Cdiff": {
-        "long_name": "Potential Temperature, Diff, 2 - 1",
+        "long_name": "Potential Temperature, Diff, 2 - 1 [ITS-90]",
         "units": "deg C",
-        "comments": "2nd sensor - 1st sensor",
-        "scale": "ITS-90"
+        "comments": "2nd sensor - 1st sensor"
     },
     "potemp90Fdiff": {
-        "long_name": "Potential Temperature, Diff, 2 - 1",
+        "long_name": "Potential Temperature, Diff, 2 - 1 [ITS-90]",
         "units": "deg F",
-        "comments": "2nd sensor - 1st sensor",
-        "scale": "ITS-90"
+        "comments": "2nd sensor - 1st sensor"
     },
     "potemp68Cdiff": {
-        "long_name": "Potential Temperature, Diff, 2 - 1",
+        "long_name": "Potential Temperature, Diff, 2 - 1 [IPTS-68]",
         "units": "deg C",
-        "comments": "2nd sensor - 1st sensor",
-        "scale": "IPTS-68"
+        "comments": "2nd sensor - 1st sensor"
     },
     "potemp68Fdiff": {
-        "long_name": "Potential Temperature, Diff, 2 - 1",
+        "long_name": "Potential Temperature, Diff, 2 - 1 [IPTS-68]",
         "units": "deg F",
-        "comments": "2nd sensor - 1st sensor",
-        "scale": "IPTS-68"
+        "comments": "2nd sensor - 1st sensor"
     },
     "pta090C": {
-        "long_name": "Potential Temperature Anomaly",
+        "long_name": "Potential Temperature Anomaly [ITS-90]",
         "units": "deg C",
-        "comments": "1st sensor",
-        "scale": "ITS-90"
+        "comments": "1st sensor"
     },
     "pta090F": {
-        "long_name": "Potential Temperature Anomaly",
+        "long_name": "Potential Temperature Anomaly [ITS-90]",
         "units": "deg F",
-        "comments": "1st sensor",
-        "scale": "ITS-90"
+        "comments": "1st sensor"
     },
     "pta068C": {
-        "long_name": "Potential Temperature Anomaly",
+        "long_name": "Potential Temperature Anomaly [IPTS-68]",
         "units": "deg C",
-        "comments": "1st sensor",
-        "scale": "IPTS-68"
+        "comments": "1st sensor"
     },
     "pta068F": {
-        "long_name": "Potential Temperature Anomaly",
+        "long_name": "Potential Temperature Anomaly [IPTS-68]",
         "units": "deg F",
-        "comments": "1st sensor",
-        "scale": "IPTS-68"
+        "comments": "1st sensor"
     },
     "pta190C": {
-        "long_name": "Potential Temperature Anomaly, 2",
+        "long_name": "Potential Temperature Anomaly, 2 [ITS-90]",
         "units": "deg C",
-        "comments": "2nd sensor",
-        "scale": "ITS-90"
+        "comments": "2nd sensor"
     },
     "pta190F": {
-        "long_name": "Potential Temperature Anomaly, 2",
+        "long_name": "Potential Temperature Anomaly, 2 [ITS-90]",
         "units": "deg F",
-        "comments": "2nd sensor",
-        "scale": "ITS-90"
+        "comments": "2nd sensor"
     },
     "pta168C": {
-        "long_name": "Potential Temperature Anomaly, 2",
+        "long_name": "Potential Temperature Anomaly, 2 [IPTS-68]",
         "units": "deg C",
-        "comments": "2nd sensor",
-        "scale": "IPTS-68"
+        "comments": "2nd sensor"
     },
     "pta168F": {
-        "long_name": "Potential Temperature Anomaly, 2",
+        "long_name": "Potential Temperature Anomaly, 2 [IPTS-68]",
         "units": "deg F",
-        "comments": "2nd sensor",
-        "scale": "IPTS-68"
+        "comments": "2nd sensor"
     },
     "prM": {
         "long_name": "Pressure",
@@ -2600,7 +2576,7 @@
         "sdn_parameter_urn": "SDN:P01::PSALST01",
         "sdn_parameter_name": "Practical salinity of the water body by CTD and computation using UNESCO 1983 algorithm",
         "comments": "1st sensor",
-        "definition": "This is the preferred term for this definition.    Alternative term PSALST02 is included to cover cases where there are two sensors of the same type contributing to the data set and referential integrity considerations prevent a usage of a single code."
+        "definition": "This is the preferred term for this definition. Alternative term PSALST02 is included to cover cases where there are two sensors of the same type contributing to the data set and referential integrity considerations prevent a usage of a single code."
     },
     "sal_": {
         "long_name": "Salinity, Practical",
@@ -2615,7 +2591,7 @@
         "sdn_parameter_urn": "SDN:P01::PSALST02",
         "sdn_parameter_name": "Practical salinity of the water body by CTD (second sensor) and computation using UNESCO 1983 algorithm",
         "comments": "2nd sensor",
-        "definition": "This is the alternative term for this definition.    Only use to cover cases where there are two sensors of the same type contributing to the data set and referential integrity considerations prevent a usage of a single code."
+        "definition": "This is the alternative term for this definition. Only use to cover cases where there are two sensors of the same type contributing to the data set and referential integrity considerations prevent a usage of a single code."
     },
     "secS-priS": {
         "long_name": "Salinity, Practical, Difference, 2 - 1",
@@ -2789,7 +2765,7 @@
         "comments": "Calculated in SBE Data Processing's Buoyancy module"
     },
     "t090C": {
-        "long_name": "Temperature",
+        "long_name": "Temperature [ITS-90]",
         "bodc_alternative_label": "CTDTmp90",
         "units": "deg C",
         "standard_name": "sea_water_temperature",
@@ -2797,11 +2773,10 @@
         "sdn_parameter_name": "Temperature (ITS-90) of the water body by CTD or STD",
         "sdn_uom_urn": "SDN:P06::UPAA",
         "sdn_uom_name": "Degrees Celsius",
-        "comments": "1st sensor",
-        "scale": "ITS-90"
+        "comments": "1st sensor"
     },
     "t4990C": {
-        "long_name": "Temperature",
+        "long_name": "Temperature [ITS-90]",
         "units": "deg C",
         "standard_name": "sea_water_temperature",
         "sdn_parameter_urn": "SDN:P01::TEMPS901",
@@ -2809,11 +2784,10 @@
         "sdn_uom_urn": "SDN:P06::UPAA",
         "sdn_uom_name": "Degrees Celsius",
         "comments": "1st sensor",
-        "bodc_alternative_label": "CTDTmp90",
-        "scale": "ITS-90"
+        "bodc_alternative_label": "CTDTmp90"
     },
     "tnc90C": {
-        "long_name": "Temperature",
+        "long_name": "Temperature [ITS-90]",
         "units": "deg C",
         "standard_name": "sea_water_temperature",
         "sdn_parameter_urn": "SDN:P01::TEMPS901",
@@ -2821,11 +2795,10 @@
         "sdn_uom_urn": "SDN:P06::UPAA",
         "sdn_uom_name": "Degrees Celsius",
         "comments": "1st sensor",
-        "bodc_alternative_label": "CTDTmp90",
-        "scale": "ITS-90"
+        "bodc_alternative_label": "CTDTmp90"
     },
     "tv290C": {
-        "long_name": "Temperature",
+        "long_name": "Temperature [ITS-90]",
         "units": "deg C",
         "standard_name": "sea_water_temperature",
         "sdn_parameter_urn": "SDN:P01::TEMPS901",
@@ -2833,80 +2806,67 @@
         "sdn_uom_urn": "SDN:P06::UPAA",
         "sdn_uom_name": "Degrees Celsius",
         "comments": "1st sensor",
-        "bodc_alternative_label": "CTDTmp90",
-        "scale": "ITS-90"
+        "bodc_alternative_label": "CTDTmp90"
     },
     "t090F": {
-        "long_name": "Temperature",
+        "long_name": "Temperature [ITS-90]",
         "units": "deg F",
-        "comments": "1st sensor",
-        "scale": "ITS-90"
+        "comments": "1st sensor"
     },
     "t4990F": {
-        "long_name": "Temperature",
+        "long_name": "Temperature [ITS-90]",
         "units": "deg F",
-        "comments": "1st sensor",
-        "scale": "ITS-90"
+        "comments": "1st sensor"
     },
     "tnc90F": {
-        "long_name": "Temperature",
+        "long_name": "Temperature [ITS-90]",
         "units": "deg F",
-        "comments": "1st sensor",
-        "scale": "ITS-90"
+        "comments": "1st sensor"
     },
     "tv290F": {
-        "long_name": "Temperature",
+        "long_name": "Temperature [ITS-90]",
         "units": "deg F",
-        "comments": "1st sensor",
-        "scale": "ITS-90"
+        "comments": "1st sensor"
     },
     "t068C": {
-        "long_name": "Temperature",
+        "long_name": "Temperature [IPTS-68]",
         "units": "deg C",
-        "comments": "1st sensor",
-        "scale": "IPTS-68"
+        "comments": "1st sensor"
     },
     "t4968C": {
-        "long_name": "Temperature",
+        "long_name": "Temperature [IPTS-68]",
         "units": "deg C",
-        "comments": "1st sensor",
-        "scale": "IPTS-68"
+        "comments": "1st sensor"
     },
     "tnc68C": {
-        "long_name": "Temperature",
+        "long_name": "Temperature [IPTS-68]",
         "units": "deg C",
-        "comments": "1st sensor",
-        "scale": "IPTS-68"
+        "comments": "1st sensor"
     },
     "tv268C": {
-        "long_name": "Temperature",
+        "long_name": "Temperature [IPTS-68]",
         "units": "deg C",
-        "comments": "1st sensor",
-        "scale": "IPTS-68"
+        "comments": "1st sensor"
     },
     "t068F": {
-        "long_name": "Temperature",
+        "long_name": "Temperature [IPTS-68]",
         "units": "deg F",
-        "comments": "1st sensor",
-        "scale": "IPTS-68"
+        "comments": "1st sensor"
     },
     "t4968F": {
-        "long_name": "Temperature",
+        "long_name": "Temperature [IPTS-68]",
         "units": "deg F",
-        "comments": "1st sensor",
-        "scale": "IPTS-68"
+        "comments": "1st sensor"
     },
     "tnc68F": {
-        "long_name": "Temperature",
+        "long_name": "Temperature [IPTS-68]",
         "units": "deg F",
-        "comments": "1st sensor",
-        "scale": "IPTS-68"
+        "comments": "1st sensor"
     },
     "tv268F": {
-        "long_name": "Temperature",
+        "long_name": "Temperature [IPTS-68]",
         "units": "deg F",
-        "comments": "1st sensor",
-        "scale": "IPTS-68"
+        "comments": "1st sensor"
     },
     "t190C": {
         "long_name": "Temperature, 2",
@@ -2920,7 +2880,7 @@
         "comments": "2nd sensor"
     },
     "tnc290C": {
-        "long_name": "Temperature, 2",
+        "long_name": "Temperature, 2 [ITS-90]",
         "units": "deg C",
         "standard_name": "sea_water_temperature",
         "sdn_parameter_urn": "SDN:P01::TEMPS902",
@@ -2928,11 +2888,10 @@
         "sdn_uom_urn": "SDN:P06::UPAA",
         "sdn_uom_name": "Degrees Celsius",
         "comments": "2nd sensor",
-        "bodc_alternative_label": "CTDTmp90_2",
-        "scale": "ITS-90"
+        "bodc_alternative_label": "CTDTmp90_2"
     },
     "t190F": {
-        "long_name": "Temperature, 2",
+        "long_name": "Temperature, 2 [ITS-90]",
         "units": "deg F",
         "standard_name": "sea_water_temperature",
         "sdn_parameter_urn": "SDN:P01::TEMPS902",
@@ -2940,11 +2899,10 @@
         "sdn_uom_urn": "SDN:P06::UPAA",
         "sdn_uom_name": "Degrees Celsius",
         "comments": "2nd sensor",
-        "bodc_alternative_label": "CTDTmp90_2",
-        "scale": "ITS-90"
+        "bodc_alternative_label": "CTDTmp90_2"
     },
     "tnc290F": {
-        "long_name": "Temperature, 2",
+        "long_name": "Temperature, 2 [ITS-90]",
         "units": "deg F",
         "standard_name": "sea_water_temperature",
         "sdn_parameter_urn": "SDN:P01::TEMPS902",
@@ -2952,140 +2910,119 @@
         "sdn_uom_urn": "SDN:P06::UPAA",
         "sdn_uom_name": "Degrees Celsius",
         "comments": "2nd sensor",
-        "bodc_alternative_label": "CTDTmp90_2",
-        "scale": "ITS-90"
+        "bodc_alternative_label": "CTDTmp90_2"
     },
     "t168C": {
-        "long_name": "Temperature, 2",
+        "long_name": "Temperature, 2 [IPTS-68]",
         "units": "deg C",
-        "comments": "2nd sensor",
-        "scale": "IPTS-68"
+        "comments": "2nd sensor"
     },
     "tnc268C": {
-        "long_name": "Temperature, 2",
+        "long_name": "Temperature, 2 [IPTS-68]",
         "units": "deg C",
-        "comments": "2nd sensor",
-        "scale": "IPTS-68"
+        "comments": "2nd sensor"
     },
     "t168F": {
-        "long_name": "Temperature, 2",
+        "long_name": "Temperature, 2 [IPTS-68]",
         "units": "deg F",
-        "comments": "2nd sensor",
-        "scale": "IPTS-68"
+        "comments": "2nd sensor"
     },
     "tnc268F": {
-        "long_name": "Temperature, 2",
+        "long_name": "Temperature, 2 [IPTS-68]",
         "units": "deg F",
-        "comments": "2nd sensor",
-        "scale": "IPTS-68"
+        "comments": "2nd sensor"
     },
     "T2-T190C": {
-        "long_name": "Temperature Difference, 2 - 1",
+        "long_name": "Temperature Difference, 2 - 1 [ITS-90]",
         "units": "deg C",
-        "comments": "2nd sensor - 1st sensor",
-        "scale": "ITS-90"
+        "comments": "2nd sensor - 1st sensor"
     },
     "T2-T190F": {
-        "long_name": "Temperature Difference, 2 - 1",
+        "long_name": "Temperature Difference, 2 - 1 [ITS-90]",
         "units": "deg F",
-        "comments": "2nd sensor - 1st sensor",
-        "scale": "ITS-90"
+        "comments": "2nd sensor - 1st sensor"
     },
     "T2-T168C": {
-        "long_name": "Temperature Difference, 2 - 1",
+        "long_name": "Temperature Difference, 2 - 1 [IPTS-68]",
         "units": "deg C",
-        "comments": "2nd sensor - 1st sensor",
-        "scale": "IPTS-68"
+        "comments": "2nd sensor - 1st sensor"
     },
     "T2-T168F": {
-        "long_name": "Temperature Difference, 2 - 1",
+        "long_name": "Temperature Difference, 2 - 1 [IPTS-68]",
         "units": "deg F",
-        "comments": "2nd sensor - 1st sensor",
-        "scale": "IPTS-68"
+        "comments": "2nd sensor - 1st sensor"
     },
     "t3890C": {
-        "long_name": "Temperature, SBE 38",
+        "long_name": "Temperature, SBE 38 [ITS-90]",
         "instrument": "SBE 38",
         "units": "deg C",
-        "comments": "1st sensor",
-        "scale": "ITS-90"
+        "comments": "1st sensor"
     },
     "t38_90C": {
-        "long_name": "Temperature, SBE 38",
+        "long_name": "Temperature, SBE 38 [ITS-90]",
         "instrument": "SBE 38",
         "units": "deg C",
-        "comments": "1st sensor",
-        "scale": "ITS-90"
+        "comments": "1st sensor"
     },
     "t3890F": {
-        "long_name": "Temperature, SBE 38",
+        "long_name": "Temperature, SBE 38 [ITS-90]",
         "instrument": "SBE 38",
         "units": "deg F",
-        "comments": "1st sensor",
-        "scale": "ITS-90"
+        "comments": "1st sensor"
     },
     "t38_90F": {
-        "long_name": "Temperature, SBE 38",
+        "long_name": "Temperature, SBE 38 [ITS-90]",
         "instrument": "SBE 38",
         "units": "deg F",
-        "comments": "1st sensor",
-        "scale": "ITS-90"
+        "comments": "1st sensor"
     },
     "t3868C": {
-        "long_name": "Temperature, SBE 38",
+        "long_name": "Temperature, SBE 38 [IPTS-68]",
         "instrument": "SBE 38",
         "units": "deg C",
-        "comments": "1st sensor",
-        "scale": "IPTS-68"
+        "comments": "1st sensor"
     },
     "t38_68C": {
-        "long_name": "Temperature, SBE 38",
+        "long_name": "Temperature, SBE 38 [IPTS-68]",
         "instrument": "SBE 38",
         "units": "deg C",
-        "comments": "1st sensor",
-        "scale": "IPTS-68"
+        "comments": "1st sensor"
     },
     "t3868F": {
-        "long_name": "Temperature, SBE 38",
+        "long_name": "Temperature, SBE 38 [IPTS-68]",
         "instrument": "SBE 38",
         "units": "deg F",
-        "comments": "1st sensor",
-        "scale": "IPTS-68"
+        "comments": "1st sensor"
     },
     "t38_68F": {
-        "long_name": "Temperature, SBE 38",
+        "long_name": "Temperature, SBE 38 [IPTS-68]",
         "instrument": "SBE 38",
         "units": "deg F",
-        "comments": "1st sensor",
-        "scale": "IPTS-68"
+        "comments": "1st sensor"
     },
     "t3890C1": {
-        "long_name": "Temperature, SBE 38, 2",
+        "long_name": "Temperature, SBE 38, 2 [ITS-90]",
         "instrument": "SBE 38",
         "units": "deg C",
-        "comments": "2nd sensor",
-        "scale": "ITS-90"
+        "comments": "2nd sensor"
     },
     "t3890F1": {
-        "long_name": "Temperature, SBE 38, 2",
+        "long_name": "Temperature, SBE 38, 2 [ITS-90]",
         "instrument": "SBE 38",
         "units": "deg F",
-        "comments": "2nd sensor",
-        "scale": "ITS-90"
+        "comments": "2nd sensor"
     },
     "t3868C1": {
-        "long_name": "Temperature, SBE 38, 2",
+        "long_name": "Temperature, SBE 38, 2 [IPTS-68]",
         "instrument": "SBE 38",
         "units": "deg C",
-        "comments": "2nd sensor",
-        "scale": "IPTS-68"
+        "comments": "2nd sensor"
     },
     "t3868F1": {
-        "long_name": "Temperature, SBE 38, 2",
+        "long_name": "Temperature, SBE 38, 2 [IPTS-68]",
         "instrument": "SBE 38",
         "units": "deg F",
-        "comments": "2nd sensor",
-        "scale": "IPTS-68"
+        "comments": "2nd sensor"
     },
     "tsa": {
         "long_name": "Thermosteric Anomaly",
@@ -3474,22 +3411,19 @@
         "comments": "1st sensor"
     },
     "gsw_ctA1": {
-        "long_name": "Conservative Temperature, 2",
+        "long_name": "Conservative Temperature, 2 [ITS-90]",
         "units": "deg C",
-        "comments": "2nd sensor",
-        "scale": "ITS-90"
+        "comments": "2nd sensor"
     },
     "gsw_ctfA0": {
-        "long_name": "Conservative Temperature Freezing",
+        "long_name": "Conservative Temperature Freezing [ITS-90]",
         "units": "deg C",
-        "comments": "1st sensor",
-        "scale": "ITS-90"
+        "comments": "1st sensor"
     },
     "gsw_ctfA1": {
-        "long_name": "Conservative Temperature Freezing, 2",
+        "long_name": "Conservative Temperature Freezing, 2 [ITS-90]",
         "units": "deg C",
-        "comments": "2nd sensor",
-        "scale": "ITS-90"
+        "comments": "2nd sensor"
     },
     "gsw_densityA0": {
         "long_name": "Density, Teos-10 [density]",
@@ -3628,16 +3562,14 @@
         "comments": "2nd sensor"
     },
     "gsw_ptA0": {
-        "long_name": "Potential Temperature",
+        "long_name": "Potential Temperature [ITS-90]",
         "units": "deg C",
-        "comments": "1st sensor",
-        "scale": "ITS-90"
+        "comments": "1st sensor"
     },
     "gsw_ptA1": {
-        "long_name": "Potential Temperature, 2",
+        "long_name": "Potential Temperature, 2 [ITS-90]",
         "units": "deg C",
-        "comments": "2nd sensor",
-        "scale": "ITS-90"
+        "comments": "2nd sensor"
     },
     "gsw_sstarA0": {
         "long_name": "Preformed Salinity",
@@ -3712,16 +3644,14 @@
         "comments": "2nd sensor"
     },
     "gsw_tfA0": {
-        "long_name": "Temperature Freezing",
+        "long_name": "Temperature Freezing [ITS-90]",
         "units": "deg C",
-        "comments": "1st sensor",
-        "scale": "ITS-90"
+        "comments": "1st sensor"
     },
     "gsw_tfA1": {
-        "long_name": "Temperature Freezing, 2",
+        "long_name": "Temperature Freezing, 2 [ITS-90]",
         "units": "deg C",
-        "comments": "2nd sensor",
-        "scale": "ITS-90"
+        "comments": "2nd sensor"
     },
     "gsw_alphaA0": {
         "long_name": "Thermal Expansion Coefficient",
