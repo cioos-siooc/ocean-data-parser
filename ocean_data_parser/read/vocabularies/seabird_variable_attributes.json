@@ -631,18 +631,12 @@
     "depFM": {
         "long_name": "Depth",
         "units": "m [fresh water]",
-        "standard_name": "depth",
-        "sdn_parameter_urn": "SDN:P01::DEPHPR01",
-        "sdn_parameter_name": "Depth (spatial coordinate) relative to water surface in the water body by profiling pressure sensor and conversion to seawater depth using UNESCO algorithm",
-        "bodc_alternative_label": "CmpDep"
+    "standard_name": "depth"
     },
     "depFF": {
         "long_name": "Depth",
         "units": "ft [fresh water]",
-        "standard_name": "depth",
-        "sdn_parameter_urn": "SDN:P01::DEPHPR01",
-        "sdn_parameter_name": "Depth (spatial coordinate) relative to water surface in the water body by profiling pressure sensor and conversion to seawater depth using UNESCO algorithm",
-        "bodc_alternative_label": "CmpDep"
+    "standard_name": "depth"
     },
     "dNMEA": {
         "long_name": "Depth, Nmea",
