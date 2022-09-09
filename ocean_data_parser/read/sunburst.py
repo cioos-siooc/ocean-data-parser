@@ -22,8 +22,8 @@ notes_dtype_mapping = {
 
 
 def _format_variables(name):
-    name = re.sub("\(|\)", "_", name)
-    name = re.sub("_$", "", name)
+    name = re.sub(r"\(|\)", "_", name)
+    name = re.sub(r"_$", "", name)
     return name
 
 

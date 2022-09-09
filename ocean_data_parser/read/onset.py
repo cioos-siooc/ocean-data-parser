@@ -223,7 +223,10 @@ def csv(
                 ds["temperature"] = (ds["temperature"] - 32.0) / 1.8000
                 ds["temperature"].attrs["units"] = "degC"
                 ds.attrs["history"] += f"{datetime.now()} {string_comment}"
-            if "conductivity" in ds and "uS/cm" not in ds["conductivity"].attrs["units"]:
+            if (
+                "conductivity" in ds
+                and "uS/cm" not in ds["conductivity"].attrs["units"]
+            ):
                 logger.warning(
                     "Unknown conductivity units (%s)", ds["conductivity"].attrs["units"]
                 )
