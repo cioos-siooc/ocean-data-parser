@@ -68,9 +68,22 @@ def standardize_dataset(ds):
     for var in ds:
         ds.encoding[var] = {}
         if "datetime" in ds[var].dtype.name:
-            ds[var].encoding.update({"units": "seconds since 1970-01-01  00:00:00"})
+            ds[var].encoding.update({"units": "seconds since 1970-01-01 00:00:00"})
             if "tz" in ds[var].dtype.name:
                 ds[var].encoding["units"] += "Z"
+        if isinstance(ds[var].dtype, object) and isinstance(
+            ds[var].item(0), pd.Timestamp
+        ):
+            timezone_aware = True if ds[var].item(0).tz else False
+            ds[var] = (
+                ds[var].dims,
+                pd.to_datetime(ds[var].values, utc=timezone_aware).tz_convert(None),
+            )
+            ds[var].encoding.update({"units": "seconds since 1970-01-01 00:00:00"})
+            if timezone_aware:
+                ds[var].attrs["timezone"] = "UTC"
+                ds[var].encoding["units"] += "Z"
+                
         elif ds[var].dtype.name == "object":
             ds[var].encoding["dtype"] = "str"
     return ds
