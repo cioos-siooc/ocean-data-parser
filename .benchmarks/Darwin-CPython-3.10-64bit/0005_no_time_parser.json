@@ -1,0 +1,78 @@
+{
+    "machine_info": {
+        "node": "Jessys-MacBook-Pro.local",
+        "processor": "arm",
+        "machine": "arm64",
+        "python_compiler": "Clang 12.0.0 ",
+        "python_implementation": "CPython",
+        "python_implementation_version": "3.10.4",
+        "python_version": "3.10.4",
+        "python_build": [
+            "main",
+            "Mar 31 2022 03:37:37"
+        ],
+        "release": "21.5.0",
+        "system": "Darwin",
+        "cpu": {
+            "python_version": "3.10.4.final.0 (64 bit)",
+            "cpuinfo_version": [
+                8,
+                0,
+                0
+            ],
+            "cpuinfo_version_string": "8.0.0",
+            "arch": "ARM_8",
+            "bits": 64,
+            "count": 10,
+            "arch_string_raw": "arm64",
+            "brand_raw": "Apple M1 Pro"
+        }
+    },
+    "commit_info": {
+        "id": "fabd0e23df80d4cea64cc1a354832e47eb6fe785",
+        "time": "2022-08-30T10:54:23-04:00",
+        "author_time": "2022-08-30T10:54:23-04:00",
+        "dirty": true,
+        "project": "ocean-data-parser",
+        "branch": "amundsen-int-format"
+    },
+    "benchmarks": [
+        {
+            "group": null,
+            "name": "test_benchmark_amundsen_trajectory",
+            "fullname": "tests/benchmark_test.py::test_benchmark_amundsen_trajectory",
+            "params": null,
+            "param": null,
+            "extra_info": {},
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 5,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 2.3826033750083297,
+                "max": 2.4185902919853106,
+                "mean": 2.403441141801886,
+                "stddev": 0.015142517369504364,
+                "rounds": 5,
+                "median": 2.4055683750193566,
+                "iqr": 0.02551741647766903,
+                "q1": 2.3913068752590334,
+                "q3": 2.4168242917367024,
+                "iqr_outliers": 0,
+                "stddev_outliers": 2,
+                "outliers": "2;0",
+                "ld15iqr": 2.3826033750083297,
+                "hd15iqr": 2.4185902919853106,
+                "ops": 0.4160701015753974,
+                "total": 12.017205709009431,
+                "iterations": 1
+            }
+        }
+    ],
+    "datetime": "2022-08-30T18:35:49.898667",
+    "version": "3.4.1"
+}

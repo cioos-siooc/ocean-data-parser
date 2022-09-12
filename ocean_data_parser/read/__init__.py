@@ -6,3 +6,4 @@ from . import seabird
 from . import utils
 from . import sunburst
 from . import nmea
+from . import amundsen

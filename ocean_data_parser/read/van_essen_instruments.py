@@ -5,7 +5,7 @@ import re
 
 import pandas as pd
 
-from .utils import test_parsed_dataset
+from .utils import test_parsed_dataset, standardize_dataset
 
 logger = logging.getLogger(__name__)
 
@@ -41,9 +41,6 @@ def mon(
     header_end = "[Data]\n"
     if read_csv_kwargs is None:
         read_csv_kwargs = {}
-
-    def date_parser(time):
-        return pd.to_datetime(f"{time} {timezone}", utc=True)
 
     with open(
         file_path,
@@ -100,7 +97,8 @@ def mon(
             engine="python",
             comment="END OF DATA FILE OF DATALOGGER FOR WINDOWS",
             parse_dates=["time"],
-            date_parser=date_parser,
+            date_parser=lambda col: pd.to_datetime(col + timezone, utc=True),
+            infer_datetime_format=True,
             **read_csv_kwargs,
         )
 
@@ -175,7 +173,7 @@ def mon(
 
     # Run tests on parsed data
     test_parsed_dataset(ds)
-    return ds
+    return standardize_dataset(ds)
 
 
 def specific_conductivity_to_conductivity(
