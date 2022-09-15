@@ -1,0 +1,47 @@
+# File input
+input: 'tests/parsers_test_files/onset/**/*csv'
+overwrite: false
+file_registry: file_registry.csv
+
+# Log
+log: 
+  file: batch_conversion.log
+  file_format: null
+  file_level: warning
+sentry:
+  dsn: null
+  level: warning
+
+# Parser
+parser: 'onset.csv'
+
+# Attributes and Metadata
+variable_attributes: {}
+global_attributes: {}
+attribute_corrections:
+  file_specific: {}
+  global_attribute_mappings: {}
+
+# Transformations
+rename_variables: {}
+merge: [{ data: 'path_to_csv' }]
+merge_asof: [{}]
+derive_variables: {}
+
+# QC
+ioos_qc: {}
+manual_qc: {}
+
+# Outputs
+file_output:
+  type: '.nc'
+  path: 'path_where_save'
+  overwrite: true,
+
+upload_to_database:
+  name: null
+  username: null
+  password: null
+  table: null
+  append: True
+  on_conflict: 'UPDATE'
