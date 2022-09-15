@@ -1,3 +1,4 @@
+from asyncore import file_dispatcher
 import importlib
 import logging
 from glob import glob
@@ -6,6 +7,10 @@ import os
 import re
 
 import pandas as pd
+import xarray as xr
+from tqdm import tqdm
+
+from ocean_data_parser.read import utils
 
 empty_file_registry = {"path": None, "last_update": None}
 
@@ -44,68 +49,89 @@ def convert(config):
         )
     else:
         import ocean_data_parser.read
+
         parser = ocean_data_parser.read.file
 
-    for file in files:
-        current_file_timestamp = os.path.getmtime(file)
-        if (
-            file in file_registry.index
-            and file_registry.loc[file]["last_update"] < current_file_timestamp
-            and not config["overwrite"]
-        ):
-            logging.info("Skip file %s which already exists", file)
-            continue
+    # Parse files
+    tbar = tqdm(files, desc="Batch convert files", unit="file")
+    for file in tbar:
+        _convert_file(file, parser, config)
 
-        # parse file to xarray
-        ds = parser(file)
 
-        # Rename variables
-        ds = ds.rename(config["rename_variables"])
+def _convert_file(file, parser, config):
+    # parse file to xarray
+    ds = parser(file)
 
-        # Merge Metadata
-        merge_steps = {
-            key: value
-            for key, value in config.items()
-            if key in ("merge", "merge_asof")
-        }
+    # Rename variables
+    # ds = ds.rename(config["rename_variables"])
 
-        # for merge_type, inputs in merge_steps.items():
-        #     if merge_type == 'merge':
-        #         ds = ds.merge(config[])
-        ## By SerialNumber
+    # Merge Metadata
+    # merge_steps = {
+    #     key: value
+    #     for key, value in config.items()
+    #     if key in ("merge", "merge_asof")
+    # }
 
-        # IOOS QC
+    # for merge_type, inputs in merge_steps.items():
+    #     if merge_type == 'merge':
+    #         ds = ds.merge(config[])
+    ## By SerialNumber
 
-        # Manual QC
+    # IOOS QC
 
-        # Aggregate flags
+    # Manual QC
 
-        # Run Sentry warnings
+    # Aggregate flags
 
-        # Save to
-        if config.get("file_output"):
-            output_path = config["file_output"].get("path", file + ".nc").copy()
-            if "$$" in output_path:
-                path_variables = re.search(r"$$([^$]+)$$", output_path)
-                for path_variable in path_variables:
-                    if path_variable.startswith("global:"):
-                        value = ds.attrs[path_variable[6:]]
-                    elif path_variable in ds:
-                        value = ds[path_variable].values
+    # Run Sentry warnings
 
-                    output_path = output_path.replace("$${path_variable}$$", value)
-            else:
-                output_path = config["file_output"]
-            output_basename = os.path.basename(output_path)
-            if not os.path.exists(output_basename):
-                os.makedirs(output_basename)
+    # Standardize output
+    ds = utils.standardize_dataset(ds)
 
-            ds.to_netcdf(output_path)
+    # Save to
+    if config.get("file_output"):
+        output_path = _generate_output_path(file, ds, config)
+        output_dir = os.path.dirname(output_path)
+        if not os.path.exists(output_dir):
+            logger.info("Create new directory: %s", output_dir)
+            os.makedirs(output_dir)
+        logger.info("Save to: %s", output_path)
+        ds.to_netcdf(output_path)
 
-        if config.get("upload_to_database"):
-            # TODO update to database
-            ds.to_dataframe().to_sql()
-            pass
+    if config.get("upload_to_database"):
+        # TODO update to database
+        # ds.to_dataframe().to_sql()
+        pass
+
+
+def _generate_output_path(source_file_path, ds, config):
+    def _add_prefix_suffix(full_path):
+        path, file_ext = os.path.split(full_path)
+        file, ext = os.path.splitext(file_ext)
+        return os.path.join(
+            path,
+            config["file_output"].get("file_prefix")
+            or "" + file + config["file_output"].get("file_suffix")
+            or "" + ext,
+        )
+
+    if config["file_output"] is None:
+        return None
+    elif config["file_output"]["path"] is None:
+        return _add_prefix_suffix(source_file_path) + ".nc"
+
+    # Review file_output path given by config
+    output_path = config["file_output"]["path"]
+    if "$$" in output_path:
+        path_variables = re.search(r"$$([^$]+)$$", output_path)
+        for path_variable in path_variables:
+            if path_variable.startswith("global:"):
+                value = ds.attrs[path_variable[6:]]
+            elif path_variable in ds:
+                value = ds[path_variable].values
+
+            output_path = output_path.replace("$${path_variable}$$", value)
+    return _add_prefix_suffix(output_path)
 
 
 if __name__ == "__main__":

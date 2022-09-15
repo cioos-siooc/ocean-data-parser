@@ -4,7 +4,7 @@ overwrite: false
 file_registry: file_registry.csv
 
 # Log
-log: 
+log:
   file: batch_conversion.log
   file_format: null
   file_level: warning
@@ -35,8 +35,10 @@ manual_qc: {}
 # Outputs
 file_output:
   type: '.nc'
-  path: 'path_where_save'
+  path: null
   overwrite: true,
+  file_prefix: null
+  file_suffix: _test
 
 upload_to_database:
   name: null
