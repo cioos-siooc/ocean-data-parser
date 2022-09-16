@@ -7,4 +7,3 @@ from . import utils
 from . import sunburst
 from . import nmea
 from . import amundsen
-from . import dfo
