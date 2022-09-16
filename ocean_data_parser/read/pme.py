@@ -10,7 +10,7 @@ from datetime import datetime
 import pandas as pd
 import xarray as xr
 
-from ..convert.oxygen import O2ctoO2p, O2ctoO2s
+from ocean_data_parser.convert.oxygen import O2ctoO2p, O2ctoO2s
 
 logger = logging.getLogger(__name__)
 vars_attributes = {

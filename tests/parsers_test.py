@@ -97,3 +97,18 @@ class AmundsenParserTests(unittest.TestCase):
                 continue
             ds = read.amundsen.int_format(path)
             ds.to_netcdf(f"{path}_test.nc", format="NETCDF4_CLASSIC")
+
+
+class ODFParsertest(unittest.TestCase):
+    def test_bio_odf_parser(self):
+        """Test DFO BIO ODF Parser"""
+        paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
+        for path in paths:
+            ds = read.dfo.bio_odf(path, config=None)
+
+
+    def test_mli_odf_parser(self):
+        """Test DFO BIO ODF Parser"""
+        paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
+        for path in paths:
+            ds = read.dfo.mli_odf(path, config=None)
