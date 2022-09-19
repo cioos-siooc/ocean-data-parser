@@ -16,8 +16,8 @@ from tqdm import tqdm
 #     get_nearest_station,
 #     read_geojson,
 # )
-from ocean_data_parser.read.odf import attributes
-from ocean_data_parser.read.odf import parser as odf_parser
+import ocean_data_parser.read.odf.attributes as attributes
+import ocean_data_parser.read.odf.parser as odf_parser
 from ocean_data_parser.read.odf._version import __version__
 from ocean_data_parser.read.odf.utils import seabird
 from ocean_data_parser.read.odf.utils.standarize_attributes import (
@@ -119,7 +119,7 @@ def read_config(config_file: str = DEFAULT_CONFIG_PATH) -> dict:
     return config
 
 
-def odf_to_netcdf(odf_path, config=None):
+def parse_odf(odf_path, config=None):
     """Convert an ODF file to a netcdf.
     Args:
         odf_path (str): path to ODF file to convert
@@ -268,7 +268,7 @@ def odf_to_netcdf_with_log(inputs):
     odf_parser.logger.extra.update(log)
     logger.extra.update(log)
     try:
-        odf_to_netcdf(*inputs)
+        parse_odf(*inputs)
     except Exception:
         logger.error("Conversion failed!!!", exc_info=True)
 
