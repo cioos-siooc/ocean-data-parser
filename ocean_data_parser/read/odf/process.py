@@ -19,10 +19,8 @@ from tqdm import tqdm
 # )
 import ocean_data_parser.read.odf.attributes as attributes
 import ocean_data_parser.read.odf.parser as odf_parser
-from ocean_data_parser.read.odf.utils import seabird
-from ocean_data_parser.read.odf.utils.standarize_attributes import (
-    standardize_dataset,
-)
+from ocean_data_parser.read import seabird
+from ocean_data_parser.read.utils import standardize_dataset
 
 tqdm.pandas()
 
@@ -211,7 +209,7 @@ def parse_odf(odf_path, config=None):
     # Add geospatial and geometry related global attributes
     # Just add spatial/time range as attributes
     initial_attrs = dataset.attrs.keys()
-    dataset = standardize_dataset(dataset, utc=True)
+    dataset = standardize_dataset(dataset)
     dropped_attrs = [var for var in initial_attrs if var not in dataset.attrs]
     if dropped_attrs:
         logger.info(f"Drop empty attributes: {dropped_attrs}")
