@@ -4,10 +4,6 @@ from ocean_data_parser.read.odf.process import (
 )
 
 
-def odf(path, config=None):
-    return parse_odf(path, config=config)
-
-
 def bio_odf(path, config=None):
     """Make sure to use only the Bedford Institute specific vocabulary"""
 

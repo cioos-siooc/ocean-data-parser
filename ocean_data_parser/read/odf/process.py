@@ -1,4 +1,5 @@
 """General module use to convert ODF files into a NetCDF CF, ACDD compliant format."""
+__version__ = "1.0.0"
 import copy
 import json
 import logging
@@ -18,7 +19,6 @@ from tqdm import tqdm
 # )
 import ocean_data_parser.read.odf.attributes as attributes
 import ocean_data_parser.read.odf.parser as odf_parser
-from ocean_data_parser.read.odf._version import __version__
 from ocean_data_parser.read.odf.utils import seabird
 from ocean_data_parser.read.odf.utils.standarize_attributes import (
     standardize_dataset,
