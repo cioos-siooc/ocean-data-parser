@@ -61,8 +61,18 @@ def _standardize_attribute_value(value: str, name: str = None):
         return value
 
 
+def csv_format(path, **kwargs):
+    """Parse Amundsen CSV format which is similar to the INT format but comma delimited"""
+    kwargs["sep"] = ","
+    return int_format(path, **kwargs)
+
+
 def int_format(
-    path, encoding="Windows-1252", map_to_vocabulary=True, generate_depth=True
+    path,
+    encoding="Windows-1252",
+    map_to_vocabulary=True,
+    generate_depth=True,
+    sep=r"\s+",
 ):
     """Parse INT format developed and distributed by ArcticNet
     and the Amundsen groups over the years."""
@@ -87,7 +97,7 @@ def int_format(
             line = line.replace("\n", "")
             if re.match(r"^%\s*$", line) or not line:
                 continue
-            elif line and not re.match(r"\s*%", line) and line[0] == " ":
+            elif line and not re.match(r"\s*%", line):
                 last_line = line
                 break
             elif ":" in line:
@@ -109,27 +119,33 @@ def int_format(
 
         # Parse Columne Header by capital letters
         column_name_line = last_line
-        delimiter_line = file.readline()
-        if not re.match(r"^[\s\-]+$", delimiter_line):
-            logger.error("Delimiter line below the column names isn't the expected one")
 
-        # Parse column names based on delimiter line below
-        delimited_segments = re.findall(r"\s*\-+", delimiter_line)
-        start_segment = 0
-        column_names = []
-        for segment in delimited_segments:
-            column_names += [
-                column_name_line[start_segment : start_segment + len(segment)].strip()
-            ]
-            start_segment = start_segment + len(segment)
+        if sep == r"\s+":
+            delimiter_line = file.readline()
+            if not re.match(r"^[\s\-]+$", delimiter_line):
+                logger.error(
+                    "Delimiter line below the column names isn't the expected one"
+                )
+
+            # Parse column names based on delimiter line below
+            delimited_segments = re.findall(r"\s*\-+", delimiter_line)
+            start_segment = 0
+            column_names = []
+            for segment in delimited_segments:
+                column_names += [
+                    column_name_line[
+                        start_segment : start_segment + len(segment)
+                    ].strip()
+                ]
+                start_segment = start_segment + len(segment)
+        elif sep == ",":
+            column_names = column_name_line.split(",")
 
         # Parse data
         df = pd.read_csv(
             file,
-            sep=r"\s+",
+            sep=sep,
             names=column_names,
-            # parse_dates=parse_dates,
-            # date_parser=date_parser,
         )
 
         # Sort column attributes
