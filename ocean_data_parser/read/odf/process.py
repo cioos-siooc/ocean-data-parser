@@ -21,6 +21,7 @@ import ocean_data_parser.read.odf.attributes as attributes
 import ocean_data_parser.read.odf.parser as odf_parser
 from ocean_data_parser.read import seabird
 from ocean_data_parser.read.utils import standardize_dataset
+from ocean_data_parser.geo import get_nearest_station, read_geojson, get_geo_code
 
 tqdm.pandas()
 
@@ -52,11 +53,14 @@ def read_config(config_file: str = DEFAULT_CONFIG_PATH) -> dict:
     )
     config = json.loads(json_text)
 
-    # FIXME add read_geojson feature
-    # # Apply fstring to geojson paths
-    # config["geographic_areas"] = {}
-    # for file in config["geographic_area_reference_files"]:
-    #     config["geographic_areas"].update(read_geojson(file))
+    # Apply fstring to geojson paths
+    config["geographic_areas"] = {}
+    if isinstance(config["geographic_area_reference_files"], str):
+        config["geographic_area_reference_files"] = glob(
+            config["geographic_area_reference_files"]
+        )
+    for file in config["geographic_area_reference_files"]:
+        config["geographic_areas"].update(read_geojson(file))
 
     # Integrate station lists from geojson files
     config["reference_stations"] = pd.concat(
@@ -158,32 +162,31 @@ def parse_odf(odf_path, config=None):
 
     # Define coordinates variables from attributes, assign geographic_area and nearest stations
     dataset = attributes.generate_coordinates_variables(dataset)
-    # FIXME add get_geo_code feature
-    # dataset.attrs["geographic_area"] = get_geo_code(
-    #     [dataset["longitude"].mean(), dataset["latitude"].mean()],
-    #     config["geographic_areas"],
-    # )
+    dataset.attrs["geographic_area"] = get_geo_code(
+        [dataset["longitude"].mean(), dataset["latitude"].mean()],
+        config["geographic_areas"],
+    )
 
-    # FIXME add nearest_station feature
-    # nearest_station = get_nearest_station(
-    #     config["reference_stations"][["station", "latitude", "longitude"]].values,
-    #     (dataset["latitude"], dataset["longitude"]),
-    #     config["maximum_distance_from_station_km"],
-    # )
-    # if nearest_station:
-    #     dataset.attrs["station"] = nearest_station
-    # elif (
-    #     dataset.attrs.get("station")
-    #     and dataset.attrs.get("station")
-    #     not in config["reference_stations"]["station"].tolist()
-    #     and re.match(r"[^0-9]", dataset.attrs["station"])
-    # ):
-    #     logger.warning(
-    #         "Station %s [%sN, %sE] is missing from the reference_station.",
-    #         dataset.attrs["station"],
-    #         dataset["latitude"].mean().values,
-    #         dataset["longitude"].mean().values,
-    #     )
+    nearest_station = get_nearest_station(
+        dataset["latitude"],
+        dataset["longitude"],
+        config["reference_stations"][["station", "latitude", "longitude"]].values,
+        config["maximum_distance_from_station_km"],
+    )
+    if nearest_station:
+        dataset.attrs["station"] = nearest_station
+    elif (
+        dataset.attrs.get("station")
+        and dataset.attrs.get("station")
+        not in config["reference_stations"]["station"].tolist()
+        and re.match(r"[^0-9]", dataset.attrs["station"])
+    ):
+        logger.warning(
+            "Station %s [%sN, %sE] is missing from the reference_station.",
+            dataset.attrs["station"],
+            dataset["latitude"].mean().values,
+            dataset["longitude"].mean().values,
+        )
 
     # Add Vocabulary attributes
     dataset = odf_parser.get_vocabulary_attributes(

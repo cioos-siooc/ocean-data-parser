@@ -22,6 +22,9 @@ setup(
         "pynmea2",
         "gsw",
     ],
+    extras={
+        "odf": ["geographicLib","shapely"]
+    }
     classifiers=[
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",

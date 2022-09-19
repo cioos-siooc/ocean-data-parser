@@ -11,6 +11,46 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
 
 
+def compare_test_to_reference_netcdf(files):
+    def ignore_from_attr(attr, expression, placeholder):
+        """Replace expression in both reference and test files which are expected to be different."""
+        ref.attrs[attr] = re.sub(expression, placeholder, ref.attrs[attr])
+        test.attrs[attr] = re.sub(expression, placeholder, test.attrs[attr])
+
+    for file in files:
+        ref = xr.open_dataset(file)
+        nc_file_test = file.replace("_reference.nc", "_test.nc")
+        if not os.path.isfile(nc_file_test):
+            raise RuntimeError(f"{nc_file_test} was not generated.")
+        test = xr.open_dataset(nc_file_test)
+
+        # Add placeholders to specific fields in attributes
+        ignore_from_attr(
+            "history",
+            r"cioos_data_trasform.odf_transform V \d+\.\d+.\d+",
+            "cioos_data_trasform.odf_transform V VERSION",
+        )
+        ignore_from_attr("history", r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ", "TIMESTAMP")
+        ref.attrs["date_created"] = "TIMESTAMP"
+        test.attrs["date_created"] = "TIMESTAMP"
+
+        if not ref.identical(test):
+            for key, value in ref.attrs.items():
+                if test.attrs.get(key) != value:
+                    logger.error(
+                        "Global attribute ds.attrs[%s] is different from reference file",
+                        key,
+                    )
+            for var in ref:
+                if not ref[var].identical(test[var]):
+                    logger.error(
+                        "Variable ds[%s] is different from reference file", var
+                    )
+            raise RuntimeError(
+                f"Converted file {nc_file_test} is different than the reference: {file}"
+            )
+
+
 class PMEParserTests(unittest.TestCase):
     def test_txt_parser(self):
         paths = glob("tests/parsers_test_files/pme")
@@ -130,57 +170,12 @@ class ODFParsertest(unittest.TestCase):
 
     def test_bio_odf_converted_netcdf_vs_references(self):
         """Test DFO BIO ODF conversion to NetCDF vs reference files"""
-
-        def ignore_from_attr(attr, expression, placeholder):
-            """Replace expression in both reference and test files which are expected to be different."""
-            ref.attrs[attr] = re.sub(expression, placeholder, ref.attrs[attr])
-            test.attrs[attr] = re.sub(expression, placeholder, test.attrs[attr])
-
-        # Run bio odf conversion
+        # Generate test bio odf netcdf files
         self.test_bio_odf_netcdf()
 
-        # Compare to reference files
-        nc_files = glob(
+        # Retriev the list of reference files
+        ref_files = glob(
             "./tests/parsers_test_files/dfo/odf/bio/**/*.ODF_reference.nc",
             recursive=True,
         )
-
-        for nc_file in nc_files:
-            ref = xr.open_dataset(nc_file)
-            nc_file_test = nc_file.replace("_reference.nc", "_test.nc")
-            if not os.path.isfile(nc_file_test):
-                raise RuntimeError(f"{nc_file_test} was not generated.")
-            test = xr.open_dataset(nc_file_test)
-
-            # Add placeholders to specific fields in attributes
-            ignore_from_attr(
-                "history",
-                r"cioos_data_trasform.odf_transform V \d+\.\d+.\d+",
-                "cioos_data_trasform.odf_transform V VERSION",
-            )
-            ignore_from_attr(
-                "history", r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ", "TIMESTAMP"
-            )
-            if "geographic_area" in ref.attrs:
-                ref.attrs.pop("geographic_area")
-            if "station" in ref.attrs:
-                ref.attrs.pop("station")
-
-            ref.attrs["date_created"] = "TIMESTAMP"
-            test.attrs["date_created"] = "TIMESTAMP"
-
-            if not ref.identical(test):
-                for key, value in ref.attrs.items():
-                    if test.attrs.get(key) != value:
-                        logger.error(
-                            "Global attribute ds.attrs[%s] is different from reference file",
-                            key,
-                        )
-                for var in ref:
-                    if not ref[var].identical(test[var]):
-                        logger.error(
-                            "Variable ds[%s] is different from reference file", var
-                        )
-                raise RuntimeError(
-                    f"Converted file {nc_file_test} is different than the reference: {nc_file}"
-                )
+        compare_test_to_reference_netcdf(ref_files)
