@@ -83,7 +83,7 @@ def standardize_dataset(ds):
             if timezone_aware:
                 ds[var].attrs["timezone"] = "UTC"
                 ds[var].encoding["units"] += "Z"
-                
+
         elif ds[var].dtype.name == "object":
             ds[var].encoding["dtype"] = "str"
     return ds
