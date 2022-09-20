@@ -5,6 +5,8 @@ from glob import glob
 import os
 
 import xarray as xr
+import pandas as pd
+import numpy as np
 from ocean_data_parser import read
 
 logging.basicConfig(level=logging.DEBUG)
@@ -12,6 +14,32 @@ logger = logging.getLogger()
 
 
 def compare_test_to_reference_netcdf(files):
+    def standardize_attributes(value):
+        if isinstance(value, str):
+            value = value.strip()
+            if re.match(
+                r"\d\d\d\d-\d\d-\d\d(T|\s)\d\d:\d\d:\d\d(\.\d*){0,1}(Z|[+-]\d\d\:\d\d){0,1}$",
+                value,
+            ):
+                value = pd.to_datetime(value)
+        return value
+
+    def standardize_dataset(ds):
+        ds.attrs = {
+            key: standardize_attributes(value) for key, value in ds.attrs.items()
+        }
+        for var in ds:
+            ds[var].attrs = {
+                key: standardize_attributes(value)
+                for key, value in ds[var].attrs.items()
+            }
+        return ds
+
+    def is_identical(ref, test):
+        if isinstance(ref, np.ndarray):
+            return (ref != test).any()
+        return ref != test
+
     def ignore_from_attr(attr, expression, placeholder):
         """Replace expression in both reference and test files which are expected to be different."""
         ref.attrs[attr] = re.sub(expression, placeholder, ref.attrs[attr])
@@ -30,23 +58,46 @@ def compare_test_to_reference_netcdf(files):
             r"cioos_data_trasform.odf_transform V \d+\.\d+.\d+",
             "cioos_data_trasform.odf_transform V VERSION",
         )
-        ignore_from_attr("history", r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ", "TIMESTAMP")
+        ignore_from_attr(
+            "history", r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.*\d*Z", "TIMESTAMP"
+        )
         ref.attrs["date_created"] = "TIMESTAMP"
         test.attrs["date_created"] = "TIMESTAMP"
 
+        ref = standardize_dataset(ref)
+        test = standardize_dataset(test)
+
         if not ref.identical(test):
-            for key, value in ref.attrs.items():
-                if test.attrs.get(key) != value:
-                    logger.error(
-                        "Global attribute ds.attrs[%s] is different from reference file",
-                        key,
-                    )
+
+            # Global attributes
+            for key in ref.attrs.keys():
+                if is_identical(ref.attrs[key], test.attrs.get(key)):
+                    raise RuntimeWarning(f"Global attribute {key} changed")
+
+            # new global attributes
+            new_global_attributes = [att for att in test.attrs.keys() if att not in ref.attrs]
+            if new_global_attributes:
+                raise RuntimeWarning(f"Extra attributes dectected that are not in the reference file: {new_global_attributes}")
+
+            # Variables
             for var in ref:
+                # Variable Attributes
+                for key in ref[var].attrs.keys():
+                    if is_identical(ref[var].attrs[key], test[var].attrs.get(key)):
+                        raise RuntimeWarning(
+                            f"Variable {key} attribute {var} changed"
+                        )
+                new_variable_attributes = [att for att in test[var].attrs.keys() if att not in ref[var].attrs]
+                if new_variable_attributes:
+                    raise RuntimeWarning(f"Extra variable attributes dectected that are not in the reference file: {var} -> {new_variable_attributes}")
+                    
+                # Values
                 if not ref[var].identical(test[var]):
-                    logger.error(
-                        "Variable ds[%s] is different from reference file", var
+                    raise RuntimeWarning(
+                        f"Variable ds[{var}] is different from reference file"
                     )
-            raise RuntimeError(
+
+            raise RuntimeWarning(
                 f"Converted file {nc_file_test} is different than the reference: {file}"
             )
 
@@ -146,13 +197,13 @@ class ODFParsertest(unittest.TestCase):
         """Test DFO BIO ODF Parser"""
         paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
         for path in paths:
-            ds = read.dfo.bio_odf(path, config=None)
+            read.dfo.bio_odf(path, config=None)
 
     def test_mli_odf_parser(self):
         """Test DFO BIO ODF Parser"""
         paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
         for path in paths:
-            ds = read.dfo.mli_odf(path, config=None)
+            read.dfo.mli_odf(path, config=None)
 
     def test_bio_odf_netcdf(self):
         """Test DFO BIO ODF Parser"""

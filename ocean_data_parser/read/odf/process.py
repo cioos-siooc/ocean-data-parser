@@ -57,7 +57,7 @@ def read_config(config_file: str = DEFAULT_CONFIG_PATH) -> dict:
     config["geographic_areas"] = {}
     if isinstance(config["geographic_area_reference_files"], str):
         config["geographic_area_reference_files"] = glob(
-            config["geographic_area_reference_files"]
+            config["geographic_area_reference_files"], recursive=True
         )
     for file in config["geographic_area_reference_files"]:
         config["geographic_areas"].update(read_geojson(file))
@@ -214,7 +214,7 @@ def parse_odf(odf_path, config=None):
     initial_attrs = dataset.attrs.keys()
     dataset = standardize_dataset(dataset)
     dropped_attrs = [var for var in initial_attrs if var not in dataset.attrs]
-    if dropped_attrs:
+    if "sampling_interval" in dropped_attrs:
         logger.info(f"Drop empty attributes: {dropped_attrs}")
 
     # Handle coordinates and dimensions

@@ -38,6 +38,11 @@ def get_history_handler():
 def standardize_dataset(ds):
     """Standardize dataset to be easily serializable to netcdf and compatible with ERDDAP"""
 
+    def _consider_attribute(value):
+        return type(value) in (dict, list) or (
+            (pd.notnull(value) or value in (0, 0.0)) and value != ""
+        )
+
     def _encode_attribute(value):
         if isinstance(value, dict):
             return json.dumps(value)
@@ -48,11 +53,15 @@ def standardize_dataset(ds):
         else:
             return value
 
+    ds = get_spatial_coverage_attributes(ds)
+    ds = standardize_variable_attributes(ds)
+    ds.attrs = standardize_global_attributes(ds.attrs)
+
     # Encode global attributes and drop empty values
     ds.attrs = {
         att: _encode_attribute(value)
         for att, value in ds.attrs.items()
-        if type(value) in (dict, list) or (value and pd.notnull(value))
+        if _consider_attribute(value)
     }
 
     # Drop empty variable attributes
@@ -60,10 +69,7 @@ def standardize_dataset(ds):
         ds[var].attrs = {
             attr: _encode_attribute(value)
             for attr, value in ds[var].attrs.items()
-            if type(value) in (dict, list)
-            or value
-            and pd.notnull(value)
-            and not isinstance(value, list)
+            if _consider_attribute(value)
         }
 
     # Specify encoding for some variables (ex time variables)
@@ -94,9 +100,6 @@ def standardize_dataset(ds):
         elif ds[var].dtype.name == "object":
             ds[var].encoding["dtype"] = "str"
 
-    ds = get_spatial_coverage_attributes(ds)
-    ds = standardize_variable_attributes(ds)
-    ds.attrs = standardize_global_attributes(ds.attrs)
     return ds
 
 
@@ -150,10 +153,10 @@ def get_spatial_coverage_attributes(
     if time in ds:
         time_spatial_coverage.update(
             {
-                "time_coverage_start": str(ds[time].min().values),
-                "time_coverage_end": str(ds[time].max().values),
+                "time_coverage_start": ds[time].min().item(0),
+                "time_coverage_end": ds[time].max().item(0),
                 "time_coverage_duration": pd.to_timedelta(
-                    (ds[time].max() - ds[time].min()).values
+                    (ds[time].max() - ds[time].min()).item(0)
                 ).isoformat(),
             }
         )
@@ -162,11 +165,11 @@ def get_spatial_coverage_attributes(
     if lat in ds and lon in ds:
         time_spatial_coverage.update(
             {
-                "geospatial_lat_min": ds[lat].min().values,
-                "geospatial_lat_max": ds[lat].max().values,
+                "geospatial_lat_min": ds[lat].min().item(0),
+                "geospatial_lat_max": ds[lat].max().item(0),
                 "geospatial_lat_units": ds[lat].attrs.get("units"),
-                "geospatial_lon_min": ds[lon].min().values,
-                "geospatial_lon_max": ds[lon].max().values,
+                "geospatial_lon_min": ds[lon].min().item(0),
+                "geospatial_lon_max": ds[lon].max().item(0),
                 "geospatial_lon_units": ds[lon].attrs.get("units"),
             }
         )
@@ -176,8 +179,8 @@ def get_spatial_coverage_attributes(
         ds["depth"].attrs["positive"] = ds["depth"].attrs.get("positive", "down")
         time_spatial_coverage.update(
             {
-                "geospatial_vertical_min": ds[depth].min().values,
-                "geospatial_vertical_max": ds[depth].max().values,
+                "geospatial_vertical_min": ds[depth].min().item(0),
+                "geospatial_vertical_max": ds[depth].max().item(0),
                 "geospatial_vertical_units": ds[depth].attrs["units"],
                 "geospatial_vertical_positive": "down",
             }

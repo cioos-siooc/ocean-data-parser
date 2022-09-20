@@ -2,7 +2,7 @@ import json
 import os
 from geographiclib.geodesic import Geodesic
 
-from shapely.geometry import shape, Point
+from shapely.geometry import shape, Point, Polygon
 
 
 def read_geojson(
@@ -27,11 +27,11 @@ def read_geojson(
         geojson = json.load(f)
 
     # Add shapely geometry
-    if "features" in geojson:
-        geojson["features"] = [
-            {**feature, **{"shape": shape(feature["geometry"]).buffer(0)}}
-            for feature in geojson["features"]
-        ]
+    for feature in geojson["features"]:
+        if feature["geometry"]["type"] == "Polygon":
+            geojson[feature["properties"]["name"]] = shape(feature["geometry"]).buffer(
+                0
+            )
     return geojson
 
 
@@ -47,21 +47,13 @@ def get_geo_code(position: list, geographical_areas_collections: list) -> str:
         geographical_areas list (str): comma separated list of matching geographical areas
     """
 
-    def _get_features_contains_position(features):
-        return [
-            feature
-            for feature in features
-            if feature["shape"].contains(Point(position))
-        ]
+    matched_features = [
+        name.replace(" ", "-")
+        for name, polygon in geographical_areas_collections.items()
+        if isinstance(polygon, Polygon) and polygon.contains(Point(position))
+    ]
 
-    matched_features = []
-    for collection in geographical_areas_collections:
-        matched_features += _get_features_contains_position(collection["features"])
-
-    if matched_features:
-        return ", ".join(
-            [feature["properties"]["name"] for feature in matched_features]
-        )
+    return " ".join(matched_features) if matched_features else "n/a"
 
 
 def get_nearest_station(
@@ -77,7 +69,7 @@ def get_nearest_station(
         latitude (float): [description]
         longigude (float): [description]
         stations (list): [description]
-        max_meter_distance_from_station (float, optional): [description]. Defaults to None.
+        max_distance_from_station_km (float, optional): Max distance [km] from station to be matched.
         geod (Geodesic, optional): [description]. Defaults to None.
 
     Returns:
@@ -93,6 +85,6 @@ def get_nearest_station(
 
     nearest_station = min(station_distance, key=station_distance.get)
     distance_from_nearest_station = station_distance[nearest_station]
-    if distance_from_nearest_station > max_meter_distance_from_station:
+    if distance_from_nearest_station / 1000 > max_meter_distance_from_station:
         return None
     return nearest_station
