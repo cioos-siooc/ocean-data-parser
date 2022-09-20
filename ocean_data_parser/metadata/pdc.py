@@ -29,11 +29,9 @@ def fgdc_to_acdd(url=None, xml=None):
     metadata = {
         "title": info["metadata"]["idinfo"]["citation"]["citeinfo"]["title"],
         "summary": info["metadata"]["idinfo"]["descript"]["abstract"],
-        "comment": "Purpose: %s \n\n Supplementary information: %s"
-        % (
-            info["metadata"]["idinfo"]["descript"]["purpose"],
-            info["metadata"]["idinfo"]["descript"]["supplinf"],
-        ),
+        "comment": f"""Purpose: {info["metadata"]["idinfo"]["descript"]["purpose"]}\n
+        Supplementary information: {info["metadata"]["idinfo"]["descript"]["supplinf"]}
+        """,
         "institution": None,
         "date_created": pd.to_datetime(
             info["metadata"]["metainfo"]["metd"]
