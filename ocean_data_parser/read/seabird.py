@@ -3,16 +3,17 @@ This module regroup a set of tools used to convert the Seabird Electronic differ
 formats to a CF compliant xarray format.
 """
 
+import difflib
 import json
 import logging
 import os
 import re
 from datetime import datetime
-import difflib
 
 import pandas as pd
 import xarray as xr
 import xmltodict
+from pyexpat import ExpatError
 
 from .utils import standardize_dataset
 
@@ -256,8 +257,8 @@ def _parse_seabird_file_header(f):
             xml_section = ""
             first_character = line[0]
             while (
-                re.match(f"\{first_character}\s*\<", line)
-                or re.match(f"^\{first_character}\s*$", line)
+                re.match(fr"\{first_character}\s*\<", line)
+                or re.match(fr"^\{first_character}\s*$", line)
                 or line.startswith("** ")
                 or line.startswith("* cast")
                 or re.search(r"\>\s*$", line)
