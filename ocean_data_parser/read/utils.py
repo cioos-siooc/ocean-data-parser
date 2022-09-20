@@ -156,7 +156,7 @@ def get_spatial_coverage_attributes(
                 "time_coverage_start": ds[time].min().item(0),
                 "time_coverage_end": ds[time].max().item(0),
                 "time_coverage_duration": pd.to_timedelta(
-                    (ds[time].max() - ds[time].min()).item(0)
+                    (ds[time].max() - ds[time].min()).values
                 ).isoformat(),
             }
         )
