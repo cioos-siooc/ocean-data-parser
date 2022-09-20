@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "ocean-data-parser"
+version = "0.1.0"
+description = ""
+authors = ["Jessy Barrette <jessy.barrette@hakai.org>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/hakaiinstitute/ocean-data-parser"
+repository = "https://github.com/hakaiinstitute/ocean-data-parser"
+keywords = ["parser", "ocean", "hakai","cioos"]
+include = [
+    "LICENSE",
+]
+[tool.poetry.dependencies]
+python = ">=3.8,<4.0"
+numpy = "^1.22.0"
+xarray = "2022.3.0"
+pandas = "1.4.2"
+xmltodict = "0.12.0"
+tqdm = "4.64.0"
+pytz = "2022.1"
+NetCDF4 = "1.6.0"
+pynmea2 = "1.8.0"
+gsw = ">3.0.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^3.0"
+flake8 = "^5.0"
+black = "22.8"
+pytest-benchmark = "3.4.1"
+pre-commit = "^2.20.0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
