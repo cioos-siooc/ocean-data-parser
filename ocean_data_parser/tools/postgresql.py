@@ -49,9 +49,7 @@ def update_database_table(
             CREATE TEMP TABLE tmp_table
             (LIKE {table_name} INCLUDING DEFAULTS)
             ON COMMIT DROP;
-
             COPY tmp_table ({columns}) FROM STDIN WITH CSV;
-        
             INSERT INTO {table_name}
             SELECT * FROM tmp_table
             {on_conflict};

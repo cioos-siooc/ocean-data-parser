@@ -7,7 +7,7 @@ import xmltodict
 
 logger = logging.getLogger(__name__)
 
-# def fgdc_to_acdd(xml)
+
 def fgdc_to_acdd(url=None, xml=None):
     """Convert PDC FGDC XML format to an ACDD 1.3 standard dictionary format."""
     # Load from URL if provided
