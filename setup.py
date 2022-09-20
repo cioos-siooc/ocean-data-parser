@@ -8,7 +8,7 @@ setup(
     author="Jessy Barrette",
     author_email="jessy.barrette@hakai.org",
     license="MIT",
-    packages=find_packages(),
+    packages=["ocean_data_parser"],
     include_package_data=True,
     install_requires=[
         "numpy",
@@ -22,9 +22,7 @@ setup(
         "pynmea2",
         "gsw",
     ],
-    extras={
-        "odf": ["geographicLib","shapely"]
-    },
+    extras={"odf": ["geographicLib", "shapely"]},
     classifiers=[
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
