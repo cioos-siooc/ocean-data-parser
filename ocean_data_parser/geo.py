@@ -60,7 +60,7 @@ def get_nearest_station(
     latitude: float,
     longigude: float,
     stations: list,
-    max_meter_distance_from_station: float = None,
+    max_distance_from_station_km: float = None,
     geod: Geodesic = None,
 ) -> str:
     """AI is creating summary for get_nearest_station
@@ -85,6 +85,9 @@ def get_nearest_station(
 
     nearest_station = min(station_distance, key=station_distance.get)
     distance_from_nearest_station = station_distance[nearest_station]
-    if distance_from_nearest_station / 1000 > max_meter_distance_from_station:
+    if (
+        max_distance_from_station_km
+        and distance_from_nearest_station / 1000 > max_distance_from_station_km
+    ):
         return None
     return nearest_station
