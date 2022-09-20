@@ -110,7 +110,7 @@ def superCO2_notes(path):
             line = f.readline()
             if line in (""):
                 continue
-            elif re.match(r"\d\d\d\d\/\d\d\/\d\d \d\d\:\d\d\:\d\d\s+\d+\.\d*", line):
+            if re.match(r"\d\d\d\d\/\d\d\/\d\d \d\d\:\d\d\:\d\d\s+\d+\.\d*", line):
                 # Parse time row
                 note_ensemble = re.match(
                     r"(?P<time>\d\d\d\d\/\d\d\/\d\d \d\d\:\d\d\:\d\d)\s+(?P<day_of_year>\d+\.\d*)",

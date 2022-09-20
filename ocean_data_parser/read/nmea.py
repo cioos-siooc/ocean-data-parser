@@ -218,7 +218,7 @@ def file(path, encoding="UTF-8", nmea_delimiter="$"):
         for row, line in enumerate(f):
             if not line:
                 continue
-            elif nmea_delimiter and nmea_delimiter not in line:
+            if nmea_delimiter and nmea_delimiter not in line:
                 logger.warning(
                     "Missing NMEA deliminter %s - ignore line %s",
                     nmea_delimiter,
