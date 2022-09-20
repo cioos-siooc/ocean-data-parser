@@ -123,7 +123,7 @@ def read(filename, encoding_format="Windows-1252"):
         if re.match(r"[-+]{0,1}\d+\.\d+$", value):
             return float(value)
         elif re.match(r"[-+]{0,1}\d*\.\d+[ED][+-]\d+$", value):
-            return float(value.replace("D","E"))
+            return float(value.replace("D", "E"))
         elif re.match(r"[-+]{0,1}\d+$", value):
             return int(value)
         elif re.match(r"^\d{1,2}-\w\w\w\-\d\d\d\d\s*\d\d:\d\d:\d\d\.*\d*$", value):
@@ -389,7 +389,7 @@ def fix_flag_variables(dataset):
             rename in dataset
             and (dataset[flag_var].values == dataset[rename].values).all()
         ):
-            dataset = dataset.drop(flag_var)
+            dataset = dataset.drop_vars(flag_var)
 
         # Update ancillary_variables attribute
         for var in related_variables:
