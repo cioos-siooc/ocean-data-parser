@@ -42,7 +42,7 @@ def standardize_dataset(ds):
         if isinstance(value, dict):
             return json.dumps(value)
         elif type(value) in (datetime, pd.Timestamp):
-            return value.isoformat(timespec="milliseconds").replace("+00:00", "Z")
+            return value.isoformat().replace("+00:00", "Z")
         elif isinstance(value, bool):
             return str(value)
         else:
