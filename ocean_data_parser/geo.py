@@ -6,24 +6,47 @@ from shapely.geometry import shape, Point
 
 
 def read_geojson(
-    filename,
-    encoding="UTF-8",
-):
-    if not os.path.exists(filename):
+    path: str,
+    encoding: str = "UTF-8",
+) -> dict:
+
+    """Parse geojson files and return it as a dictionary.
+
+    If features are available, generate a shapely feature object.
+
+    Args:
+        path: The path to the geojson file to read.
+        encoding [UTF-8]: The encoding of the geojson file.
+    Returns:
+        parsed geojson dictionary (dict)
+    """
+    if not os.path.exists(path):
         return None
 
-    with open(filename, "r", encoding=encoding) as f:
+    with open(path, "r", encoding=encoding) as f:
         geojson = json.load(f)
 
     # Add shapely geometry
-    geojson["features"] = [
-        {**feature, **{"shape": shape(feature["geometry"]).buffer(0)}}
-        for feature in geojson["features"]
-    ]
+    if "features" in geojson:
+        geojson["features"] = [
+            {**feature, **{"shape": shape(feature["geometry"]).buffer(0)}}
+            for feature in geojson["features"]
+        ]
     return geojson
 
 
-def get_geo_code(position, collections):
+def get_geo_code(position: list, geographical_areas_collections: list) -> str:
+    """get_geo_code generate for a given position (longitude, latitude)
+    the list of associated geographical areas available
+    within the collections.
+
+    Args:
+        position (float,float): [description]
+        collections (list): [description]
+    Returns:
+        geographical_areas list (str): comma separated list of matching geographical areas
+    """
+
     def _get_features_contains_position(features):
         return [
             feature
@@ -32,7 +55,7 @@ def get_geo_code(position, collections):
         ]
 
     matched_features = []
-    for collection in collections:
+    for collection in geographical_areas_collections:
         matched_features += _get_features_contains_position(collection["features"])
 
     if matched_features:
@@ -42,9 +65,24 @@ def get_geo_code(position, collections):
 
 
 def get_nearest_station(
-    latitude, longigude, stations, max_meter_distance_from_station=None, geod=None
-):
+    latitude: float,
+    longigude: float,
+    stations: list,
+    max_meter_distance_from_station: float = None,
+    geod: Geodesic = None,
+) -> str:
+    """AI is creating summary for get_nearest_station
 
+    Args:
+        latitude (float): [description]
+        longigude (float): [description]
+        stations (list): [description]
+        max_meter_distance_from_station (float, optional): [description]. Defaults to None.
+        geod (Geodesic, optional): [description]. Defaults to None.
+
+    Returns:
+        nearest_station (str): Nearest station to the given latitude and longitude
+    """
     if geod is None:
         geod = Geodesic.WGS84  # define the WGS84 ellipsoid
 
