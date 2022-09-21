@@ -231,31 +231,41 @@ def parse_odf(odf_path, config=None):
     logger.debug(f"Variable List: {list(dataset)}")
 
     return dataset
-    # # Save dataset to a NetCDF file
-    # if config["output_path"] is None:
-    #     output_path = odf_path + config["addFileNameSuffix"] + ".nc"
-    # else:
-    #     # Retrieve subfolder path
-    #     subfolders = [
-    #         dataset.attrs.get(key, default)
-    #         for key, default in config.get(
-    #             "subfolder_attribute_output_path", {}
-    #         ).items()
-    #         if dataset.attrs.get(key, default)
-    #     ]
-    #     output_path = os.path.join(
-    #         config["output_path"],
-    #         *subfolders,
-    #         os.path.basename(odf_path) + config["addFileNameSuffix"] + ".nc",
-    #     )
 
-    # # Review if output path folders exists if not create them
-    # dirname = os.path.dirname(output_path)
-    # if not os.path.isdir(dirname):
-    #     logger.info(f"Generate output directory: {output_path}")
-    #     os.makedirs(dirname)
 
-    # dataset.to_netcdf(output_path)
+def save_parsed_odf_to_netcdf(dataset, odf_path, config):
+    """Saved parsed ODF file to netcdf file format based on the given configuration.
+
+    Args:
+        dataset (xarray): Parsed Xarray Dataset
+        odf_path (str): Path to the original ODF file
+        config (dict): configuration used to save netcdf
+    """
+    # Save dataset to a NetCDF file
+    if config["output_path"] is None:
+        output_path = odf_path + config["addFileNameSuffix"] + ".nc"
+    else:
+        # Retrieve subfolder path
+        subfolders = [
+            dataset.attrs.get(key, default)
+            for key, default in config.get(
+                "subfolder_attribute_output_path", {}
+            ).items()
+            if dataset.attrs.get(key, default)
+        ]
+        output_path = os.path.join(
+            config["output_path"],
+            *subfolders,
+            os.path.basename(odf_path) + config["addFileNameSuffix"] + ".nc",
+        )
+
+    # Review if output path folders exists if not create them
+    dirname = os.path.dirname(output_path)
+    if not os.path.isdir(dirname):
+        logger.info(f"Generate output directory: {output_path}")
+        os.makedirs(dirname)
+
+    dataset.to_netcdf(output_path)
 
 
 def odf_to_netcdf_with_log(inputs):
