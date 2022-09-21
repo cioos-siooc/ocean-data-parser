@@ -247,3 +247,10 @@ class ODFParsertest(unittest.TestCase):
             recursive=True,
         )
         compare_test_to_reference_netcdf(ref_files)
+
+
+class StarOddiParsertest(unittest.TestCase):
+    def test_star_oddi_dat_parser(self):
+        paths = glob("tests/parsers_test_files/star_oddi/**/*.DAT", recursive=True)
+        for path in paths:
+            ds = read.star_oddi.DAT(path)
