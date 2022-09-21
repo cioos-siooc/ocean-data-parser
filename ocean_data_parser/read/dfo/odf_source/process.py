@@ -17,8 +17,8 @@ from tqdm import tqdm
 #     get_nearest_station,
 #     read_geojson,
 # )
-import ocean_data_parser.read.odf.attributes as attributes
-import ocean_data_parser.read.odf.parser as odf_parser
+import ocean_data_parser.read.dfo.odf_source.attributes as attributes
+import ocean_data_parser.read.dfo.odf_source.parser as odf_parser
 from ocean_data_parser.read import seabird
 from ocean_data_parser.read.utils import standardize_dataset
 from ocean_data_parser.geo import get_nearest_station, read_geojson, get_geo_code

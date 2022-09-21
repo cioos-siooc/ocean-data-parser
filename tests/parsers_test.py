@@ -89,9 +89,13 @@ def compare_test_to_reference_netcdf(files):
                 # Variable Attributes
                 for key in ref[var].attrs.keys():
                     if not_identical(ref[var].attrs[key], test[var].attrs.get(key)):
-                        raise RuntimeWarning(f"Variable attribute changed {key}[{var}].attrs ->")
+                        raise RuntimeWarning(
+                            f"Variable attribute changed {key}[{var}].attrs ->"
+                        )
                 new_variable_attributes = {
-                    att:value for att,value in test[var].attrs.items() if att not in ref[var].attrs
+                    att: value
+                    for att, value in test[var].attrs.items()
+                    if att not in ref[var].attrs
                 }
                 if new_variable_attributes:
                     raise RuntimeWarning(
@@ -204,32 +208,32 @@ class ODFParsertest(unittest.TestCase):
         """Test DFO BIO ODF Parser"""
         paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
         for path in paths:
-            read.dfo.bio_odf(path, config=None)
+            read.dfo.odf.bio_odf(path, config=None)
 
     def test_bio_odf_parser_to_netcdf(self):
         """Test DFO BIO ODF Parser"""
         paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
         for path in paths:
-            read.dfo.bio_odf(path, config=None, output='netcdf')
+            read.dfo.odf.bio_odf(path, config=None, output="netcdf")
 
     def test_mli_odf_parser(self):
         """Test DFO BIO ODF Parser"""
         paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
         for path in paths:
-            read.dfo.mli_odf(path, config=None)
+            read.dfo.odf.mli_odf(path, config=None)
 
     def test_bio_odf_netcdf(self):
         """Test DFO BIO ODF Parser"""
         paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
         for path in paths:
-            ds = read.dfo.bio_odf(path, config=None)
+            ds = read.dfo.odf.bio_odf(path, config=None)
             ds.to_netcdf(f"{path}_test.nc")
 
     def test_mli_odf_netcdf(self):
         """Test DFO BIO ODF Parser"""
         paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
         for path in paths:
-            ds = read.dfo.mli_odf(path, config=None)
+            ds = read.dfo.odf.mli_odf(path, config=None)
             ds.to_netcdf(f"{path}_test.nc")
 
     def test_bio_odf_converted_netcdf_vs_references(self):
