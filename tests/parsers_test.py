@@ -35,7 +35,7 @@ def compare_test_to_reference_netcdf(files):
             }
         return ds
 
-    def is_identical(ref, test):
+    def not_identical(ref, test):
         return (ref != test).any() if isinstance(ref, np.ndarray) else ref != test
 
     def ignore_from_attr(attr, expression, placeholder):
@@ -70,13 +70,15 @@ def compare_test_to_reference_netcdf(files):
 
             # Global attributes
             for key in ref.attrs.keys():
-                if is_identical(ref.attrs[key], test.attrs.get(key)):
-                    raise RuntimeWarning(f"Global attribute {key} changed")
+                if not_identical(ref.attrs[key], test.attrs.get(key)):
+                    raise RuntimeWarning(
+                        f"Different Global attribute detected {key} -> REF {ref.attrs[key]} -> TEST {test.attrs.get(key)} changed"
+                    )
 
             # new global attributes
-            new_global_attributes = [
-                att for att in test.attrs.keys() if att not in ref.attrs
-            ]
+            new_global_attributes = {
+                att: value for att, value in test.attrs.items() if att not in ref.attrs
+            }
             if new_global_attributes:
                 raise RuntimeWarning(
                     f"Extra attributes dectected that are not in the reference file: {new_global_attributes}"
@@ -86,11 +88,11 @@ def compare_test_to_reference_netcdf(files):
             for var in ref:
                 # Variable Attributes
                 for key in ref[var].attrs.keys():
-                    if is_identical(ref[var].attrs[key], test[var].attrs.get(key)):
-                        raise RuntimeWarning(f"Variable {key} attribute {var} changed")
-                new_variable_attributes = [
-                    att for att in test[var].attrs.keys() if att not in ref[var].attrs
-                ]
+                    if not_identical(ref[var].attrs[key], test[var].attrs.get(key)):
+                        raise RuntimeWarning(f"Variable attribute changed {key}[{var}].attrs ->")
+                new_variable_attributes = {
+                    att:value for att,value in test[var].attrs.items() if att not in ref[var].attrs
+                }
                 if new_variable_attributes:
                     raise RuntimeWarning(
                         f"Extra variable attributes dectected that are not in the reference file: {var} -> {new_variable_attributes}"
