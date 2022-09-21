@@ -11,7 +11,11 @@
   },
   "addFileNameSuffix": "_dev",
   "overwrite": false,
-  "geographic_area_reference_files": "{ODF_TRANSFORM_MODULE_PATH}/references/geographical_areas/**/*.geojson",
+  "geographic_area_reference_files": [
+    "{ODF_TRANSFORM_MODULE_PATH}/geojson_files/ios_polygons.geojson",
+    "{ODF_TRANSFORM_MODULE_PATH}/geojson_files/MLI_St-LawrenceBoxes.geojson",
+    "{ODF_TRANSFORM_MODULE_PATH}/geojson_files/csasAtlPhys_climatePolygons.geojson"
+  ],
   "reference_stations_reference_files": [
     "{ODF_TRANSFORM_MODULE_PATH}/references/reference_stations.geojson"
   ],
