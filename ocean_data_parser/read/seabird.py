@@ -257,8 +257,8 @@ def _parse_seabird_file_header(f):
             xml_section = ""
             first_character = line[0]
             while (
-                re.match(fr"\{first_character}\s*\<", line)
-                or re.match(fr"^\{first_character}\s*$", line)
+                re.match(rf"\{first_character}\s*\<", line)
+                or re.match(rf"^\{first_character}\s*$", line)
                 or line.startswith("** ")
                 or line.startswith("* cast")
                 or re.search(r"\>\s*$", line)
