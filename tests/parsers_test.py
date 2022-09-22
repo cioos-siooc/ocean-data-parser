@@ -247,3 +247,20 @@ class ODFParsertest(unittest.TestCase):
             recursive=True,
         )
         compare_test_to_reference_netcdf(ref_files)
+
+
+class BlueElectricParsertest(unittest.TestCase):
+    def test_blue_electric_csv_parser(self):
+        paths = glob(
+            "./tests/parsers_test_files/electric_blue/**/[!log_]*.csv", recursive=True
+        )
+
+        for path in paths:
+            ds = read.electric_blue.csv(path)
+
+    def test_blue_electric_log_csv_parser(self):
+        paths = glob(
+            "./tests/parsers_test_files/electric_blue/**/log*.csv", recursive=True
+        )
+        for path in paths:
+            ds = read.electric_blue.log_csv(path)
