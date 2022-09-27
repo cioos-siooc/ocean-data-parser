@@ -8,4 +8,4 @@ from . import sunburst
 from . import nmea
 from . import amundsen
 from . import dfo
-from . import electric_blue
+from . import electricblue
