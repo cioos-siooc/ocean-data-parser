@@ -256,11 +256,11 @@ class BlueElectricParsertest(unittest.TestCase):
         )
 
         for path in paths:
-            ds = read.electric_blue.csv(path)
+            ds = read.electricblue.csv(path)
 
     def test_blue_electric_log_csv_parser(self):
         paths = glob(
             "./tests/parsers_test_files/electric_blue/**/log*.csv", recursive=True
         )
         for path in paths:
-            ds = read.electric_blue.log_csv(path)
+            ds = read.electricblue.log_csv(path)
