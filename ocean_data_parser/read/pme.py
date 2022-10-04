@@ -52,6 +52,7 @@ def minidot_txt(path, read_csv_kwargs=None):
     ) as f:
         # Read the headre
         serial_number = f.readline().replace("\n", "")
+        logger.debug("Parse file from serial number: %s", serial_number)
         metadata = re.search(
             r"OS REV: (?P<software_version>\d+\.\d+) Sensor Cal: (?P<instrument_calibration>\d*)",
             f.readline(),
