@@ -19,6 +19,7 @@ from tqdm import tqdm
 # )
 import ocean_data_parser.read.dfo.odf_source.attributes as attributes
 import ocean_data_parser.read.dfo.odf_source.parser as odf_parser
+import ocean_data_parser.read.dfo.odf_source.geospatial as geospatial
 from ocean_data_parser.read import seabird
 from ocean_data_parser.read.utils import standardize_dataset
 from ocean_data_parser.geo import get_nearest_station, read_geojson, get_geo_code
@@ -174,34 +175,6 @@ def parse_odf(odf_path, config=None):
     # Handle ODF flag variables
     dataset = odf_parser.odf_flag_variables(dataset, config.get("flag_convention"))
 
-    # Define coordinates variables from attributes, assign geographic_area and nearest stations
-    dataset = attributes.generate_coordinates_variables(dataset)
-    dataset.attrs["geographic_area"] = get_geo_code(
-        [dataset["longitude"].mean(), dataset["latitude"].mean()],
-        config["geographic_areas"],
-    )
-
-    nearest_station = get_nearest_station(
-        dataset["latitude"],
-        dataset["longitude"],
-        config["reference_stations"][["station", "latitude", "longitude"]].values,
-        config["maximum_distance_from_station_km"],
-    )
-    if nearest_station:
-        dataset.attrs["station"] = nearest_station
-    elif (
-        dataset.attrs.get("station")
-        and dataset.attrs.get("station")
-        not in config["reference_stations"]["station"].tolist()
-        and re.match(r"[^0-9]", dataset.attrs["station"])
-    ):
-        logger.warning(
-            "Station %s [%sN, %sE] is missing from the reference_station.",
-            dataset.attrs["station"],
-            dataset["latitude"].mean().values,
-            dataset["longitude"].mean().values,
-        )
-
     # Add Vocabulary attributes
     dataset = odf_parser.get_vocabulary_attributes(
         dataset,
@@ -211,6 +184,9 @@ def parse_odf(odf_path, config=None):
 
     # Fix flag variables with some issues to map
     dataset = odf_parser.fix_flag_variables(dataset)
+
+    # Generate geographical attributes
+    dataset = geospatial.generate_geospatial_attributes(dataset, config)
 
     # Instrument specific variables and attributes
     if dataset.attrs["instrument_manufacturer_header"].startswith("* Sea-Bird"):
