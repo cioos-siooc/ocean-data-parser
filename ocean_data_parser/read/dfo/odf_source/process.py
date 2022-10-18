@@ -137,7 +137,21 @@ def parse_odf(odf_path, config=None):
     metadata, raw_data = odf_parser.read(odf_path)
 
     # Review ODF data type compatible with odf_transform
-    if metadata["EVENT_HEADER"]["DATA_TYPE"] not in ["CTD", "BT", "BOTL"]:
+    if metadata["EVENT_HEADER"]["DATA_TYPE"] not in [
+        "CTD",
+        "BT",
+        "BOTL",
+        "MCTD",
+        "XBT",
+        "MCM",
+        "MADCP",
+        "MMOB",
+        "MTC",
+        "MTG",
+        "TCTD",
+        "MTR",
+        "TSG"
+    ]:
         logger.warning(
             "ODF_transform is not yet compatible with ODF Data Type: %s",
             metadata["EVENT_HEADER"]["DATA_TYPE"],
