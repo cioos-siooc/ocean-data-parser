@@ -216,9 +216,37 @@ class ODFParsertest(unittest.TestCase):
         for path in paths:
             read.dfo.odf.bio_odf(path, config=None, output="netcdf")
 
-    def test_mli_odf_parser(self):
+    def test_mli_all_odf_parser(self):
         """Test DFO BIO ODF Parser"""
-        paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
+        paths = glob("tests/parsers_test_files/dfo/odf/mli/**/*.ODF", recursive=True)
+        for path in paths:
+            read.dfo.odf.mli_odf(path, config=None)
+
+    def test_mli_odf_parser_timeseries(self):
+        """Test DFO BIO ODF Parser"""
+        datatypes = ["MCM", "MCTD", "MMOB", "MTC", "MTG", "MTR", "TCTD"]
+        for datatype in datatypes:
+            paths = glob(
+                f"tests/parsers_test_files/dfo/odf/mli/**/{datatype}*.ODF",
+                recursive=True,
+            )
+            for path in paths:
+                read.dfo.odf.mli_odf(path, config=None)
+
+    def test_mli_odf_parser_trajectory(self):
+        """Test DFO BIO ODF Parser"""
+        paths = glob(
+            "tests/parsers_test_files/dfo/odf/mli/**/TSG*.ODF",
+            recursive=True,
+        )
+        for path in paths:
+            read.dfo.odf.mli_odf(path, config=None)
+
+    def test_mli_odf_parser_madcp(self):
+        """Test DFO BIO ODF Parser"""
+        paths = glob(
+            "tests/parsers_test_files/dfo/odf/mli/**/MADCP*.ODF", recursive=True
+        )
         for path in paths:
             read.dfo.odf.mli_odf(path, config=None)
 
