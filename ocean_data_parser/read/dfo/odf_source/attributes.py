@@ -44,6 +44,8 @@ def _generate_cf_history_from_odf(odf_header):
 
     def _add_to_history(comment, date=datetime.now(timezone.utc)):
         """Generate a CF standard history line."""
+        if pd.isna(date):
+            return f"NaT {comment}\n"
         return f"{date.strftime('%Y-%m-%dT%H:%M:%SZ')} {comment}\n"
 
     # Convert ODF history to CF history
