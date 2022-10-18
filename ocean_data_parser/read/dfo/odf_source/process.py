@@ -22,7 +22,7 @@ import ocean_data_parser.read.dfo.odf_source.parser as odf_parser
 import ocean_data_parser.read.dfo.odf_source.geospatial as geospatial
 from ocean_data_parser.read import seabird
 from ocean_data_parser.read.utils import standardize_dataset
-from ocean_data_parser.geo import get_nearest_station, read_geojson, get_geo_code
+from ocean_data_parser.geo import read_geojson
 
 tqdm.pandas()
 
@@ -35,7 +35,7 @@ DEFAULT_CONFIG_PATH = os.path.join(MODULE_PATH, "config.json")
 ODF_TRANSFORM_MODULE_PATH = MODULE_PATH
 
 
-def read_config(config_file: str = DEFAULT_CONFIG_PATH) -> dict:
+def read_config(config_file: str = DEFAULT_CONFIG_PATH, institute=None) -> dict:
     """Parse json configuration file used to convert ODF files to netcdf.
 
     Args:
@@ -45,6 +45,10 @@ def read_config(config_file: str = DEFAULT_CONFIG_PATH) -> dict:
     Returns:
         dict: parsed configuration
     """
+    if institute:
+        config_file = DEFAULT_CONFIG_PATH.replace(
+            "config.json", f"{institute}-config.json"
+        )
     # read json file with information on dataset etc.
     with open(config_file, encoding="UTF-8") as fid:
         json_text = fid.read()
