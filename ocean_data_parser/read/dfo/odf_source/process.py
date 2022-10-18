@@ -208,7 +208,7 @@ def parse_odf(odf_path, config=None):
         logger.info(f"Drop empty attributes: {dropped_attrs}")
 
     # Handle coordinates and dimensions
-    coordinates = ["time", "latitude", "longitude", "depth"]
+    coordinates = ["measurement_time", "latitude", "longitude", "depth"]
     dataset = dataset.set_coords([var for var in coordinates if var in dataset])
     if (
         dataset.attrs["cdm_data_type"] == "Profile"
