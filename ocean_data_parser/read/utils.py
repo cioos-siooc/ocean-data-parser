@@ -70,7 +70,7 @@ def standardize_dataset(ds):
             ds[var].attrs = attrs
             ds[var].encoding = encoding
         elif ds[var].dtype.name == "object":
-            ds[var] = ds[var].astype(str).str.replace("^None$", "")
+            ds[var] = ds[var].astype(str)
             ds[var].encoding["dtype"] = "str"
 
     # Generate geospatial attributes
