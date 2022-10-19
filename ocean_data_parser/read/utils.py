@@ -84,7 +84,7 @@ def standardize_dataset(ds):
     if time:
         t_min = pd.to_datetime(ds[time].min().values)
         t_max = pd.to_datetime(ds[time].max().values)
-        dt = t_max-t_min
+        dt = t_max - t_min
         ds.attrs.update(
             {
                 "time_coverage_start": t_min.isoformat(),
