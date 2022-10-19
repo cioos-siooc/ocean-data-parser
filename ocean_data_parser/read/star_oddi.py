@@ -89,7 +89,7 @@ def DAT(path, encoding="cp1252", kwargs_read_csv=None):
             logger.warning(
                 "Length of data retrieved (=%s) does not match the expected length from the header (=%s).",
                 len(df),
-                int(n_records)-1,
+                int(n_records) - 1,
             )
         # Convert to xarray object and add related metadata
         ds = df.to_xarray()
