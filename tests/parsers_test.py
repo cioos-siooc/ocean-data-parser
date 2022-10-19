@@ -257,6 +257,7 @@ class BlueElectricParsertest(unittest.TestCase):
 
         for path in paths:
             ds = read.electricblue.csv(path)
+            ds.to_netcdf(path + "_test.nc")
 
     def test_blue_electric_log_csv_parser(self):
         paths = glob(
@@ -264,3 +265,4 @@ class BlueElectricParsertest(unittest.TestCase):
         )
         for path in paths:
             ds = read.electricblue.log_csv(path)
+            ds.to_netcdf(path + "_test.nc")

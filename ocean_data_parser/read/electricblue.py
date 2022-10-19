@@ -2,13 +2,17 @@ import logging
 
 import pandas as pd
 import re
+from ocean_data_parser.read.utils import (
+    standardize_dataset,
+    rename_variables_to_valid_netcdf,
+)
 
 logger = logging.getLogger(__name__)
 
 default_global_attribute = {
     "instrument_manufacturer": "ElectricBlue",
     "instrument_manufacturer_webpage": "https://electricblue.eu/",
-    "source_file": None,
+    "source": None,
     "source_file_header": "",
 }
 default_variable_attributes = {
@@ -105,12 +109,19 @@ def csv(
             if var in default_variable_attributes:
                 ds[var].attrs = default_variable_attributes[var]
         ds["temp"].attrs["units"] = ds.attrs.pop("temperature")
+        ds = standardize_dataset(ds)
         return ds
 
 
-def log_csv(path, encoding="UTF-8"):
+def log_csv(path, encoding="UTF-8", rename_variables=True):
 
     df = pd.read_csv(path, encoding=encoding, parse_dates=True, index_col=["time"])
     ds = df.to_xarray()
     # add default attributes
+    ds.attrs.update({**default_global_attribute, "source": path})
+    ds = standardize_dataset(ds)
+
+    # Rename variables to be compatible with NetCDF
+    if rename_variables:
+        ds = rename_variables_to_valid_netcdf(ds)
     return ds
