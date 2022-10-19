@@ -537,9 +537,11 @@ def get_vocabulary_attributes(ds, organizations=None, vocabulary=None):
         # If nothing matches, move to the next one
         if matching_terms.empty:
             logger.warning(
-                "No matching vocabulary term is available for variable %s: %s",
+                "No matching vocabulary term is available for variable %s: %s and instrument: {'type':%s,'model':%s}",
                 gf3.name,
                 ds[var].attrs,
+                ds.attrs.get("instrument_type"),
+                ds.attrs.get("instrument_model"),
             )
             new_variable_order.append(var)
             continue
@@ -564,10 +566,12 @@ def get_vocabulary_attributes(ds, organizations=None, vocabulary=None):
         # No matching term, give a warning if not a flag and move on to the next iteration
         if len(matching_terms_and_units) == 0:
             logger.warning(
-                "No Matching unit found for code: %s: %s in vocabulary %s",
+                "No Matching unit found in vocabulary %s for code: %s: %s and odf instrument: {'type':%s,'model':%s}",
                 var,
                 ({att: ds[var].attrs[att] for att in ["long_name", "units"]}),
                 selected_organization,
+                ds.attrs.get("instrument_type"),
+                ds.attrs.get("instrument_model"),
             )
             new_variable_order.append(var)
             continue
