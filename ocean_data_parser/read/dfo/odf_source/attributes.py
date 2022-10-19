@@ -99,7 +99,7 @@ def _define_cdm_data_type_from_odf(odf_header):
     # Derive cdm_data_type from DATA_TYPE
     odf_data_type = odf_header["EVENT_HEADER"]["DATA_TYPE"]
     attributes = {"odf_data_type": odf_data_type}
-    if odf_data_type in ["CTD", "BOTL", "BT","XBT"]:
+    if odf_data_type in ["CTD", "BOTL", "BT", "XBT"]:
         attributes.update(
             {
                 "cdm_data_type": "Profile",
@@ -126,10 +126,12 @@ def _define_cdm_data_type_from_odf(odf_header):
                 "cdm_profile_variables": "",
             }
         )
-    elif odf_data_type in ["TCTD","TSG"]:
+    elif odf_data_type in ["TCTD", "TSG"]:
         attributes.update(
             {"cdm_data_type": "Trajectory", "cdm_trajectory_variables": ""}
         )
+    elif odf_data_type == "PLNKG":
+        attributes["cdm_data_type"] = "Point"
     else:
         logger.error(
             "ODF_transform is not yet incompatible with ODF DATA_TYPE: %s",
@@ -469,7 +471,7 @@ def generate_coordinates_variables(dataset):
     """
     if "cdm_data_type" not in dataset.attrs:
         logging.error("No cdm_data_type attribute")
-    elif dataset.attrs["cdm_data_type"] == "Profile":
+    elif dataset.attrs["cdm_data_type"] in ("Profile", "Point"):
         dataset["time"] = dataset.attrs["event_start_time"]
         dataset["latitude"] = dataset.attrs["initial_latitude"]
         dataset["longitude"] = dataset.attrs["initial_longitude"]

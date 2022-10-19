@@ -156,6 +156,7 @@ def parse_odf(odf_path, config=None):
         "TCTD",
         "MTR",
         "TSG",
+        "PLNKG",
     ]:
         logger.warning(
             "ODF_transform is not yet compatible with ODF Data Type: %s",
