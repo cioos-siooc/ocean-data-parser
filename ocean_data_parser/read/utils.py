@@ -26,9 +26,7 @@ def rename_variables_to_valid_netcdf(dataset):
         variable_name = re.sub(r"[\(\)\-\s]+", "_", variable_name.strip())
         return re.sub(r"^_|_$", "", variable_name)
 
-    return dataset.rename(
-        {key: _transform(key) for key in dataset}
-    )
+    return dataset.rename({key: _transform(key) for key in dataset})
 
 
 def get_history_handler():
