@@ -22,13 +22,12 @@ def test_benchmark_amundsen_trajectory(benchmark):
         ),
     )
 
+
 def test_benchmark_onset_csv(benchmark):
     benchmark(
         batch_parse_and_save_to_netcdf,
         parser=read.onset.csv,
-        files=glob(
-            "tests/parsers_test_files/onset/**/*.cnv", recursive=True
-        ),
+        files=glob("tests/parsers_test_files/onset/**/*.cnv", recursive=True),
     )
 
 
@@ -40,4 +39,3 @@ def test_benchmark_van_essen_mon(benchmark):
             "tests/parsers_test_files/van_essen_instruments/**/*.MON", recursive=True
         ),
     )
-

@@ -249,6 +249,25 @@ class ODFParsertest(unittest.TestCase):
         compare_test_to_reference_netcdf(ref_files)
 
 
+class BlueElectricParsertest(unittest.TestCase):
+    def test_blue_electric_csv_parser(self):
+        paths = glob(
+            "./tests/parsers_test_files/electric_blue/**/[!log_]*.csv", recursive=True
+        )
+
+        for path in paths:
+            ds = read.electricblue.csv(path)
+            ds.to_netcdf(path + "_test.nc")
+
+    def test_blue_electric_log_csv_parser(self):
+        paths = glob(
+            "./tests/parsers_test_files/electric_blue/**/log*.csv", recursive=True
+        )
+        for path in paths:
+            ds = read.electricblue.log_csv(path)
+            ds.to_netcdf(path + "_test.nc")
+
+
 class StarOddiParsertest(unittest.TestCase):
     def test_star_oddi_dat_parser(self):
         paths = glob("tests/parsers_test_files/star_oddi/**/*.DAT", recursive=True)
