@@ -8,6 +8,7 @@ import logging
 import re
 from datetime import datetime, timezone
 from difflib import get_close_matches
+import os
 
 import pandas as pd
 from ocean_data_parser.read.seabird import (
@@ -98,7 +99,7 @@ def _define_cdm_data_type_from_odf(odf_header):
     # Derive cdm_data_type from DATA_TYPE
     odf_data_type = odf_header["EVENT_HEADER"]["DATA_TYPE"]
     attributes = {"odf_data_type": odf_data_type}
-    if odf_data_type in ["CTD", "BOTL", "BT"]:
+    if odf_data_type in ["CTD", "BOTL", "BT","XBT"]:
         attributes.update(
             {
                 "cdm_data_type": "Profile",
@@ -125,7 +126,7 @@ def _define_cdm_data_type_from_odf(odf_header):
                 "cdm_profile_variables": "",
             }
         )
-    elif odf_data_type in ["TSG"]:
+    elif odf_data_type in ["TCTD","TSG"]:
         attributes.update(
             {"cdm_data_type": "Trajectory", "cdm_trajectory_variables": ""}
         )
@@ -359,6 +360,13 @@ def global_attributes_from_header(dataset, odf_header, config=None):
     def _review_longitude(value):
         return value if value != -999.9 else None
 
+    def _get_attribute_mapping_corrections():
+        return {
+            attr: attr_mapping[dataset.attrs[attr]]
+            for attr, attr_mapping in config["attribute_mapping_corrections"].items()
+            if attr in dataset.attrs and dataset.attrs[attr] in attr_mapping
+        }
+
     odf_original_header = odf_header.copy()
     odf_original_header.pop("variable_attributes")
     platform_attributes = _generate_platform_attributes(
@@ -420,6 +428,20 @@ def global_attributes_from_header(dataset, odf_header, config=None):
             **cdm_data_type_attributes,
         }
     )
+
+    # Apply global attributes corrections
+    dataset.attrs.update(config["global_attributes"])
+    if config["file_specific_attributes"] and config["file_specific_attributes"].get(
+        os.path.basename(dataset.attrs["source"])
+    ):
+        logger.info("Apply file specific attributes correction")
+        dataset.attrs.update(
+            config["file_specific_attributes"][
+                os.path.basename(dataset.attrs["source"])
+            ]
+        )
+    dataset.attrs.update(_get_attribute_mapping_corrections())
+
     # Generate attributes from other attributes
     dataset.attrs["title"] = _generate_title_from_global_attributes(dataset.attrs)
     dataset.attrs.update(**_generate_program_specific_attritutes(dataset.attrs))
@@ -431,15 +453,6 @@ def global_attributes_from_header(dataset, odf_header, config=None):
         dataset.attrs["comments"] = "\n".join(
             [line for line in dataset.attrs["comments"] if line]
         )
-
-    # Apply attributes corrections from attribute_correction json
-    dataset.attrs.update(
-        {
-            attr: attr_mapping[dataset.attrs[attr]]
-            for attr, attr_mapping in config["attribute_mapping_corrections"].items()
-            if attr in dataset.attrs and dataset.attrs[attr] in attr_mapping
-        }
-    )
 
     # Drop empty global attributes
     dataset.attrs = {
@@ -454,8 +467,9 @@ def generate_coordinates_variables(dataset):
     """
     Method use to generate metadata variables from the ODF Header to a xarray Dataset.
     """
-
-    if dataset.attrs["cdm_data_type"] == "Profile":
+    if "cdm_data_type" not in dataset.attrs:
+        logging.error("No cdm_data_type attribute")
+    elif dataset.attrs["cdm_data_type"] == "Profile":
         dataset["time"] = dataset.attrs["event_start_time"]
         dataset["latitude"] = dataset.attrs["initial_latitude"]
         dataset["longitude"] = dataset.attrs["initial_longitude"]
