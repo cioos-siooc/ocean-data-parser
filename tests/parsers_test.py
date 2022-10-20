@@ -266,3 +266,10 @@ class BlueElectricParsertest(unittest.TestCase):
         for path in paths:
             ds = read.electricblue.log_csv(path)
             ds.to_netcdf(path + "_test.nc")
+
+
+class StarOddiParsertest(unittest.TestCase):
+    def test_star_oddi_dat_parser(self):
+        paths = glob("tests/parsers_test_files/star_oddi/**/*.DAT", recursive=True)
+        for path in paths:
+            ds = read.star_oddi.DAT(path)

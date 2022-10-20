@@ -9,3 +9,4 @@ from . import nmea
 from . import amundsen
 from . import dfo
 from . import electricblue
+from . import star_oddi
