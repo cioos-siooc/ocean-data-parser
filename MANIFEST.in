@@ -1,1 +1,4 @@
 recursive-include ocean_data_parser/read/vocabularies *
+include ocean_data_parser/read/dfo/odf_source/config.json 
+recursive-include ocean_data_parser/read/dfo/odf_source/references *
+recursive-include ocean_data_parser/read/dfo/odf_source/references/geographical_areas *

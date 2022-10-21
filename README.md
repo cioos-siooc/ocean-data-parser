@@ -27,7 +27,7 @@ pip install -e .
 ```
 For development purposes, it is recommended to install the development requirements:
 ```console
-pip install -r development-requirements.txt
+pip install -e ".[dev]"
 ```
 
 ## How to
@@ -36,5 +36,5 @@ To parse seabird file:
 from ocean_data_parser.read import searbird
 
 PATH_TO_SEABIRD_CNV = "PATH_TO_SEABIRD_CNV"
-ds = seabird.int(PATH_TO_SEABIRD_CNV)
+ds = seabird.cnv(PATH_TO_SEABIRD_CNV)
 ```

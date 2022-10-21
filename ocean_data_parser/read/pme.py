@@ -10,7 +10,7 @@ from datetime import datetime
 import pandas as pd
 import xarray as xr
 
-from ..convert.oxygen import O2ctoO2p, O2ctoO2s
+from ocean_data_parser.convert.oxygen import O2ctoO2p, O2ctoO2s
 
 logger = logging.getLogger(__name__)
 vars_attributes = {
@@ -52,6 +52,7 @@ def minidot_txt(path, read_csv_kwargs=None):
     ) as f:
         # Read the headre
         serial_number = f.readline().replace("\n", "")
+        logger.debug("Parse file from serial number: %s", serial_number)
         metadata = re.search(
             r"OS REV: (?P<software_version>\d+\.\d+) Sensor Cal: (?P<instrument_calibration>\d*)",
             f.readline(),
