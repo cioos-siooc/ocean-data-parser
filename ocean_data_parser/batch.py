@@ -19,6 +19,24 @@ adapted_logger = logging.LoggerAdapter(logger, {"file": None})
 
 
 def convert(config):
+    ## Setup logging configuration
+    if config["log"]["file"]["path"]:
+        file_handler = logging.FileHandler(config["log"])
+        file_handler.setFormatter(config["log"]["file"]["format"])
+        file_handler.setLevel(config["log"]["file"]["level"])
+        adapted_logger.add_handler(file_handler)
+
+    # Sentry
+    if config["log"]["sentry"]["dsn"]:
+        import sentry_sdk
+        from sentry_sdk.integrations.logging import LoggingIntegration
+
+        sentry_logging = LoggingIntegration(
+            level=config["sentry"].pop("level"),
+            event_level=config["sentry"].pop("event_level"),
+        )
+        sentry_sdk.init(**config["sentry"], integrations=[sentry_logging])
+
     # Connect to database if given
     # TODO add connection to database
 

@@ -1,16 +1,20 @@
 # File input
-input: 'tests/parsers_test_files/onset/**/*csv'
+input: 'tests/parsers_test_files/onset/**/*.csv'
 overwrite: false
 file_registry: file_registry.csv
 
 # Log
 log:
-  file: batch_conversion.log
-  file_format: null
-  file_level: warning
-sentry:
-  dsn: null
-  level: warning
+  file:
+    path: batch_conversion.log
+    format: null
+    level: warning
+  sentry:
+    # https://docs.sentry.io/platforms/python/configuration/options/
+    dsn: null
+    level: WARNING
+    event_level: ERROR
+    traces_sample_rate: 1.0,
 
 # Parser
 parser: 'onset.csv'
