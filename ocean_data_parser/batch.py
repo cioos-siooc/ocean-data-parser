@@ -46,8 +46,10 @@ def convert(config):
         file_registry = pd.DataFrame(empty_file_registry, index=["path"])
     elif config["file_registry"].endswith("csv"):
         file_registry = pd.read_csv(config["file_registry"], index_col=["path"])
+    elif config["file_registry"].endswith("parquet"):
+        file_registry = pd.read_parquet(config["file_registry"], index_col=["path"])
 
-    # Define Input
+    # Get Files
     files = glob(config["input"])
     if not config["overwrite"]:
         # Ignore files already parsed
@@ -66,6 +68,7 @@ def convert(config):
             importlib.import_module(f"ocean_data_parser.read.{module}"), func
         )
     else:
+        # Import the whole ocean_data_parser.read package
         import ocean_data_parser.read
 
         parser = ocean_data_parser.read.file
@@ -74,6 +77,28 @@ def convert(config):
     tbar = tqdm(files, desc="Batch convert files", unit="file")
     for file in tbar:
         _convert_file(file, parser, config)
+
+
+def _load_registry(config):
+
+    file_registry_exists = os.path.exists(config["file_registry"])
+    if config.get("file_registry") is None or not file_registry_exists:
+        file_registry = pd.DataFrame(empty_file_registry, index=["path"])
+    elif config["file_registry"].endswith("csv"):
+        file_registry = pd.read_csv(config["file_registry"], index_col=["path"])
+    elif config["file_registry"].endswith("parquet"):
+        file_registry = pd.read_parquet(config["file_registry"], index_col=["path"])
+    return file_registry
+
+
+def _update_registry(file_registry, config):
+
+    if config["file_registry"].endswith("csv"):
+        pd.write_csv(config["file_registry"])
+    elif config["file_registry"].endswith("parquet"):
+        pd.write_parquet(config["file_registry"])
+    else:
+        logger.error("Unknown registry format")
 
 
 def _convert_file(file, parser, config):
