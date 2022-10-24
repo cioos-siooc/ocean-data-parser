@@ -7,7 +7,20 @@ import os
 import xarray as xr
 import pandas as pd
 import numpy as np
-from ocean_data_parser import read
+from ocean_data_parser.read import (
+    seabird,
+    van_essen_instruments,
+    onset,
+    amundsen,
+    electricblue,
+    star_oddi,
+    rbr,
+    sunburst,
+    dfo,
+    nmea,
+    pme,
+)
+from ocean_data_parser.read import file
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
@@ -116,40 +129,45 @@ def compare_test_to_reference_netcdf(files):
 class PMEParserTests(unittest.TestCase):
     def test_txt_parser(self):
         paths = glob("tests/parsers_test_files/pme")
-        read.pme.minidot_txts(paths)
+        pme.minidot_txts(paths)
 
 
 class SeabirdParserTests(unittest.TestCase):
     def test_btl_parser(self):
         paths = glob("tests/parsers_test_files/seabird/*.btl")
         for path in paths:
-            read.seabird.btl(path)
+            seabird.btl(path)
 
     def test_cnv_parser(self):
         paths = glob("tests/parsers_test_files/seabird/*.cnv")
         for path in paths:
-            read.seabird.cnv(path)
+            seabird.cnv(path)
+
+    def test_cnv_auto_parser(self):
+        paths = glob("tests/parsers_test_files/seabird/*.cnv")
+        for path in paths:
+            file(path)
 
 
 class VanEssenParserTests(unittest.TestCase):
     def test_mon_parser(self):
         paths = glob("tests/parsers_test_files/van_essen_instruments/ctd_divers/*.MON")
         for path in paths:
-            read.van_essen_instruments.mon(path)
+            van_essen_instruments.mon(path)
 
 
 class OnsetParserTests(unittest.TestCase):
     def test_csv_parser(self):
         paths = glob("tests/parsers_test_files/onset/**/*.csv")
         for path in paths:
-            read.onset.csv(path)
+            onset.csv(path)
 
 
 class RBRParserTests(unittest.TestCase):
     def test_reng_parser(self):
         paths = glob("tests/parsers_test_files/rbr/*.txt")
         for path in paths:
-            read.rbr.rtext(path)
+            rbr.rtext(path)
 
 
 class SunburstParserTests(unittest.TestCase):
@@ -158,19 +176,19 @@ class SunburstParserTests(unittest.TestCase):
         # Ignore note files
         paths = [path for path in paths if "_notes_" not in path]
         for path in paths:
-            read.sunburst.superCO2(path)
+            sunburst.superCO2(path)
 
     def test_sunburst_pCO2_notes_parser(self):
         paths = glob("tests/parsers_test_files/sunburst/*pCO2_notes*.txt")
         for path in paths:
-            read.sunburst.superCO2_notes(path)
+            sunburst.superCO2_notes(path)
 
 
 class NMEAParserTest(unittest.TestCase):
     def test_all_files_in_nmea(self):
         paths = glob("tests/parsers_test_files/nmea/*.*")
         for path in paths:
-            read.nmea.file(path)
+            nmea.file(path)
 
 
 class AmundsenParserTests(unittest.TestCase):
@@ -180,7 +198,7 @@ class AmundsenParserTests(unittest.TestCase):
         for path in paths:
             if path.endswith("info.int"):
                 continue
-            read.amundsen.int_format(path)
+            amundsen.int_format(path)
 
     def test_amundsen_int_parser_to_netcdf(self):
         """Test conversion of int files to xarray and netcdf files."""
@@ -188,7 +206,7 @@ class AmundsenParserTests(unittest.TestCase):
         for path in paths:
             if path.endswith("info.int"):
                 continue
-            ds = read.amundsen.int_format(path)
+            ds = amundsen.int_format(path)
             ds.to_netcdf(f"{path}_test.nc", format="NETCDF4_CLASSIC")
 
     def test_amundsen_trajectory_int_parser_to_netcdf(self):
@@ -199,7 +217,7 @@ class AmundsenParserTests(unittest.TestCase):
         for path in paths:
             if path.endswith("info.int"):
                 continue
-            ds = read.amundsen.int_format(path)
+            ds = amundsen.int_format(path)
             ds.to_netcdf(f"{path}_test.nc", format="NETCDF4_CLASSIC")
 
 
@@ -208,32 +226,32 @@ class ODFParsertest(unittest.TestCase):
         """Test DFO BIO ODF Parser"""
         paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
         for path in paths:
-            read.dfo.odf.bio_odf(path, config=None)
+            dfo.odf.bio_odf(path, config=None)
 
     def test_bio_odf_parser_to_netcdf(self):
         """Test DFO BIO ODF Parser"""
         paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
         for path in paths:
-            read.dfo.odf.bio_odf(path, config=None, output="netcdf")
+            dfo.odf.bio_odf(path, config=None, output="netcdf")
 
     def test_mli_odf_parser(self):
         """Test DFO BIO ODF Parser"""
         paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
         for path in paths:
-            read.dfo.odf.mli_odf(path, config=None)
+            dfo.odf.mli_odf(path, config=None)
 
     def test_bio_odf_netcdf(self):
         """Test DFO BIO ODF Parser"""
         paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
         for path in paths:
-            ds = read.dfo.odf.bio_odf(path, config=None)
+            ds = dfo.odf.bio_odf(path, config=None)
             ds.to_netcdf(f"{path}_test.nc")
 
     def test_mli_odf_netcdf(self):
         """Test DFO BIO ODF Parser"""
         paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
         for path in paths:
-            ds = read.dfo.odf.mli_odf(path, config=None)
+            ds = dfo.odf.mli_odf(path, config=None)
             ds.to_netcdf(f"{path}_test.nc")
 
     def test_bio_odf_converted_netcdf_vs_references(self):
@@ -256,7 +274,7 @@ class BlueElectricParsertest(unittest.TestCase):
         )
 
         for path in paths:
-            ds = read.electricblue.csv(path)
+            ds = electricblue.csv(path)
             ds.to_netcdf(path + "_test.nc")
 
     def test_blue_electric_log_csv_parser(self):
@@ -264,7 +282,7 @@ class BlueElectricParsertest(unittest.TestCase):
             "./tests/parsers_test_files/electric_blue/**/log*.csv", recursive=True
         )
         for path in paths:
-            ds = read.electricblue.log_csv(path)
+            ds = electricblue.log_csv(path)
             ds.to_netcdf(path + "_test.nc")
 
 
@@ -272,4 +290,4 @@ class StarOddiParsertest(unittest.TestCase):
     def test_star_oddi_dat_parser(self):
         paths = glob("tests/parsers_test_files/star_oddi/**/*.DAT", recursive=True)
         for path in paths:
-            ds = read.star_oddi.DAT(path)
+            ds = star_oddi.DAT(path)
