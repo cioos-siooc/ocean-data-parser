@@ -249,7 +249,7 @@ class ODFParsertest(unittest.TestCase):
                 recursive=True,
             )
             for path in paths:
-                read.dfo.odf.mli_odf(path, config=None)
+                dfo.odf.mli_odf(path, config=None)
 
     def test_mli_odf_parser_trajectory(self):
         """Test DFO BIO ODF Parser"""
@@ -258,7 +258,7 @@ class ODFParsertest(unittest.TestCase):
             recursive=True,
         )
         for path in paths:
-            read.dfo.odf.mli_odf(path, config=None)
+            dfo.odf.mli_odf(path, config=None)
 
     def test_mli_odf_parser_madcp(self):
         """Test DFO BIO ODF Parser"""
@@ -266,7 +266,7 @@ class ODFParsertest(unittest.TestCase):
             "tests/parsers_test_files/dfo/odf/mli/**/MADCP*.ODF", recursive=True
         )
         for path in paths:
-            read.dfo.odf.mli_odf(path)
+            dfo.odf.mli_odf(path)
 
     def test_mli_odf_parser_plnkg(self):
         """Test DFO BIO ODF Parser"""
@@ -274,7 +274,7 @@ class ODFParsertest(unittest.TestCase):
             "tests/parsers_test_files/dfo/odf/mli/**/PLNKG*.ODF", recursive=True
         )
         for path in paths:
-            read.dfo.odf.mli_odf(path)
+            dfo.odf.mli_odf(path)
 
     def test_bio_odf_netcdf(self):
         """Test DFO BIO ODF Parser"""
