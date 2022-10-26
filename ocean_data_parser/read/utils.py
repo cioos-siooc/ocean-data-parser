@@ -1,6 +1,5 @@
 import json
 import logging
-import os
 import re
 from datetime import datetime
 from io import StringIO
@@ -199,71 +198,6 @@ def get_spatial_coverage_attributes(
     # Add to global attributes
     ds.attrs.update(time_spatial_coverage)
     return ds
-
-
-def detect_file_format(file, encoding="UTF-8"):
-    # Retrieve file extension and the first few lines of the file header
-    _, ext = os.path.splitext(file)
-    ext = ext[1:]
-    with open(file, encoding=encoding, errors="ignore") as file_handle:
-        header = "".join((next(file_handle) for _ in range(5)))
-
-    # Detect the right file format
-    if ext == "btl" and "* Sea-Bird" in header:
-        parser = "seabird.btl"
-    elif ext == "cnv" and "* Sea-Bird" in header:
-        parser = "seabird.cnv"
-    elif ext == "csv" and re.search("electricblue", header):
-        parser = "electricblue.csv"
-    elif ext == "hobo":
-        parser = "ignore"
-    elif ext == "csv" and (
-        "Plot Title" in header
-        or (
-            re.search(r"Serial Number:\s*\d+\s*", header)
-            and "Host Connect" in header
-        )
-    ):
-        parser = "onset.csv"
-    elif (
-        ext == "csv"
-        and "time, action, id, version, name, status, code, sampling interval (s), "
-        + "sampling resolution (C), samples, time diff (s), start time, lat, long, accuracy, device"
-        in header
-    ):
-        parser = "electricblue.log_csv"
-    elif ext == "DAT" and "Version	SeaStar" in header:
-        parser = "star_oddi.DAT"
-    elif ext == "geojson":
-        parser = "geojson"
-    elif ext == "int" and "% Cruise_Number:" in header:
-        parser = "amundsen.int_format"
-    elif ext == "ODF" and re.search(r"COUNTRY_INSTITUTE_CODE\s*=\s*1810", header):
-        parser = "dfo.odf.bio_odf"
-    elif (
-        ext == "ODF"
-        and re.search(r"COUNTRY_INSTITUTE_COD\s*=\s*1830", header)
-        or re.search(r"COUNTRY_INSTITUTE_CODE\s*=\s*CaIML", header)
-    ):
-        parser = "dfo.odf.mli_odf"
-    elif ext == "ODF":
-        parser = "dfo.odf"
-    elif ext == "MON":
-        parser = "van_essen_instruments.mon"
-    elif ext == "txt" and re.match(r"\d+\-\d+\s*\nOS REV\:", header):
-        parser = "pme.minidot_txt"
-    elif ext == "txt" and re.match(r"Model\=.*\nFirmware\=.*\nSerial\=.*", header):
-        parser = "rbr.rtext"
-    elif ext == "txt" and "Front panel parameter change:" in header:
-        parser = "sunburst.superCO2_notes"
-    elif ext == "txt" and "CO2 surface underway data" in header:
-        parser = "sunburst.superCO2"
-    else:
-        logger.error("Unable to match file to a specific data parser")
-        return
-
-    logger.info("Selected parser: %s", parser)
-    return parser
 
 
 global_attributes_order = [
