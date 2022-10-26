@@ -19,3 +19,4 @@ dist/
 pdc-amundsen-conversion.log
 
 tests/parsers_test_files/amundsen/12713/**/*
+output/
