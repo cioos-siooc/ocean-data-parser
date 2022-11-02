@@ -1,10 +1,11 @@
 import json
 import logging
+import re
 from datetime import datetime
 from io import StringIO
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +20,14 @@ def test_parsed_dataset(ds):
     # time
     if "time" not in ds:
         logger.warning("Missing time variable")
+
+
+def rename_variables_to_valid_netcdf(dataset):
+    def _transform(variable_name):
+        variable_name = re.sub(r"[\(\)\-\s]+", "_", variable_name.strip())
+        return re.sub(r"^_|_$", "", variable_name)
+
+    return dataset.rename({key: _transform(key) for key in dataset})
 
 
 def get_history_handler():
