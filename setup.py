@@ -20,7 +20,20 @@ setup(
         "pytz",
         "NetCDF4",
         "pynmea2",
+        "gsw",
     ],
+    extras_require={
+        "odf": ["geographicLib", "shapely"],
+        "dev": [
+            "geographicLib",
+            "shapely",
+            "pytest",
+            "pylint",
+            "flake8",
+            "black",
+            "pytest-benchmark",
+        ],
+    },
     classifiers=[
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",

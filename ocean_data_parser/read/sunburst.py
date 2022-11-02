@@ -22,8 +22,8 @@ notes_dtype_mapping = {
 
 
 def _format_variables(name):
-    name = re.sub("\(|\)", "_", name)
-    name = re.sub("_$", "", name)
+    name = re.sub(r"\(|\)", "_", name)
+    name = re.sub(r"_$", "", name)
     return name
 
 
@@ -45,7 +45,7 @@ def superCO2(path, output=None):
 
         # Read the column header and data with pandas
         df = pd.read_csv(
-            f, sep=r"\s+", dtype={"Date": str, "Time": str}, na_values=[-999]
+            f, sep=r"\t", dtype={"Date": str, "Time": str}, na_values=[-999]
         )
     if "Collected beginning on" in header[2]:
         collected_beginning_date = pd.to_datetime(header[3])
