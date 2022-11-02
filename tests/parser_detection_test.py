@@ -4,8 +4,7 @@ from glob import glob
 import re
 import os
 
-from ocean_data_parser.read.utils import detect_file_format
-from ocean_data_parser.read import file
+from ocean_data_parser.read.auto import file, detect_file_format
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
