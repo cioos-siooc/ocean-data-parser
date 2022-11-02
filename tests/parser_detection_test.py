@@ -4,7 +4,7 @@ from glob import glob
 import re
 import os
 
-from ocean_data_parser.read import auto
+from ocean_data_parser.read import file, detect_file_format
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
@@ -16,7 +16,7 @@ class ParserDetectionTests(unittest.TestCase):
         for file in test_files:
             if "nmea" in file or file.endswith("nc"):
                 continue
-            parser = auto.detect_file_format(file)
+            parser = detect_file_format(file)
             assert parser, f"Test file {file} doesn't match any parser"
 
     def test_amundsen(self):
@@ -24,7 +24,7 @@ class ParserDetectionTests(unittest.TestCase):
         for file in test_files:
             if file.endswith("nc"):
                 continue
-            parser = auto.detect_file_format(file)
+            parser = detect_file_format(file)
             assert (
                 parser == "amundsen.int_format"
             ), f"Test file {file} doesn't match amundsen.int_format"
@@ -34,16 +34,16 @@ class ParserDetectionTests(unittest.TestCase):
         for file in test_files:
             if file.endswith("nc"):
                 continue
-            parser = auto.detect_file_format(file)
+            parser = detect_file_format(file)
             assert (
                 parser == "dfo.odf.bio_format"
             ), f"Test file {file} doesn't match dfo.odf.bio_format"
 
 
 class AutomatedParserTests(unittest.TestCase):
-    def test_autodetect_and_parse(self):
+    def test_etect_and_parse(self):
         test_files = glob("tests/parsers_test_files/**/*", recursive=True)
         for test_file in test_files:
             if re.search("geojson", test_file) or not os.path.isfile(test_file):
                 continue
-            output = auto.file(test_file)
+            output = file(test_file)
