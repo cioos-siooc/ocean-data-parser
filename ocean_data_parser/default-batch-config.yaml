@@ -1,5 +1,10 @@
 # File input
-input: 'tests/parsers_test_files/onset/**/*.csv'
+input:
+  - path: tests/parsers_test_files/onset/**/*.csv
+    parser: auto
+  - path: tests/parsers_test_files/onset/**/*.MON
+    parser: auto
+output: ./output
 overwrite: false
 file_registry: file_registry.csv
 
@@ -15,9 +20,6 @@ log:
     level: WARNING
     event_level: ERROR
     traces_sample_rate: 1.0,
-
-# Parser
-parser: 'onset.csv'
 
 # Attributes and Metadata
 variable_attributes: {}

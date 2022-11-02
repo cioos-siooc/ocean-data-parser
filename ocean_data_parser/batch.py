@@ -1,4 +1,4 @@
-import importlib
+from importlib import import_module
 import logging
 from glob import glob
 import yaml
@@ -9,12 +9,27 @@ import pandas as pd
 import xarray as xr
 from tqdm import tqdm
 
-from ocean_data_parser.read import utils
+
+from ocean_data_parser.read import utils, auto
 
 empty_file_registry = {"path": None, "last_update": None}
 
 logger = logging.getLogger(__name__)
 adapted_logger = logging.LoggerAdapter(logger, {"file": None})
+
+
+def load_config(config_path: str = None, encoding="UTF-8"):
+    """Load YAML configuration file, if not provided load default configuration."""
+    # Get default config if no file provided
+    if config_path is None:
+        config_path = os.path.join(
+            os.path.dirname(__file__), "default-batch-config.yaml"
+        )
+
+    with open(config_path, "r", encoding=encoding) as file:
+        config = yaml.load(file, Loader=yaml.SafeLoader)
+
+    return config
 
 
 def convert(config):
@@ -40,42 +55,43 @@ def convert(config):
     # TODO add connection to database
 
     # Load parse log file
-    file_registry_exists = os.path.exists(config["file_registry"])
-    if config.get("file_registry") is None or not file_registry_exists:
-        file_registry = pd.DataFrame(empty_file_registry, index=["path"])
-    elif config["file_registry"].endswith("csv"):
-        file_registry = pd.read_csv(config["file_registry"], index_col=["path"])
-    elif config["file_registry"].endswith("parquet"):
-        file_registry = pd.read_parquet(config["file_registry"], index_col=["path"])
+    file_registry = _load_registry(config)
 
     # Get Files
-    files = glob(config["input"])
-    if not config["overwrite"]:
-        # Ignore files already parsed
-        files = [
-            file
-            for file in files
-            if file not in file_registry.index
-            or os.path.getmtime(file) > file_registry.loc[file, "last_update"]
-        ]
+    for id, input in enumerate(config["input"]):
+        config[id]["files"] = glob(input["path"])
+        total_files = len(config[id]["files"])
+        if not config["overwrite"]:
+            # Ignore files already parsed
+            config[id]["files"] = [
+                file
+                for file in config[id]["files"]
+                if file not in file_registry.index
+                or os.path.getmtime(file) > file_registry.loc[file, "last_update"]
+            ]
+        logger.info("%s.%s will be parse", len(config[id]["file"]), total_files)
 
-    # Get parser
-    if isinstance(config["parser"], str) and "." in config["parser"]:
-        logging.info("Load parser %s", config["parser"])
-        module, func = config["parser"].rsplit(".", 1)
-        parser = getattr(
-            importlib.import_module(f"ocean_data_parser.read.{module}"), func
-        )
-    else:
-        # Import the whole ocean_data_parser.read package
-        import ocean_data_parser.read
+    # Import parser module and load each files:
+    for input in config["inputs"]:
+        parser = input.get("parser", "auto")
 
-        parser = ocean_data_parser.read.file
-
-    # Parse files
-    tbar = tqdm(files, desc="Batch convert files", unit="file")
-    for file in tbar:
-        _convert_file(file, parser, config)
+        if parser == "auto":
+            parser_func = auto.file
+        else:
+            logging.info("Load parser %s", input["parser"])
+            # Load the appropriate parser and read the file
+            read_module, filetype = config["parser"].rsplit(".", 1)
+            try:
+                mod = import_module(f"ocean_data_parser.read.{read_module}")
+                parser_func = getattr(mod, filetype)
+            except Exception:
+                logger.exception("Failed to load module %s", parser)
+                return
+        for file in input["files"]:
+            try:
+                _convert_file(file, parser_func, config)
+            except Exception as e:
+                file_registry.loc[file, "error_message"] = e
 
 
 def _load_registry(config):
@@ -178,7 +194,8 @@ def _generate_output_path(source_file_path, ds, config):
 
 if __name__ == "__main__":
     with open(
-        "/Users/jessybarrette/repo/ocean-data-parser-start/ocean_data_parser/sample-batch-config.yaml"
+        "/Users/jessybarrette/repo/ocean-data-parser-start/ocean_data_parser/default-batch-config.yaml",
+        encoding="UTF-8",
     ) as f:
         config = yaml.load(f, Loader=yaml.SafeLoader)
     convert(config)
