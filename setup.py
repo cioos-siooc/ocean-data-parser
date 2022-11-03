@@ -1,8 +1,9 @@
 from setuptools import setup, find_packages
 
+
 setup(
     name="ocean_data_parser",
-    version="0.1.0",
+    version="0.2.0",
     description="Package used to parse different Ocean Instruments Propriatary format to an xarray dataset.",
     url="https://github.com/HakaiInstitute/ocean-data-parser",
     author="Jessy Barrette",
