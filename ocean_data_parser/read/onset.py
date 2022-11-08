@@ -256,6 +256,10 @@ def csv(
             )
 
     # Test dataset
+    if not ds.attrs["instrument_sn"]:
+        logger.warning(
+            "Unknown instrument serial number, we recommand using another data format if possible"
+        )
     test_parsed_dataset(ds)
     return ds
 
