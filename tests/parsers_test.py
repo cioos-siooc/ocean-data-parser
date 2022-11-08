@@ -158,7 +158,14 @@ class VanEssenParserTests(unittest.TestCase):
 
 class OnsetParserTests(unittest.TestCase):
     def test_csv_parser(self):
-        paths = glob("tests/parsers_test_files/onset/**/*.csv")
+        paths = glob("tests/parsers_test_files/onset/**/*.csv", recursive=True)
+        for path in paths:
+            onset.csv(path)
+
+    def test_mx_csv_parser(self):
+        paths = glob(
+            "tests/parsers_test_files/onset/Tidbits MX 2203/**/*.csv", recursive=True
+        )
         for path in paths:
             onset.csv(path)
 
