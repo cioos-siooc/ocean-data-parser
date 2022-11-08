@@ -5,7 +5,7 @@ branches:
     prerelease: true
 debug: true
 ci: false
-dryRun: false
+dryRun: true
 plugins:
   - '@semantic-release/commit-analyzer'
   - '@semantic-release/release-notes-generator'
