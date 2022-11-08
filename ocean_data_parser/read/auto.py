@@ -35,6 +35,7 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
     elif ext == "csv" and (
         "Plot Title" in header
         or (re.search(r"Serial Number:\s*\d+\s*", header) and "Host Connect" in header)
+        or (header.startswith("#,Date-Time") and "Stopped,End of File" in header)
     ):
         parser = "onset.csv"
     elif (
