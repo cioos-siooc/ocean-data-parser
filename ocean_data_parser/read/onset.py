@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 _onset_variables_mapping = {
     "#": "record_number",
     "Date Time": "time",
+    "Date-Time": "time",
     "Temp": "temperature",
     "Intensity": "light_intensity",
     "Specific Conductance": "specific_conductance",
@@ -48,6 +49,7 @@ _ignored_variables = [
     "record",
     "",
 ]
+tiemzone_mapping = {"PST": "-08:00", "PDT": "-07:00"}
 
 
 def _parse_onset_time(time, timezone="UTC"):
@@ -56,6 +58,8 @@ def _parse_onset_time(time, timezone="UTC"):
         time_format = None
     elif re.match(r"\d\d\/\d\d\/\d\d\s+\d\d\:\d\d\:\d\d\s+\w\w", time):
         time_format = r"%m/%d/%y %I:%M:%S %p"
+    elif re.match(r"\d\d\/\d\d\/\d\d\d\d\s+\d\d\:\d\d\:\d\d", time):
+        time_format = r"%m/%d/%Y %H:%M:%S"
     elif re.match(r"\d\d\d\d\/\d\d\/\d\d\s+\d\d\:\d\d\:\d\d\s+\w\w", time):
         time_format = r"%Y/%m/%d %I:%M:%S %p"
     elif re.match(r"\d\d\/\d\d\/\d\d\s+\d\d\:\d\d", time):
@@ -88,10 +92,16 @@ def _parse_onset_time(time, timezone="UTC"):
 def _parse_onset_csv_header(header_lines):
 
     full_header = "\n".join(header_lines)
+    timezone = re.search(r"GMT\s*([\-\+\d\:]*)|Date\-Time \((\w+)\)", full_header)
+    if timezone:
+        timezone = [item for item in timezone.groups() if item][0]
+    if timezone in tiemzone_mapping:
+        timezone = tiemzone_mapping[timezone]
+
     header = {
         "instrument_manufacturer": "Onset",
         "history": "",
-        "timezone": re.search(r"GMT\s*([\-\+\d\:]*)", full_header),
+        "timezone": timezone,
         "plot_title": re.search(r"Plot Title\: (\w*),+", full_header),
         "logger_sn": ",".join(set(re.findall(r"LGR S\/N\: (\d*)", full_header))),
         "sensor_sn": ",".join(set(re.findall(r"SEN S\/N\: (\d*)", full_header))),
@@ -130,7 +140,9 @@ def _parse_onset_csv_header(header_lines):
             else None,
         }
 
-    header["time_variables"] = [var for var in variables if "Date Time" in var]
+    header["time_variables"] = [
+        var for var in variables if re.search(r"Date(\s|\-)Time", var)
+    ]
 
     if header["timezone"] is None:
         logger.warning("No Timezone available within this file. UTC will be assumed.")
@@ -176,6 +188,7 @@ def csv(
             # skip second empty line
             header_lines += 1
             f.readline()  #
+        if not re.search(r"Date(\s|\-)Time", raw_header[0]):
         # Read csv columns
         raw_header += [f.readline()]
 
