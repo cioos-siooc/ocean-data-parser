@@ -125,6 +125,11 @@ def _parse_onset_csv_header(header_lines):
         if header["plot_title"]:
             col = col.replace(header["plot_title"], "")
 
+        # retrieve channel if available
+        channel = re.search(r"Ch: (\d+) \- ", col)
+        if channel:
+            col = re.sub(r"Ch: \d+ \- ", "", col)
+
         column_with_units = re.sub(
             r"\s*\(*(LGR S\/N|SEN S\/N|LBL): .*",
             "",
@@ -139,6 +144,8 @@ def _parse_onset_csv_header(header_lines):
             if re.search(r"\,|\(", column_with_units)
             else None,
         }
+        if channel:
+            variables[column]["channel"] = int(channel[1])
 
     header["time_variables"] = [
         var for var in variables if re.search(r"Date(\s|\-)Time", var)
@@ -189,8 +196,8 @@ def csv(
             header_lines += 1
             f.readline()  #
         if not re.search(r"Date(\s|\-)Time", raw_header[0]):
-        # Read csv columns
-        raw_header += [f.readline()]
+            # Read csv columns
+            raw_header += [f.readline()]
 
     # Parse onset header
     header, variables = _parse_onset_csv_header(raw_header)
