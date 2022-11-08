@@ -41,7 +41,7 @@ class ParserDetectionTests(unittest.TestCase):
 
 
 class AutomatedParserTests(unittest.TestCase):
-    def test_etect_and_parse(self):
+    def test_detect_and_parse(self):
         test_files = glob("tests/parsers_test_files/**/*", recursive=True)
         for test_file in test_files:
             if re.search("geojson", test_file) or not os.path.isfile(test_file):
