@@ -1,4 +1,10 @@
 # Ocean Data Parser
+
+The `ocean data parser` has for primary objectif to streamline the data parsing the different oceanographic data format to a standard xarray object. This object can then easily be used for:
+- Data Analysis
+- NetCDF conversion
+- Data Pipeline Ingestion
+
 ## Installation
 With miniconda, create a new environement:
 ```console
