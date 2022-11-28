@@ -72,6 +72,8 @@ def _parse_onset_time(time, timezone="UTC"):
         time_format = r"%Y-%m-%d %I:%M:%S %p"
     elif re.match(r"^\d\d\-\d\d\-\d\d\s+\d{1,2}\:\d\d$", time):
         time_format = r"%y-%m-%d %H:%M"
+    elif re.match(r"^\d\d\-\d\d\-\d\d\s+\d{1,2}\:\d\d\:\d\d$", time):
+        time_format = r"%y-%m-%d %H:%M:%S"
     elif re.match(r"^\d\d\d\d\-\d\d\-\d\d\s+\d{1,2}\:\d\d$", time):
         time_format = r"%Y-%m-%d %H:%M"
     elif time in ("", None):
