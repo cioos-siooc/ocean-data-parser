@@ -38,14 +38,14 @@
     "Tem_mean": [
         {
             "long_name": "Mean Temperature (ITS-90)",
-            "units": "degrees C",
+      "units": "degC",
             "standard_name": "sea_water_temperature"
         }
     ],
     "Tem_std": [
         {
             "long_name": "Standard Deviation Temperature (ITS-90)",
-            "units": "degrees C",
+      "units": "degC",
             "standard_name": "sea_water_temperature"
         }
     ],
@@ -75,8 +75,8 @@
     "Temp": [
         {
             "long_name": "Temperature (ITS-90)",
-            "accepted_units": "degrees C|deg C",
-            "units": "degrees C",
+      "accepted_units": "degC|deg C",
+      "units": "degC",
             "standard_name": "sea_water_temperature"
         }
     ],
@@ -139,14 +139,14 @@
     "Air temp": [
         {
             "long_name": "Air Temperature",
-            "units": "deg C",
+            "units": "degC",
             "standard_name": "air_temperature"
         }
     ],
     "Dew point": [
         {
             "long_name": "Dew Point",
-            "units": "deg C",
+            "units": "degC",
             "standard_name": "dew_point_temperature"
         }
     ],
@@ -222,14 +222,14 @@
     "CONT": [
         {
             "long_name": "Conservative Temperature (TEOS-10)",
-            "units": "deg C",
+            "units": "degC",
             "standard_name": "sea_water_conservative_temperature"
         }
     ],
     "Cont": [
         {
             "long_name": "Conservative Temperature TEOS-10",
-            "units": "deg C",
+            "units": "degC",
             "standard_name": "sea_water_conservative_temperature",
             "rename": "CONT"
         }
@@ -329,7 +329,7 @@
     "Theta": [
         {
             "long_name": "Potential Temperature",
-            "units": "deg C",
+            "units": "degC",
             "standard_name": "sea_water_potential_temperature",
             "rename": "theta"
         }
@@ -337,7 +337,7 @@
     "theta": [
         {
             "long_name": "Potential Temperature",
-            "units": "deg C",
+            "units": "degC",
             "standard_name": "sea_water_potential_temperature"
         }
     ],
@@ -378,12 +378,8 @@
             "rename": "CDOM"
         }
     ],
-    "CDOMV": [
-        {}
-    ],
-    "FLUOV": [
-        {}
-    ],
+  "CDOMV": [{}],
+  "FLUOV": [{}],
     "NO3": [
         {
             "long_name": "Nitrate (NO3-N) Content",
@@ -423,14 +419,14 @@
     "FreezT": [
         {
             "long_name": "Freezing Temperature",
-            "units": "deg C",
+            "units": "degC",
             "standard_name": "freezing_temperature_of_sea_water"
         }
     ],
     "FreezT-": [
         {
             "long_name": "Freezing Temperature",
-            "units": "deg C",
+            "units": "degC",
             "standard_name": "freezing_temperature_of_sea_water",
             "rename": "FreezT"
         }
@@ -487,7 +483,8 @@
     "pH": [
         {
             "long_name": "pH",
-            "standard_name": "sea_water_ph_reported_on_total_scale"
+      "standard_name": "sea_water_ph_reported_on_total_scale",
+      "units": "1"
         }
     ],
     "PresPar": [
