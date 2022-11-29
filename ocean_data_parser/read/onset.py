@@ -7,6 +7,7 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 from dateutil.parser._parser import ParserError
+import xarray as xr
 
 from .utils import test_parsed_dataset
 
@@ -156,6 +157,7 @@ def csv(
     convert_units_to_si: bool = True,
     read_csv_kwargs: dict = None,
     standardize_variable_names: bool = True,
+    fix_dst: bool = False,
 ):
 
     """tidbit_csv parses the Onset Tidbit CSV format into a pandas dataframe
@@ -254,6 +256,16 @@ def csv(
             dst_fall,
             sampling_interval,
         )
+    if fix_dst:
+        logger.warning("Fix daylight saving issue")
+        ds['dst_time_fix'] = xr.zeros_like(ds['time'])
+        ds["dst_time_fix"].loc[1:].loc[dt == dst_fall] = 3600
+        ds["dst_time_fix"].loc[1:].loc[dt == dst_spring] = -3600
+        ds["dst_time_fix"] = ds["dst_time_fix"].cumsum("index")
+        ds['time'] = ds['time'].astype('datetime64[s]') + ds['dst_time_fix'].astype('timedelta64[s]')
+        # TODO make time output back to Timestamp object with timezone
+
+    
     # Test dataset
     test_parsed_dataset(ds)
     return ds
