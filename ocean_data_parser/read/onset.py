@@ -237,6 +237,23 @@ def csv(
                 "Unit conversion is not supported if standardize_variable_names=False"
             )
 
+    # Test daylight saving issue
+    dt = ds["time"].diff("index")
+    sampling_interval = dt.median().values
+    dst_fall = -pd.Timedelta("1h") + sampling_interval
+    dst_spring = pd.Timedelta("1h") + sampling_interval
+    if any(dt == dst_fall):
+        logger.warning(
+            "Time gaps (=%s) for sampling interval of %s suggest a Fall daylight saving issue is present",
+            dst_fall,
+            sampling_interval,
+        )
+    if any(dt == dst_spring):
+        logger.warning(
+            "Time gaps (=%s) for sampling interval of %s suggest a Spring daylight saving issue is present",
+            dst_fall,
+            sampling_interval,
+        )
     # Test dataset
     test_parsed_dataset(ds)
     return ds
