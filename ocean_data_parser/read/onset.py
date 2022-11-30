@@ -158,11 +158,14 @@ def csv(
     standardize_variable_names: bool = True,
 ):
 
-    """tidbit_csv parses the Onset Tidbit CSV format into a pandas dataframe
-
+    """Parses the Onset CSV format generate by HOBOware into a xarray object
+    Inputs:
+        path: The path to the CSV file
+        convert_units_to_si: Whether to standardize data units to SI units
+        read_csv_kwargs: dictionary of keyword arguments to be passed to pd.read_csv
+        standardize_variable_names: Rename the variable names a standardize name convention
     Returns:
-        df: data in pandas dataframe
-        metadata: metadata dictionary
+        xarray.Dataset
     """
     if read_csv_kwargs is None:
         read_csv_kwargs = {}
