@@ -68,6 +68,8 @@ def _parse_onset_time(time, timezone="UTC"):
         time_format = r"%Y-%m-%d %I:%M:%S %p"
     elif re.match(r"^\d\d\-\d\d\-\d\d\s+\d{1,2}\:\d\d$", time):
         time_format = r"%y-%m-%d %H:%M"
+    elif re.match(r"^\d\d\-\d\d\-\d\d\s+\d{1,2}\:\d\d\:\d\d$", time):
+        time_format = r"%y-%m-%d %H:%M:%S"
     elif re.match(r"^\d\d\d\d\-\d\d\-\d\d\s+\d{1,2}\:\d\d$", time):
         time_format = r"%Y-%m-%d %H:%M"
     elif time in ("", None):
@@ -156,11 +158,14 @@ def csv(
     standardize_variable_names: bool = True,
 ):
 
-    """tidbit_csv parses the Onset Tidbit CSV format into a pandas dataframe
-
+    """Parses the Onset CSV format generate by HOBOware into a xarray object
+    Inputs:
+        path: The path to the CSV file
+        convert_units_to_si: Whether to standardize data units to SI units
+        read_csv_kwargs: dictionary of keyword arguments to be passed to pd.read_csv
+        standardize_variable_names: Rename the variable names a standardize name convention
     Returns:
-        df: data in pandas dataframe
-        metadata: metadata dictionary
+        xarray.Dataset
     """
     if read_csv_kwargs is None:
         read_csv_kwargs = {}
@@ -235,6 +240,23 @@ def csv(
                 "Unit conversion is not supported if standardize_variable_names=False"
             )
 
+    # Test daylight saving issue
+    dt = ds["time"].diff("index")
+    sampling_interval = dt.median().values
+    dst_fall = -pd.Timedelta("1h") + sampling_interval
+    dst_spring = pd.Timedelta("1h") + sampling_interval
+    if any(dt == dst_fall):
+        logger.warning(
+            "Time gaps (=%s) for sampling interval of %s suggest a Fall daylight saving issue is present",
+            dst_fall,
+            sampling_interval,
+        )
+    if any(dt == dst_spring):
+        logger.warning(
+            "Time gaps (=%s) for sampling interval of %s suggest a Spring daylight saving issue is present",
+            dst_fall,
+            sampling_interval,
+        )
     # Test dataset
     test_parsed_dataset(ds)
     return ds

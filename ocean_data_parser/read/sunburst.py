@@ -19,6 +19,34 @@ notes_dtype_mapping = {
     "num_Stds": float,
     "min_btw_stds": float,
 }
+superCO2_dtypes = {
+    "DOY_UTC": float,
+    "CO2_ppm": float,
+    "CO2_abs": float,
+    "H2O_ppt_mass": float,
+    "H2Oabs": float,
+    "Cell_T": float,
+    "Cell_P": float,
+    "820pwr": float,
+    "Fluke_Temp": float,
+    "Press(kPa)": float,
+    "SB63_T": float,
+    "SB63_O2": float,
+    "SB63_RawP": float,
+    "SB63_RawTV": float,
+    "Press(V)": object,
+    "IO1": float,
+    "IO2": float,
+    "IO3": float,
+    "Valve1pos": int,
+    "StandardVal": int,
+    "TSG_T": float,
+    "TSG_Cond": float,
+    "TSG_Sal": float,
+    "Remote_Therm": float,
+    "Date": str,
+    "Time": str,
+}
 
 
 def _format_variables(name):
@@ -45,7 +73,11 @@ def superCO2(path, output=None):
 
         # Read the column header and data with pandas
         df = pd.read_csv(
-            f, sep=r"\t", dtype={"Date": str, "Time": str}, na_values=[-999]
+            f,
+            sep=r"\t",
+            engine="python",
+            dtype=superCO2_dtypes,
+            na_values=[-999, "NaN"],
         )
     if "Collected beginning on" in header[2]:
         collected_beginning_date = pd.to_datetime(header[3])
