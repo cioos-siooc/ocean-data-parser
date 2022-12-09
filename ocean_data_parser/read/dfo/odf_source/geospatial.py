@@ -15,6 +15,7 @@ def generate_geospatial_attributes(dataset, config):
         dataset.attrs["cdm_data_type"] in ("Profile", "Timeseries")
         and "latitude" in dataset
         and "longitude" in dataset
+        and "reference_stations" in config
     ):
         dataset.attrs["geographic_area"] = get_geo_code(
             [dataset["longitude"].mean(), dataset["latitude"].mean()],

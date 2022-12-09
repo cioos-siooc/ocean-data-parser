@@ -371,9 +371,13 @@ def global_attributes_from_header(dataset, odf_header, config=None):
 
     odf_original_header = odf_header.copy()
     odf_original_header.pop("variable_attributes")
-    platform_attributes = _generate_platform_attributes(
-        odf_header["CRUISE_HEADER"]["PLATFORM"], config["reference_platforms"]
-    )
+    if "reference_platforms" in config:
+        platform_attributes = _generate_platform_attributes(
+            odf_header["CRUISE_HEADER"]["PLATFORM"], config["reference_platforms"]
+        )
+    else: 
+        platform_attributes = {}
+
     history = _generate_cf_history_from_odf(odf_header)
     instrument_attributes = _generate_instrument_attributes(
         odf_header, history.get("instrument_manufacturer_header")
@@ -445,7 +449,8 @@ def global_attributes_from_header(dataset, odf_header, config=None):
     dataset.attrs.update(_get_attribute_mapping_corrections())
 
     # Generate attributes from other attributes
-    dataset.attrs["title"] = _generate_title_from_global_attributes(dataset.attrs)
+    if dataset.attrs.keys() >= {"organisation", "institution", "plateform"}:
+        dataset.attrs["title"] = _generate_title_from_global_attributes(dataset.attrs)
     dataset.attrs.update(**_generate_program_specific_attritutes(dataset.attrs))
 
     # Review ATTRIBUTES
