@@ -218,7 +218,7 @@ def read(filename, encoding_format="Windows-1252"):
                 "null_value": att["NULL_VALUE"],
                 "resolution": (
                     10 ** -att["PRINT_DECIMAL_PLACES"]
-                    if not att["PRINT_DECIMAL_PLACES"] == "-99"
+                    if not att["PRINT_DECIMAL_PLACES"] == -99
                     else None
                 ),
             }
