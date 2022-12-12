@@ -3,6 +3,7 @@ import re
 import unittest
 from glob import glob
 import os
+import warnings
 
 import xarray as xr
 import pandas as pd
@@ -84,8 +85,10 @@ def compare_test_to_reference_netcdf(files):
             # Global attributes
             for key in ref.attrs.keys():
                 if not_identical(ref.attrs[key], test.attrs.get(key)):
-                    raise RuntimeWarning(
-                        f"Different Global attribute detected {key} -> REF {ref.attrs[key]} -> TEST {test.attrs.get(key)} changed"
+                    warnings.warn(
+                        UserWarning(
+                            f"Different Global attribute detected {key} -> REF {ref.attrs[key]} -> TEST {test.attrs.get(key)} changed"
+                        )
                     )
 
             # new global attributes
@@ -93,17 +96,27 @@ def compare_test_to_reference_netcdf(files):
                 att: value for att, value in test.attrs.items() if att not in ref.attrs
             }
             if new_global_attributes:
-                raise RuntimeWarning(
-                    f"Extra attributes dectected that are not in the reference file: {new_global_attributes}"
+                warnings.warn(
+                    UserWarning(
+                        f"Extra attributes dectected that are not in the reference file: {new_global_attributes}"
+                    )
                 )
-
+            # coordites
+            if test.coords != ref.coords:
+                warnings.warn(
+                    UserWarning(
+                        f"Coordinates are different between {ref.coords=} and {test.coords=}"
+                    )
+                )
             # Variables
             for var in ref:
                 # Variable Attributes
                 for key in ref[var].attrs.keys():
                     if not_identical(ref[var].attrs[key], test[var].attrs.get(key)):
-                        raise RuntimeWarning(
-                            f"Variable attribute changed {key}[{var}].attrs ->"
+                        warnings.warn(
+                            UserWarning(
+                                f"Variable attribute changed {key}[{var}].attrs ->"
+                            )
                         )
                 new_variable_attributes = {
                     att: value
@@ -111,18 +124,29 @@ def compare_test_to_reference_netcdf(files):
                     if att not in ref[var].attrs
                 }
                 if new_variable_attributes:
-                    raise RuntimeWarning(
-                        f"Extra variable attributes dectected that are not in the reference file: {var} -> {new_variable_attributes}"
+                    warnings.warn(
+                        UserWarning(
+                            f"Extra variable attributes dectected that are not in the reference file: {var} -> {new_variable_attributes}"
+                        )
                     )
+
+                if test.coords != ref.coords:
+                    continue
 
                 # Values
                 if not ref[var].identical(test[var]):
-                    raise RuntimeWarning(
-                        f"Variable ds[{var}] is different from reference file"
+                    warnings.warn(
+                        UserWarning(
+                            f"Variable ds[{var}] is different from reference file"
+                        )
                     )
+            if test.coords != ref.coords:
+                continue
 
-            raise RuntimeWarning(
-                f"Converted file {nc_file_test} is different than the reference: {file}"
+            warnings.warn(
+                UserWarning(
+                    f"Converted file {nc_file_test} is different than the reference: {file}"
+                )
             )
 
 
