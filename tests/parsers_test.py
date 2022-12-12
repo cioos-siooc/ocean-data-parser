@@ -309,7 +309,7 @@ class ODFParsertest(unittest.TestCase):
 
     def test_mli_odf_netcdf(self):
         """Test DFO BIO ODF Parser"""
-        paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
+        paths = glob("tests/parsers_test_files/dfo/odf/mli/**/*.ODF", recursive=True)
         for path in paths:
             ds = dfo.odf.mli_odf(path, config=None)
             ds.to_netcdf(f"{path}_test.nc")
