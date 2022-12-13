@@ -4,6 +4,7 @@ This module regroups all the different parsers associated with
 the different data formats developped by the different Canadian DFO offices.
 """
 from typing import Union
+
 from ocean_data_parser.read.dfo.odf_source.process import (
     parse_odf,
     read_config,

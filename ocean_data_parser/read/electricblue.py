@@ -1,10 +1,11 @@
 import logging
+import re
 
 import pandas as pd
-import re
+
 from ocean_data_parser.read.utils import (
-    standardize_dataset,
     rename_variables_to_valid_netcdf,
+    standardize_dataset,
 )
 
 logger = logging.getLogger(__name__)
