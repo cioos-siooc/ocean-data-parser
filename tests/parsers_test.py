@@ -13,7 +13,6 @@ from ocean_data_parser.read import (
     amundsen,
     dfo,
     electricblue,
-    file,
     nmea,
     onset,
     pme,
@@ -167,11 +166,6 @@ class SeabirdParserTests(unittest.TestCase):
         paths = glob("tests/parsers_test_files/seabird/*.cnv")
         for path in paths:
             seabird.cnv(path)
-
-    def test_cnv_auto_parser(self):
-        paths = glob("tests/parsers_test_files/seabird/*.cnv")
-        for path in paths:
-            file(path)
 
 
 class VanEssenParserTests(unittest.TestCase):
