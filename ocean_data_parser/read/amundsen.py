@@ -1,14 +1,15 @@
 """Module use to handle int file format generated historically ArcticNet and the Amundsen inc."""
 __version__ = "0.1.0"
 
-import re
+import json
 import logging
 import os
-import json
+import re
 
 import pandas as pd
 from gsw import z_from_p
-from .utils import standardize_dataset, get_history_handler
+
+from .utils import get_history_handler, standardize_dataset
 
 logger = logging.getLogger(__name__)
 string_attributes = ["Cruise_Number", "Cruise_Name", "Station"]

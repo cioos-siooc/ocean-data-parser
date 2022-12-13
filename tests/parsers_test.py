@@ -1,27 +1,28 @@
 import logging
+import os
 import re
 import unittest
-from glob import glob
-import os
 import warnings
+from glob import glob
 
-import xarray as xr
-import pandas as pd
 import numpy as np
+import pandas as pd
+import xarray as xr
+
 from ocean_data_parser.read import (
-    seabird,
-    van_essen_instruments,
-    onset,
     amundsen,
-    electricblue,
-    star_oddi,
-    rbr,
-    sunburst,
     dfo,
+    electricblue,
+    file,
     nmea,
+    onset,
     pme,
+    rbr,
+    seabird,
+    star_oddi,
+    sunburst,
+    van_essen_instruments,
 )
-from ocean_data_parser.read import file
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()

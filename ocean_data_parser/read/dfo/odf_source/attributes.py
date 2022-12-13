@@ -5,12 +5,13 @@ attribtutes to the different conventions (CF, ACDD).
 
 import json
 import logging
+import os
 import re
 from datetime import datetime, timezone
 from difflib import get_close_matches
-import os
 
 import pandas as pd
+
 from ocean_data_parser.read.seabird import (
     get_seabird_instrument_from_header,
     get_seabird_processing_history,
