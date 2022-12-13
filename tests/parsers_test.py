@@ -86,9 +86,7 @@ def compare_test_to_reference_netcdf(files):
             for key in ref.attrs.keys():
                 if not_identical(ref.attrs[key], test.attrs.get(key)):
                     warnings.warn(
-                        UserWarning(
-                            f"Different Global attribute detected {key} -> REF {ref.attrs[key]} -> TEST {test.attrs.get(key)} changed"
-                        )
+                        f"Different Global attribute detected {key} -> REF {ref.attrs[key]} -> TEST {test.attrs.get(key)} changed"
                     )
 
             # new global attributes
@@ -97,16 +95,12 @@ def compare_test_to_reference_netcdf(files):
             }
             if new_global_attributes:
                 warnings.warn(
-                    UserWarning(
-                        f"Extra attributes dectected that are not in the reference file: {new_global_attributes}"
-                    )
+                    f"Extra attributes dectected that are not in the reference file: {new_global_attributes}"
                 )
             # coordites
             if test.coords != ref.coords:
                 warnings.warn(
-                    UserWarning(
-                        f"Coordinates are different between {ref.coords=} and {test.coords=}"
-                    )
+                    f"Coordinates are different between {ref.coords=} and {test.coords=}"
                 )
             # Variables
             for var in ref:
@@ -114,9 +108,7 @@ def compare_test_to_reference_netcdf(files):
                 for key in ref[var].attrs.keys():
                     if not_identical(ref[var].attrs[key], test[var].attrs.get(key)):
                         warnings.warn(
-                            UserWarning(
-                                f"Variable attribute changed {key}[{var}].attrs ->"
-                            )
+                            f"Variable attribute changed {key}[{var}].attrs ->"
                         )
                 new_variable_attributes = {
                     att: value
@@ -125,9 +117,7 @@ def compare_test_to_reference_netcdf(files):
                 }
                 if new_variable_attributes:
                     warnings.warn(
-                        UserWarning(
-                            f"Extra variable attributes dectected that are not in the reference file: {var} -> {new_variable_attributes}"
-                        )
+                        f"Extra variable attributes dectected that are not in the reference file: {var} -> {new_variable_attributes}"
                     )
 
                 if test.coords != ref.coords:
@@ -136,17 +126,13 @@ def compare_test_to_reference_netcdf(files):
                 # Values
                 if not ref[var].identical(test[var]):
                     warnings.warn(
-                        UserWarning(
-                            f"Variable ds[{var}] is different from reference file"
-                        )
+                        f"Variable ds[{var}] is different from reference file"
                     )
             if test.coords != ref.coords:
                 continue
 
             warnings.warn(
-                UserWarning(
-                    f"Converted file {nc_file_test} is different than the reference: {file}"
-                )
+                f"Converted file {nc_file_test} is different than the reference: {file}"
             )
 
 
