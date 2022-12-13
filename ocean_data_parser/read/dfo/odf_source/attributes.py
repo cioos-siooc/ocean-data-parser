@@ -450,7 +450,10 @@ def global_attributes_from_header(dataset, odf_header, config=None):
     dataset.attrs.update(_get_attribute_mapping_corrections())
 
     # Generate attributes from other attributes
-    if dataset.attrs.keys() >= {"organization", "institution", "platform"}:
+    if (
+        item in dataset.attrs.keys()
+        for item in {"organization", "institution", "platform"}
+    ).all():
         dataset.attrs["title"] = _generate_title_from_global_attributes(dataset.attrs)
     dataset.attrs.update(**_generate_program_specific_attritutes(dataset.attrs))
 
