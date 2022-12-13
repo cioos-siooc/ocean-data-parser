@@ -22,7 +22,7 @@ def bio_odf(path: str, config: Union[str, dict] = None, output=None):
         dataset (xarray dataset): Parsed xarray dataset
     """
     if config is None:
-        config = read_config()
+        config = read_config(institute="bio")
 
     config["organisationVocabulary"] = ["BIO", "GF3"]
     ds = parse_odf(path, config=config)
@@ -41,7 +41,7 @@ def mli_odf(path: str, config: Union[str, dict] = None, output=None):
         dataset (xarray dataset): Parsed xarray dataset
     """
     if config is None:
-        config = read_config()
+        config = read_config(institute="mli")
 
     config["organisationVocabulary"] = ["MLI", "GF3"]
     ds = parse_odf(path, config=config)

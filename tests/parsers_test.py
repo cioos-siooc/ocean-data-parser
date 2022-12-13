@@ -2,6 +2,7 @@ import logging
 import os
 import re
 import unittest
+import warnings
 from glob import glob
 
 import numpy as np
@@ -12,7 +13,6 @@ from ocean_data_parser.read import (
     amundsen,
     dfo,
     electricblue,
-    file,
     nmea,
     onset,
     pme,
@@ -85,7 +85,7 @@ def compare_test_to_reference_netcdf(files):
             # Global attributes
             for key in ref.attrs.keys():
                 if not_identical(ref.attrs[key], test.attrs.get(key)):
-                    raise RuntimeWarning(
+                    warnings.warn(
                         f"Different Global attribute detected {key} -> REF {ref.attrs[key]} -> TEST {test.attrs.get(key)} changed"
                     )
 
@@ -94,16 +94,20 @@ def compare_test_to_reference_netcdf(files):
                 att: value for att, value in test.attrs.items() if att not in ref.attrs
             }
             if new_global_attributes:
-                raise RuntimeWarning(
+                warnings.warn(
                     f"Extra attributes dectected that are not in the reference file: {new_global_attributes}"
                 )
-
+            # coordites
+            if test.coords != ref.coords:
+                warnings.warn(
+                    f"Coordinates are different between ref={ref.coords} and test={test.coords}"
+                )
             # Variables
             for var in ref:
                 # Variable Attributes
                 for key in ref[var].attrs.keys():
                     if not_identical(ref[var].attrs[key], test[var].attrs.get(key)):
-                        raise RuntimeWarning(
+                        warnings.warn(
                             f"Variable attribute changed {key}[{var}].attrs ->"
                         )
                 new_variable_attributes = {
@@ -112,17 +116,22 @@ def compare_test_to_reference_netcdf(files):
                     if att not in ref[var].attrs
                 }
                 if new_variable_attributes:
-                    raise RuntimeWarning(
+                    warnings.warn(
                         f"Extra variable attributes dectected that are not in the reference file: {var} -> {new_variable_attributes}"
                     )
 
+                if test.coords != ref.coords:
+                    continue
+
                 # Values
                 if not ref[var].identical(test[var]):
-                    raise RuntimeWarning(
+                    warnings.warn(
                         f"Variable ds[{var}] is different from reference file"
                     )
+            if test.coords != ref.coords:
+                continue
 
-            raise RuntimeWarning(
+            warnings.warn(
                 f"Converted file {nc_file_test} is different than the reference: {file}"
             )
 
@@ -143,11 +152,6 @@ class SeabirdParserTests(unittest.TestCase):
         paths = glob("tests/parsers_test_files/seabird/*.cnv")
         for path in paths:
             seabird.cnv(path)
-
-    def test_cnv_auto_parser(self):
-        paths = glob("tests/parsers_test_files/seabird/*.cnv")
-        for path in paths:
-            file(path)
 
 
 class VanEssenParserTests(unittest.TestCase):
@@ -235,11 +239,47 @@ class ODFParsertest(unittest.TestCase):
         for path in paths:
             dfo.odf.bio_odf(path, config=None, output="netcdf")
 
-    def test_mli_odf_parser(self):
+    def test_mli_all_odf_parser(self):
         """Test DFO BIO ODF Parser"""
-        paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
+        paths = glob("tests/parsers_test_files/dfo/odf/mli/**/*.ODF", recursive=True)
         for path in paths:
             dfo.odf.mli_odf(path, config=None)
+
+    def test_mli_odf_parser_timeseries(self):
+        """Test DFO BIO ODF Parser"""
+        datatypes = ["MCM", "MCTD", "MMOB", "MTC", "MTG", "MTR", "TCTD"]
+        for datatype in datatypes:
+            paths = glob(
+                f"tests/parsers_test_files/dfo/odf/mli/**/{datatype}*.ODF",
+                recursive=True,
+            )
+            for path in paths:
+                dfo.odf.mli_odf(path, config=None)
+
+    def test_mli_odf_parser_trajectory(self):
+        """Test DFO BIO ODF Parser"""
+        paths = glob(
+            "tests/parsers_test_files/dfo/odf/mli/**/TSG*.ODF",
+            recursive=True,
+        )
+        for path in paths:
+            dfo.odf.mli_odf(path, config=None)
+
+    def test_mli_odf_parser_madcp(self):
+        """Test DFO BIO ODF Parser"""
+        paths = glob(
+            "tests/parsers_test_files/dfo/odf/mli/**/MADCP*.ODF", recursive=True
+        )
+        for path in paths:
+            dfo.odf.mli_odf(path)
+
+    def test_mli_odf_parser_plnkg(self):
+        """Test DFO BIO ODF Parser"""
+        paths = glob(
+            "tests/parsers_test_files/dfo/odf/mli/**/PLNKG*.ODF", recursive=True
+        )
+        for path in paths:
+            dfo.odf.mli_odf(path)
 
     def test_bio_odf_netcdf(self):
         """Test DFO BIO ODF Parser"""
@@ -250,7 +290,7 @@ class ODFParsertest(unittest.TestCase):
 
     def test_mli_odf_netcdf(self):
         """Test DFO BIO ODF Parser"""
-        paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
+        paths = glob("tests/parsers_test_files/dfo/odf/mli/**/*.ODF", recursive=True)
         for path in paths:
             ds = dfo.odf.mli_odf(path, config=None)
             ds.to_netcdf(f"{path}_test.nc")
