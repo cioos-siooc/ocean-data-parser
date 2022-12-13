@@ -1,7 +1,1 @@
-from . import rbr
-from . import van_essen_instruments
-from . import pme
-from . import onset
-from . import seabird
-from . import utils
-from . import sunburst
+from ocean_data_parser.read.auto import detect_file_format, file

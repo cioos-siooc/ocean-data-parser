@@ -1,0 +1,30 @@
+% Cruise_Number: Amundsen_2016002
+% Section_Number: 2016002
+% Cast_Number: 1
+% Original_Filename: ArcticNet2016-stn323-04.08.16.DAT
+% Start_Date_Time [UTC]: 04-Aug-2016 20:29:04
+% Initial_Latitude [deg]: 74.1575
+% Initial_Longitude [deg]: -80.4746
+% Min_Depth [m]: 1.98
+% Max_Depth [m]: 93.01
+%
+% Net: Net number
+% Pres_open: Net open pressure [db]
+% Pres_close: Net close pressure [db]
+% Duration: Sample duration [s]
+% Volume: Sample volume [m^3]
+% Tem_mean: Mean Temperature (ITS-90) [degrees C]
+% Tem_std: Standard deviation Temperature (ITS-90) [degrees C]
+% Sal_mean: Mean Salinity (PSS-78) [psu]
+% Sal_std: Standard deviation Salinity (PSS-78) [psu]
+%
+   Net  Pres_open Pres_close   Duration     Volume   Tem_mean    Tem_std   Sal_mean    Sal_std
+  ----    -------    -------    -------    -------    -------    -------    -------    -------
+  1.00      88.87      79.58         66      51.70      -1.22       0.02      33.41       0.03
+  2.00      79.49      68.78         79      64.19      -1.24       0.06      33.33       0.03
+  3.00      69.26      59.45         74      51.80      -1.15       0.06      33.27       0.02
+  4.00      59.65      49.52         92      79.74      -1.02       0.01      33.19       0.02
+  5.00      49.48      39.45         83      60.53      -0.70       0.17      33.07       0.04
+  6.00      39.66      29.76         58      37.46      -0.85       0.04      32.93       0.05
+  7.00      29.85      18.84         83      62.60      -0.44       0.27      32.73       0.09
+  8.00      18.90      10.03         85      71.55       1.65       1.14      32.39       0.09
