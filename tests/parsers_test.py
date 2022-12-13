@@ -13,7 +13,6 @@ from ocean_data_parser.read import (
     amundsen,
     dfo,
     electricblue,
-    file,
     nmea,
     onset,
     pme,
