@@ -100,7 +100,7 @@ def compare_test_to_reference_netcdf(files):
             # coordites
             if test.coords != ref.coords:
                 warnings.warn(
-                    f"Coordinates are different between {ref.coords=} and {test.coords=}"
+                    f"Coordinates are different between ref={ref.coords} and test={test.coords}"
                 )
             # Variables
             for var in ref:
