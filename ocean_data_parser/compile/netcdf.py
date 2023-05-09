@@ -35,11 +35,33 @@ def get_erddap_xml_variable(variable, destination, type, attrs):
 
 
 def variables(
-    input_dir=None, file_regex="**/*.nc", groupby=None, output=None, get_erddap_xml=True
+    input_dir=None,
+    file_regex="**/*.nc",
+    groupby=None,
+    table_output=None,
+    erddap_xml_output=True,
 ):
-    """Search any netcdf files within the directory and its subdirectories, extract all the variables and their attributes and compile the whole list"""
+    """
+    Search any netcdf files within the directory and its subdirectories,
+      extract all the variables and their attributes and compile the whole list
+    """
 
-    groupby = ["variable", "units"] if groupby is None else groupby
+    def _get_var_attrs(var, **kwargs):
+        return dict(
+            file=file, variable=var, dtype=ds[var].dtype, **ds[var].attrs, **kwargs
+        )
+
+    groupby = (
+        [
+            "variable",
+            "units",
+            "standard_name",
+            "sdn_parameter_urn",
+            "sdn_parameter_name",
+        ]
+        if groupby is None
+        else groupby
+    )
 
     # Get file list
     input_dir = Path(input_dir or ".")
@@ -52,39 +74,51 @@ def variables(
     variables = []
     for file in tqdm(files, unit="file", desc="Compile NetCDF variables"):
         ds = xr.open_dataset(file)
-        for var in ds:
-            variables += [
-                dict(file=file, variable=var, dtype=ds[var].dtype, **ds[var].attrs)
-            ]
+        variables += [_get_var_attrs(var, coords=True) for var in ds.coords]
+        variables += [_get_var_attrs(var) for var in ds]
 
     # Generate DataFrame
     df_vars = pd.DataFrame(variables)
+    logger.debug("columns available: %s", df_vars.columns)
     df_vars_grouped = (
-        df_vars.groupby(["variable", "units"]).agg({"file": "count"})
+        df_vars.groupby(
+            groupby,
+            dropna=False,
+        ).agg({"file": "count"})
     ).reset_index()
     df_vars_unique = df_vars.drop_duplicates(subset=["variable", "units"], keep="first")
 
     # Generate output
     logger.info("Unique Variable list")
-    if output is None:
+    if table_output is None:
         print(df_vars_grouped.to_markdown())
-    elif output.endswith("md"):
-        df_vars_grouped.to_markdown(output)
-    elif output.endswith("csv"):
-        df_vars_grouped.to_csv(output)
+    elif table_output.endswith("md"):
+        df_vars_grouped.to_markdown(table_output)
+    elif table_output.endswith("csv"):
+        df_vars_grouped.to_csv(table_output)
 
     # Gernerate
-    if get_erddap_xml:
+    if erddap_xml_output:
+        erddap_xml = []
         for id, row in df_vars_unique.iterrows():
             attrs = row.dropna().to_dict()
             file = attrs.pop("file")
             var = attrs.pop("variable")
             dtype = get_erddap_dtype(attrs.pop("dtype", "String"))
-            print(get_erddap_xml_variable(var, var, dtype, attrs))
+            erddap_xml += [get_erddap_xml_variable(var, var, dtype, attrs)]
+        erddap_xml = "/n".join(erddap_xml)
+        if erddap_xml_output == True:
+            print(erddap_xml)
+        else:
+            with open(erddap_xml_output, "w") as file_handle:
+                file_handle.write(erddap_xml)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="Ocean Data Parser NetCDF Compiler")
+    parser.add_argument(
+        "type", type=str, help="Which component of netcdfs to compile? [variables]"
+    )
     parser.add_argument("-i", "--input_dir", type=str, help="input directory")
     parser.add_argument(
         "--file_regex", type=str, help="file glob type search", default="**/*.nc"
@@ -97,6 +131,11 @@ if __name__ == "__main__":
     parser.add_argument(
         "-o", "--output", type=str, help="Output type/path to present results"
     )
-    args = parser.parse_args()
-    # start_dir = "/Users/jessybarrette/repo/ocean-data-parser-start/output"
-    variables(**vars(args))
+    args = vars(parser.parse_args())
+    compile_type = args.pop("type")
+    if "variable" in compile_type:
+        output_path = args.pop("output")
+        if output_path:
+            args["table_output"] = output_path
+            args["erddap_xml_output"] = output_path.rsplit(".", 1)[0] + ".xml"
+        variables(**args)
