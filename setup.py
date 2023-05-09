@@ -21,6 +21,7 @@ setup(
         "NetCDF4",
         "pynmea2",
         "gsw",
+        "tabulate",
     ],
     extras_require={
         "odf": ["geographicLib", "shapely"],
