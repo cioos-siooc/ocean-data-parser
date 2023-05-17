@@ -27,7 +27,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
 
 
-def compare_test_to_reference_netcdf(files):
+def compare_test_to_reference_netcdf(file):
     def standardize_attributes(value):
         if isinstance(value, str):
             value = value.strip()
@@ -49,91 +49,86 @@ def compare_test_to_reference_netcdf(files):
             }
         return ds
 
-    def not_identical(ref, test):
-        return (ref != test).any() if isinstance(ref, np.ndarray) else ref != test
-
     def ignore_from_attr(attr, expression, placeholder):
         """Replace expression in both reference and test files which are
         expected to be different."""
         ref.attrs[attr] = re.sub(expression, placeholder, ref.attrs[attr])
         test.attrs[attr] = re.sub(expression, placeholder, test.attrs[attr])
 
-    for file in files:
-        ref = xr.open_dataset(file)
-        nc_file_test = file.replace("_reference.nc", "_test.nc")
-        if not os.path.isfile(nc_file_test):
-            raise RuntimeError(f"{nc_file_test} was not generated.")
-        test = xr.open_dataset(nc_file_test)
+    # Load test file and reference file
+    ref = xr.open_dataset(file)
+    nc_file_test = file.replace("_reference.nc", "_test.nc")
+    if not os.path.isfile(nc_file_test):
+        raise RuntimeError(f"{nc_file_test} was not generated.")
+    test = xr.open_dataset(nc_file_test)
 
-        # Add placeholders to specific fields in attributes
-        ignore_from_attr(
-            "history",
-            r"cioos_data_trasform.odf_transform V \d+\.\d+.\d+",
-            "cioos_data_trasform.odf_transform V VERSION",
-        )
-        ignore_from_attr(
-            "history", r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.*\d*Z", "TIMESTAMP"
-        )
-        ref.attrs["date_created"] = "TIMESTAMP"
-        test.attrs["date_created"] = "TIMESTAMP"
+    # Add placeholders to specific fields in attributes
+    ignore_from_attr(
+        "history",
+        r"cioos_data_trasform.odf_transform V \d+\.\d+.\d+",
+        "cioos_data_trasform.odf_transform V VERSION",
+    )
+    ignore_from_attr(
+        "history", r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.*\d*Z", "TIMESTAMP"
+    )
+    ref.attrs["date_created"] = "TIMESTAMP"
+    test.attrs["date_created"] = "TIMESTAMP"
 
-        ref = standardize_dataset(ref)
-        test = standardize_dataset(test)
+    ref = standardize_dataset(ref)
+    test = standardize_dataset(test)
 
-        if not ref.identical(test):
+    if ref.identical(test):
+        return
 
-            # Global attributes
-            for key in ref.attrs.keys():
-                if not_identical(ref.attrs[key], test.attrs.get(key)):
-                    warnings.warn(
-                        f"Different Global attribute detected {key} -> REF {ref.attrs[key]} -> TEST {test.attrs.get(key)} changed"
-                    )
-
-            # new global attributes
-            new_global_attributes = {
-                att: value for att, value in test.attrs.items() if att not in ref.attrs
-            }
-            if new_global_attributes:
-                warnings.warn(
-                    f"Extra attributes dectected that are not in the reference file: {new_global_attributes}"
-                )
-            # coordites
-            if test.coords != ref.coords:
-                warnings.warn(
-                    f"Coordinates are different between ref={ref.coords} and test={test.coords}"
-                )
-            # Variables
-            for var in ref:
-                # Variable Attributes
-                for key in ref[var].attrs.keys():
-                    if not_identical(ref[var].attrs[key], test[var].attrs.get(key)):
-                        warnings.warn(
-                            f"Variable attribute changed {key}[{var}].attrs ->"
-                        )
-                new_variable_attributes = {
-                    att: value
-                    for att, value in test[var].attrs.items()
-                    if att not in ref[var].attrs
-                }
-                if new_variable_attributes:
-                    warnings.warn(
-                        f"Extra variable attributes dectected that are not in the reference file: {var} -> {new_variable_attributes}"
-                    )
-
-                if test.coords != ref.coords:
-                    continue
-
-                # Values
-                if not ref[var].identical(test[var]):
-                    warnings.warn(
-                        f"Variable ds[{var}] is different from reference file"
-                    )
-            if test.coords != ref.coords:
-                continue
-
-            warnings.warn(
-                f"Converted file {nc_file_test} is different than the reference: {file}"
+    # find through netcdf files differences
+    for key, value in ref.attrs.items():
+        if test.attrs.get(key) != value:
+            logger.error(
+                "Global attribute ds.attrs[%s] is different from reference file",
+                key,
             )
+
+    if test.attrs.keys() != ref.attrs.keys():
+        logger.error(
+            "A new global attribute %s was detected.",
+            set(test.attrs.keys()) - set(ref.attrs.keys()),
+        )
+
+    ref_variables = list(ref) + list(ref.coords)
+    test_variables = list(test) + list(test.coords)
+
+    if ref_variables.sort() != test_variables.sort():
+        logger.error("A variable mismatch exist between the reference and test files")
+
+    for var in ref_variables:
+        # compare variable
+        if not ref[var].identical(test[var]):
+            logger.error("Variable ds[%s] is different from reference file", var)
+        if (ref[var].values != test[var].values).any():
+            logger.error(
+                "Variable ds[%s].values are different from reference file", var
+            )
+
+        # compare variable attributes
+        for attr, value in ref[var].attrs.items():
+            is_not_same_attr = test[var].attrs.get(attr) != value
+            if isinstance(is_not_same_attr, bool) and not is_not_same_attr:
+                continue
+            elif isinstance(is_not_same_attr, bool) and is_not_same_attr:
+                logger.error(
+                    "Variable ds[%s].attrs[%s] list is different from reference file",
+                    var,
+                    attr,
+                )
+            elif (is_not_same_attr).any():
+                logger.error(
+                    "Variable ds[%s].attrs[%s] is different from reference file",
+                    var,
+                    attr,
+                )
+    raise RuntimeError(
+        f"Converted file {nc_file_test} is different than the reference: {file}"
+    )
 
 
 class PMEParserTests(unittest.TestCase):
@@ -305,7 +300,8 @@ class ODFParsertest(unittest.TestCase):
             "./tests/parsers_test_files/dfo/odf/bio/**/*.ODF_reference.nc",
             recursive=True,
         )
-        compare_test_to_reference_netcdf(ref_files)
+        for file in ref_files:
+            compare_test_to_reference_netcdf(file)
 
 
 class BlueElectricParsertest(unittest.TestCase):
