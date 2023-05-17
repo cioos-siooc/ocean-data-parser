@@ -1,0 +1,25 @@
+site_name: Ocean Data Parser - Documentation
+theme:
+  name: material
+
+plugins:
+  - mkdocstrings
+
+nav:
+  - Welcome: index.md
+  - Data Format:
+      - data-format.md
+      - Amundsen: read-amundsen.md
+      - Fisheries And Ocean Canada:
+          - ODF: read-odf.md
+          - IOS Shell: read-ios.md
+      - ElectricBlue: read-electricblue.md
+      - NMEA: read-nmea.md
+      - Onset: read-onset.md
+      - PME: read-pme.md
+      - RBR: read-rbr.md
+      - Seabird: read-seabird.md
+      - Star-Oddi: read-star-oddi.md
+      - SunBurst: read-sunburst.md
+      - Van Essen Instruments: read-van-essen-intruments.md
+  - metadata.md

@@ -1,4 +1,8 @@
-""" Parse Onset Propriatery format to an xarray dataset.    """
+""" 
+# Onset 
+<https://www.onsetcomp.com/>
+
+"""
 import logging
 import re
 from csv import reader
@@ -6,6 +10,7 @@ from datetime import datetime
 
 import numpy as np
 import pandas as pd
+import xarray
 from dateutil.parser._parser import ParserError
 
 from .utils import test_parsed_dataset
@@ -152,11 +157,11 @@ def _standardized_variable_mapping(variables):
 
 
 def csv(
-    path,
+    path: str,
     convert_units_to_si: bool = True,
     read_csv_kwargs: dict = None,
     standardize_variable_names: bool = True,
-):
+) -> xarray.Dataset:
 
     """Parses the Onset CSV format generate by HOBOware into a xarray object
     Inputs:

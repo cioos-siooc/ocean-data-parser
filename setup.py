@@ -35,6 +35,9 @@ setup(
             "flake8",
             "black",
             "pytest-benchmark",
+            "mkdocs",
+            "mkdocs-material",
+            "mkdocstrings[python]",
         ],
     },
     classifiers=[

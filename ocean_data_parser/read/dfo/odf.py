@@ -5,6 +5,7 @@ the different data formats developped by the different Canadian DFO offices.
 """
 from typing import Union
 import logging
+import xarray
 from ocean_data_parser.read.dfo.odf_source.process import (
     parse_odf,
     read_config,
@@ -16,7 +17,7 @@ from odf_transform.process import odf_to_xarray, read_config as cioos_odf_config
 logger = logging.getLogger(__name__)
 
 
-def bio_odf_cioos(path: str, config):
+def bio_odf_cioos(path: str, config: Union[dict, str]) -> xarray.Dataset:
     """Read ODF with the CIOOS Data Transform package"""
 
     config = cioos_odf_config(config)
@@ -32,7 +33,9 @@ def mli_odf_cioos(path: str, config):
     return odf_to_xarray(path, config)
 
 
-def bio_odf(path: str, config: Union[str, dict] = None, output=None):
+def bio_odf(
+    path: str, config: Union[str, dict] = None, output: str = None
+) -> xarray.Dataset:
     """Bedford Institute of Ocean ODF format parser
     Args:
         path (str): Path to the odf file to parse
@@ -51,7 +54,7 @@ def bio_odf(path: str, config: Union[str, dict] = None, output=None):
     return ds
 
 
-def mli_odf(path: str, config: Union[str, dict] = None, output=None):
+def mli_odf(path: str, config: Union[str, dict] = None, output=None) -> xarray.Dataset:
     """Maurice Lamontagne Institute ODF format parser
     Args:
         path (str): Path to the odf file to parse

@@ -1,7 +1,13 @@
+"""
+# Sunburst
+<http://www.sunburstsensors.com/>
+
+"""
 import logging
 import re
 
 import pandas as pd
+import xarray
 
 from .utils import standardize_dataset
 
@@ -55,7 +61,7 @@ def _format_variables(name):
     return name
 
 
-def superCO2(path, output=None):
+def superCO2(path: str, output: str = None) -> xarray.Dataset:
     """Parse superCO2 output file txt file"""
     header = []
     line = 1
@@ -133,7 +139,7 @@ def superCO2(path, output=None):
     return standardize_dataset(ds)
 
 
-def superCO2_notes(path):
+def superCO2_notes(path:str) -> xarray.Dataset:
     """Parse superCO2 notes files and return a pandas dataframe"""
     line = True
     notes = []

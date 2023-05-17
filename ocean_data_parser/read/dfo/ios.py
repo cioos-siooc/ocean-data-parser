@@ -1,11 +1,12 @@
 import logging
 from cioos_data_transform.IosObsFile import CurFile, GenFile
+import xarray
 
 logger = logging.getLogger(__name__)
 HANDLED_DATA_TYPES = ("tob", "drf", "ane", "ubc", "loop", "ctd", "mctd", "bot", "che")
 
 
-def shell(filename):
+def shell(filename: str) -> xarray.Dataset:
     """Read IOS Shell format to xarray"""
     extension = filename.rsplit(".", 1)[1]
     if extension == "cur":

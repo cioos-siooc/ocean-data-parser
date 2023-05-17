@@ -1,6 +1,7 @@
 """
-Set of tools used to parsed RBR manufacturer proprieatary data formats to an
-xarray data structure.
+# RBR Ltd.
+<https://rbr-global.com/>
+
 """
 import re
 
