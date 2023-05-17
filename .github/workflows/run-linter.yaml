@@ -1,4 +1,4 @@
-name: Python package
+name: Test Linter and full pytest 
 
 on:
   pull_request:
