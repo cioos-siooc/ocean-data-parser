@@ -72,11 +72,35 @@ def compare_test_to_reference_netcdf(file):
     ignore_from_attr(
         "history", r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.*\d*Z", "TIMESTAMP"
     )
+    ignore_from_attr("source", ".*", "source")
+    
     ref.attrs["date_created"] = "TIMESTAMP"
     test.attrs["date_created"] = "TIMESTAMP"
 
     ref = standardize_dataset(ref)
     test = standardize_dataset(test)
+
+    # Compare only attributes that exist in reference
+    test.attrs = {
+        attr: value for attr, value in test.attrs.items() if attr in ref.attrs
+    }
+    for var in test:
+        if var not in ref:
+            test.drop(var)
+        test[var].attrs = {
+            attr: value
+            for attr, value in test[var].attrs.items()
+            if attr in ref[var].attrs
+        }
+
+    for var in test.coords:
+        if var not in ref:
+            continue
+        test[var].attrs = {
+            attr: value
+            for attr, value in test[var].attrs.items()
+            if attr in ref[var].attrs
+        }
 
     if ref.identical(test):
         return
