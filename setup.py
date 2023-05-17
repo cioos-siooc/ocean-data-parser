@@ -14,7 +14,7 @@ setup(
         "numpy",
         "xarray",
         "requests",
-        "pandas",
+        "pandas==1.3.5",
         "xmltodict",
         "tqdm",
         "pytz",
