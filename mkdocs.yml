@@ -7,19 +7,23 @@ plugins:
 
 nav:
   - Welcome: index.md
-  - Data Format:
+  - Metadata:
+      - CF: metadata/cf.md
+      - NERC: metadata/nerc.md
+      - Polar Data Catalog: metadata/pdc.md
+  - Data Parsers:
       - data-format.md
-      - Amundsen: read-amundsen.md
+      - Amundsen: read/amundsen.md
       - Fisheries And Ocean Canada:
-          - ODF: read-odf.md
-          - IOS Shell: read-ios.md
-      - ElectricBlue: read-electricblue.md
-      - NMEA: read-nmea.md
-      - Onset: read-onset.md
-      - PME: read-pme.md
-      - RBR: read-rbr.md
-      - Seabird: read-seabird.md
-      - Star-Oddi: read-star-oddi.md
-      - SunBurst: read-sunburst.md
-      - Van Essen Instruments: read-van-essen-intruments.md
+          - ODF: read/odf.md
+          - IOS Shell: read/ios.md
+      - ElectricBlue: read/electricblue.md
+      - NMEA: read/nmea.md
+      - Onset: read/onset.md
+      - PME: read/pme.md
+      - RBR: read/rbr.md
+      - Seabird: read/seabird.md
+      - Star-Oddi: read/star-oddi.md
+      - SunBurst: read/sunburst.md
+      - Van Essen Instruments: read/van-essen-intruments.md
   - metadata.md
