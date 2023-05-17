@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
+import pytest
 from ocean_data_parser.read import (
     amundsen,
     dfo,
@@ -221,87 +222,112 @@ class AmundsenParserTests(unittest.TestCase):
             ds.to_netcdf(f"{path}_test.nc", format="NETCDF4_CLASSIC")
 
 
-class ODFParsertest(unittest.TestCase):
-    def test_bio_odf_parser(self):
+class TestODFBIOParser(object):
+    @pytest.mark.parametrize(
+        "file", glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
+    )
+    def test_bio_odf_parser(self, file):
         """Test DFO BIO ODF Parser"""
-        paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
-        for path in paths:
-            dfo.odf.bio_odf(path, config=None)
+        dfo.odf.bio_odf(file, config=None)
 
-    def test_bio_odf_parser_to_netcdf(self):
+    @pytest.mark.parametrize(
+        "file", glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
+    )
+    def test_bio_odf_parser_to_netcdf(self, file):
         """Test DFO BIO ODF Parser"""
-        paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
-        for path in paths:
-            dfo.odf.bio_odf(path, config=None, output="netcdf")
+        dfo.odf.bio_odf(file, config=None, output="netcdf")
 
-    def test_mli_all_odf_parser(self):
+    @pytest.mark.parametrize(
+        "file", glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
+    )
+    def test_bio_odf_netcdf(self, file):
         """Test DFO BIO ODF Parser"""
-        paths = glob("tests/parsers_test_files/dfo/odf/mli/**/*.ODF", recursive=True)
-        for path in paths:
-            dfo.odf.mli_odf(path, config=None)
+        ds = dfo.odf.bio_odf(file, config=None)
+        ds.to_netcdf(f"{file}_test.nc")
 
-    def test_mli_odf_parser_timeseries(self):
+    @pytest.mark.parametrize(
+        "file",
+        glob(
+            "tests/parsers_test_files/dfo/odf/bio/**/*.ODF_reference.nc", recursive=True
+        ),
+    )
+    def test_bio_odf_converted_netcdf_vs_references(self, file):
+        """Test DFO BIO ODF conversion to NetCDF vs reference files"""
+        # Generate test bio odf netcdf files
+        self.test_bio_odf_netcdf(file.replace("_reference.nc", ""))
+        compare_test_to_reference_netcdf(file)
+
+
+class TestODFMLIParser(object):
+    @pytest.mark.parametrize(
+        "file",
+        glob(
+            "tests/parsers_test_files/dfo/odf/mli/**/*.ODF_reference.nc", recursive=True
+        ),
+    )
+    def test_mli_all_odf_parser(self, file):
         """Test DFO BIO ODF Parser"""
-        datatypes = ["MCM", "MCTD", "MMOB", "MTC", "MTG", "MTR", "TCTD"]
-        for datatype in datatypes:
-            paths = glob(
+        dfo.odf.mli_odf(file, config=None)
+
+    @pytest.mark.parametrize(
+        "file",
+        [
+            file
+            for datatype in ["MCM", "MCTD", "MMOB", "MTC", "MTG", "MTR", "TCTD"]
+            for file in glob(
                 f"tests/parsers_test_files/dfo/odf/mli/**/{datatype}*.ODF",
                 recursive=True,
             )
-            for path in paths:
-                dfo.odf.mli_odf(path, config=None)
-
-    def test_mli_odf_parser_trajectory(self):
+        ],
+    )
+    def test_mli_odf_parser_timeseries(self, file):
         """Test DFO BIO ODF Parser"""
-        paths = glob(
+        dfo.odf.mli_odf(file, config=None)
+
+    @pytest.mark.parametrize(
+        "file",
+        glob(
             "tests/parsers_test_files/dfo/odf/mli/**/TSG*.ODF",
             recursive=True,
-        )
-        for path in paths:
-            dfo.odf.mli_odf(path, config=None)
-
-    def test_mli_odf_parser_madcp(self):
+        ),
+    )
+    def test_mli_odf_parser_trajectory(self, file):
         """Test DFO BIO ODF Parser"""
-        paths = glob(
-            "tests/parsers_test_files/dfo/odf/mli/**/MADCP*.ODF", recursive=True
-        )
-        for path in paths:
-            dfo.odf.mli_odf(path)
+        dfo.odf.mli_odf(file, config=None)
 
-    def test_mli_odf_parser_plnkg(self):
-        """Test DFO BIO ODF Parser"""
-        paths = glob(
-            "tests/parsers_test_files/dfo/odf/mli/**/PLNKG*.ODF", recursive=True
-        )
-        for path in paths:
-            dfo.odf.mli_odf(path)
-
-    def test_bio_odf_netcdf(self):
-        """Test DFO BIO ODF Parser"""
-        paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
-        for path in paths:
-            ds = dfo.odf.bio_odf(path, config=None)
-            ds.to_netcdf(f"{path}_test.nc")
-
-    def test_mli_odf_netcdf(self):
-        """Test DFO BIO ODF Parser"""
-        paths = glob("tests/parsers_test_files/dfo/odf/mli/**/*.ODF", recursive=True)
-        for path in paths:
-            ds = dfo.odf.mli_odf(path, config=None)
-            ds.to_netcdf(f"{path}_test.nc")
-
-    def test_bio_odf_converted_netcdf_vs_references(self):
-        """Test DFO BIO ODF conversion to NetCDF vs reference files"""
-        # Generate test bio odf netcdf files
-        self.test_bio_odf_netcdf()
-
-        # Retriev the list of reference files
-        ref_files = glob(
-            "./tests/parsers_test_files/dfo/odf/bio/**/*.ODF_reference.nc",
+    @pytest.mark.parametrize(
+        "file",
+        glob(
+            "tests/parsers_test_files/dfo/odf/mli/**/MADCP*.ODF",
             recursive=True,
-        )
-        for file in ref_files:
-            compare_test_to_reference_netcdf(file)
+        ),
+    )
+    def test_mli_odf_parser_madcp(self, file):
+        """Test DFO BIO ODF Parser"""
+        dfo.odf.mli_odf(file)
+
+    @pytest.mark.parametrize(
+        "file",
+        glob(
+            "tests/parsers_test_files/dfo/odf/mli/**/PLNKG*.ODF",
+            recursive=True,
+        ),
+    )
+    def test_mli_odf_parser_plnkg(self, file):
+        """Test DFO BIO ODF Parser"""
+        dfo.odf.mli_odf(file)
+
+    @pytest.mark.parametrize(
+        "file",
+        glob(
+            "tests/parsers_test_files/dfo/odf/mli/**/*.ODF",
+            recursive=True,
+        ),
+    )
+    def test_mli_odf_netcdf(self, file):
+        """Test DFO BIO ODF Parser"""
+        ds = dfo.odf.mli_odf(file, config=None)
+        ds.to_netcdf(f"{file}_test.nc")
 
 
 class BlueElectricParsertest(unittest.TestCase):
