@@ -23,6 +23,7 @@ def bio_odf_cioos(path: str, config):
     config["organisationVocabulary"] = ["BIO", "GF3"]
     return odf_to_xarray(path, config)
 
+
 def mli_odf_cioos(path: str, config):
     """Read ODF with the CIOOS Data Transform package"""
 
