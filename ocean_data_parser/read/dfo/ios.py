@@ -1,7 +1,8 @@
 import logging
-from cioos_data_transform.IosObsFile import CurFile, GenFile, HANDLED_DATA_TYPES
+from cioos_data_transform.IosObsFile import CurFile, GenFile
 
 logger = logging.getLogger(__name__)
+HANDLED_DATA_TYPES = ("tob", "drf", "ane", "ubc", "loop", "ctd", "mctd", "bot", "che")
 
 
 def shell(filename):
