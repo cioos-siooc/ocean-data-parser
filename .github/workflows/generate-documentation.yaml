@@ -22,7 +22,7 @@ jobs:
           path: .cache
           restore-keys: |
             mkdocs-material-
-      - run: pip install mkdocs-material mkdocstrings[python] mkdocs-jupyter mkdocs-gen-files pandas mike mkdocs-simple-hooks
+      - run: pip install mkdocs-material mkdocstrings[python] mkdocs-jupyter mkdocs-gen-files pandas mike mkdocs-simple-hooks tabulate
       - run: |
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
