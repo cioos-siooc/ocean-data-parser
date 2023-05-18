@@ -31,9 +31,16 @@ theme:
 
 plugins:
   - mkdocstrings
+  - mkdocs-jupyter:
+      ignore_h1_titles: True
 
 nav:
   - Welcome: index.md
+  - Notebooks:
+      - Amundsen INT: notebooks/amundsen_int_parser_example.ipynb
+      - DFO-BIO parsing: notebooks/bio_odf_parsing_example.ipynb
+      - NMEA Parsing: notebooks/nmea_example.ipynb
+      - Seabird CNV: notebooks/seabird_cnv_and_btl_example.ipynb
   - Metadata:
       - metadata/index.md
       - CF: metadata/cf.md
@@ -60,4 +67,3 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/HakaiInstitute/ocean-data-parser
       name: Github Page
-
