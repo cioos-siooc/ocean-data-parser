@@ -13,8 +13,8 @@ This parsed data can then be use as an example to:
 
 ## Table Of Contents
 
-1. [Compatible Data Formats](data-format.md)
-2. [Metadata](metadata.md)
+1. [Data Parsers](read/index.md)
+2. [Metadata](metadata/index.md)
 
 Quickly find what you're looking for depending on
 your use case by looking at the different pages.
