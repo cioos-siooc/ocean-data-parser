@@ -31,13 +31,9 @@ and the development documentation at [here](https://hakaiinstitute.github.io/oce
 <summary>Table of Contents</summary>
 
 [Configuration](#configuration)
-
 [Development](#development)
-
 [Tests](#tests)
-
 [Deploying](#deploying)
-
 
 </details>
 
@@ -80,7 +76,7 @@ mike serve
 
 Any documentation changes to the main and development branches will automatically update respectively the main and dev document pages.
 
-## Test
+### Testing
 To run the different tests, you can use pytest with the command:
 
 ```
