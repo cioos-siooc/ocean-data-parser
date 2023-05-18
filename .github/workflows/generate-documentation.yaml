@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - development
       - 30-add-mkdocs
 permissions:
   contents: write
@@ -22,4 +23,9 @@ jobs:
           restore-keys: |
             mkdocs-material-
       - run: pip install mkdocs-material mkdocstrings[python] mkdocs-jupyter mkdocs-gen-files pandas mike
-      - run: mkdocs gh-deploy --force
+      - run: |
+          if [[ "${{github.ref_name}}" == "main" ]]; then
+              mike deploy main --push
+          else
+              mike deploy dev --push
+          fi
