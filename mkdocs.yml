@@ -23,7 +23,6 @@ theme:
       accent: blue
   features:
     - header.autohide
-    - navigation.indexes
     - navigation.top
     - navigation.tracking
     - toc.integrate
@@ -45,12 +44,10 @@ nav:
       - NMEA Parsing: notebooks/nmea_example.ipynb
       - Seabird CNV: notebooks/seabird_cnv_and_btl_example.ipynb
   - Metadata:
-      - metadata/index.md
       - CF: metadata/cf.md
       - NERC: metadata/nerc.md
       - Polar Data Catalog: metadata/pdc.md
   - Data Parsers:
-      - read/index.md
       - Amundsen: read/amundsen-hook.md
       - Fisheries And Ocean Canada:
           - read/dfo/index.md
