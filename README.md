@@ -86,31 +86,6 @@ To run the different tests, you can use pytest with the command:
 ```
 pytest
 ```
-## Deploying
-
-The production branch
-
-`TODO:production_branch_goes_here`
-
-is deployed at: <https://production_url>
-
----
-The testing branch
-
-`TODO:testing_branch_name_goes_here`
-
-is deployed at: <https://testing_url>
-
-<!-- etc... -->
----
-
-To deploy this project run:
-
-```shell
-  npm run deploy
-```
-
----
 
 ## Contributing
 
