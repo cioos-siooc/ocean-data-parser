@@ -39,6 +39,7 @@ setup(
             "mkdocs-material",
             "mkdocstrings[python]",
             "mkdocs-jupyter",
+            "mkdocs-gen-files",
         ],
     },
     classifiers=[
