@@ -1,44 +1,3 @@
-# Ocean Data Parser
-## Installation
-With miniconda, create a new environement:
-```console
-conda create --name ocean_parser 
-````
-
-Get in the environment:
-```console
-conda activate ocean_parser
-```
-
-Install the present package:
-```console
-pip install git+https://github.com/HakaiInstitute/ocean-data-parser.git
-```
-
-
-For development, clone locally the package :
-```console
-git clone git+https://github.com/HakaiInstitute/ocean-data-parser.git
-```
-and install the package:
-```console
-cd ocean-data-parser
-pip install -e .
-```
-For development purposes, it is recommended to install the development requirements:
-```console
-pip install -e ".[dev]"
-```
-
-## How to
-To parse seabird file:
-```python
-from ocean_data_parser.read import searbird
-
-PATH_TO_SEABIRD_CNV = "PATH_TO_SEABIRD_CNV"
-ds = seabird.cnv(PATH_TO_SEABIRD_CNV)
-```
-
 <!-- NOTE: All sections are placeholders. Use the relevant ones-->
 
 ![Logo](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/th5xamgrr6se0x5ro4g6.png)
@@ -53,7 +12,8 @@ ds = seabird.cnv(PATH_TO_SEABIRD_CNV)
 
 <!-- You can get project relevant badges from: [shields.io](https://shields.io/) -->
 
-[![Build | Passing](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://img.shields.io/badge/build-passing-brightgreen)    [![Latest Release ](https://img.shields.io/badge/release-v4.16.4-blue.svg)](https://img.shields.io/badge/release-v4.16.4-blue) [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![Update gh-pages Docs](https://github.com/HakaiInstitute/ocean-data-parser/actions/workflows/generate-documentation.yaml/badge.svg)](https://github.com/HakaiInstitute/ocean-data-parser/actions/workflows/generate-documentation.yaml)
+[![pages-build-deployment](https://github.com/HakaiInstitute/ocean-data-parser/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/HakaiInstitute/ocean-data-parser/actions/workflows/pages/pages-build-deployment)
 
 # Ocean Data Parser
 
