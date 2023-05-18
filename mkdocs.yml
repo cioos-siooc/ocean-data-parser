@@ -64,10 +64,9 @@ nav:
       - Van Essen Instruments: read/van-essen-intruments.md
 
 extra:
-  social:
-    - icon: fontawesome/brands/github
-      link: https://github.com/HakaiInstitute/ocean-data-parser
-      name: Github Page
+  version:
+    provider: mike
+    default: latest
 
 extra_javascript:
   - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
