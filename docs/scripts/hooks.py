@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import json
-import mkdocs_gen_files
 
 
 def quote_column(col):
@@ -19,7 +18,7 @@ def get_odf_vocab_markdown():
         "apply_function",
     ]:
         df[column] = quote_column(df[column])
-    with mkdocs_gen_files.open("read/dfo/odf-hook.md", "w") as file_handle:
+    with open("read/dfo/odf-hook.md", "w") as file_handle:
         file_handle.write(
             """:::ocean_data_parser.read.dfo.odf\n\n## ODF Vocabulary\n"""
         )
@@ -37,7 +36,7 @@ def get_ios_vocab_markdown():
         "apply_func",
     ]:
         df[column] = quote_column(df[column].astype(str))
-    with mkdocs_gen_files.open("read/dfo/ios-hook.md", "w") as file_handle:
+    with open("read/dfo/ios-hook.md", "w") as file_handle:
         file_handle.write(
             """:::ocean_data_parser.read.dfo.ios\n\n## IOS Vocabulary\n"""
         )
@@ -57,7 +56,7 @@ def get_amundsen_vocab_markdown():
             if attrs and name != "VARIABLE_NAME"
         ]
     )
-    with mkdocs_gen_files.open("read/amundsen-hook.md", "w") as file_handle:
+    with open("read/amundsen-hook.md", "w") as file_handle:
         file_handle.write(""":::ocean_data_parser.read.amundsen\n\n## Vocabulary\n""")
         df.replace({np.nan: ""}).to_markdown(file_handle, index=False, tablefmt="pipe")
 
@@ -73,7 +72,7 @@ def get_seabird_vocab_markdown():
             for name, attrs in vocab.items()
         ]
     )
-    with mkdocs_gen_files.open("read/seabird-hook.md", "w") as file_handle:
+    with open("read/seabird-hook.md", "w") as file_handle:
         file_handle.write(""":::ocean_data_parser.read.seabird\n\n## Vocabulary\n""")
         df.replace({np.nan: ""}).to_markdown(file_handle, index=False, tablefmt="pipe")
 

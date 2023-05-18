@@ -32,12 +32,12 @@ plugins:
   - mkdocstrings
   - mkdocs-jupyter:
       ignore_h1_titles: True
-  - gen-files:
-      scripts:
-        - docs/scripts/hooks.py
   - mike:
       # These fields are all optional; the defaults are as below...
       canonical_version: main
+  - mkdocs-simple-hooks:
+      hooks:
+        on_pre_build: 'docs.scripts.hooks:on_pre_build'
 
 nav:
   - Welcome: index.md
