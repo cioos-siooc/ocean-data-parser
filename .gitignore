@@ -21,7 +21,5 @@ pdc-amundsen-conversion.log
 tests/parsers_test_files/amundsen/12713/**/*
 output/
 
-docs/**/*-hook.md
-
 #ignore mkdocs gh-pages local build
 site/**
