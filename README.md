@@ -78,11 +78,6 @@ and the development documentation at [here](https://hakaiinstitute.github.io/oce
 
 [Deploying](#deploying)
 
-[Contributing](#contributing)
-
-[Documentation](#documentation)
-
-[License](#license)
 
 </details>
 
