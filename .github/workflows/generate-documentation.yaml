@@ -1,4 +1,4 @@
-name: Rebuild mkdocs to gh-pages
+name: Update gh-pages Docs
 on:
   push:
     branches:
