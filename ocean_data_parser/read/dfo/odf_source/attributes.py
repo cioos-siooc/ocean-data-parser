@@ -182,7 +182,7 @@ def _standardize_station_names(station):
         return station
 
 
-def _review_station(global_attributes, odf_header):
+def _review_station(global_attributes, odf_header, config):
     """Review station attribute,
     - If not available search in original odf header for "station... : STATION_NAME"
     - Standardize station name
@@ -191,8 +191,18 @@ def _review_station(global_attributes, odf_header):
     # If station is already available return it back
     if "station" in global_attributes:
         return global_attributes["station"]
-    elif global_attributes.get("project", "") not in stationless_programs:
+    elif global_attributes.get("project", "") in stationless_programs:
         return None
+
+
+    # If user specified in the configs the regex expression to retrieve the station, use this
+    if "station_regex" in config['global_attributes']:
+        try:
+            station = re.search(config['global_attributes']['station_regex'].replace("//","\\"),"".join(odf_header["original_header"]),re.IGNORECASE).group(1)
+        except AttributeError:
+            print("Station name: The regex expression did not catch any group in the header. Please modify the regex so that the number or name of the station is included in the first group")
+            return None
+        return station
 
     # Search station anywhere within ODF Header
     station = re.search(
@@ -260,7 +270,7 @@ def _generate_instrument_attributes(odf_header, instrument_manufacturer_header=N
         attributes["instrument"] = " ".join(
             [
                 odf_header["INSTRUMENT_HEADER"].get("INST_TYPE") or "",
-                odf_header["INSTRUMENT_HEADER"].get("MODEL") or "",
+                str(odf_header["INSTRUMENT_HEADER"].get("MODEL")) or "",
             ]
         ).strip()
         attributes["instrument_serial_number"] = (
@@ -356,7 +366,6 @@ def global_attributes_from_header(dataset, odf_header, config=None):
     Method use to define the standard global attributes from an ODF Header
     parsed by the read function.
     """
-
     def _review_latitude(value):
         return value if value != -99.9 else None
 
@@ -456,7 +465,7 @@ def global_attributes_from_header(dataset, odf_header, config=None):
 
     # Review ATTRIBUTES
     dataset.attrs["event_number"] = _review_event_number(dataset.attrs, odf_header)
-    dataset.attrs["station"] = _review_station(dataset.attrs, odf_header)
+    dataset.attrs["station"] = _review_station(dataset.attrs, odf_header, config)
     if isinstance(dataset.attrs["comments"], list):
         dataset.attrs["comments"] = "\n".join(
             [line for line in dataset.attrs["comments"] if line]
