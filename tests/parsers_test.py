@@ -73,7 +73,7 @@ def compare_test_to_reference_netcdf(file):
         "history", r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.*\d*Z", "TIMESTAMP"
     )
     ignore_from_attr("source", ".*", "source")
-    
+
     ref.attrs["date_created"] = "TIMESTAMP"
     test.attrs["date_created"] = "TIMESTAMP"
 
@@ -104,35 +104,37 @@ def compare_test_to_reference_netcdf(file):
 
     if ref.identical(test):
         return
-
+    difference_detected = []
     # find through netcdf files differences
     for key, value in ref.attrs.items():
         if test.attrs.get(key) != value:
-            logger.error(
-                "Global attribute ds.attrs[%s] is different from reference file",
-                key,
-            )
+            difference_detected += [
+                f"Global attribute ref.attrs[{key}]={value} != test.attrs[{key}]={test.attrs.get(key)}",
+            ]
 
     if test.attrs.keys() != ref.attrs.keys():
-        logger.error(
-            "A new global attribute %s was detected.",
-            set(test.attrs.keys()) - set(ref.attrs.keys()),
-        )
+        difference_detected += [
+            f"A new global attribute {set(test.attrs.keys()) - set(ref.attrs.keys())} was detected.",
+        ]
 
     ref_variables = list(ref) + list(ref.coords)
     test_variables = list(test) + list(test.coords)
 
     if ref_variables.sort() != test_variables.sort():
-        logger.error("A variable mismatch exist between the reference and test files")
+        difference_detected += [
+            "A variable mismatch exist between the reference and test files"
+        ]
 
     for var in ref_variables:
         # compare variable
         if not ref[var].identical(test[var]):
-            logger.error("Variable ds[%s] is different from reference file", var)
+            difference_detected += [
+                f"Variable ds[{var}] is different from reference file"
+            ]
         if (ref[var].values != test[var].values).any():
-            logger.error(
-                "Variable ds[%s].values are different from reference file", var
-            )
+            difference_detected += [
+                f"Variable ds[{var}].values are different from reference file"
+            ]
 
         # compare variable attributes
         for attr, value in ref[var].attrs.items():
@@ -140,19 +142,16 @@ def compare_test_to_reference_netcdf(file):
             if isinstance(is_not_same_attr, bool) and not is_not_same_attr:
                 continue
             elif isinstance(is_not_same_attr, bool) and is_not_same_attr:
-                logger.error(
-                    "Variable ds[%s].attrs[%s] list is different from reference file",
-                    var,
-                    attr,
-                )
+                difference_detected += [
+                    f"Variable Attribute ref[{var}].attrs[{attr}]={value} != test[{var}].attrs[{attr}]={test[var].attrs.get(attr)}",
+                ]
             elif (is_not_same_attr).any():
-                logger.error(
-                    "Variable ds[%s].attrs[%s] is different from reference file",
-                    var,
-                    attr,
-                )
+                difference_detected += [
+                    f"Variable ds[{var}].attrs[{attr}] is different from reference file",
+                ]
     raise RuntimeError(
-        f"Converted file {nc_file_test} is different than the reference: {file}"
+        f"Converted file {nc_file_test} is different than the reference: {file}: %s",
+        "\n + ".join(difference_detected),
     )
 
 
