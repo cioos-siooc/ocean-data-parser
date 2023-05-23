@@ -56,12 +56,10 @@ def compare_test_to_reference_netcdf(file):
         ref.attrs[attr] = re.sub(expression, placeholder, ref.attrs[attr])
         test.attrs[attr] = re.sub(expression, placeholder, test.attrs[attr])
 
+    # Run Test conversion
+    test = dfo.odf.bio_odf(file)
     # Load test file and reference file
-    ref = xr.open_dataset(file)
-    nc_file_test = file.replace("_reference.nc", "_test.nc")
-    if not os.path.isfile(nc_file_test):
-        raise RuntimeError(f"{nc_file_test} was not generated.")
-    test = xr.open_dataset(nc_file_test)
+    ref = xr.open_dataset(file + "_reference.nc")
 
     # Add placeholders to specific fields in attributes
     ignore_from_attr(
@@ -103,7 +101,7 @@ def compare_test_to_reference_netcdf(file):
         }
 
     if ref.identical(test):
-        return
+        return []
     difference_detected = []
     # find through netcdf files differences
     for key, value in ref.attrs.items():
@@ -149,10 +147,10 @@ def compare_test_to_reference_netcdf(file):
                 difference_detected += [
                     f"Variable ds[{var}].attrs[{attr}] is different from reference file",
                 ]
-    raise RuntimeError(
-        f"Converted file {nc_file_test} is different than the reference: {file}: %s",
-        "\n + ".join(difference_detected),
+    logger.error(
+        "Test file differ from reference: %s", "\n + ".join(difference_detected)
     )
+    return difference_detected
 
 
 class PMEParserTests(unittest.TestCase):
@@ -245,7 +243,7 @@ class AmundsenParserTests(unittest.TestCase):
             ds.to_netcdf(f"{path}_test.nc", format="NETCDF4_CLASSIC")
 
 
-class TestODFBIOParser(object):
+class TestODFBIOParser:
     @pytest.mark.parametrize(
         "file", glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
     )
@@ -270,15 +268,17 @@ class TestODFBIOParser(object):
 
     @pytest.mark.parametrize(
         "file",
-        glob(
-            "tests/parsers_test_files/dfo/odf/bio/**/*.ODF_reference.nc", recursive=True
-        ),
+        glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True),
     )
     def test_bio_odf_converted_netcdf_vs_references(self, file):
         """Test DFO BIO ODF conversion to NetCDF vs reference files"""
         # Generate test bio odf netcdf files
-        self.test_bio_odf_netcdf(file.replace("_reference.nc", ""))
-        compare_test_to_reference_netcdf(file)
+        difference_detected = compare_test_to_reference_netcdf(file)
+        assert (
+            not difference_detected
+        ), f"Converted file {file} is different than the reference: " + "\n + ".join(
+            difference_detected
+        )
 
 
 class TestODFMLIParser(object):
