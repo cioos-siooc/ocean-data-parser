@@ -4,8 +4,6 @@ input:
     parser: auto
   - path: tests/parsers_test_files/onset/**/*.MON
     parser: auto
-output: ./output
-overwrite: false
 file_registry: file_registry.csv
 
 # Log
@@ -13,7 +11,7 @@ log:
   file:
     path: batch_conversion.log
     format: null
-    level: warning
+    level: WARNING
   sentry:
     # https://docs.sentry.io/platforms/python/configuration/options/
     dsn: null
@@ -29,10 +27,7 @@ attribute_corrections:
   global_attribute_mappings: {}
 
 # Transformations
-rename_variables: {}
-merge: [{ data: 'path_to_csv' }]
-merge_asof: [{}]
-derive_variables: {}
+xarray_pipe: []
 
 # QC
 ioos_qc: {}
@@ -40,11 +35,11 @@ manual_qc: {}
 
 # Outputs
 file_output:
-  type: '.nc'
   path: null
-  overwrite: true,
-  file_prefix: null
+  overwrite: true
+  file_preffix: ""
   file_suffix: _test
+  output_format: .nc
 
 upload_to_database:
   name: null
@@ -52,4 +47,4 @@ upload_to_database:
   password: null
   table: null
   append: True
-  on_conflict: 'UPDATE'
+  on_conflict: "UPDATE"
