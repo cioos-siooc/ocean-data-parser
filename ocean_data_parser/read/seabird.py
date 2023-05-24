@@ -15,7 +15,7 @@ import xarray as xr
 import xmltodict
 from pyexpat import ExpatError
 
-from .utils import standardize_dataset
+from .utils import standardize_dataset, convert_datetime_str
 
 SBE_TIME_FORMAT = "%b %d %Y %H:%M:%S"  # Jun 23 2016 13:51:30
 var_dtypes = {
@@ -237,7 +237,6 @@ def _parse_seabird_file_header(f):
     header["history"] = []
     read_next_line = True
     while "*END*" not in line and line.startswith(("*", "#")):
-
         if read_next_line:
             line = f.readline()
         else:
@@ -388,6 +387,7 @@ seabird_to_bodc = {
     "Fluorometer, Wetlabs Wetstar": ["CPHLPR01", "CPHLPR02"],
     "Fluorometer, Wetlab Wetstar": ["CPHLPR01", "CPHLPR02"],
     "Fluorometer, WET Labs ECO-AFL/FL": ["CPHLPR01", "CPHLPR02"],
+    "Fluorometer, Seatech/Wetlabs FLF": ["CPHLPR01", "CPHLPR02"],
     "Fluorometer, Chelsea Aqua": ["CPHLPR01", "CPHLPR02"],
     "Fluorometer, Chelsea Aqua 3": ["CPHLPR01", "CPHLPR02"],
     "Fluorometer, Chelsea Minitracka": ["CPHLPR01", "CPHLPR02"],
@@ -490,7 +490,6 @@ def generate_binned_attributes(ds, seabird_header):
         ds.attrs["time_coverage_resolution"] = pd.Timedelta(bin_str).isoformat()
     for var in ds:
         if (len(ds.dims) == 1 and len(ds[var].dims) == 1) or binvar in ds[var].dims:
-
             ds[var].attrs["cell_method"] = f"{binvar}: mean (interval: {bin_str})"
     return ds
 
@@ -584,10 +583,9 @@ def generate_instruments_variables_from_xml(ds, seabird_header):
         # https://ioos.github.io/ioos-metadata/ioos-metadata-profile-v1-2.html#instrument
         ds[sensor_var_name] = json.dumps(attrs)
         ds[sensor_var_name].attrs = {
-            "calibration_date": pd.to_datetime(
+            "calibration_date": convert_datetime_str(
                 attrs.pop("CalibrationDate"),
                 errors="ignore",
-                infer_datetime_format=True,
             ),  # IOOS 1.2, NCEI 2.0
             "component": f"{sensor_var_name}_sn{attrs['SerialNumber']}",  # IOOS 1.2
             "discriminant": str(sensor_number),  # IOOS 1.2

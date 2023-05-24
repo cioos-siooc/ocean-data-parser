@@ -1,6 +1,6 @@
-from io import StringIO
 import csv
 import logging
+from io import StringIO
 
 logger = logging.getLogger(__name__)
 

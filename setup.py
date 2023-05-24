@@ -1,8 +1,8 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name="ocean_data_parser",
-    version="0.1.0",
+    version="0.2.0",
     description="Package used to parse different Ocean Instruments Propriatary format to an xarray dataset.",
     url="https://github.com/HakaiInstitute/ocean-data-parser",
     author="Jessy Barrette",
@@ -14,13 +14,16 @@ setup(
         "numpy",
         "xarray",
         "requests",
-        "pandas",
+        "pandas>=1.3, <2.0",
         "xmltodict",
         "tqdm",
         "pytz",
         "NetCDF4",
         "pynmea2",
         "gsw",
+        "lxml",
+        "cioos_data_transform @ git+https://github.com/cioos-siooc/cioos-siooc_data_transform.git@ios-parser-extra-vocabulary#egg=cioos_data_transform&subdirectory=cioos_data_transform",
+        "cioos_data_transform_projects @ git+https://github.com/cioos-siooc/cioos-siooc_data_transform.git@ios-parser-extra-vocabulary#egg=cioos_data_transform_projects&subdirectory=projects",
     ],
     extras_require={
         "odf": ["geographicLib", "shapely"],

@@ -200,6 +200,28 @@ def get_spatial_coverage_attributes(
     return ds
 
 
+def convert_datetime_str(time_str, **to_datetime_kwargs):
+    date_format = None
+    if re.fullmatch(r"\d\d\d\d-\d\d-\d\d", time_str):
+        date_format = "%Y-%m-%d"
+    elif re.fullmatch(r"\d\d-\d\d-\d\d\d\d", time_str):
+        date_format = "%d-%m-%Y"
+    elif re.fullmatch(r"%d-\w\w\w-\d\d\d\d", time_str):
+        date_format = "%d-%b-%Y"
+    elif re.fullmatch(r"\d\d-\w\w\w-\d\d", time_str):
+        date_format = "%d-%b-%y"
+    elif re.fullmatch(r"\d\d-\w\w\w-\d\d\d\d", time_str):
+        date_format = "%d-%b-%Y"
+
+    if date_format:
+        time = pd.to_datetime(time_str, format=date_format, **to_datetime_kwargs)
+        if not isinstance(time, pd.DatetimeTZDtype):
+            logger.warning("Failed to parse datetime: %s", time_str)
+        return time
+    logger.warning("Unknown time format: %s", time_str)
+    return pd.to_datetime(time_str, **to_datetime_kwargs)
+
+
 global_attributes_order = [
     "organization",
     "institution",

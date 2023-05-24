@@ -4,12 +4,13 @@ available within the different datasets maintained by PDC to a NetCDF format.
 Those NetCDFs are then served by the PDC Hyrax and CIOOS ERDAP servers
 """
 
-from glob import glob
 import logging
+from glob import glob
 
-from ocean_data_parser.read import amundsen
-from ocean_data_parser.metadata import pdc
 from tqdm import tqdm
+
+from ocean_data_parser.metadata import pdc
+from ocean_data_parser.read import amundsen
 
 FORMAT = "%(asctime)s [%(levelname)s] %(message)s"
 logging.basicConfig(

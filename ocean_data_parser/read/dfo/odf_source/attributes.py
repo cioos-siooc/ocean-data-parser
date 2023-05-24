@@ -5,11 +5,13 @@ attribtutes to the different conventions (CF, ACDD).
 
 import json
 import logging
+import os
 import re
 from datetime import datetime, timezone
 from difflib import get_close_matches
 
 import pandas as pd
+
 from ocean_data_parser.read.seabird import (
     get_seabird_instrument_from_header,
     get_seabird_processing_history,
@@ -44,6 +46,8 @@ def _generate_cf_history_from_odf(odf_header):
 
     def _add_to_history(comment, date=datetime.now(timezone.utc)):
         """Generate a CF standard history line."""
+        if pd.isna(date):
+            return f"NaT {comment}\n"
         return f"{date.strftime('%Y-%m-%dT%H:%M:%SZ')} {comment}\n"
 
     # Convert ODF history to CF history
@@ -96,7 +100,7 @@ def _define_cdm_data_type_from_odf(odf_header):
     # Derive cdm_data_type from DATA_TYPE
     odf_data_type = odf_header["EVENT_HEADER"]["DATA_TYPE"]
     attributes = {"odf_data_type": odf_data_type}
-    if odf_data_type in ["CTD", "BOTL", "BT"]:
+    if odf_data_type in ["CTD", "BOTL", "BT", "XBT"]:
         attributes.update(
             {
                 "cdm_data_type": "Profile",
@@ -108,7 +112,27 @@ def _define_cdm_data_type_from_odf(odf_header):
             attributes["profile_direction"] = odf_header["EVENT_HEADER"][
                 "EVENT_QUALIFIER2"
             ]
-
+    elif odf_data_type in ["MCM", "MCTD", "MMOB", "MTC", "MTG", "MTR"]:
+        attributes.update(
+            {
+                "cdm_data_type": "Timeseries",
+                "cdm_timeseries_variables": "",
+            }
+        )
+    elif odf_data_type in ["MADCP"]:
+        attributes.update(
+            {
+                "cdm_data_type": "TimeseriesProfile",
+                "cdm_timeseries_variables": "",
+                "cdm_profile_variables": "",
+            }
+        )
+    elif odf_data_type in ["TCTD", "TSG"]:
+        attributes.update(
+            {"cdm_data_type": "Trajectory", "cdm_trajectory_variables": ""}
+        )
+    elif odf_data_type == "PLNKG":
+        attributes["cdm_data_type"] = "Point"
     else:
         logger.error(
             "ODF_transform is not yet incompatible with ODF DATA_TYPE: %s",
@@ -268,7 +292,7 @@ def _generate_title_from_global_attributes(attributes):
     title = (
         f"{attributes['odf_data_type']} profile data collected "
         + (
-            f"from the {attributes['platform']} {attributes['platform_name']}"
+            f"from the {attributes['platform']} {attributes.get('platform_name','')}"
             if "platform" in attributes
             else ""
         )
@@ -339,11 +363,22 @@ def global_attributes_from_header(dataset, odf_header, config=None):
     def _review_longitude(value):
         return value if value != -999.9 else None
 
+    def _get_attribute_mapping_corrections():
+        return {
+            attr: attr_mapping[dataset.attrs[attr]]
+            for attr, attr_mapping in config["attribute_mapping_corrections"].items()
+            if attr in dataset.attrs and dataset.attrs[attr] in attr_mapping
+        }
+
     odf_original_header = odf_header.copy()
     odf_original_header.pop("variable_attributes")
-    platform_attributes = _generate_platform_attributes(
-        odf_header["CRUISE_HEADER"]["PLATFORM"], config["reference_platforms"]
-    )
+    if "reference_platforms" in config:
+        platform_attributes = _generate_platform_attributes(
+            odf_header["CRUISE_HEADER"]["PLATFORM"], config["reference_platforms"]
+        )
+    else:
+        platform_attributes = {}
+
     history = _generate_cf_history_from_odf(odf_header)
     instrument_attributes = _generate_instrument_attributes(
         odf_header, history.get("instrument_manufacturer_header")
@@ -400,8 +435,23 @@ def global_attributes_from_header(dataset, odf_header, config=None):
             **cdm_data_type_attributes,
         }
     )
+
+    # Apply global attributes corrections
+    dataset.attrs.update(config["global_attributes"])
+    if config["file_specific_attributes"] and config["file_specific_attributes"].get(
+        os.path.basename(dataset.attrs["source"])
+    ):
+        logger.info("Apply file specific attributes correction")
+        dataset.attrs.update(
+            config["file_specific_attributes"][
+                os.path.basename(dataset.attrs["source"])
+            ]
+        )
+    dataset.attrs.update(_get_attribute_mapping_corrections())
+
     # Generate attributes from other attributes
-    dataset.attrs["title"] = _generate_title_from_global_attributes(dataset.attrs)
+    if dataset.attrs.keys() >= {"organization", "institution", "platform"}:
+        dataset.attrs["title"] = _generate_title_from_global_attributes(dataset.attrs)
     dataset.attrs.update(**_generate_program_specific_attritutes(dataset.attrs))
 
     # Review ATTRIBUTES
@@ -411,15 +461,6 @@ def global_attributes_from_header(dataset, odf_header, config=None):
         dataset.attrs["comments"] = "\n".join(
             [line for line in dataset.attrs["comments"] if line]
         )
-
-    # Apply attributes corrections from attribute_correction json
-    dataset.attrs.update(
-        {
-            attr: attr_mapping[dataset.attrs[attr]]
-            for attr, attr_mapping in config["attribute_mapping_corrections"].items()
-            if attr in dataset.attrs and dataset.attrs[attr] in attr_mapping
-        }
-    )
 
     # Drop empty global attributes
     dataset.attrs = {
@@ -434,12 +475,26 @@ def generate_coordinates_variables(dataset):
     """
     Method use to generate metadata variables from the ODF Header to a xarray Dataset.
     """
-
-    if dataset.attrs["cdm_data_type"] == "Profile":
+    if "cdm_data_type" not in dataset.attrs:
+        logging.error("No cdm_data_type attribute")
+    elif dataset.attrs["cdm_data_type"] in ("Profile", "Point"):
         dataset["time"] = dataset.attrs["event_start_time"]
         dataset["latitude"] = dataset.attrs["initial_latitude"]
         dataset["longitude"] = dataset.attrs["initial_longitude"]
         # depth is generated by vocabulary
+    elif dataset.attrs["cdm_data_type"] in ["Timeseries", "TimeseriesProfile"]:
+        dataset["latitude"] = dataset.attrs["initial_latitude"]
+        dataset["longitude"] = dataset.attrs["initial_longitude"]
+        # depth and time are generated by vocabulary
+    elif dataset.attrs["cdm_data_type"] == "Trajectory":
+        dataset = dataset.rename(
+            {
+                "SYTM_01": "measurement_time",
+                "LATD_01": "latitude",
+                "LOND_01": "longitude",
+            }
+        )
+
     else:
         logger.error(
             "odf_converter is not yet compatible with %s",

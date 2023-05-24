@@ -1,11 +1,10 @@
 import logging
+import os
+import re
 import unittest
 from glob import glob
-import re
-import os
 
-from ocean_data_parser.read.utils import detect_file_format
-from ocean_data_parser.read import file
+from ocean_data_parser.read import detect_file_format, file
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
@@ -42,7 +41,7 @@ class ParserDetectionTests(unittest.TestCase):
 
 
 class AutomatedParserTests(unittest.TestCase):
-    def test_autodetect_and_parse(self):
+    def test_detect_and_parse(self):
         test_files = glob("tests/parsers_test_files/**/*", recursive=True)
         for test_file in test_files:
             if re.search("geojson", test_file) or not os.path.isfile(test_file):

@@ -1,8 +1,8 @@
 import json
 import os
-from geographiclib.geodesic import Geodesic
 
-from shapely.geometry import shape, Point, Polygon
+from geographiclib.geodesic import Geodesic
+from shapely.geometry import Point, Polygon, shape
 
 
 def read_geojson(
