@@ -18,10 +18,10 @@ def get_odf_vocab_markdown():
         "apply_function",
     ]:
         df[column] = quote_column(df[column])
+    with open("docs/read/dfo/odf-header.md") as file_handle:
+        header = file_handle.read()
     with open("docs/read/dfo/odf-hook.md", "w") as file_handle:
-        file_handle.write(
-            """:::ocean_data_parser.read.dfo.odf\n\n## ODF Vocabulary\n"""
-        )
+        file_handle.write(header)
         df.replace({np.nan: ""}).to_markdown(file_handle, index=False, tablefmt="pipe")
 
 
@@ -36,10 +36,10 @@ def get_ios_vocab_markdown():
         "apply_func",
     ]:
         df[column] = quote_column(df[column].astype(str))
+    with open("docs/read/dfo/ios-header.md") as file_handle:
+        header = file_handle.read()
     with open("docs/read/dfo/ios-hook.md", "w") as file_handle:
-        file_handle.write(
-            """:::ocean_data_parser.read.dfo.ios\n\n## IOS Vocabulary\n"""
-        )
+        file_handle.write(header)
         df.replace({np.nan: ""}).to_markdown(file_handle, index=False, tablefmt="pipe")
 
 
