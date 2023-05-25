@@ -44,4 +44,9 @@ setup(
         "Operating System :: OS Independent",
     ],
     zip_safe=True,
+    entry_points={
+        "console_scripts": [
+            "odpy.convert = ocean_data_parser.batch.convert:cli_files",
+        ]
+    },
 )

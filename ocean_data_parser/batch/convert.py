@@ -4,6 +4,7 @@ from importlib import import_module
 from pathlib import Path
 
 from tqdm import tqdm
+import click
 
 from ocean_data_parser.batch.config import load_config
 from ocean_data_parser.batch.registry import FileConversionRegistry
@@ -17,17 +18,39 @@ main_logger = logging.getLogger(__name__)
 logger = logging.LoggerAdapter(main_logger, {"file": None})
 
 
+@click.command()
+@click.option(
+    "--config", "-c", type=click.Path(exists=True), help="Path to configuration file"
+)
+@click.option(
+    "--add",
+    "-a",
+    multiple=True,
+    help="Extra parameters to include within the configuration",
+)
+def cli_files(config=None, add=None):
+    add = () if add is None else add
+    added_inputs = dict((item.split("=", 1) for item in add))
+    logger.info("Run config=%s", config)
+    if add:
+        logger.info("Modify configuration with added inputs=%s", added_inputs)
+    files(config=config, **added_inputs)
+    logger.info("Completed")
+
+
 def files(config=None, **kwargs):
     """Ocean Data Parser batch conversion method
 
     Args:
         config (dict, optional): Configuration use to run the batch conversion.
             Defaults to None.
+        **kwargs (optiona): Overwrite any configuration parameter by
+            matching first level key.
     """
     # load config
     config = {
         **load_config(DEFAULT_CONFIG_PATH),
-        **(load_config(config) if isinstance(config, str) else config),
+        **(load_config(config) if isinstance(config, str) else config or {}),
         **kwargs,
     }
 
@@ -94,7 +117,7 @@ def files(config=None, **kwargs):
                 logger.exception("Conversion failed")
                 file_registry.add_to_source(file, error_message=error)
 
-        file_registry.save()
+    file_registry.save()
 
 
 def _file(file: str, parser: str, config: dict) -> str:
@@ -161,3 +184,7 @@ def _file(file: str, parser: str, config: dict) -> str:
         pass
 
     return output_path
+
+
+if __name__ == "__main__":
+    cli_files()
