@@ -5,6 +5,7 @@ from pathlib import Path
 
 from tqdm import tqdm
 import click
+from xarray import Dataset
 
 from ocean_data_parser.batch.config import load_config
 from ocean_data_parser.batch.registry import FileConversionRegistry
@@ -14,7 +15,7 @@ from ocean_data_parser.read import auto, utils
 MODULE_PATH = Path(__file__).parent
 DEFAULT_CONFIG_PATH = MODULE_PATH / "default-batch-config.yaml"
 
-main_logger = logging.getLogger(__name__)
+main_logger = logging.getLogger()
 logger = logging.LoggerAdapter(main_logger, {"file": None})
 
 
@@ -134,9 +135,13 @@ def _file(file: str, parser: str, config: dict) -> str:
     # parse file to xarray
     logger.extra["file"] = file
     ds = parser(file)
+    if not isinstance(ds, Dataset):
+        raise RuntimeError(
+            f"{parser.__module__}{parser.__name__}:{file} didn't return an Xarray Dataset"
+        )
 
     # Update global and variable attributes from config
-    ds.attrs.update(config.get("global_attributes"))
+    ds.attrs.update(config.get("global_attributes", {}))
     if file in config.get("attribute_corrections"):
         ds.attrs.update(config["attribute_corrections"][file])
 
