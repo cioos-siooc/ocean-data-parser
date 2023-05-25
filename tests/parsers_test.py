@@ -56,12 +56,10 @@ def compare_test_to_reference_netcdf(file):
         ref.attrs[attr] = re.sub(expression, placeholder, ref.attrs[attr])
         test.attrs[attr] = re.sub(expression, placeholder, test.attrs[attr])
 
+    # Run Test conversion
+    test = dfo.odf.bio_odf(file)
     # Load test file and reference file
-    ref = xr.open_dataset(file)
-    nc_file_test = file.replace("_reference.nc", "_test.nc")
-    if not os.path.isfile(nc_file_test):
-        raise RuntimeError(f"{nc_file_test} was not generated.")
-    test = xr.open_dataset(nc_file_test)
+    ref = xr.open_dataset(file + "_reference.nc")
 
     # Add placeholders to specific fields in attributes
     ignore_from_attr(
@@ -73,7 +71,7 @@ def compare_test_to_reference_netcdf(file):
         "history", r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.*\d*Z", "TIMESTAMP"
     )
     ignore_from_attr("source", ".*", "source")
-    
+
     ref.attrs["date_created"] = "TIMESTAMP"
     test.attrs["date_created"] = "TIMESTAMP"
 
@@ -103,36 +101,38 @@ def compare_test_to_reference_netcdf(file):
         }
 
     if ref.identical(test):
-        return
-
+        return []
+    difference_detected = []
     # find through netcdf files differences
     for key, value in ref.attrs.items():
         if test.attrs.get(key) != value:
-            logger.error(
-                "Global attribute ds.attrs[%s] is different from reference file",
-                key,
-            )
+            difference_detected += [
+                f"Global attribute ref.attrs[{key}]={value} != test.attrs[{key}]={test.attrs.get(key)}",
+            ]
 
     if test.attrs.keys() != ref.attrs.keys():
-        logger.error(
-            "A new global attribute %s was detected.",
-            set(test.attrs.keys()) - set(ref.attrs.keys()),
-        )
+        difference_detected += [
+            f"A new global attribute {set(test.attrs.keys()) - set(ref.attrs.keys())} was detected.",
+        ]
 
     ref_variables = list(ref) + list(ref.coords)
     test_variables = list(test) + list(test.coords)
 
     if ref_variables.sort() != test_variables.sort():
-        logger.error("A variable mismatch exist between the reference and test files")
+        difference_detected += [
+            "A variable mismatch exist between the reference and test files"
+        ]
 
     for var in ref_variables:
         # compare variable
         if not ref[var].identical(test[var]):
-            logger.error("Variable ds[%s] is different from reference file", var)
+            difference_detected += [
+                f"Variable ds[{var}] is different from reference file"
+            ]
         if (ref[var].values != test[var].values).any():
-            logger.error(
-                "Variable ds[%s].values are different from reference file", var
-            )
+            difference_detected += [
+                f"Variable ds[{var}].values are different from reference file"
+            ]
 
         # compare variable attributes
         for attr, value in ref[var].attrs.items():
@@ -140,20 +140,17 @@ def compare_test_to_reference_netcdf(file):
             if isinstance(is_not_same_attr, bool) and not is_not_same_attr:
                 continue
             elif isinstance(is_not_same_attr, bool) and is_not_same_attr:
-                logger.error(
-                    "Variable ds[%s].attrs[%s] list is different from reference file",
-                    var,
-                    attr,
-                )
+                difference_detected += [
+                    f"Variable Attribute ref[{var}].attrs[{attr}]={value} != test[{var}].attrs[{attr}]={test[var].attrs.get(attr)}",
+                ]
             elif (is_not_same_attr).any():
-                logger.error(
-                    "Variable ds[%s].attrs[%s] is different from reference file",
-                    var,
-                    attr,
-                )
-    raise RuntimeError(
-        f"Converted file {nc_file_test} is different than the reference: {file}"
+                difference_detected += [
+                    f"Variable ds[{var}].attrs[{attr}] is different from reference file",
+                ]
+    logger.error(
+        "Test file differ from reference: %s", "\n + ".join(difference_detected)
     )
+    return difference_detected
 
 
 class PMEParserTests(unittest.TestCase):
@@ -246,7 +243,7 @@ class AmundsenParserTests(unittest.TestCase):
             ds.to_netcdf(f"{path}_test.nc", format="NETCDF4_CLASSIC")
 
 
-class TestODFBIOParser(object):
+class TestODFBIOParser:
     @pytest.mark.parametrize(
         "file", glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
     )
@@ -271,15 +268,17 @@ class TestODFBIOParser(object):
 
     @pytest.mark.parametrize(
         "file",
-        glob(
-            "tests/parsers_test_files/dfo/odf/bio/**/*.ODF_reference.nc", recursive=True
-        ),
+        glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True),
     )
     def test_bio_odf_converted_netcdf_vs_references(self, file):
         """Test DFO BIO ODF conversion to NetCDF vs reference files"""
         # Generate test bio odf netcdf files
-        self.test_bio_odf_netcdf(file.replace("_reference.nc", ""))
-        compare_test_to_reference_netcdf(file)
+        difference_detected = compare_test_to_reference_netcdf(file)
+        assert (
+            not difference_detected
+        ), f"Converted file {file} is different than the reference: " + "\n + ".join(
+            difference_detected
+        )
 
 
 class TestODFMLIParser(object):
