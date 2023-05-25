@@ -1,17 +1,14 @@
 import logging.config
-import os
 from glob import glob
 from importlib import import_module
 from pathlib import Path
 
-import xarray as xr
 from tqdm import tqdm
 
 from ocean_data_parser.batch.config import load_config
-from ocean_data_parser.batch.utils import _generate_output_path
 from ocean_data_parser.batch.registry import FileConversionRegistry
+from ocean_data_parser.batch.utils import _generate_output_path
 from ocean_data_parser.read import auto, utils
-
 
 MODULE_PATH = Path(__file__).parent
 DEFAULT_CONFIG_PATH = MODULE_PATH / "default-batch-config.yaml"

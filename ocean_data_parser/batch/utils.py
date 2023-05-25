@@ -1,5 +1,6 @@
-import xarray
 from pathlib import Path
+
+import xarray
 
 
 def _generate_output_path(

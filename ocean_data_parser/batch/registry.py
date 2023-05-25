@@ -86,7 +86,7 @@ class FileConversionRegistry:
                 for source in sources
             ]
         )
-        return df_registry if df_registry.empty else df_registry.set_index(['source'])
+        return df_registry if df_registry.empty else df_registry.set_index(["source"])
 
     def load_sources(self, sources: list):
         new_entry = self._get_sources_entry(sources)
