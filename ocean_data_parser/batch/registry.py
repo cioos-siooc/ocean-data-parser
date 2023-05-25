@@ -35,9 +35,12 @@ class FileConversionRegistry:
 
     def save(self):
         """_summary_"""
-        if self.path.suffix == "csv":
+        self.data = self.data.drop(
+            columns=[col for col in self.data if col.endswith("_new")]
+        )
+        if self.path.suffix == ".csv":
             self.data.to_csv(self.path)
-        elif self.path.suffix == "parquet":
+        elif self.path.suffix == ".parquet":
             self.data.to_parquet(self.path)
         else:
             logger.error("Unknown registry format: %s", self.path)
@@ -77,6 +80,7 @@ class FileConversionRegistry:
                     "source": source,
                     "last_update": self._get_modified_times(source),
                     "hash": self._get_hash(source),
+                    "error_message": None,
                     **kwargs,
                 }
                 for source in sources
@@ -88,19 +92,30 @@ class FileConversionRegistry:
         self.data = self.data.join(new_entry.add_suffix("_new"), how="outer")
 
     def get_modified_hashes(self) -> list:
+        """Get source files list with modified hash different then registry 
+        and not error associated.
+
+        Returns:
+            list: source files list
+        """
         if "hash" not in self.data and "hash_new" in self.data:
             return self.data.index.to_list()
-        return self.data.query("hash != hash_new").index.to_list()
+        return self.data.query(
+            "hash != hash_new and error_message.isna()"
+        ).index.to_list()
 
     def get_modified_times(self) -> list:
-        """Get source files list with modified times different then registry
+        """Get source files list with modified times different then registry 
+        and not error associated.
 
         Returns:
             list: source file list
         """
         if "last_update" not in self.data and "last_update_new" in self.data:
             return self.data.index.to_list()
-        return self.data.query("last_update != last_update_new").index.to_list()
+        return self.data.query(
+            "last_update != last_update_new and error_message.isna()"
+        ).index.to_list()
 
     def update_source(self, source):
         """Update a given source file registry hash and modified time.
