@@ -19,12 +19,7 @@ main_logger = logging.getLogger(__name__)
 logger = logging.LoggerAdapter(main_logger, {"file": None})
 
 
-config = load_config(DEFAULT_CONFIG_PATH)
-
-
-@click.command()
-@click.argument("-c", "--config")
-def main(config=None, **kwargs):
+def conversion(config=None, **kwargs):
     """Ocean Data Parser batch conversion method
 
     Args:
@@ -86,7 +81,7 @@ def main(config=None, **kwargs):
         for file in tqdm(input["files"], desc="Run batch conversion", unit="file"):
             try:
                 logger.extra[file] = file
-                output_file = convert_file(file, parser_func, config)
+                output_file = _convert_file(file, parser_func, config)
                 file_registry.update_source(file)
                 file_registry.add_to_source(file, output_file=output_file)
             except Exception as error:
@@ -96,7 +91,7 @@ def main(config=None, **kwargs):
         file_registry.save()
 
 
-def convert_file(file: str, parser: str, config: dict) -> str:
+def _convert_file(file: str, parser: str, config: dict) -> str:
     # parse file to xarray
     logger.extra["file"] = file
     ds = parser(file)
@@ -130,7 +125,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
     output_path = None
     if config.get("file_output") and "path":
         overwrite = config["file_output"].pop("overwrite", False)
-        output_path = generate_output_path(ds, source=file, **config["file_output"])
+        output_path = _generate_output_path(ds, source=file, **config["file_output"])
         if output_path.exists() and not overwrite:
             logger.info(
                 "Converted output file already exist and won't be overwritten. (output_path=%s)",
@@ -152,7 +147,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
     return output_path
 
 
-def generate_output_path(
+def _generate_output_path(
     ds: xr.Dataset,
     path: str,
     source: str = None,
@@ -221,7 +216,3 @@ def generate_output_path(
     if not output_path.name:
         output_path = output_path / Path(source).stem + output_format
     return _add_preffix_suffix(output_path)
-
-
-if __name__ == "__main__":
-    main()
