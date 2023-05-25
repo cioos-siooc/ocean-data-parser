@@ -110,14 +110,7 @@ def file(path: str, parser: str = None, kwargs=None) -> Dataset:
 
     # Load the appropriate parser and read the file
     read_module, filetype = parser.rsplit(".", 1)
-    try:
-        mod = import_module(f"ocean_data_parser.read.{read_module}")
-        parser_func = getattr(mod, filetype)
-    except Exception:
-        logger.exception("Failed to load module %s", parser)
-        return
+    mod = import_module(f"ocean_data_parser.read.{read_module}")
+    parser_func = getattr(mod, filetype)
 
-    if kwargs:
-        return parser_func(path, **kwargs)
-    else:
-        parser_func(path)
+    return parser_func(path, **(kwargs or {}))
