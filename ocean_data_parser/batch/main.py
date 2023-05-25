@@ -186,7 +186,7 @@ def generate_output_path(
 
     def _add_preffix_suffix(filename: Path):
         return Path(filename.parent) / (
-            file_preffix or "" + filename.stem + file_suffix or "" + filename.suffix
+            (file_preffix or "") + filename.stem + (file_suffix or "") + filename.suffix
         )
 
     output_format = output_format or Path(path or ".").suffix
@@ -195,7 +195,7 @@ def generate_output_path(
     ), "Unknown output file format extension: define the format through the path or output_format inputs"
 
     if path is None and source:
-        return _add_preffix_suffix(Path(f"{source}.nc"))
+        return _add_preffix_suffix(Path(f"{source}{output_format}"))
 
     defaults = defaults or {}
     # Review file_output path given by config
@@ -216,7 +216,9 @@ def generate_output_path(
     }
 
     output_path = Path(path.format(**path_generation_inputs))
-    if output_path.is_dir() and source:
+    if output_path.suffix != output_format:
+        output_path += output_format
+    if not output_path.name:
         output_path = output_path / Path(source).stem + output_format
     return _add_preffix_suffix(output_path)
 
