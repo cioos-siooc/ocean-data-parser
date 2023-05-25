@@ -1,9 +1,6 @@
 # File input
-input:
-  - path: tests/parsers_test_files/onset/**/*.csv
-    parser: auto
-  - path: tests/parsers_test_files/onset/**/*.MON
-    parser: auto
+input_path: tests/parsers_test_files/onset/**/*.csv,tests/parsers_test_files/onset/**/*.MON
+parser: auto,auto
 file_registry: file_registry.csv
 
 # Log

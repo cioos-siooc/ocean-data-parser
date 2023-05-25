@@ -74,7 +74,7 @@ class FileConversionRegistry:
         Returns:
             DataFrame: Dataframe of the sources parameters.
         """
-        return pd.DataFrame(
+        df_registry = pd.DataFrame(
             [
                 {
                     "source": source,
@@ -85,14 +85,15 @@ class FileConversionRegistry:
                 }
                 for source in sources
             ]
-        ).set_index(["source"])
+        )
+        return df_registry if df_registry.empty else df_registry.set_index(['source'])
 
     def load_sources(self, sources: list):
         new_entry = self._get_sources_entry(sources)
         self.data = self.data.join(new_entry.add_suffix("_new"), how="outer")
 
     def get_modified_hashes(self) -> list:
-        """Get source files list with modified hash different then registry 
+        """Get source files list with modified hash different then registry
         and not error associated.
 
         Returns:
@@ -105,7 +106,7 @@ class FileConversionRegistry:
         ).index.to_list()
 
     def get_modified_times(self) -> list:
-        """Get source files list with modified times different then registry 
+        """Get source files list with modified times different then registry
         and not error associated.
 
         Returns:

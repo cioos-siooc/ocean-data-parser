@@ -3,7 +3,7 @@ import logging.config
 import unittest
 from pathlib import Path
 
-from ocean_data_parser.batch.main import FileConversionRegistry, conversion, load_config
+from ocean_data_parser.batch.convert import FileConversionRegistry, files, load_config
 
 PACKAGE_PATH = Path(__file__).parent
 logging.basicConfig(level=logging.DEBUG)
@@ -25,10 +25,9 @@ class ConfigLoadTests(unittest.TestCase):
 class BatchModeTests(unittest.TestCase):
     def test_batch_onset_parser(self):
         config = load_config()
-        config["input"] = [
-            {"path": "tests/parsers_test_files/onset/**/*.csv", "parser": "onset.csv"}
-        ]
-        conversion(config=config)
+        config["input_path"] = "tests/parsers_test_files/onset/**/*.csv"
+        config["parser"] = "onset.csv"
+        files(config=config)
 
 
 class FileRegistryTests(unittest.TestCase):

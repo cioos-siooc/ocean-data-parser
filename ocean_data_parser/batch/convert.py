@@ -4,11 +4,11 @@ from glob import glob
 from importlib import import_module
 from pathlib import Path
 
-import click
 import xarray as xr
 from tqdm import tqdm
 
 from ocean_data_parser.batch.config import load_config
+from ocean_data_parser.batch.utils import _generate_output_path
 from ocean_data_parser.batch.registry import FileConversionRegistry
 from ocean_data_parser.read import auto, utils
 
@@ -20,7 +20,7 @@ main_logger = logging.getLogger(__name__)
 logger = logging.LoggerAdapter(main_logger, {"file": None})
 
 
-def conversion(config=None, **kwargs):
+def files(config=None, **kwargs):
     """Ocean Data Parser batch conversion method
 
     Args:
@@ -28,7 +28,11 @@ def conversion(config=None, **kwargs):
             Defaults to None.
     """
     # load config
-    config = {**load_config(DEFAULT_CONFIG_PATH), **(config or {}), **kwargs}
+    config = {
+        **load_config(DEFAULT_CONFIG_PATH),
+        **(load_config(config) if isinstance(config, str) else config),
+        **kwargs,
+    }
 
     ## Setup logging configuration
     if config.get("logging"):
@@ -53,19 +57,23 @@ def conversion(config=None, **kwargs):
 
     # Get Files
     to_parse = []
-    for input in config["input"]:
-        source_files = glob(input["path"], recursive=input.get("recursive"))
+    for input_path, parser in zip(
+        config["input_path"].split(","), config["parser"].split(",")
+    ):
+        source_files = glob(input_path, recursive=config.get("recursive"))
         total_files = len(source_files)
         if not config.get("overwrite"):
             # Ignore files already parsed
             file_registry.load_sources(source_files)
             source_files = file_registry.get_modified_hashes()
-        to_parse += [{"files": source_files, **input}]
+        to_parse += [
+            {"files": source_files, "input_path": input_path, "parser": parser}
+        ]
         logger.info("%s.%s will be parse", len(source_files), total_files)
 
     # Import parser module and load each files:
     for input in to_parse:
-        parser = input.get("parser", "auto")
+        parser = input["parser"]
 
         if parser == "auto":
             parser_func = auto.file
@@ -82,7 +90,7 @@ def conversion(config=None, **kwargs):
         for file in tqdm(input["files"], desc="Run batch conversion", unit="file"):
             try:
                 logger.extra[file] = file
-                output_file = _convert_file(file, parser_func, config)
+                output_file = _file(file, parser_func, config)
                 file_registry.update_source(file)
                 file_registry.add_to_source(file, output_file=output_file)
             except Exception as error:
@@ -92,7 +100,17 @@ def conversion(config=None, **kwargs):
         file_registry.save()
 
 
-def _convert_file(file: str, parser: str, config: dict) -> str:
+def _file(file: str, parser: str, config: dict) -> str:
+    """Parse file with given parser and configuration
+
+    Args:
+        file (str): file path
+        parser (str): ocean_data_parser.read parser.
+        config (dict): Configuration use to apply the conversion
+
+    Returns:
+        str: _description_
+    """
     # parse file to xarray
     logger.extra["file"] = file
     ds = parser(file)
@@ -146,74 +164,3 @@ def _convert_file(file: str, parser: str, config: dict) -> str:
         pass
 
     return output_path
-
-
-def _generate_output_path(
-    ds: xr.Dataset,
-    path: str,
-    source: str = None,
-    defaults: dict = None,
-    file_preffix: str = "",
-    file_suffix: str = "",
-    output_format: str = None,
-) -> Path:
-    """Generate output path where to save Dataset.
-
-    Args:
-        ds (xr.Dataset): Dataset
-        path (str): Output path where to save the directory.
-            The output path uses the python String format method to reference
-            attributes accoding to the convention:
-              - source_filename: pathlib.Path of original parsed file filename
-              - source_filename_stem: original parsed file filename without the extension
-              - global attributes: `global_{Attribute}`
-              - variable attributes: `variable_{variable}_{attribute}`
-            ex: ".\{global_program}\{global_project}\{source_filename.name}.nc"
-        source (str, optional): original source file path. Defaults to None.
-        defaults (dict, optional): Placeholder for any global
-            attributes or variable attributes used in output path. Defaults to None.
-        file_preffix (str, optional): Preffix to add to file name. Defaults to "".
-        file_suffix (str, optional): Suffix to add to file name. Defaults to "".
-        output_format (str, optional): Output File Format extension.
-
-    Returns:
-        Path: _description_
-    """
-
-    def _add_preffix_suffix(filename: Path):
-        return Path(filename.parent) / (
-            (file_preffix or "") + filename.stem + (file_suffix or "") + filename.suffix
-        )
-
-    output_format = output_format or Path(path or ".").suffix
-    assert (
-        output_format
-    ), "Unknown output file format extension: define the format through the path or output_format inputs"
-
-    if path is None and source:
-        return _add_preffix_suffix(Path(f"{source}{output_format}"))
-
-    defaults = defaults or {}
-    # Review file_output path given by config
-    path_generation_inputs = {
-        "source_filename": Path(source or "."),
-        **defaults,
-        **{f"global_{key}": value for key, value in ds.attrs.items()},
-        **{
-            f"variable_{var}_{key}": value
-            for var in ds
-            for key, value in ds[var].attrs.items()
-        },
-        **{
-            f"variable_{var}_{key}": value
-            for var in ds.coords
-            for key, value in ds[var].attrs.items()
-        },
-    }
-
-    output_path = Path(path.format(**path_generation_inputs))
-    if output_path.suffix != output_format:
-        output_path += output_format
-    if not output_path.name:
-        output_path = output_path / Path(source).stem + output_format
-    return _add_preffix_suffix(output_path)
