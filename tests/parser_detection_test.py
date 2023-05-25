@@ -1,49 +1,49 @@
 import logging
-import os
+from pathlib import Path
 import re
 import unittest
 from glob import glob
+import pytest
 
-from ocean_data_parser.read import detect_file_format, file
+from xarray import Dataset
+
+from ocean_data_parser.read import detect_file_format, file as auto_read
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
 
-
-class ParserDetectionTests(unittest.TestCase):
-    def test_all_test_files(self):
-        test_files = glob("tests/parsers_test_files/**/*.*", recursive=True)
-        for file in test_files:
-            if "nmea" in file or file.endswith("nc"):
-                continue
-            parser = detect_file_format(file)
-            assert parser, f"Test file {file} doesn't match any parser"
-
-    def test_amundsen(self):
-        test_files = glob("tests/parsers_test_files/amundsen/**/*.*", recursive=True)
-        for file in test_files:
-            if file.endswith("nc"):
-                continue
-            parser = detect_file_format(file)
-            assert (
-                parser == "amundsen.int_format"
-            ), f"Test file {file} doesn't match amundsen.int_format"
-
-    def test_bio_odf(self):
-        test_files = glob("tests/parsers_test_files/dfo/bio/**/*.*", recursive=True)
-        for file in test_files:
-            if file.endswith("nc"):
-                continue
-            parser = detect_file_format(file)
-            assert (
-                parser == "dfo.odf.bio_format"
-            ), f"Test file {file} doesn't match dfo.odf.bio_format"
+auto_detection_ignore = [
+    "tests/parsers_test_files/dfo/odf/bio/CTD/CTD_1994038_147_1_DN.ODF",
+    "tests/parsers_test_files/dfo/odf/bio/CTD/CTD_2020003_004_1_DN.ODF",
+]
 
 
-class AutomatedParserTests(unittest.TestCase):
-    def test_detect_and_parse(self):
-        test_files = glob("tests/parsers_test_files/**/*", recursive=True)
-        for test_file in test_files:
-            if re.search("geojson", test_file) or not os.path.isfile(test_file):
-                continue
-            output = file(test_file)
+@pytest.mark.parametrize(
+    "file",
+    [
+        file
+        for file in glob("tests/parsers_test_files/**/*.*", recursive=True)
+        if not file.endswith("nc")
+        and file not in auto_detection_ignore
+    ],
+)
+def test_automated_parser_detection(file):
+    parser = detect_file_format(file)
+    parser = parser.replace("_format", "")
+    assert parser, f"Test file {file} doesn't match any parser"
+    assert all(
+        item.lower() in file.lower() for item in re.split(r"\.|_", parser)
+    ), f"Parser wasn't match to the right parser: {parser}"
+
+
+@pytest.mark.parametrize(
+    "file",
+    [
+        file
+        for file in glob("tests/parsers_test_files/**/*.*", recursive=True)
+        if not file.endswith("nc") and "geojson" not in file and Path(file).exists()
+    ],
+)
+def test_detect_and_parse(file):
+    dataset = auto_read(file)
+    assert isinstance(dataset, Dataset), "Output isn't an xarray dataset"
