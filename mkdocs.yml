@@ -1,0 +1,75 @@
+site_name: Ocean Data Parser - Documentation
+theme:
+  name: material
+  logo: images/logo.svg
+  favicon: images/logo.svg
+  palette:
+    # Palette toggle for light mode
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+      primary: light blue
+      accent: blue
+
+    # Palette toggle for dark mode
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+      primary: light blue
+      accent: blue
+  features:
+    - header.autohide
+    - navigation.top
+    - navigation.tracking
+    - toc.integrate
+    - toc.follow
+
+plugins:
+  - mkdocstrings
+  - mkdocs-jupyter:
+      ignore_h1_titles: True
+  - mike:
+      # These fields are all optional; the defaults are as below...
+      canonical_version: main
+  - mkdocs-simple-hooks:
+      hooks:
+        on_pre_build: 'docs.scripts.hooks:on_pre_build'
+
+nav:
+  - Welcome: index.md
+  - Notebooks:
+      - Amundsen INT: notebooks/amundsen_int_parser_example.ipynb
+      - DFO-BIO parsing: notebooks/bio_odf_parsing_example.ipynb
+      - NMEA Parsing: notebooks/nmea_example.ipynb
+      - Seabird CNV: notebooks/seabird_cnv_and_btl_example.ipynb
+  - Metadata:
+      - CF: metadata/cf.md
+      - NERC: metadata/nerc.md
+      - Polar Data Catalog: metadata/pdc.md
+  - Data Parsers:
+      - Amundsen: read/amundsen-hook.md
+      - Fisheries And Ocean Canada:
+          - read/dfo/index.md
+          - ODF: read/dfo/odf-hook.md
+          - IOS Shell: read/dfo/ios-hook.md
+      - ElectricBlue: read/electricblue.md
+      - NMEA: read/nmea.md
+      - Onset: read/onset.md
+      - PME: read/pme.md
+      - RBR: read/rbr.md
+      - Seabird: read/seabird-hook.md
+      - Star-Oddi: read/star-oddi.md
+      - SunBurst: read/sunburst.md
+      - Van Essen Instruments: read/van-essen-intruments.md
+
+extra:
+  version:
+    provider: mike
+
+extra_javascript:
+  - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
+  - javascripts/tablesort.js

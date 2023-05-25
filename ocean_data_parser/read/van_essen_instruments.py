@@ -1,9 +1,14 @@
-"""Van Essen Instrument Data Format Parser"""
+"""
+# Van Essen Instruments
+<https://www.vanessen.com/>
+
+"""
 import json
 import logging
 import re
 
 import pandas as pd
+import xarray
 
 from .utils import standardize_dataset, test_parsed_dataset
 
@@ -26,11 +31,11 @@ van_essen_vocabulary = {
 
 
 def mon(
-    file_path,
-    standardize_variable_names=True,
-    read_csv_kwargs=None,
-    convert_pressure_to_dbar=True,
-):
+    file_path: str,
+    standardize_variable_names: bool = True,
+    read_csv_kwargs: dict = None,
+    convert_pressure_to_dbar: bool = True,
+) -> xarray.Dataset:
     """
     Read MON file format from Van Essen Instrument format.
     :param errors: default ignore
@@ -153,13 +158,13 @@ def mon(
 
     # Add Conductivity if missing
     if "CONDUCTIVITY" not in ds and "SPEC.COND." in ds:
-        ds["CONDUCTIVITY"] = specific_conductivity_to_conductivity(
+        ds["CONDUCTIVITY"] = _specific_conductivity_to_conductivity(
             ds["SPEC.COND."], ds["TEMPERATURE"]
         )
 
     # Specific Conductance if missing
     if "CONDUCTIVITY" in ds and "SPEC.COND." not in ds:
-        ds["SPEC.COND."] = conductivity_to_specific_conductivity(
+        ds["SPEC.COND."] = _conductivity_to_specific_conductivity(
             ds["CONDUCTIVITY"], ds["TEMPERATURE"]
         )
 
@@ -176,13 +181,13 @@ def mon(
     return standardize_dataset(ds)
 
 
-def specific_conductivity_to_conductivity(
+def _specific_conductivity_to_conductivity(
     spec_cond, temp, theta=1.91 / 100, temp_ref=25
 ):
     """Apply specific_conductivity conversion to conductivity based on the manufacturer equation."""
     return (100 + theta * (temp - temp_ref)) / 100 * spec_cond
 
 
-def conductivity_to_specific_conductivity(cond, temp, theta=1.91 / 100, temp_ref=25):
+def _conductivity_to_specific_conductivity(cond, temp, theta=1.91 / 100, temp_ref=25):
     """Apply conductivity conversion to specific_conductivity based on the manufacturer equation."""
     return 100 / (100 + theta * (temp - temp_ref)) * cond

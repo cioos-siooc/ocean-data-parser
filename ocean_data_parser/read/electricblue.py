@@ -1,7 +1,14 @@
+"""
+# ElectricBlue
+<https://electricblue.eu/envloggers>
+
+ElectricBlue is a non-profit technology transfer startup creating research-oriented solutions for the scientific community
+"""
 import logging
 import re
 
 import pandas as pd
+import xarray
 
 from ocean_data_parser.read.utils import (
     rename_variables_to_valid_netcdf,
@@ -33,9 +40,9 @@ default_variable_attributes = {
 
 
 def csv(
-    path,
-    encoding="utf-8",
-):
+    path: str,
+    encoding: str = "utf-8",
+) -> xarray.Dataset:
     """ElectricBlue csv data format parser
 
     Args:
@@ -114,7 +121,9 @@ def csv(
         return ds
 
 
-def log_csv(path, encoding="UTF-8", rename_variables=True):
+def log_csv(
+    path: str, encoding: str = "UTF-8", rename_variables: bool = True
+) -> xarray.Dataset:
 
     df = pd.read_csv(path, encoding=encoding, parse_dates=True, index_col=["time"])
     ds = df.to_xarray()

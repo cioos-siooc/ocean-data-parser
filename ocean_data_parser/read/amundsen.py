@@ -1,4 +1,10 @@
-"""Module use to handle int file format generated historically ArcticNet and the Amundsen inc."""
+"""
+# Amundsen
+<https://arcticnet.ulaval.ca/>
+<https://amundsenscience.com/>
+
+Historically ArcticNet and the Amundsen Siences.
+"""
 __version__ = "0.1.0"
 
 import json
@@ -7,6 +13,7 @@ import os
 import re
 
 import pandas as pd
+import xarray as xr
 from gsw import z_from_p
 
 from .utils import get_history_handler, standardize_dataset
@@ -63,10 +70,24 @@ def _standardize_attribute_value(value: str, name: str = None):
 
 
 def int_format(
-    path, encoding="Windows-1252", map_to_vocabulary=True, generate_depth=True
-):
-    """Parse INT format developed and distributed by ArcticNet
-    and the Amundsen groups over the years."""
+    path: str,
+    encoding: str = "Windows-1252",
+    map_to_vocabulary: bool = True,
+    generate_depth: bool = True,
+) -> xr.Dataset:
+    """Parse Amundsen INT format.
+
+    The Amundsen INT format is a tabular format
+
+    Args:
+        path (str): file path to parse.
+        encoding (str, optional): File encoding. Defaults to "Windows-1252".
+        map_to_vocabulary (bool, optional): Rename variables to vocabulary. Defaults to True.
+        generate_depth (bool, optional): Generate depth variable. Defaults to True.
+
+    Returns:
+        xr.Dataset: xarray compliant with CF-1.6
+    """
     nc_logger, nc_handler = get_history_handler()
     logger.addHandler(nc_handler)
 
