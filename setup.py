@@ -40,7 +40,8 @@ setup(
             "mkdocstrings[python]",
             "mkdocs-jupyter",
             "mkdocs-gen-files",
-            "mike"
+            "mkdocs-simple-hooks",
+            "mike",
         ],
     },
     classifiers=[
