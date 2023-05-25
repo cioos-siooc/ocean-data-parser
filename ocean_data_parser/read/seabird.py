@@ -12,7 +12,7 @@ import re
 from datetime import datetime
 
 import pandas as pd
-import xarray as xr
+import xarray
 import xmltodict
 from pyexpat import ExpatError
 
