@@ -1,11 +1,9 @@
 import logging
-from pathlib import Path
+import logging.config
 import unittest
-from ocean_data_parser.batch.main import (
-    main as batch,
-    load_config,
-    FileConversionRegistry,
-)
+from pathlib import Path
+
+from ocean_data_parser.batch.main import FileConversionRegistry, conversion, load_config
 
 PACKAGE_PATH = Path(__file__).parent
 logging.basicConfig(level=logging.DEBUG)
@@ -19,6 +17,10 @@ class ConfigLoadTests(unittest.TestCase):
             config, dict
         ), "Default loaded configuration is not a dictionary"
 
+    def test_default_config_logging(self):
+        config = load_config()
+        logging.config.dictConfig(config["logging"])
+
 
 class BatchModeTests(unittest.TestCase):
     def test_batch_onset_parser(self):
@@ -26,12 +28,12 @@ class BatchModeTests(unittest.TestCase):
         config["input"] = [
             {"path": "tests/parsers_test_files/onset/**/*.csv", "parser": "onset.csv"}
         ]
-        batch(config)
+        conversion(config=config)
 
 
 class FileRegistryTests(unittest.TestCase):
     def test_file_registry_init(self):
-        file_registry = FileConversionRegistry
+        file_registry = FileConversionRegistry()
         assert isinstance(
             file_registry, FileConversionRegistry
         ), "Didn't return  FileConversionRegistry object"
