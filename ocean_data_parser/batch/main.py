@@ -1,18 +1,16 @@
-from importlib import import_module
-import logging
-from glob import glob
+import logging.config
 import os
+from glob import glob
+from importlib import import_module
 from pathlib import Path
 
-import pandas as pd
+import click
 import xarray as xr
 from tqdm import tqdm
-import click
 
-from ocean_data_parser.read import utils, auto
-from ocean_data_parser.batch.registry import FileConversionRegistry
 from ocean_data_parser.batch.config import load_config
-from ocean_data_parser.tools.postgresql import update_database_table
+from ocean_data_parser.batch.registry import FileConversionRegistry
+from ocean_data_parser.read import auto, utils
 
 MODULE_PATH = Path(__file__).parent
 DEFAULT_CONFIG_PATH = MODULE_PATH / "default-batch-config.yaml"
