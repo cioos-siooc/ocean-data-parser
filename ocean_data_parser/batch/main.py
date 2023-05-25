@@ -35,14 +35,11 @@ def main(config=None, **kwargs):
     config = {**load_config(DEFAULT_CONFIG_PATH), **(config or {}), **kwargs}
 
     ## Setup logging configuration
-    if config["log"]["file"]["path"]:
-        file_handler = logging.FileHandler(config["log"]["file"]["path"])
-        file_handler.setFormatter(config["log"]["file"]["format"])
-        file_handler.setLevel(config["log"]["file"]["level"])
-        main_logger.addHandler(file_handler)
+    if config.get("logging"):
+        logging.config.dictConfig(config["logging"])
 
     # Sentry
-    if config["log"]["sentry"]["dsn"]:
+    if config.get("sentry", {}).get("dsn"):
         import sentry_sdk
         from sentry_sdk.integrations.logging import LoggingIntegration
 
