@@ -42,6 +42,7 @@ setup(
             "mkdocs-gen-files",
             "mkdocs-simple-hooks",
             "mike",
+            "tabulate",
         ],
     },
     classifiers=[
