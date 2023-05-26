@@ -53,7 +53,6 @@ nav:
   - Data Parsers:
       - Amundsen: read/amundsen-hook.md
       - Fisheries And Ocean Canada:
-          - read/dfo/index.md
           - ODF: read/dfo/odf-hook.md
           - IOS Shell: read/dfo/ios-hook.md
       - ElectricBlue: read/electricblue.md
