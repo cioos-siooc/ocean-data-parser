@@ -33,7 +33,9 @@ variables_attributes = {
 }
 
 
-def DAT(path:str, encoding:str="cp1252", kwargs_read_csv:dict=None) -> xarray.Dataset:
+def DAT(
+    path: str, encoding: str = "cp1252", kwargs_read_csv: dict = None
+) -> xarray.Dataset:
     def _standardize_attributes(item):
         item = re.sub(r"[\.\:]", "", item.strip().lower())
         return re.sub(r"\s", "_", item)

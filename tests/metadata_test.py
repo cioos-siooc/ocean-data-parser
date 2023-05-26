@@ -1,8 +1,9 @@
 import logging
 import unittest
 
-from ocean_data_parser.metadata import pdc, cf, nerc
 import pandas as pd
+
+from ocean_data_parser.metadata import cf, nerc, pdc
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
