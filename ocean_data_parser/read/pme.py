@@ -1,11 +1,14 @@
 """
-PME Instruments https://www.pme.com/
+# PME Instruments 
+<https://www.pme.com/>
+
 """
 
 import logging
 import re
 import warnings
 from datetime import datetime
+from typing import Union
 
 import pandas as pd
 import xarray as xr
@@ -112,11 +115,14 @@ def minidot_txt(path, read_csv_kwargs=None):
     return ds
 
 
-def minidot_txts(paths: list or str):
-    """
-    txts reads individual minidot txt files,
-    add the calibration, serial_number and software version
-    information as a new column and return a dataframe.
+def minidot_txts(paths: Union[list, str]) -> xr.Dataset:
+    """Parse PME Minidots txt files
+
+    Args:
+        paths (listorstr): List of file paths to read.
+
+    Returns:
+        xr.Dataset: xarray dataset which is compliant with CF-1.6
     """
     # If a single string is givien, assume only one path
     if type(paths) is str:

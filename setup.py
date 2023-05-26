@@ -21,6 +21,7 @@ setup(
         "NetCDF4",
         "pynmea2",
         "gsw",
+        "tabulate",
         "lxml",
         "pyyaml",
         "click",
@@ -37,6 +38,14 @@ setup(
             "flake8",
             "black",
             "pytest-benchmark",
+            "mkdocs",
+            "mkdocs-material",
+            "mkdocstrings[python]",
+            "mkdocs-jupyter",
+            "mkdocs-gen-files",
+            "mkdocs-simple-hooks",
+            "mike",
+            "tabulate",
         ],
     },
     classifiers=[
@@ -47,6 +56,11 @@ setup(
     entry_points={
         "console_scripts": [
             "odpy.convert = ocean_data_parser.batch.convert:cli_files",
+        ]
+    },
+    entry_points={
+        "console_scripts": [
+            "odpy.compile.nc.variables = ocean_data_parser.compile.netcdf:cli_variables",
         ]
     },
 )
