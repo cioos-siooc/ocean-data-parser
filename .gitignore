@@ -24,3 +24,5 @@ site/**
 docs/read/**/*-hook.md
 *.log
 file_registry.csv
+temp/**
+tests/test_file_registry_temp.csv

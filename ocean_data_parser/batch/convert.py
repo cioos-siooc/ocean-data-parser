@@ -74,7 +74,7 @@ def files(config=None, **kwargs):
     # TODO Establish connection to database
 
     # Load parse log file
-    file_registry = FileConversionRegistry(path=config["file_registry"]).load()
+    file_registry = FileConversionRegistry(path=config["file_registry"])
 
     # Get Files
     to_parse = []
@@ -85,8 +85,8 @@ def files(config=None, **kwargs):
         total_files = len(source_files)
         if not config.get("overwrite"):
             # Ignore files already parsed
-            file_registry.load_sources(source_files)
-            source_files = file_registry.get_modified_hashes()
+            file_registry.add_missing(source_files)
+            source_files = file_registry.get_sources_with_modified_hash()
         to_parse += [
             {"files": source_files, "input_path": input_path, "parser": parser}
         ]
@@ -112,11 +112,11 @@ def files(config=None, **kwargs):
             try:
                 logger.extra[file] = file
                 output_file = _file(file, parser_func, config)
-                file_registry.update_source(file)
-                file_registry.add_to_source(file, output_file=output_file)
+                file_registry.update(file)
+                file_registry.update_fields(file, output_file=output_file)
             except Exception as error:
                 logger.exception("Conversion failed")
-                file_registry.add_to_source(file, error_message=error)
+                file_registry.update_fields(file, error_message=error)
 
     file_registry.save()
 
