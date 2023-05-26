@@ -65,7 +65,8 @@ nav:
       - Star-Oddi: read/star-oddi.md
       - SunBurst: read/sunburst.md
       - Van Essen Instruments: read/van-essen-intruments.md
-  - Compiler: compile/netcdf.md
+  - CLI:
+      - Compile NetCDFs: CLI/compile-netcdf.md
 
 extra:
   version:

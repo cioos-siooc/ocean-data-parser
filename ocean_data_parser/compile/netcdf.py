@@ -47,16 +47,17 @@ def variables(
 
     Args:
         input_dir (str, optional): Top directory from where to start
-          looking for netCDF files. Defaults to '.'.
+            looking for netCDF files. Defaults to '.'.
         file_regex (str, optional): Glob expression for search NetCDF
-          files under subdirectories. Defaults to "**/*.nc".
+            files under subdirectories. Defaults to "**/*.nc".
         groupby (list, optional): List of attributes to regroup the
-          different sets of attributes. Defaults to  [
-            "variable","units","standard_name",
-            "sdn_parameter_urn","sdn_parameter_name",
-        ]
-        table_output (str, optional): Path to file where to output table (csv/md[markdown]). Defaults console.
-        erddap_xml_output (str, optional): Path to where to ouput erddap dataset xml. Defaults to console.
+            different sets of attributes. Defaults to
+            ["variable","units","standard_name",
+            "sdn_parameter_urn","sdn_parameter_name"]
+        output_table (str, optional): Path to file where to output
+            table csv or markdown. Defaults console.
+        output_erddap_xml (str, optional): Path to where to ouput
+            erddap dataset xml. Defaults to console.
     """
 
     def _get_var_attrs(var, **kwargs):
@@ -160,8 +161,7 @@ def variables(
     help="Output an ERDDAP XML blurb or all the variables. ",
 )
 def cli_variables(**kwargs):
-     """Compile NetCDF files variables and variables attributes."""
-
+    """Compile NetCDF files variables and variables attributes."""
     kwargs["groupby"] = kwargs["groupby"].split(",") if kwargs["groupby"] else None
     variables(**kwargs)
 
