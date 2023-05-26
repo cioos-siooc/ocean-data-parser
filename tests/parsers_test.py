@@ -7,6 +7,7 @@ from glob import glob
 
 import numpy as np
 import pandas as pd
+import pytest
 import xarray as xr
 
 from ocean_data_parser.read import (
@@ -27,7 +28,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
 
 
-def compare_test_to_reference_netcdf(files):
+def compare_test_to_reference_netcdf(file):
     def standardize_attributes(value):
         if isinstance(value, str):
             value = value.strip()
@@ -49,91 +50,107 @@ def compare_test_to_reference_netcdf(files):
             }
         return ds
 
-    def not_identical(ref, test):
-        return (ref != test).any() if isinstance(ref, np.ndarray) else ref != test
-
     def ignore_from_attr(attr, expression, placeholder):
         """Replace expression in both reference and test files which are
         expected to be different."""
         ref.attrs[attr] = re.sub(expression, placeholder, ref.attrs[attr])
         test.attrs[attr] = re.sub(expression, placeholder, test.attrs[attr])
 
-    for file in files:
-        ref = xr.open_dataset(file)
-        nc_file_test = file.replace("_reference.nc", "_test.nc")
-        if not os.path.isfile(nc_file_test):
-            raise RuntimeError(f"{nc_file_test} was not generated.")
-        test = xr.open_dataset(nc_file_test)
+    # Run Test conversion
+    test = dfo.odf.bio_odf(file)
+    # Load test file and reference file
+    ref = xr.open_dataset(file + "_reference.nc")
 
-        # Add placeholders to specific fields in attributes
-        ignore_from_attr(
-            "history",
-            r"cioos_data_trasform.odf_transform V \d+\.\d+.\d+",
-            "cioos_data_trasform.odf_transform V VERSION",
-        )
-        ignore_from_attr(
-            "history", r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.*\d*Z", "TIMESTAMP"
-        )
-        ref.attrs["date_created"] = "TIMESTAMP"
-        test.attrs["date_created"] = "TIMESTAMP"
+    # Add placeholders to specific fields in attributes
+    ignore_from_attr(
+        "history",
+        r"cioos_data_trasform.odf_transform V \d+\.\d+.\d+",
+        "cioos_data_trasform.odf_transform V VERSION",
+    )
+    ignore_from_attr(
+        "history", r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.*\d*Z", "TIMESTAMP"
+    )
+    ignore_from_attr("source", ".*", "source")
 
-        ref = standardize_dataset(ref)
-        test = standardize_dataset(test)
+    ref.attrs["date_created"] = "TIMESTAMP"
+    test.attrs["date_created"] = "TIMESTAMP"
 
-        if not ref.identical(test):
+    ref = standardize_dataset(ref)
+    test = standardize_dataset(test)
 
-            # Global attributes
-            for key in ref.attrs.keys():
-                if not_identical(ref.attrs[key], test.attrs.get(key)):
-                    warnings.warn(
-                        f"Different Global attribute detected {key} -> REF {ref.attrs[key]} -> TEST {test.attrs.get(key)} changed"
-                    )
+    # Compare only attributes that exist in reference
+    test.attrs = {
+        attr: value for attr, value in test.attrs.items() if attr in ref.attrs
+    }
+    for var in test:
+        if var not in ref:
+            test.drop(var)
+        test[var].attrs = {
+            attr: value
+            for attr, value in test[var].attrs.items()
+            if attr in ref[var].attrs
+        }
 
-            # new global attributes
-            new_global_attributes = {
-                att: value for att, value in test.attrs.items() if att not in ref.attrs
-            }
-            if new_global_attributes:
-                warnings.warn(
-                    f"Extra attributes dectected that are not in the reference file: {new_global_attributes}"
-                )
-            # coordites
-            if test.coords != ref.coords:
-                warnings.warn(
-                    f"Coordinates are different between ref={ref.coords} and test={test.coords}"
-                )
-            # Variables
-            for var in ref:
-                # Variable Attributes
-                for key in ref[var].attrs.keys():
-                    if not_identical(ref[var].attrs[key], test[var].attrs.get(key)):
-                        warnings.warn(
-                            f"Variable attribute changed {key}[{var}].attrs ->"
-                        )
-                new_variable_attributes = {
-                    att: value
-                    for att, value in test[var].attrs.items()
-                    if att not in ref[var].attrs
-                }
-                if new_variable_attributes:
-                    warnings.warn(
-                        f"Extra variable attributes dectected that are not in the reference file: {var} -> {new_variable_attributes}"
-                    )
+    for var in test.coords:
+        if var not in ref:
+            continue
+        test[var].attrs = {
+            attr: value
+            for attr, value in test[var].attrs.items()
+            if attr in ref[var].attrs
+        }
 
-                if test.coords != ref.coords:
-                    continue
+    if ref.identical(test):
+        return []
+    difference_detected = []
+    # find through netcdf files differences
+    for key, value in ref.attrs.items():
+        if test.attrs.get(key) != value:
+            difference_detected += [
+                f"Global attribute ref.attrs[{key}]={value} != test.attrs[{key}]={test.attrs.get(key)}",
+            ]
 
-                # Values
-                if not ref[var].identical(test[var]):
-                    warnings.warn(
-                        f"Variable ds[{var}] is different from reference file"
-                    )
-            if test.coords != ref.coords:
+    if test.attrs.keys() != ref.attrs.keys():
+        difference_detected += [
+            f"A new global attribute {set(test.attrs.keys()) - set(ref.attrs.keys())} was detected.",
+        ]
+
+    ref_variables = list(ref) + list(ref.coords)
+    test_variables = list(test) + list(test.coords)
+
+    if ref_variables.sort() != test_variables.sort():
+        difference_detected += [
+            "A variable mismatch exist between the reference and test files"
+        ]
+
+    for var in ref_variables:
+        # compare variable
+        if not ref[var].identical(test[var]):
+            difference_detected += [
+                f"Variable ds[{var}] is different from reference file"
+            ]
+        if (ref[var].values != test[var].values).any():
+            difference_detected += [
+                f"Variable ds[{var}].values are different from reference file"
+            ]
+
+        # compare variable attributes
+        for attr, value in ref[var].attrs.items():
+            is_not_same_attr = test[var].attrs.get(attr) != value
+            if isinstance(is_not_same_attr, bool) and not is_not_same_attr:
                 continue
-
-            warnings.warn(
-                f"Converted file {nc_file_test} is different than the reference: {file}"
-            )
+            elif isinstance(is_not_same_attr, bool) and is_not_same_attr:
+                difference_detected += [
+                    f"Variable Attribute ref[{var}].attrs[{attr}]={value} != test[{var}].attrs[{attr}]={test[var].attrs.get(attr)}",
+                ]
+            elif (is_not_same_attr).any():
+                difference_detected += [
+                    f"Variable ds[{var}].attrs[{attr}] is different from reference file",
+                ]
+    logger.error(
+        "Test file differ from reference: %s", "\n + ".join(difference_detected)
+    )
+    return difference_detected
 
 
 class PMEParserTests(unittest.TestCase):
@@ -226,86 +243,114 @@ class AmundsenParserTests(unittest.TestCase):
             ds.to_netcdf(f"{path}_test.nc", format="NETCDF4_CLASSIC")
 
 
-class ODFParsertest(unittest.TestCase):
-    def test_bio_odf_parser(self):
+class TestODFBIOParser:
+    @pytest.mark.parametrize(
+        "file", glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
+    )
+    def test_bio_odf_parser(self, file):
         """Test DFO BIO ODF Parser"""
-        paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
-        for path in paths:
-            dfo.odf.bio_odf(path, config=None)
+        dfo.odf.bio_odf(file, config=None)
 
-    def test_bio_odf_parser_to_netcdf(self):
+    @pytest.mark.parametrize(
+        "file", glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
+    )
+    def test_bio_odf_parser_to_netcdf(self, file):
         """Test DFO BIO ODF Parser"""
-        paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
-        for path in paths:
-            dfo.odf.bio_odf(path, config=None, output="netcdf")
+        dfo.odf.bio_odf(file, config=None, output="netcdf")
 
-    def test_mli_all_odf_parser(self):
+    @pytest.mark.parametrize(
+        "file", glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
+    )
+    def test_bio_odf_netcdf(self, file):
         """Test DFO BIO ODF Parser"""
-        paths = glob("tests/parsers_test_files/dfo/odf/mli/**/*.ODF", recursive=True)
-        for path in paths:
-            dfo.odf.mli_odf(path, config=None)
+        ds = dfo.odf.bio_odf(file, config=None)
+        ds.to_netcdf(f"{file}_test.nc")
 
-    def test_mli_odf_parser_timeseries(self):
+    @pytest.mark.parametrize(
+        "file",
+        glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True),
+    )
+    def test_bio_odf_converted_netcdf_vs_references(self, file):
+        """Test DFO BIO ODF conversion to NetCDF vs reference files"""
+        # Generate test bio odf netcdf files
+        difference_detected = compare_test_to_reference_netcdf(file)
+        assert (
+            not difference_detected
+        ), f"Converted file {file} is different than the reference: " + "\n + ".join(
+            difference_detected
+        )
+
+
+class TestODFMLIParser(object):
+    @pytest.mark.parametrize(
+        "file",
+        glob(
+            "tests/parsers_test_files/dfo/odf/mli/**/*.ODF_reference.nc", recursive=True
+        ),
+    )
+    def test_mli_all_odf_parser(self, file):
         """Test DFO BIO ODF Parser"""
-        datatypes = ["MCM", "MCTD", "MMOB", "MTC", "MTG", "MTR", "TCTD"]
-        for datatype in datatypes:
-            paths = glob(
+        dfo.odf.mli_odf(file, config=None)
+
+    @pytest.mark.parametrize(
+        "file",
+        [
+            file
+            for datatype in ["MCM", "MCTD", "MMOB", "MTC", "MTG", "MTR", "TCTD"]
+            for file in glob(
                 f"tests/parsers_test_files/dfo/odf/mli/**/{datatype}*.ODF",
                 recursive=True,
             )
-            for path in paths:
-                dfo.odf.mli_odf(path, config=None)
-
-    def test_mli_odf_parser_trajectory(self):
+        ],
+    )
+    def test_mli_odf_parser_timeseries(self, file):
         """Test DFO BIO ODF Parser"""
-        paths = glob(
+        dfo.odf.mli_odf(file, config=None)
+
+    @pytest.mark.parametrize(
+        "file",
+        glob(
             "tests/parsers_test_files/dfo/odf/mli/**/TSG*.ODF",
             recursive=True,
-        )
-        for path in paths:
-            dfo.odf.mli_odf(path, config=None)
-
-    def test_mli_odf_parser_madcp(self):
+        ),
+    )
+    def test_mli_odf_parser_trajectory(self, file):
         """Test DFO BIO ODF Parser"""
-        paths = glob(
-            "tests/parsers_test_files/dfo/odf/mli/**/MADCP*.ODF", recursive=True
-        )
-        for path in paths:
-            dfo.odf.mli_odf(path)
+        dfo.odf.mli_odf(file, config=None)
 
-    def test_mli_odf_parser_plnkg(self):
-        """Test DFO BIO ODF Parser"""
-        paths = glob(
-            "tests/parsers_test_files/dfo/odf/mli/**/PLNKG*.ODF", recursive=True
-        )
-        for path in paths:
-            dfo.odf.mli_odf(path)
-
-    def test_bio_odf_netcdf(self):
-        """Test DFO BIO ODF Parser"""
-        paths = glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
-        for path in paths:
-            ds = dfo.odf.bio_odf(path, config=None)
-            ds.to_netcdf(f"{path}_test.nc")
-
-    def test_mli_odf_netcdf(self):
-        """Test DFO BIO ODF Parser"""
-        paths = glob("tests/parsers_test_files/dfo/odf/mli/**/*.ODF", recursive=True)
-        for path in paths:
-            ds = dfo.odf.mli_odf(path, config=None)
-            ds.to_netcdf(f"{path}_test.nc")
-
-    def test_bio_odf_converted_netcdf_vs_references(self):
-        """Test DFO BIO ODF conversion to NetCDF vs reference files"""
-        # Generate test bio odf netcdf files
-        self.test_bio_odf_netcdf()
-
-        # Retriev the list of reference files
-        ref_files = glob(
-            "./tests/parsers_test_files/dfo/odf/bio/**/*.ODF_reference.nc",
+    @pytest.mark.parametrize(
+        "file",
+        glob(
+            "tests/parsers_test_files/dfo/odf/mli/**/MADCP*.ODF",
             recursive=True,
-        )
-        compare_test_to_reference_netcdf(ref_files)
+        ),
+    )
+    def test_mli_odf_parser_madcp(self, file):
+        """Test DFO BIO ODF Parser"""
+        dfo.odf.mli_odf(file)
+
+    @pytest.mark.parametrize(
+        "file",
+        glob(
+            "tests/parsers_test_files/dfo/odf/mli/**/PLNKG*.ODF",
+            recursive=True,
+        ),
+    )
+    def test_mli_odf_parser_plnkg(self, file):
+        """Test DFO BIO ODF Parser"""
+        dfo.odf.mli_odf(file)
+
+    @pytest.mark.parametrize(
+        "file",
+        glob(
+            "tests/parsers_test_files/dfo/odf/mli/**/*.ODF",
+            recursive=True,
+        ),
+    )
+    def test_mli_odf_netcdf(self, file):
+        """Test DFO BIO ODF Parser"""
+        ds = dfo.odf.mli_odf(file, config=None)
+        ds.to_netcdf(f"{file}_test.nc")
 
 
 class BlueElectricParsertest(unittest.TestCase):

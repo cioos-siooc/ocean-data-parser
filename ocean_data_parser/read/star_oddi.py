@@ -1,7 +1,13 @@
+"""
+# Star-Oddi
+<https://www.star-oddi.com/>
+
+"""
 import logging
 import re
 
 import pandas as pd
+import xarray
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +33,9 @@ variables_attributes = {
 }
 
 
-def DAT(path, encoding="cp1252", kwargs_read_csv=None):
+def DAT(
+    path: str, encoding: str = "cp1252", kwargs_read_csv: dict = None
+) -> xarray.Dataset:
     def _standardize_attributes(item):
         item = re.sub(r"[\.\:]", "", item.strip().lower())
         return re.sub(r"\s", "_", item)

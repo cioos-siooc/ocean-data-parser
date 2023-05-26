@@ -1,4 +1,9 @@
-"""Set of tools used to parsed an NMEA string feed from a file."""
+"""
+# NMEA Standard Protocol
+<https://en.wikipedia.org/wiki/NMEA_0183>
+
+
+"""
 
 import logging
 from datetime import datetime
@@ -6,6 +11,7 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 import pynmea2
+import xarray
 
 logger = logging.getLogger(__name__)
 
@@ -204,7 +210,19 @@ def _generate_extra_terms(nmea):
     return extra
 
 
-def file(path, encoding="UTF-8", nmea_delimiter="$"):
+def file(
+    path: str, encoding: str = "UTF-8", nmea_delimiter: str = "$"
+) -> xarray.Dataset:
+    """Parse NMEA 0183 standard protocol file into a pandas dataframe
+
+    Args:
+        path (str): [description]
+        encoding (str, optional): [description]. Defaults to "UTF-8".
+        nmea_delimiter (str, optional): [description]. Defaults to "$".
+
+    Returns:
+        xarray.Dataset: [description]
+    """
     """Parse a file containing NMEA information into a pandas dataframe"""
 
     def rename_variable(name):
