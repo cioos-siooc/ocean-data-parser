@@ -1,4 +1,3 @@
-import argparse
 import logging
 from pathlib import Path
 
@@ -123,7 +122,7 @@ def variables(
             dtype = _get_erddap_dtype(attrs.pop("dtype", "String"))
             erddap_xml += [_get_erddap_xml_variable(var, var, dtype, attrs)]
         erddap_xml = "\n".join(erddap_xml)
-        if output_erddap_xml == True:
+        if output_erddap_xml in (True, "true", "True", "1"):
             print(erddap_xml)
         else:
             with open(output_erddap_xml, "w") as file_handle:
@@ -135,13 +134,16 @@ def variables(
     "--input_dir",
     "-i",
     default=".",
+    type=click.Path(exists=True),
     help="Top directory from where to look for netCDFs",
 )
-@click.option("--file_regex", "-f", default="**/*.nc", help="File search expression.")
+@click.option(
+    "--file_regex", "-f", default="**/*.nc", type=str, help="File search expression."
+)
 @click.option(
     "--groupby",
     "-g",
-    default="",
+    default=None,
     type=str,
     help="Comma separated list of attributes to regroup variables by.",
 )
@@ -158,6 +160,9 @@ def variables(
     help="Output an ERDDAP XML blurb or all the variables. ",
 )
 def cli_variables(**kwargs):
+     """Compile NetCDF files variables and variables attributes."""
+
+    kwargs["groupby"] = kwargs["groupby"].split(",") if kwargs["groupby"] else None
     variables(**kwargs)
 
 
