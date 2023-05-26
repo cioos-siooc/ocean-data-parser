@@ -353,6 +353,24 @@ class TestODFMLIParser(object):
         ds.to_netcdf(f"{file}_test.nc")
 
 
+class TestDFOpFiles:
+    @pytest.mark.parametrize(
+        "file",
+        [
+            file
+            for file in glob(
+                "tests/parsers_test_files/dfo/odf/p/**/*.p*",
+                recursive=True,
+            )
+            if not file.endswith(".nc")
+        ],
+    )
+    def test_dfo_nl_p_to_netcdf(self, file):
+        """Test DFO BIO ODF Parser"""
+        ds = dfo.p(file)
+        ds.to_netcdf(f"{file}_test.nc")
+
+
 class BlueElectricParsertest(unittest.TestCase):
     def test_blue_electric_csv_parser(self):
         paths = glob(
