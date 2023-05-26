@@ -21,6 +21,7 @@ setup(
         "NetCDF4",
         "pynmea2",
         "gsw",
+        "tabulate",
         "lxml",
         "cioos_data_transform @ git+https://github.com/cioos-siooc/cioos-siooc_data_transform.git@ios-parser-extra-vocabulary#egg=cioos_data_transform&subdirectory=cioos_data_transform",
         "cioos_data_transform_projects @ git+https://github.com/cioos-siooc/cioos-siooc_data_transform.git@ios-parser-extra-vocabulary#egg=cioos_data_transform_projects&subdirectory=projects",
@@ -50,4 +51,9 @@ setup(
         "Operating System :: OS Independent",
     ],
     zip_safe=True,
+    entry_points={
+        "console_scripts": [
+            "odpy.compile.nc.variables = ocean_data_parser.compile.netcdf:cli_variables",
+        ]
+    },
 )
