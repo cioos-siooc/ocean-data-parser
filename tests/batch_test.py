@@ -1,16 +1,17 @@
+import filecmp
 import logging
 import logging.config
 import unittest
 from pathlib import Path
-import filecmp
-from click.testing import CliRunner
 from time import sleep
+
+from click.testing import CliRunner
 
 from ocean_data_parser.batch.convert import (
     FileConversionRegistry,
+    cli_files,
     files,
     load_config,
-    cli_files,
 )
 
 PACKAGE_PATH = Path(__file__).parent

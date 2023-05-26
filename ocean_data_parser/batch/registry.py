@@ -1,7 +1,7 @@
+import copy
 import hashlib
 import logging
 from pathlib import Path
-import copy
 
 import pandas as pd
 

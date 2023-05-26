@@ -1,13 +1,14 @@
 import logging
-from pathlib import Path
 import re
 import unittest
 from glob import glob
-import pytest
+from pathlib import Path
 
+import pytest
 from xarray import Dataset
 
-from ocean_data_parser.read import detect_file_format, file as auto_read
+from ocean_data_parser.read import detect_file_format
+from ocean_data_parser.read import file as auto_read
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
@@ -23,8 +24,7 @@ auto_detection_ignore = [
     [
         file
         for file in glob("tests/parsers_test_files/**/*.*", recursive=True)
-        if not file.endswith("nc")
-        and file not in auto_detection_ignore
+        if not file.endswith("nc") and file not in auto_detection_ignore
     ],
 )
 def test_automated_parser_detection(file):

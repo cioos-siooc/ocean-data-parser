@@ -3,8 +3,8 @@ from glob import glob
 from importlib import import_module
 from pathlib import Path
 
-from tqdm import tqdm
 import click
+from tqdm import tqdm
 from xarray import Dataset
 
 from ocean_data_parser.batch.config import load_config
