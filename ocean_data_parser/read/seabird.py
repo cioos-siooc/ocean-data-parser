@@ -16,7 +16,7 @@ import xarray
 import xmltodict
 from pyexpat import ExpatError
 
-from .utils import standardize_dataset, convert_datetime_str
+from .utils import convert_datetime_str, standardize_dataset
 
 SBE_TIME_FORMAT = "%b %d %Y %H:%M:%S"  # Jun 23 2016 13:51:30
 var_dtypes = {

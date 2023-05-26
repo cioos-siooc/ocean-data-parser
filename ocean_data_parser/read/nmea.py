@@ -10,8 +10,8 @@ from datetime import datetime
 
 import numpy as np
 import pandas as pd
-import xarray
 import pynmea2
+import xarray
 
 logger = logging.getLogger(__name__)
 

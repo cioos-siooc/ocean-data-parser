@@ -139,7 +139,7 @@ def superCO2(path: str, output: str = None) -> xarray.Dataset:
     return standardize_dataset(ds)
 
 
-def superCO2_notes(path:str) -> xarray.Dataset:
+def superCO2_notes(path: str) -> xarray.Dataset:
     """Parse superCO2 notes files and return a pandas dataframe"""
     line = True
     notes = []

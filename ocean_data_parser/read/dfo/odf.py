@@ -7,16 +7,18 @@ This module regroups all the tools related to the ODF format actively used by th
 
 """
 
-from typing import Union
 import logging
+from typing import Union
+
 import xarray
+from odf_transform.process import odf_to_xarray
+from odf_transform.process import read_config as cioos_odf_config
+
 from ocean_data_parser.read.dfo.odf_source.process import (
     parse_odf,
     read_config,
     save_parsed_odf_to_netcdf,
 )
-
-from odf_transform.process import odf_to_xarray, read_config as cioos_odf_config
 
 logger = logging.getLogger(__name__)
 

@@ -7,9 +7,9 @@ from glob import glob
 
 import numpy as np
 import pandas as pd
+import pytest
 import xarray as xr
 
-import pytest
 from ocean_data_parser.read import (
     amundsen,
     dfo,
