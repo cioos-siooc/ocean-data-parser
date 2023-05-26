@@ -33,48 +33,4 @@ class CompileNetcdfVariablesTests(unittest.TestCase):
             TEST_FILE_PATH, "**/*", output_erddap_xml="test_compile_erddap_xml.xml"
         )
 
-    # def test_compile_variables_cli(self):
-    #     runner = CliRunner()
-    #     result = runner.invoke(
-    #         cli_variables,
-    #         ["-i", "tests/dfo/bio", "-f", "'**/*_test.nc'"],
-    #     )
-    #     assert result.exit_code == 0, result.stderr
-    #     assert "Compile NetCDF variables:" in result.output
-    #     assert "standard_name" in result.output
-    #     assert "</dataVariable>" not in result.output
-
-    # def test_compile_variables_cli_xml_to_console(self):
-    #     runner = CliRunner()
-    #     result = runner.invoke(
-    #         cli_variables,
-    #         ["-i", "tests/dfo/bio", "-f", "'**/*_test.nc'", "-xml", "true"],
-    #     )
-    #     assert result.exit_code == 0, result
-    #     assert "Compile NetCDF variables:" in result.output
-    #     assert "</dataVariable>" in result.output
-
-        # captured = capsys.readouterr()
-        # assert captured
-
-    # def test_batch_cli_conversion_onset_parser(self):
-    #     runner = CliRunner()
-    #     result = runner.invoke(
-    #         cli_files,
-    #         ["--config=tests/batch_test_configs/batch_convert_test_onset_csv.yaml"],
-    #     )
-    #     assert result.exit_code == 0, result
-    #     assert "Run batch conversion" in result.output
-
-    # def test_batch_cli_conversion_onset_parser_added_input(self):
-    #     runner = CliRunner()
-    #     result = runner.invoke(
-    #         cli_files,
-    #         [
-    #             "--config=tests/batch_test_configs/batch_convert_test_onset_csv.yaml",
-    #             "--add",
-    #             "overwrite=True",
-    #         ],
-    #     )
-    #     assert result.exit_code == 0, result
-    #     assert "Run batch conversion" in result.output
+    # TODO add some tests for the cli method
