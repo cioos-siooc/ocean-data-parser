@@ -1,4 +1,5 @@
 import logging
+
 from cioos_data_transform.IosObsFile import CurFile, GenFile
 
 logger = logging.getLogger(__name__)
