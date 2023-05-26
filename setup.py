@@ -56,10 +56,6 @@ setup(
     entry_points={
         "console_scripts": [
             "odpy.convert = ocean_data_parser.batch.convert:cli_files",
-        ]
-    },
-    entry_points={
-        "console_scripts": [
             "odpy.compile.nc.variables = ocean_data_parser.compile.netcdf:cli_variables",
         ]
     },
