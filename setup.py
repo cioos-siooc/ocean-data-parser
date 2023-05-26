@@ -51,4 +51,9 @@ setup(
         "Operating System :: OS Independent",
     ],
     zip_safe=True,
+    entry_points={
+        "console_scripts": [
+            "odpy.compile.variabes = ocean_data_parser.compile.netcdf:cli_variables",
+        ]
+    },
 )
