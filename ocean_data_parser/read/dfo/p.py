@@ -54,6 +54,13 @@ def _parse_history(lines: list) -> dict:
 
 
 # TODO Name every fields present within the file header
+""" from 56001001.p2022
+NAFC_Y2K_HEADER
+56001001  47 32.80 -052 35.20 2022-04-10 14:06 0176 S1460 001 V S27-01         1
+56001001 002260  8.00 A 13 #PTCSMOFLHXAW-------            D 000 0001 0173 000 4
+56001001 7 08 02    0999.1 003.8       08 01 18 10 01                          8
+-- CHANNEL STATS -->
+"""
 metatadata_items = (
     (
         "56001001",
@@ -107,14 +114,15 @@ def _parse_metadata_header(header_lines: list) -> dict:
     for names, values in zip(metatadata_items, header_lines):
         metadata.update(**dict(zip(names, re.split("\s+", values))))
 
+    # Transform some of the fields to main standards
     metadata["datetime"] = pd.to_datetime(
         f"{metadata.pop('date')} {metadata.pop('time')}", format="%Y-%m-%d %H:%M"
     )  # UTC?
-    metadata["latitude"] = float(metadata.pop("lat_deg")) + float(
-        metadata.pop("lat_min")
+    metadata["latitude"] = (
+        float(metadata.pop("lat_deg")) + float(metadata.pop("lat_min")) / 60
     )
-    metadata["longitude"] = float(metadata.pop("lon_deg")) + float(
-        metadata.pop("lon_min")
+    metadata["longitude"] = (
+        float(metadata.pop("lon_deg")) + float(metadata.pop("lon_min")) / 60
     )
     return metadata
 
