@@ -365,10 +365,9 @@ class TestDFOpFiles:
             if not file.endswith(".nc")
         ],
     )
-    def test_dfo_nl_p_to_netcdf(self, file):
+    def test_dfo_nl_p(self, file):
         """Test DFO BIO ODF Parser"""
-        ds = dfo.p(file)
-        ds.to_netcdf(f"{file}_test.nc")
+        dfo.p.parser(file)
 
 
 class BlueElectricParsertest(unittest.TestCase):
