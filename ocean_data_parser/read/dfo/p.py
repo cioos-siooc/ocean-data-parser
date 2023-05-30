@@ -10,6 +10,7 @@ import xarray as xr
 
 logger = logging.getLogger(__name__)
 
+# TODO add global and variable attributes. Variable attributes could be move to an external file
 global_attributes = {}
 variables_attributes = {
     "pres": {
