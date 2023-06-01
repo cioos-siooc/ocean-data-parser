@@ -13,6 +13,7 @@ from ocean_data_parser.batch.convert import (
     files,
     load_config,
 )
+from utils import compare_text_files
 
 PACKAGE_PATH = Path(__file__).parent
 logging.basicConfig(level=logging.DEBUG)
@@ -258,18 +259,21 @@ class FileRegistryTests(unittest.TestCase):
 
         file_registry.path = Path(str(file_registry.path).replace(".csv", "_temp.csv"))
         file_registry.save()
-        initial_hash = TEST_REGISTRY._get_hash(TEST_REGISTRY.path)
-        saved_hash = file_registry._get_hash(file_registry.path)
+        differences = compare_text_files(
+            str(TEST_REGISTRY.path), str(file_registry.path)
+        )
         assert (
-            initial_hash == saved_hash
-        ), "Resaving the intial test registry didn't produce a similar file"
+            not differences
+        ), f"Resaving the intial test registry didn't produce a similar file: {differences}"
 
-        file_registry.data["last_update"] += 100
+        file_registry.data["last_update"].iloc[-1] += 100
         file_registry.save()
-        saved_hash = file_registry._get_hash(file_registry.path)
+        differences = compare_text_files(
+            str(TEST_REGISTRY.path), str(file_registry.path)
+        )
         assert (
-            initial_hash != saved_hash
-        ), "Resaving the test registry after changes didn't produce a different file"
+            len(differences) == 5
+        ), f"Resaving the test registry after changes didn't produce the expected different file: {differences}"
 
     def test_get_sources_with_modified_hash_unchanged(self):
         file_registry = TEST_REGISTRY.deepcopy()
