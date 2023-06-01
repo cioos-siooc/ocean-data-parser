@@ -84,7 +84,6 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
 
 
 def file(path, parser=None, **kwargs):
-
     # Review the file format if no parser is specified
     if parser is None:
         parser = detect_file_format(path)
@@ -108,4 +107,4 @@ def file(path, parser=None, **kwargs):
     if kwargs:
         return parser_func(path, **kwargs)
     else:
-        parser_func(path)
+        return parser_func(path)

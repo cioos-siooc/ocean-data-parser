@@ -22,6 +22,8 @@ from ocean_data_parser.read import (
     star_oddi,
     sunburst,
     van_essen_instruments,
+    auto,
+    utils
 )
 
 logging.basicConfig(level=logging.DEBUG)
@@ -102,8 +104,9 @@ def compare_test_to_reference_netcdf(test: xr.Dataset, reference: xr.Dataset):
         attr: value for attr, value in test.attrs.items() if attr in reference.attrs
     }
     for var in test:
-        if var not in reference:
-            test.drop(var)
+        if var not in reference and var in test:
+            test = test.drop(var)
+            continue
         test[var].attrs = {
             attr: value
             for attr, value in test[var].attrs.items()
@@ -267,25 +270,6 @@ class TestODFBIOParser:
         ds = dfo.odf.bio_odf(file, config=None)
         ds.to_netcdf(f"{file}_test.nc")
 
-    @pytest.mark.parametrize(
-        "file",
-        glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True),
-    )
-    def test_bio_odf_converted_netcdf_vs_references(self, file):
-        """Test DFO BIO ODF conversion to NetCDF vs reference files"""
-        # Generate test bio odf netcdf files
-
-        # Run Test conversion
-        test = dfo.odf.bio_odf(file)
-        # Load test file and reference file
-        ref = xr.open_dataset(file + "_reference.nc")
-        difference_detected = compare_test_to_reference_netcdf(test, ref)
-        assert (
-            not difference_detected
-        ), f"Converted file {file} is different than the reference: " + "\n + ".join(
-            "".join(difference_detected)
-        )
-
 
 class TestODFMLIParser(object):
     @pytest.mark.parametrize(
@@ -383,3 +367,25 @@ class StarOddiParsertest(unittest.TestCase):
         paths = glob("tests/parsers_test_files/star_oddi/**/*.DAT", recursive=True)
         for path in paths:
             ds = star_oddi.DAT(path)
+
+
+@pytest.mark.parametrize(
+    "reference_file",
+    glob("tests/parsers_test_files/**/*_reference.nc", recursive=True),
+)
+def test_compare_test_to_reference_netcdf(reference_file):
+    """Test DFO BIO ODF conversion to NetCDF vs reference files"""
+    # Generate test bio odf netcdf files
+
+    # Run Test conversion
+    source_file = reference_file.replace("_reference.nc", "")
+    test = utils.standardize_dataset(auto.file(source_file))
+
+    # Load test file and reference file
+    ref = xr.open_dataset(reference_file)
+    difference_detected = compare_test_to_reference_netcdf(test, ref)
+    assert (
+        not difference_detected
+    ), f"Converted file {source_file} is different than the reference: " + "\n".join(
+        difference_detected
+    )
