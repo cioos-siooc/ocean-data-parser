@@ -116,4 +116,7 @@ def file(path: str, parser: str = None, kwargs=None) -> Dataset:
     mod = import_module(f"ocean_data_parser.read.{read_module}")
     parser_func = getattr(mod, filetype)
 
-    return parser_func(path, **(kwargs or {}))
+    if kwargs:
+        return parser_func(path, **kwargs)
+    else:
+        parser_func(path)

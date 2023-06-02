@@ -1,8 +1,8 @@
+import difflib
+import io
 import logging
-import os
 import re
 import unittest
-import warnings
 from glob import glob
 
 import numpy as np
@@ -22,13 +22,38 @@ from ocean_data_parser.read import (
     star_oddi,
     sunburst,
     van_essen_instruments,
+    auto,
+    utils
 )
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
 
 
-def compare_test_to_reference_netcdf(file):
+def compare_xarray_datasets(ds1: xr.Dataset, ds2: xr.Dataset, **kwargs) -> list:
+    """Compare two xarray.Dataset.info outputs with difflib.unified_diff.
+
+    Args:
+        ds1 (xr.Dataset): First dataset
+        ds2 (xr.Dataset): Second datset
+        **kwargs (optional): difflib.unified_diff **kwargs
+
+    Returns:
+        list: List of differences detected by difflib.
+    """
+
+    def _get_xarray_dataset_info(ds):
+        f = io.StringIO()
+        ds.info(f)
+        return f.getvalue().split("\n")
+
+    ds1_info = _get_xarray_dataset_info(ds1)
+    ds2_info = _get_xarray_dataset_info(ds2)
+
+    return list(difflib.unified_diff(ds1_info, ds2_info, **kwargs))
+
+
+def compare_test_to_reference_netcdf(test: xr.Dataset, reference: xr.Dataset):
     def standardize_attributes(value):
         if isinstance(value, str):
             value = value.strip()
@@ -53,14 +78,10 @@ def compare_test_to_reference_netcdf(file):
     def ignore_from_attr(attr, expression, placeholder):
         """Replace expression in both reference and test files which are
         expected to be different."""
-        ref.attrs[attr] = re.sub(expression, placeholder, ref.attrs[attr])
+        reference.attrs[attr] = re.sub(expression, placeholder, reference.attrs[attr])
         test.attrs[attr] = re.sub(expression, placeholder, test.attrs[attr])
 
-    # Run Test conversion
-    test = dfo.odf.bio_odf(file)
-    # Load test file and reference file
-    ref = xr.open_dataset(file + "_reference.nc")
-
+    # Drop some expected differences
     # Add placeholders to specific fields in attributes
     ignore_from_attr(
         "history",
@@ -72,85 +93,68 @@ def compare_test_to_reference_netcdf(file):
     )
     ignore_from_attr("source", ".*", "source")
 
-    ref.attrs["date_created"] = "TIMESTAMP"
+    reference.attrs["date_created"] = "TIMESTAMP"
     test.attrs["date_created"] = "TIMESTAMP"
 
-    ref = standardize_dataset(ref)
+    reference = standardize_dataset(reference)
     test = standardize_dataset(test)
 
     # Compare only attributes that exist in reference
     test.attrs = {
-        attr: value for attr, value in test.attrs.items() if attr in ref.attrs
+        attr: value for attr, value in test.attrs.items() if attr in reference.attrs
     }
     for var in test:
-        if var not in ref:
-            test.drop(var)
-        test[var].attrs = {
-            attr: value
-            for attr, value in test[var].attrs.items()
-            if attr in ref[var].attrs
-        }
-
-    for var in test.coords:
-        if var not in ref:
+        if var not in reference and var in test:
+            test = test.drop(var)
             continue
         test[var].attrs = {
             attr: value
             for attr, value in test[var].attrs.items()
-            if attr in ref[var].attrs
+            if attr in reference[var].attrs
         }
 
-    if ref.identical(test):
+    for var in test.coords:
+        if var not in reference:
+            continue
+        test[var].attrs = {
+            attr: value
+            for attr, value in test[var].attrs.items()
+            if attr in reference[var].attrs
+        }
+
+    if reference.identical(test):
         return []
-    difference_detected = []
-    # find through netcdf files differences
-    for key, value in ref.attrs.items():
-        if test.attrs.get(key) != value:
-            difference_detected += [
-                f"Global attribute ref.attrs[{key}]={value} != test.attrs[{key}]={test.attrs.get(key)}",
-            ]
-
-    if test.attrs.keys() != ref.attrs.keys():
-        difference_detected += [
-            f"A new global attribute {set(test.attrs.keys()) - set(ref.attrs.keys())} was detected.",
-        ]
-
-    ref_variables = list(ref) + list(ref.coords)
-    test_variables = list(test) + list(test.coords)
-
-    if ref_variables.sort() != test_variables.sort():
-        difference_detected += [
-            "A variable mismatch exist between the reference and test files"
-        ]
-
-    for var in ref_variables:
-        # compare variable
-        if not ref[var].identical(test[var]):
-            difference_detected += [
-                f"Variable ds[{var}] is different from reference file"
-            ]
-        if (ref[var].values != test[var].values).any():
-            difference_detected += [
-                f"Variable ds[{var}].values are different from reference file"
-            ]
-
-        # compare variable attributes
-        for attr, value in ref[var].attrs.items():
-            is_not_same_attr = test[var].attrs.get(attr) != value
-            if isinstance(is_not_same_attr, bool) and not is_not_same_attr:
-                continue
-            elif isinstance(is_not_same_attr, bool) and is_not_same_attr:
-                difference_detected += [
-                    f"Variable Attribute ref[{var}].attrs[{attr}]={value} != test[{var}].attrs[{attr}]={test[var].attrs.get(attr)}",
-                ]
-            elif (is_not_same_attr).any():
-                difference_detected += [
-                    f"Variable ds[{var}].attrs[{attr}] is different from reference file",
-                ]
-    logger.error(
-        "Test file differ from reference: %s", "\n + ".join(difference_detected)
+    differences = compare_xarray_datasets(
+        reference, test, fromfile="reference", tofile="test", n=0
     )
-    return difference_detected
+    return "Unknown differences" if not differences else differences
+
+
+class TestCompareDatasets:
+    def _get_test_and_reference(self):
+        reference_files = glob(
+            "tests/parsers_test_files/**/*_reference.nc", recursive=True
+        )
+        assert reference_files, "Fail to retrieve any reference netcdf file"
+        reference = xr.open_dataset(reference_files[0])
+        return reference, reference.copy()
+
+    def _compare_datasets(self, ref, test):
+        return compare_xarray_datasets(
+            ref, test, fromfile="reference", tofile="test", n=0
+        )
+
+    def test_compare_test_to_reference_datasets(self):
+        reference, test = self._get_test_and_reference()
+        reference.attrs["title"] = "This is the reference title"
+        test = reference.copy()
+        test.attrs["title"] = "This is the test title"
+        differences = self._compare_datasets(reference, test)
+        assert differences, "Failed to detect any differences"
+        assert len(differences) == 5, "Failed to detect the rigth differences"
+        assert any(
+            "title" in line for line in differences
+        ), "Didn't suggest that the title attribute is changed"
 
 
 class PMEParserTests(unittest.TestCase):
@@ -266,20 +270,6 @@ class TestODFBIOParser:
         ds = dfo.odf.bio_odf(file, config=None)
         ds.to_netcdf(f"{file}_test.nc")
 
-    @pytest.mark.parametrize(
-        "file",
-        glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True),
-    )
-    def test_bio_odf_converted_netcdf_vs_references(self, file):
-        """Test DFO BIO ODF conversion to NetCDF vs reference files"""
-        # Generate test bio odf netcdf files
-        difference_detected = compare_test_to_reference_netcdf(file)
-        assert (
-            not difference_detected
-        ), f"Converted file {file} is different than the reference: " + "\n + ".join(
-            difference_detected
-        )
-
 
 class TestODFMLIParser(object):
     @pytest.mark.parametrize(
@@ -377,3 +367,25 @@ class StarOddiParsertest(unittest.TestCase):
         paths = glob("tests/parsers_test_files/star_oddi/**/*.DAT", recursive=True)
         for path in paths:
             ds = star_oddi.DAT(path)
+
+
+@pytest.mark.parametrize(
+    "reference_file",
+    glob("tests/parsers_test_files/**/*_reference.nc", recursive=True),
+)
+def test_compare_test_to_reference_netcdf(reference_file):
+    """Test DFO BIO ODF conversion to NetCDF vs reference files"""
+    # Generate test bio odf netcdf files
+
+    # Run Test conversion
+    source_file = reference_file.replace("_reference.nc", "")
+    test = utils.standardize_dataset(auto.file(source_file))
+
+    # Load test file and reference file
+    ref = xr.open_dataset(reference_file)
+    difference_detected = compare_test_to_reference_netcdf(test, ref)
+    assert (
+        not difference_detected
+    ), f"Converted file {source_file} is different than the reference: " + "\n".join(
+        difference_detected
+    )

@@ -44,7 +44,9 @@ def get_history_handler():
     return nc_logger, nc_handler
 
 
-def standardize_dataset(ds):
+def standardize_dataset(
+    ds, time_variables_encoding="seconds since 1970-01-01T00:00:00"
+):
     """Standardize dataset to be easily serializable to netcdf and compatible with ERDDAP"""
 
     def _consider_attribute(value):
@@ -74,7 +76,7 @@ def standardize_dataset(ds):
     }
 
     # Drop empty variable attributes
-    for var in ds:
+    for var in ds.variables:
         ds[var].attrs = {
             attr: _encode_attribute(value)
             for attr, value in ds[var].attrs.items()
@@ -82,10 +84,10 @@ def standardize_dataset(ds):
         }
 
     # Specify encoding for some variables (ex time variables)
-    for var in ds:
+    for var in ds.variables:
         ds.encoding[var] = {}
         if "datetime" in ds[var].dtype.name:
-            ds[var].encoding.update({"units": "seconds since 1970-01-01 00:00:00"})
+            ds[var].encoding.update({"units": time_variables_encoding})
             if "tz" in ds[var].dtype.name:
                 ds[var].encoding["units"] += "Z"
         elif isinstance(ds[var].dtype, object) and isinstance(
@@ -101,7 +103,7 @@ def standardize_dataset(ds):
                     pd.to_datetime(ds[var].values, utc=timezone_aware).tz_convert(None),
                 )
             ds[var].attrs = var_attrs
-            ds[var].encoding.update({"units": "seconds since 1970-01-01 00:00:00"})
+            ds[var].encoding.update({"units": time_variables_encoding})
             if timezone_aware:
                 ds[var].attrs["timezone"] = "UTC"
                 ds[var].encoding["units"] += "Z"
@@ -130,7 +132,7 @@ def standardize_variable_attributes(ds):
     """
     Method to generate simple generic variable attributes and reorder attributes in a consistent order.
     """
-    for var in ds:
+    for var in ds.variables:
         # Generate min/max values attributes
         if (
             ds[var].dtype in [float, int, "float32", "float64", "int64", "int32"]
@@ -159,7 +161,7 @@ def get_spatial_coverage_attributes(
     # TODO add resolution attributes
     time_spatial_coverage = {}
     # time
-    if time in ds:
+    if time in ds.variables:
         time_spatial_coverage.update(
             {
                 "time_coverage_start": ds[time].min().item(0),
@@ -171,7 +173,7 @@ def get_spatial_coverage_attributes(
         )
 
     # lat/long
-    if lat in ds and lon in ds:
+    if lat in ds.variables and lon in ds.variables:
         time_spatial_coverage.update(
             {
                 "geospatial_lat_min": ds[lat].min().item(0),
@@ -184,7 +186,7 @@ def get_spatial_coverage_attributes(
         )
 
     # depth coverage
-    if depth in ds:
+    if depth in ds.variables:
         ds["depth"].attrs["positive"] = ds["depth"].attrs.get("positive", "down")
         time_spatial_coverage.update(
             {
