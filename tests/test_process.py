@@ -71,26 +71,29 @@ class ProcessLoadDatasetTests(unittest.TestCase):
         assert isinstance(ds, xr.Dataset)
 
 
+test_convention = "tests/{ds.attrs['instrument_type'].strip()}_{ds['time'].min().dt.strftime('%Y%m%d').values}"
+
+
 class ProcessNamingConvention(unittest.TestCase):
     def test_basic_convention(self):
         ds = load_test_dataset()
-        ds.process.filename_convention = "test_{ds.attrs['instrument_type'].strip()}_{ds['time'].min().dt.strftime('%Y%m%d').values}"
+        ds.process.filename_convention = test_convention
         filename = ds.process.get_filename_from_convention()
-        assert filename == "test_SBE37SMP-ODO-SDI12_20220510"
+        assert filename == "tests/SBE37SMP-ODO-SDI12_20220510"
 
     def test_basic_convention_suffix(self):
         ds = load_test_dataset()
-        ds.process.filename_convention = "test_{ds.attrs['instrument_type'].strip()}_{ds['time'].min().dt.strftime('%Y%m%d').values}"
-        filename = ds.process.get_filename_from_convention(suffix="_test")
-        assert filename == "test_SBE37SMP-ODO-SDI12_20220510_test"
+        ds.process.filename_convention = test_convention
+        filename = ds.process.get_filename_from_convention(suffix="_process_test")
+        assert filename == "tests/SBE37SMP-ODO-SDI12_20220510_process_test"
 
 
 class ProcessSaveNetcdfTests(unittest.TestCase):
     def test_process_save_netcdf(self):
         ds = load_test_dataset()
-        ds.process.filename_convention = "test_{ds.attrs['instrument_type'].strip()}_{ds['time'].min().dt.strftime('%Y%m%d').values}"
-        ds.process.to_netcdf(suffix="_test")
-        filename = ds.process.get_filename_from_convention(suffix="_test.nc")
+        ds.process.filename_convention = test_convention
+        ds.process.to_netcdf(suffix="_process_test")
+        filename = ds.process.get_filename_from_convention(suffix="_process_test.nc")
         assert Path(filename).exists()
 
 
