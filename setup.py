@@ -20,7 +20,7 @@ setup(
         "pytz",
         "NetCDF4",
         "pynmea2",
-        "gsw",
+        "gsw-xarray",
         "tabulate",
         "lxml",
         "pyyaml",
@@ -30,7 +30,11 @@ setup(
     ],
     extras_require={
         "odf": ["geographicLib", "shapely"],
+        "process": ["plotly", "ipywidgets", "IPython", "ipywidgets"],
         "dev": [
+            "plotly",
+            "ipywidgets",
+            "IPython",
             "geographicLib",
             "shapely",
             "pytest",
