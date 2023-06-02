@@ -119,4 +119,4 @@ def file(path: str, parser: str = None, kwargs=None) -> Dataset:
     if kwargs:
         return parser_func(path, **kwargs)
     else:
-        parser_func(path)
+        return parser_func(path)
