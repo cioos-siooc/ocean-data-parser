@@ -5,13 +5,13 @@ import re
 import unittest
 from glob import glob
 
-import numpy as np
 import pandas as pd
 import pytest
 import xarray as xr
 
 from ocean_data_parser.read import (
     amundsen,
+    auto,
     dfo,
     electricblue,
     nmea,
@@ -21,9 +21,8 @@ from ocean_data_parser.read import (
     seabird,
     star_oddi,
     sunburst,
+    utils,
     van_essen_instruments,
-    auto,
-    utils
 )
 
 logging.basicConfig(level=logging.DEBUG)

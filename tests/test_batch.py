@@ -1,4 +1,3 @@
-import filecmp
 import logging
 import logging.config
 import unittest
@@ -6,6 +5,7 @@ from pathlib import Path
 from time import sleep
 
 from click.testing import CliRunner
+from utils import compare_text_files
 
 from ocean_data_parser.batch.convert import (
     FileConversionRegistry,
@@ -13,7 +13,6 @@ from ocean_data_parser.batch.convert import (
     files,
     load_config,
 )
-from utils import compare_text_files
 
 PACKAGE_PATH = Path(__file__).parent
 logging.basicConfig(level=logging.DEBUG)
