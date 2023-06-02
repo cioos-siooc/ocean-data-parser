@@ -88,7 +88,7 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
 
 
 def file(path: str, parser: str = None, kwargs=None) -> Dataset:
-    """AI is creating summary for file
+    """Automatically detect file format and load it as an xarray dataset.
 
     Args:
         path (str): path to file to parse
