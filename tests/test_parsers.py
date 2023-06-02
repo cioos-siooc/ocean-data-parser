@@ -271,7 +271,7 @@ class TestODFBIOParser:
         ds.to_netcdf(f"{file}_test.nc")
 
 
-class TestODFMLIParser(object):
+class TestODFMLIParser:
     @pytest.mark.parametrize(
         "file",
         glob(
