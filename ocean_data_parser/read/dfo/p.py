@@ -4,21 +4,115 @@ P-files is a file format used by the DFO NewfoundLand office.
 
 import logging
 import re
+from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import xarray as xr
 
 logger = logging.getLogger(__name__)
-
-# TODO add global and variable attributes. Variable attributes could be move to an external file
+MODULE_PATH = Path(__file__).parent
+p_file_vocabulary = pd.read_csv(MODULE_PATH / "p_files_vocabulary.csv").replace(
+    {"variable_name": {np.nan: None}}
+)
+p_file_shipcode = pd.read_csv(
+    MODULE_PATH / "NL_BPO_shipcodes.csv", skiprows=[1]
+).set_index("Code")
 global_attributes = {}
-variables_attributes = {
-    "pres": {
-        "long_name": "Pressure",
-        "units": "dbar",
-        "standard_name": "sea_water_pressure",
-    }
-}
+
+
+def _int(value: str) -> int:
+    """Attemp to convert string to int, return None if empty or failed"""
+    if not value.strip():
+        return
+    try:
+        return int(value)
+    except TypeError:
+        logger.error("Failed to convert string=%s to int", value)
+
+
+def _float(value: str) -> float:
+    """Attemp to convert string to float, return None if empty or failed"""
+    if not value.strip():
+        return
+    try:
+        return float(value)
+    except TypeError:
+        logger.error("Failed to convert string=%s to float", value)
+
+
+def _parse_pfile_header_line1(line: str) -> dict:
+    """Parse first row of the p file format which contains location and instrument information."""
+    return dict(
+        ship_code=_int(line[:2]),
+        trip=_int(line[2:5]),
+        station=_int(line[5:8]),
+        latitude=_float(line[9:12]) + float(line[13:18]) / 60,
+        longitude=_float(line[19:23]) + float(line[24:29]) / 60,
+        time=pd.to_datetime(line[30:46], format="%Y%m%d %H:%M", utc=True),
+        depth=_int(line[47:51])
+        if line[47:51] not in ("9999", "0000")
+        else None,  # water depth in meters 9999 or 0000 = not known
+        probe=line[
+            52:57
+        ],  # Sxxxxx is a seabird ctd XBTxx is an XBT for an XBT, A&C= Sippican probe, A&B mk9, B&D= Spartan probe, C&D mk12"
+        fish_set=_int(line[58:61]),  # usually same as stn
+        format=line[62],  # V vertical profile T for tow
+        comment=line[62:78],
+        card_1_id=line[79],
+    )
+
+
+def _parse_pfile_header_line2(line: str) -> dict:
+    return dict(
+        ship_code=_int(line[:2]),
+        trip=_int(line[2:5]),
+        station=_int(line[5:8]),
+        scan_cnt=_int(line[9:15]),  # number of scan lines in file
+        scan_rate=_float(line[16:21]),  # 00.00 for unknown
+        data_format=line[22],  # A for ASCII B for binary data
+        chan_cnt=_int(line[24:26]),  # number of data channels in file including dummies
+        chan_ids=line[27:47],  # id codes as described above in same order as channels
+        chan_extra=line[47:58],
+        direction=line[59],  # "U for up cast only, D for down cast only, B bot"
+        sub_interval=_int(
+            line[61:64]
+        ),  # sub sample interval, 000 if irregular stream or unknown"
+        min_depth=_int(
+            line[65:69]
+        ),  # integral min depth in file from pres or depth channel
+        max_depth=_int(
+            line[70:74]
+        ),  # integral max depth in file from pres or depth channel
+        strata_number=_int(line[75:78]),  # ground fish specified strata number
+        card_4_id=line[79],  # ,i1,4
+    )
+
+
+def _parse_pfile_header_line3(line: str) -> dict:
+    """Parse P file 3 metadata line which present environment metadata"""
+    return dict(
+        ship_code=_int(line[:2]),
+        trip=_int(line[2:5]),
+        station=_int(line[5:8]),
+        cloud=_int(line[9]),  # i1,
+        wind_dir=_int(line[11:13]) * 10,  # in 10 degree steps (eg 270 is=27)
+        wind_speed_knots=_int(line[14:16]),  # i2,knots s= cale
+        ww_code=_int(line[17:19]),  # i2,
+        pressure_bars=_float(line[20:26]),  # pressure mil-= bars
+        air_dry_temp_celsius=_float(line[27:32]),  # f5.1,tem= p °C
+        air_wet_temp_celsius=_float(line[33:38]),  # f5.1,tem= p °C
+        waves_period=_int(line[39:41]),  # i2,
+        waves_height=_int(line[42:44]),  # i2,
+        swell_dir=_int(line[45:47]),  # i2,
+        swell_period=_int(line[48:50]),  # i2,
+        swell_height=_int(line[51:53]),  # i2,
+        ice_conc=_int(line[54]),  # i1,
+        ice_stage=_int(line[56]),  # i1,
+        ice_bergs=_int(line[58]),  # i1,
+        ice_SandT=_int(line[60]),  # i1,
+        card_8_id=_int(line[79]),  # i1 ,=8
+    )
 
 
 def _get_dtype(var):
@@ -49,83 +143,29 @@ def _parse_channel_stats(lines: list) -> dict:
     return {item["name"]: {"actual_range": _get_range(item)} for item in spans}
 
 
-def _parse_history(lines: list) -> dict:
-    # TODO convert history to cf format: 2022-02-02T00:00:00Z - ...
+def _get_ship_code_metadata(shipcode: int) -> dict:
+    if shipcode in p_file_shipcode.index:
+        return p_file_shipcode.loc[p_file_shipcode].to_dict()
+    logger.warning("Unknown p-file shipcode=%s", shipcode)
     return {}
 
 
-# TODO Name every fields present within the file header
-""" from 56001001.p2022
-NAFC_Y2K_HEADER
-56001001  47 32.80 -052 35.20 2022-04-10 14:06 0176 S1460 001 V S27-01         1
-56001001 002260  8.00 A 13 #PTCSMOFLHXAW-------            D 000 0001 0173 000 4
-56001001 7 08 02    0999.1 003.8       08 01 18 10 01                          8
--- CHANNEL STATS -->
-"""
-metatadata_items = (
-    (
-        "56001001",
-        "lat_deg",
-        "lat_min",
-        "lon_deg",
-        "lon_min",
-        "date",
-        "time",
-        "?0176",
-        "?S1460",
-        "?V",
-        "?S27-01",
-        "1",
-    ),
-    (
-        "56001001",
-        "?002260",
-        "?8.00",
-        "?A",
-        "?13",
-        "?#PTCSMOFLHXAW-------",
-        "?D",
-        "?000",
-        "?0001",
-        "?0173",
-        "?000",
-        "?4",
-    ),
-    (
-        "56001001",
-        "?7",
-        "?08",
-        "?02",
-        "?0999.1",
-        "?003.8",
-        "?08",
-        "?01",
-        "?18",
-        "?10",
-        "?01",
-        "?8",
-    ),
-)
-
-
-def _parse_metadata_header(header_lines: list) -> dict:
-    """Parse the three metadata lines present within the p files"""
-    assert len(header_lines) == 3, "expected 3 separate lines"
-    metadata = {}
-    for names, values in zip(metatadata_items, header_lines):
-        metadata.update(**dict(zip(names, re.split("\s+", values))))
-
-    # Transform some of the fields to main standards
-    metadata["datetime"] = pd.to_datetime(
-        f"{metadata.pop('date')} {metadata.pop('time')}", format="%Y-%m-%d %H:%M"
-    )  # UTC?
-    metadata["latitude"] = (
-        float(metadata.pop("lat_deg")) + float(metadata.pop("lat_min")) / 60
+def _pfile_history_to_cf(lines: list) -> dict:
+    # TODO convert history to cf format: 2022-02-02T00:00:00Z - ...
+    history_timestamp = re.search(
+        "-- HISTORY --> (\w+ \w+ \d+ \d{2}:\d{2}:\d{2} \d{4})", lines[0]
     )
-    metadata["longitude"] = (
-        float(metadata.pop("lon_deg")) + float(metadata.pop("lon_min")) / 60
+    if not history_timestamp:
+        logger.error("Failed to retrieve the history associated timestamp from header")
+        return "".join(lines)
+    iso_timestamp = (
+        pd.to_datetime(history_timestamp[1], format="%a %B %d %H:%M:%S %Y", utc=True)
+        .isoformat()
+        .replace("+00:00", "Z")
     )
-    return metadata
+    return "".join([f"{iso_timestamp} - {line}" for line in lines[1:]])
+
+    return "".join(history)
 
 
 def parser(file: str, encoding="UTF-8") -> xr.Dataset:
@@ -137,6 +177,18 @@ def parser(file: str, encoding="UTF-8") -> xr.Dataset:
     Returns:
         xr.Dataset
     """
+
+    def _get_variable_vocabulary(variable: str) -> dict:
+        matching_vocabulary = p_file_vocabulary.query(
+            f"p_name == '{variable}' and "
+            f"(matching_instrument.isna() or "
+            f"matching_instrument in '{ds.attrs.get('instrument','')}' )"
+        )
+        if matching_vocabulary.empty:
+            logger.warning("No vocabulary is available for variable=%s", variable)
+            return []
+        return matching_vocabulary.to_dict(orient="records")
+
     line = None
     header = {}
     section = None
@@ -171,18 +223,44 @@ def parser(file: str, encoding="UTF-8") -> xr.Dataset:
 
     # Convert dataframe to an xarray and populate information
     ds = df.to_xarray()
-    ds.attrs.update(global_attributes)
-    ds.attrs.update(_parse_metadata_header(metadata_lines[1:]))
+    ds.attrs.update(
+        {
+            **global_attributes,
+            **_parse_pfile_header_line1(metadata_lines[1]),
+            **_parse_pfile_header_line2(metadata_lines[2]),
+            **_parse_pfile_header_line3(metadata_lines[3]),
+            "history": header.get("HISTORY"),
+        }
+    )
     ds.attrs["original_header"] = "\n".join(original_header)
-    ds.attrs["history"] = header.get("HISTORY")
-    # TODO bring more attributes from the file header
+    ds.attrs["history"] = _pfile_history_to_cf(header.get("HISTORY"))
+    ds.attrs.update(_get_ship_code_metadata(ds.attrs.get("ship_code", {})))
 
-    # Populate variable attributes
+    # Move coordinates to variables:
+    coords = ["time", "latitude", "longitude"]
+    for coord in coords:
+        ds[coord] = ds.attrs[coord]
+    ds = ds.set_coords(coords)
+
+    # Populate variable attributes base on vocabulary
     variables_span = _parse_channel_stats(header.get("CHANNEL STATS"))
+    apply_vocab = {}
     for var in ds:
-        ds[var].attrs.update(
-            {**variables_attributes.get(var, {}), **variables_span.get(var, {})}
+        apply_vocab.update(
+            {
+                (vocab.pop("variable_name") or vocab["p_name"]): {
+                    "apply": lambda x: x[var],
+                    "attrs": {**variables_span[var], **vocab, "source": var},
+                }
+                for vocab in _get_variable_vocabulary(var)
+            }
         )
-        if var not in variables_attributes:
-            logger.warning("unknow variable %s", var)
+    ds = ds.assign({name: items["apply"] for name, items in apply_vocab.items()})
+    for new_var, items in apply_vocab.items():
+        ds[new_var].attrs.update(items["attrs"])
+
+    # TODO Add newly generated variables to history
+
+    # Drop not vocabulary related variables
+    ds = ds.drop_vars([var for var in ds.variables if var not in apply_vocab])
     return ds

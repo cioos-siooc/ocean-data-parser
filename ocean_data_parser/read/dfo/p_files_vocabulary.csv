@@ -1,0 +1,24 @@
+p_name,matching_instrument,seabird_name,long_name,units,variable_name
+scan,,scan,Scan Count,,scan
+pres,,prDM,"Pressure, Digiquartz",db,PRESPR01
+temp,,t090C,Temperature,"ITS-90, deg C",TEMPS901
+temp2,,t190C,"Temperature, 2","ITS-90, deg C",TEMPS902
+cond,,c0S/m,Conductivity,S/m,COND
+cond2,,c1S/m,"Conductivity, 2",S/m,COND2
+pH,,ph,pH,,pH
+flor,,fl,Fluorescence,mg/m^3,FLOR
+flor,WET Labs ECO-AFL/FL,flECO-AFL,"Fluorescence, WET Labs ECO-AFL/FL",mg/m^3,
+flor,Chelsea Aqua 3 Chl Con,flC,"Fluorescence, Chelsea Aqua 3 Chl Con",ug/l,
+wet,,wetCDOM,"Fluorescence, WET Labs CDOM",mg/m^3,
+par,,par,PAR,uEinsteins/m^2/sec,
+par,Satlantic,par/sat/log,"PAR/Logarithmic, Satlantic",umol photons/m^2/sec,
+par,Biospherical/Licor,par,"PAR/Irradiance, Biospherical/Licor",uEinsteins/m^2/sec,
+tra,,CStarAt0,"Beam Attenuation, WET Labs C-Star",1/m,
+trp,,CStarTr0,"Beam Transmission, WET Labs C-Star",%,
+oxy,,sbeox0ML/L,"Oxygen, SBE 43",ml/l,
+oxy2,,sbeox1ML/L,"Oxygen, SBE 43, 2",ml/l,
+sal,,sal00,"Salinity, Practical",PSU,
+sal2,,sal11,"Salinity, Practical, 2",PSU,
+sig,,sigma-t00,Density,"sigma-t, kg/m^3",
+sig2,,sigma-t11,"Density, 2","sigma-t, kg/m^3",
+oxypsat,,oxsatML/L,"Oxygen Saturation, Weiss",ml/l,
