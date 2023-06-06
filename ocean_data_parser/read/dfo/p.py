@@ -12,9 +12,9 @@ import xarray as xr
 
 logger = logging.getLogger(__name__)
 MODULE_PATH = Path(__file__).parent
-p_file_vocabulary = pd.read_csv(MODULE_PATH / "p_files_vocabulary.csv").replace(
-    {"variable_name": {np.nan: None}}
-)
+p_file_vocabulary = pd.read_csv(
+    MODULE_PATH / ".." / "vocabularies" / "dfo_p_files_vocabulary.csv"
+).replace({"variable_name": {np.nan: None}})
 p_file_shipcode = pd.read_csv(
     MODULE_PATH / "NL_BPO_shipcodes.csv", skiprows=[1]
 ).set_index("Code")
