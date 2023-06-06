@@ -120,12 +120,18 @@ def read(filename, encoding_format="Windows-1252"):
         value = re.sub(r"^'|,$|',$|'$", "", value)
 
         # Convert numerical values to float and integers
-        if re.match(r"[-+]{0,1}\d+\.\d+$", value):
+        if "LATITUDE" in key and value == "-99.9":
+            return None
+        elif "LONGITUDE" in key and value == "-999.9":
+            return None
+        elif re.match(r"[-+]{0,1}\d+\.\d+$", value):
             return float(value)
         elif re.match(r"[-+]{0,1}\d*\.\d+[ED][+-]\d+$", value):
             return float(value.replace("D", "E"))
         elif re.match(r"[-+]{0,1}\d+$", value):
             return int(value)
+        elif value == "17-NOV-1858 00:00:00.00":
+            return pd.NaT
         elif re.match(r"^\d{1,2}-\w\w\w\-\d\d\d\d\s*\d\d:\d\d:\d\d\.*\d*$", value):
             try:
                 return _convert_odf_time(value)
@@ -258,19 +264,7 @@ def read(filename, encoding_format="Windows-1252"):
         raise RuntimeError(
             f"{len(data_raw.columns)}/{len(metadata['PARAMETER_HEADER'])} variables were detected"
         )
-
-    # Make sure that timezone is UTC, GMT or None
-    # (This may not be necessary since we're looking at the units later now)
-    if time_columns:
-        for parm in time_columns:
-            units = metadata["variable_attributes"][parm].get(
-                ORIGINAL_PREFIX_VAR_ATTRIBUTE + "UNITS"
-            )
-            if units not in [None, "none", "(none)", "GMT", "UTC", "seconds"]:
-                logger.warning(
-                    "%s: %s has UNITS (timezone) of %s", filename, parm, units
-                )
-
+    
     return metadata, data_raw
 
 
