@@ -45,7 +45,7 @@ class GF3Code:
         self.name = f"{self.code}_{self.index:02}" if index else self.code
 
 
-def _convert_odf_time(time_string, time_zone=timezone.utc):
+def _convert_odf_time(time_string):
     """Convert ODF timestamps to a datetime object"""
     if time_string == "17-NOV-1858 00:00:00.00":
         return pd.NaT
@@ -55,14 +55,34 @@ def _convert_odf_time(time_string, time_zone=timezone.utc):
     )
     if delta_time.total_seconds() > 0:
         time_string = re.sub(r":60.0+", ":00.00", time_string)
+
+    # Detect time format
     if re.match(r"\d+-\w\w\w-\d\d\d\d\s*\d+\:\d\d\:\d\d\.\d+", time_string):
-        time = datetime.strptime(time_string, r"%d-%b-%Y %H:%M:%S.%f") + delta_time
+        time_format = r"%d-%b-%Y %H:%M:%S.%f"
     elif re.match(r"\d\d-\w\w\w-\d\d\d\d\s*\d\d\:\d\d\:\d\d", time_string):
-        time = datetime.strptime(time_string, r"%d-%b-%Y %H:%M:%S") + delta_time
+        time_format = r"%d-%b-%Y %H:%M:%S"
     else:
         logger.warning("Unknown time format: %s", time_string)
-        time = pd.to_datetime(time_string).to_pydatetime() + delta_time
-    return time.replace(tzinfo=time_zone)
+        time_format = "infer"
+
+    # Conver to datetime object
+    time = (
+        pd.to_datetime(time_string, format=time_format, utc=True, errors="coerce")
+        + delta_time
+    )
+    if time is pd.NaT and time_string:
+        logger.warning(
+            "Failed to parse the timestamp=%s, it will be replaced by NaT", time_string
+        )
+
+    # Check if time is valid
+    if time < pd.to_datetime("1990-Jan-01", format="%Y-%b-%d", utc=True):
+        logger.warning(
+            "Time stamp '%s' = %s is before 1900-01-01 which is very suspicious",
+            time_string,
+            time,
+        )
+    return time
 
 
 def history_input(comment, date=datetime.now(timezone.utc)):
@@ -264,7 +284,7 @@ def read(filename, encoding_format="Windows-1252"):
         raise RuntimeError(
             f"{len(data_raw.columns)}/{len(metadata['PARAMETER_HEADER'])} variables were detected"
         )
-    
+
     return metadata, data_raw
 
 
