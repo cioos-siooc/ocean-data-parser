@@ -1,5 +1,14 @@
 """
 P-files is a file format used by the DFO NewfoundLand office.
+
+According to the pfile documentation, the format is:
+
+1) NAFC_Y2K_HEADER
+2) 3 single line 80 byte headers, the formats of which is described on an attached page.
+3) A variable length block of processing history information
+4) A line of channel name identifiers
+5) A start of data flag line -- DATA --
+
 """
 
 import logging
