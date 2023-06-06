@@ -1,11 +1,8 @@
 import logging
-import os
 import re
 import unittest
-import warnings
 from glob import glob
 
-import numpy as np
 import pandas as pd
 import pytest
 import xarray as xr
@@ -368,6 +365,48 @@ class TestDFOpFiles:
     def test_dfo_nl_p(self, file):
         """Test DFO BIO ODF Parser"""
         dfo.p.parser(file)
+
+    def test_ship_code_mapping(self):
+        """Test ship code mapping"""
+        response = dfo.p._get_ship_code_metadata(55)
+        assert isinstance(response, dict)
+        assert response["ship_name"] == "Discovery"
+
+    def test_unknown_ship_code_mapping(self):
+        """Test unknown ship code mapping"""
+        response = dfo.p._get_ship_code_metadata(9999)
+        assert isinstance(response, dict)
+        assert "ship_name" not in response
+
+    @pytest.mark.parametrize(
+        "line",
+        [
+            "56001001  47 32.80 -052 35.20 2022-04-10 14:06 0176 S1460 001 V S27-01         1"
+        ],
+    )
+    def test_p_file_metadata_parser_line1(self, line):
+        response = dfo.p._parse_pfile_header_line1(line)
+        assert isinstance(response, dict)
+
+    @pytest.mark.parametrize(
+        "line",
+        [
+            "56001001 002260  8.00 A 13 #PTCSMOFLHXAW-------            D 000 0001 0173 000 4"
+        ],
+    )
+    def test_p_file_metadata_parser_line2(self, line):
+        response = dfo.p._parse_pfile_header_line2(line)
+        assert isinstance(response, dict)
+
+    @pytest.mark.parametrize(
+        "line",
+        [
+            "56001001 7 08 02    0999.1 003.8       08 01 18 10 01                          8"
+        ],
+    )
+    def test_p_file_metadata_parser_line3(self, line):
+        response = dfo.p._parse_pfile_header_line3(line)
+        assert isinstance(response, dict)
 
 
 class BlueElectricParsertest(unittest.TestCase):
