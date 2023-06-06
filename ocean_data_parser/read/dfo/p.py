@@ -214,8 +214,8 @@ def parser(file: str, encoding="UTF-8") -> xr.Dataset:
     def _get_variable_vocabulary(variable: str) -> dict:
         matching_vocabulary = p_file_vocabulary.query(
             f"p_name == '{variable}' and "
-            f"(matching_instrument.isna() or "
-            f"matching_instrument in '{ds.attrs.get('instrument','')}' )"
+            f"(accepted_instrument.isna() or "
+            f"accepted_instrument in '{ds.attrs.get('instrument','')}' )"
         )
         if matching_vocabulary.empty:
             logger.warning("No vocabulary is available for variable=%s", variable)

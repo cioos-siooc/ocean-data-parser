@@ -1,4 +1,4 @@
-p_name,matching_instrument,seabird_name,long_name,units,variable_name
+p_name,accepted_instruments,seabird_name,long_name,units,variable_name
 scan,,scan,Scan Count,,scan
 pres,,prDM,"Pressure, Digiquartz",db,PRESPR01
 temp,,t090C,Temperature,"ITS-90, deg C",TEMPS901
