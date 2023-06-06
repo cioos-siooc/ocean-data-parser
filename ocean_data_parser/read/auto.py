@@ -50,6 +50,8 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
         parser = "geojson"
     elif ext == "int" and "% Cruise_Number:" in header:
         parser = "amundsen.int_format"
+    elif ext[0] == "p" and "NAFC_Y2K_HEADER" in header:
+        parser = "dfo.p.parser"
     elif ext == "ODF" and re.search(r"COUNTRY_INSTITUTE_CODE\s*=\s*1810", header):
         parser = "dfo.odf.bio_odf"
     elif (
@@ -75,6 +77,8 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
         parser = "sunburst.superCO2_notes"
     elif ext == "txt" and "CO2 surface underway data" in header:
         parser = "sunburst.superCO2"
+    elif all(re.search(r"\$\w+,", row) for row in header.split("\n") if row):
+        parser = "nmea.file"
     else:
         logger.error("Unable to match file to a specific data parser")
         return
