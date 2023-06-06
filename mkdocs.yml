@@ -5,7 +5,7 @@ theme:
   favicon: images/logo.svg
   palette:
     # Palette toggle for light mode
-    - media: '(prefers-color-scheme: light)'
+    - media: "(prefers-color-scheme: light)"
       scheme: default
       toggle:
         icon: material/brightness-7
@@ -14,7 +14,7 @@ theme:
       accent: blue
 
     # Palette toggle for dark mode
-    - media: '(prefers-color-scheme: dark)'
+    - media: "(prefers-color-scheme: dark)"
       scheme: slate
       toggle:
         icon: material/brightness-4
@@ -37,7 +37,7 @@ plugins:
       canonical_version: main
   - mkdocs-simple-hooks:
       hooks:
-        on_pre_build: 'docs.scripts.hooks:on_pre_build'
+        on_pre_build: "docs.scripts.hooks:on_pre_build"
 
 nav:
   - Welcome: index.md
@@ -53,7 +53,6 @@ nav:
   - Data Parsers:
       - Amundsen: read/amundsen-hook.md
       - Fisheries And Ocean Canada:
-          - read/dfo/index.md
           - ODF: read/dfo/odf-hook.md
           - IOS Shell: read/dfo/ios-hook.md
       - ElectricBlue: read/electricblue.md
@@ -65,6 +64,8 @@ nav:
       - Star-Oddi: read/star-oddi.md
       - SunBurst: read/sunburst.md
       - Van Essen Instruments: read/van-essen-intruments.md
+  - CLI:
+      - Compile NetCDFs: CLI/compile-netcdf.md
 
 extra:
   version:
