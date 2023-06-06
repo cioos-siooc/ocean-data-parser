@@ -34,6 +34,7 @@ global_odf_to_cf = {
     "date_issued": "event_orig_creation_date",
 }
 
+
 def _generate_platform_attributes(platform, reference_platforms):
     """Review ODF CRUISE_HEADER:PLATFORM and match to closest"""
     if reference_platforms is None:
@@ -341,16 +342,17 @@ def _generate_program_specific_attritutes(global_attributes):
     else:
         return {}
 
+
 def _map_odf_to_cf_globals(attrs):
     """Map ODF attributes cf names
 
     Args:
         attrs (dict): parsed global attributes
 
-    Returns:            
+    Returns:
         dict: attrs with keys renamed to match cf convention
     """
-    return {global_odf_to_cf.get(name,name):value for name,value in attrs.items()}
+    return {global_odf_to_cf.get(name, name): value for name, value in attrs.items()}
 
 
 def global_attributes_from_header(dataset, odf_header, config=None):
@@ -402,11 +404,7 @@ def global_attributes_from_header(dataset, odf_header, config=None):
                     "GENERAL_CAL_HEADER",
                 )
             },
-            "date_created": pd.Timestamp.utcnow(),
-            "date_modified": odf_header["EVENT_HEADER"]["CREATION_DATE"],
-            "date_issued": odf_header["EVENT_HEADER"]["ORIG_CREATION_DATE"],
             **_generate_cf_history_from_odf(odf_header),
-            "comments": odf_header["EVENT_HEADER"].get("EVENT_COMMENTS"),
             "original_odf_header": "\n".join(odf_header["original_header"]),
             "original_odf_header_json": json.dumps(
                 odf_original_header, ensure_ascii=False, indent=False, default=str
