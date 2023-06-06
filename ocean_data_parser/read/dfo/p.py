@@ -178,6 +178,20 @@ def parser(file: str, encoding="UTF-8") -> xr.Dataset:
         xr.Dataset
     """
 
+    def _check_ship_trip_stn():
+        """Review if the ship,trip,stn string is the same
+        accorss the 3 metadata rows
+        """
+        ship_trip_stn = [line[:9] for line in metadata_lines[1:]]
+        if len(set(ship_trip_stn)) != 1:
+            logger.error(
+                "Ship,trip,station codes do not match" " in the header metadata: %s",
+                ship_trip_stn,
+            )
+            raise RuntimeError(
+                "Ship,trip,station codes do not match" " in the header metadata"
+            )
+
     def _get_variable_vocabulary(variable: str) -> dict:
         matching_vocabulary = p_file_vocabulary.query(
             f"p_name == '{variable}' and "
@@ -216,6 +230,9 @@ def parser(file: str, encoding="UTF-8") -> xr.Dataset:
 
         # Read data section
         df = pd.read_fwf(file_handle)
+
+    # Review metadata
+    _check_ship_trip_stn()
 
     # Get column names and define data types
     df.columns = re.split(r"\s+", previous_line.strip())
