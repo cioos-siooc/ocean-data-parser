@@ -368,7 +368,7 @@ def global_attributes_from_header(dataset, odf_header, config=None):
     def _get_global_name(section, name):
         prefix = section_prefix.get(section, "")
         return (
-            (name if name.startswith(prefix) else f"{prefix}{name}")
+            (name if name.lower().startswith(prefix) else f"{prefix}{name}")
             .lower()
             .replace("date_time", "time")
             .replace("inst_", "")
