@@ -242,6 +242,10 @@ def parser(file: str, encoding="UTF-8") -> xr.Dataset:
         df = pd.read_fwf(file_handle)
 
     # Review metadata
+    if metadata_lines[0] == "NAFC_Y2K_HEADER":
+        raise RuntimeError(
+            "File header doesn't contain pfile first line 'NAFC_Y2K_HEADER'"
+        )
     _check_ship_trip_stn()
 
     # Get column names and define data types
