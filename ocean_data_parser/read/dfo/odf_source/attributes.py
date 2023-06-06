@@ -28,6 +28,11 @@ section_prefix = {
     "INSTRUMENT_HEADER": "instrument_",
 }
 
+global_odf_to_cf = {
+    "event_comments": "comments",
+    "date_modified": "event_creation_date",
+    "date_issued": "event_orig_creation_date",
+}
 
 def _generate_platform_attributes(platform, reference_platforms):
     """Review ODF CRUISE_HEADER:PLATFORM and match to closest"""
@@ -227,28 +232,6 @@ def _review_station(global_attributes, odf_header):
     return _standardize_station_names(station)
 
 
-def _review_time_attributes(value, attr):
-    """Review time attributesw which should be:
-    - Parsed and converted to datetime
-    - > 1900-01-01
-    """
-    # Review attributes format
-    if value in (None, pd.NaT, ""):
-        return pd.NaT
-    if not isinstance(value, datetime):
-        logger.warning(
-            "Failed to convert timestamp %s: %s",
-            attr,
-            value,
-        )
-        return pd.NaT
-    elif value < pd.Timestamp(1900, 1, 1).tz_localize("UTC"):
-        logger.warning(
-            "%s = %s is before 1900-01-01 which is very suspicious", attr, value
-        )
-    return value
-
-
 def _generate_instrument_attributes(odf_header, instrument_manufacturer_header=None):
     """
     Generate instrument attributes based on:
@@ -358,6 +341,17 @@ def _generate_program_specific_attritutes(global_attributes):
     else:
         return {}
 
+def _map_odf_to_cf_globals(attrs):
+    """Map ODF attributes cf names
+
+    Args:
+        attrs (dict): parsed global attributes
+
+    Returns:            
+        dict: attrs with keys renamed to match cf convention
+    """
+    return {global_odf_to_cf.get(name,name):value for name,value in attrs.items()}
+
 
 def global_attributes_from_header(dataset, odf_header, config=None):
     """
@@ -400,6 +394,13 @@ def global_attributes_from_header(dataset, odf_header, config=None):
                 for key, value in (
                     subset if isinstance(subset, dict) else {section: subset}
                 ).items()
+                if section
+                not in (
+                    "HISTORY_HEADER",
+                    "PARAMETER_HEADER",
+                    "QUALITY_HEADER",
+                    "GENERAL_CAL_HEADER",
+                )
             },
             "date_created": pd.Timestamp.utcnow(),
             "date_modified": odf_header["EVENT_HEADER"]["CREATION_DATE"],
@@ -421,10 +422,13 @@ def global_attributes_from_header(dataset, odf_header, config=None):
     )
     # Apply global attributes corrections
     dataset.attrs.update(
-        _generate_instrument_attributes(
-            odf_header, dataset.attrs.get("instrument_manufacturer_header")
-        )
+        {
+            **_generate_instrument_attributes(
+                odf_header, dataset.attrs.get("instrument_manufacturer_header")
+            ),
+        }
     )
+    dataset.attrs = _map_odf_to_cf_globals(dataset.attrs)
     dataset.attrs.update(_get_attribute_mapping_corrections())
 
     # Generate attributes from other attributes

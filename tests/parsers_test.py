@@ -23,7 +23,7 @@ from ocean_data_parser.read import (
     sunburst,
     van_essen_instruments,
     auto,
-    utils
+    utils,
 )
 
 logging.basicConfig(level=logging.DEBUG)
