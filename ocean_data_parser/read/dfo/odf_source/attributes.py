@@ -374,12 +374,6 @@ def global_attributes_from_header(dataset, odf_header, config=None):
             .replace("inst_", "")
         )
 
-    def _review_latitude(value):
-        return value if value != -99.9 else None
-
-    def _review_longitude(value):
-        return value if value != -999.9 else None
-
     def _get_attribute_mapping_corrections():
         return {
             attr: attr_mapping[dataset.attrs[attr]]
