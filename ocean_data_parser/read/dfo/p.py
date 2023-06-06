@@ -120,6 +120,8 @@ def _get_dtype(var):
 
 
 def _parse_channel_stats(lines: list) -> dict:
+    """Parse p file CHANNEL STATISTIC header section to cf variable dictionary"""
+
     def _get_range(attrs: dict) -> tuple:
         """Convert range to the variable dtype"""
         dtype = _get_dtype(attrs["name"])
@@ -145,13 +147,23 @@ def _parse_channel_stats(lines: list) -> dict:
 
 def _get_ship_code_metadata(shipcode: int) -> dict:
     if shipcode in p_file_shipcode.index:
-        return p_file_shipcode.loc[p_file_shipcode].to_dict()
+        return p_file_shipcode.loc[shipcode].to_dict()
     logger.warning("Unknown p-file shipcode=%s", shipcode)
     return {}
 
 
-def _pfile_history_to_cf(lines: list) -> dict:
-    # TODO convert history to cf format: 2022-02-02T00:00:00Z - ...
+def _pfile_history_to_cf(lines: list) -> str:
+    """Convert history to cf format: 2022-02-02T00:00:00Z - ...
+
+    Args:
+        lines (list): p file history list of strings
+
+    Returns:
+        str:
+    """
+
+    # """Convert history to cf format: 2022-02-02T00:00:00Z - ..."""
+
     history_timestamp = re.search(
         "-- HISTORY --> (\w+ \w+ \d+ \d{2}:\d{2}:\d{2} \d{4})", lines[0]
     )
@@ -164,8 +176,6 @@ def _pfile_history_to_cf(lines: list) -> dict:
         .replace("+00:00", "Z")
     )
     return "".join([f"{iso_timestamp} - {line}" for line in lines[1:]])
-
-    return "".join(history)
 
 
 def parser(file: str, encoding="UTF-8") -> xr.Dataset:
