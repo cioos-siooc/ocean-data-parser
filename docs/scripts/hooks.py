@@ -8,6 +8,18 @@ def quote_column(col):
     return "`" + col + "`"
 
 
+def get_dfo_pfile_vocab_markdown():
+    """Convert P file vocabulary to markdown table"""
+    df = pd.read_csv("ocean_data_parser/read/vocabularies/dfo_p_files_vocabulary.csv")
+    for column in ["accepted_instruments"]:
+        df[column] = quote_column(df[column])
+    with open("docs/read/dfo/p-header.md") as file_handle:
+        header = file_handle.read()
+    with open("docs/read/dfo/p-hook.md", "w") as file_handle:
+        file_handle.write(header)
+        df.replace({np.nan: ""}).to_markdown(file_handle, index=False, tablefmt="pipe")
+
+
 def get_odf_vocab_markdown():
     df = pd.read_csv(
         "ocean_data_parser/read/dfo/odf_source/references/reference_vocabulary.csv"
@@ -83,3 +95,4 @@ def on_pre_build(config, **kwargs) -> None:
     get_ios_vocab_markdown()
     get_amundsen_vocab_markdown()
     get_seabird_vocab_markdown()
+    get_dfo_pfile_vocab_markdown()

@@ -55,6 +55,7 @@ nav:
       - Fisheries And Ocean Canada:
           - ODF: read/dfo/odf-hook.md
           - IOS Shell: read/dfo/ios-hook.md
+          - P Format: read/dfo/p-hook.md
       - ElectricBlue: read/electricblue.md
       - NMEA: read/nmea.md
       - Onset: read/onset.md
