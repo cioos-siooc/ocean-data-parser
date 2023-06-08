@@ -155,9 +155,9 @@ def read(filename, encoding_format="Windows-1252"):
         value = re.sub(r"^'|,$|',$|'$", "", value)
 
         # Convert numerical values to float and integers
-        if "LATITUDE" in key and value == "-99.9":
+        if "LATITUDE" in key and "-99.9" in value:
             return None
-        elif "LONGITUDE" in key and value == "-999.9":
+        elif "LONGITUDE" in key and "-999.9" in value:
             return None
         elif re.match(r"[-+]{0,1}\d+\.\d+$", value):
             return float(value)
@@ -252,14 +252,12 @@ def read(filename, encoding_format="Windows-1252"):
             # Generate variable attributes
             metadata["variable_attributes"][var_name] = {
                 "long_name": att.get("NAME"),
-                "units": att.get("UNITS", "").replace("**", "^"),
+                "units": (att.get("UNITS") or "").replace("**", "^"),
                 "legacy_gf3_code": var_name,
                 "null_value": att["NULL_VALUE"],
-                "resolution": (
-                    10 ** -att["PRINT_DECIMAL_PLACES"]
-                    if not att["PRINT_DECIMAL_PLACES"] == -99
-                    else None
-                ),
+                "resolution": 10 ** -att["PRINT_DECIMAL_PLACES"]
+                if att["PRINT_DECIMAL_PLACES"] != -99
+                else None,
             }
             # Time type column add to time variables to parse by pd.read_csv()
             if var_name.startswith("SYTM") or att["TYPE"] == "SYTM":
