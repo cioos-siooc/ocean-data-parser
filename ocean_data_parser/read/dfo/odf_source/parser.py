@@ -155,11 +155,9 @@ def read(filename, encoding_format="Windows-1252"):
         value = re.sub(r"^'|,$|',$|'$", "", value)
 
         # Convert numerical values to float and integers
-        if "LATITUDE" in key and "-99.9" in value:
-            return None
-        elif "LONGITUDE" in key and "-999.9" in value:
-            return None
-        elif re.match(r"[-+]{0,1}\d+\.\d+$", value):
+        if re.match(r"[-+]{0,1}\d+\.\d+$", value):
+            if float(value) in (-99.9, -999.9):
+                return None
             return float(value)
         elif re.match(r"[-+]{0,1}\d*\.\d+[ED][+-]\d+$", value):
             return float(value.replace("D", "E"))
