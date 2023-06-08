@@ -296,145 +296,52 @@ def odf_flag_variables(dataset, flag_convention=None):
     over the years and map them to the CF standards.
     """
 
+    def _add_ancillary(ancillary, variable):
+        dataset[variable].attrs[
+            "ancillary_variables"
+        ] = f"{dataset[variable].attrs.get('ancillary_variables','')} {ancillary}".strip()
+        return dataset[variable]
+
     # Loop through each variables and detect flag variables
-    previous_key = None
-    for var in dataset:
-        related_variables = None
+    variables = list(dataset.variables)
 
-        # Find related variable
-        if var.startswith("QQQQ"):
-            # FLAG QQQQ should apply to previous variable
-            related_variables = [previous_key]
+    # Rename QQQQ flag convention
+    qqqq_flags = {
+        var: f"Q{variables[id-1]}"
+        for id, var in enumerate(variables)
+        if var.startswith("QQQQ")
+    }
+    if qqqq_flags:
+        dataset = dataset.rename(qqqq_flags)
+        dataset.attrs["history"] += history_input(
+            f"Rename QQQQ flags to QXXXX convention: {qqqq_flags}",
+        )
 
-            # Rename variable so that we can link by variable name
-            dataset = dataset.rename({var: f"Q{previous_key}"})
-            dataset.attrs["history"] += history_input(
-                f"Rename Parameter {var} as Q{previous_key}"
-            )
-            var = f"Q{previous_key}"
-
-        elif var.startswith(("QCFF", "FFFF")):
-            # This is a general flag
-            related_variables = [var for var in dataset if not var.startswith("Q")]
-
-        elif var.startswith("Q") and var[1:] in dataset:
-            # Q  Format is usually Q+[PCODE] of the associated variable
-            related_variables = [var[1:]]
-
+    # Add ancillary_variable attribute
+    for variable in dataset.variables:
+        if variable.startswith(("QCFF", "FFFF")):
+            # add QCFF and FFFF as ancillary variables
+            # to all non flag variables
+            for var in dataset.variables:
+                if not var.startswith("Q"):
+                    _add_ancillary(variable, var)
+        elif variable.startswith("Q") and variable[1:] in dataset:
+            dataset[variable] = _add_ancillary(variable, variable[1:])
+            dataset[variable].attrs[
+                "long_name"
+            ] = f"Quality_Flag: {dataset[variable[1:]].attrs['long_name']}"
         else:
-            # If the variable isn't a flag variable, go to the next iteration
-            # Set previous key for the next iteration
-            previous_key = var
+            # ignore normal variables
             continue
 
-        # Add flag variable to related variable ancillary_variables attribute
-        for related_variable in related_variables:
-            if "ancillary_variables" in dataset[related_variable].attrs:
-                dataset[related_variable].attrs["ancillary_variables"] += f" {var}"
-            else:
-                dataset[related_variable].attrs["ancillary_variables"] = var
+        # Add flag convention attributes
+        dataset[variable].attrs.update(
+            flag_convention.get(variable, flag_convention["default"])
+        )
+        dataset[variable] = dataset[variable].astype(int)
+        dataset[variable].attrs.pop("units", None)
 
-        # Add flag convention attributes if available within config file
-        if flag_convention:
-            # Add configuration attributes
-            if var in flag_convention:
-                dataset[var].attrs.update(flag_convention[var])
-            elif "default" in flag_convention:
-                dataset[var].attrs.update(flag_convention["default"])
-
-            # Change variable type to configuration
-            if "dtype" in dataset[var].attrs:
-                dataset[var] = dataset[var].astype(dataset[var].attrs.pop("dtype"))
-
-            # Match flag_values data type to variable data type
-            if "flag_values" in dataset[var].attrs:
-                dataset[var].attrs["flag_values"] = tuple(
-                    np.array(dataset[var].attrs["flag_values"]).astype(
-                        dataset[var].dtype
-                    )
-                )
-
-        # Drop units variable from flag variables
-        if "units" in dataset[var].attrs:
-            dataset[var].attrs.pop("units")
-
-        # Set previous key for the next iteration
-        previous_key = var
-
-    return dataset
-
-
-def fix_flag_variables(dataset):
-    """Fix different issues related to flag variables within the ODFs."""
-
-    def _replace_flag(dataset, flag_var, rename=None):
-        if flag_var not in dataset:
-            return dataset
-
-        # Find related variables to this flag
-        related_variables = [
-            var
-            for var in dataset
-            if flag_var in dataset[var].attrs.get("ancillary_variables", "")
-        ]
-
-        # Update long_name if flag is related to only one variable
-        if len(related_variables) == 1:
-            dataset[flag_var].attrs["long_name"] = (
-                FLAG_LONG_NAME_PREFIX + dataset[related_variables[0]].attrs["long_name"]
-            )
-
-        # If no rename and affects only one variable. Name it Q{related_variable}
-        if rename is None:
-            if len(related_variables) > 1:
-                logger.error(
-                    "Multiple variables are affected by %s, I'm not sure how to rename it.",
-                    flag_var,
-                )
-            rename = "Q" + related_variables[0]
-
-        # Rename or drop flag variable
-        if rename not in dataset:
-            dataset = dataset.rename({flag_var: rename})
-        elif (
-            rename in dataset
-            and (dataset[flag_var].values != dataset[rename].values).any()
-        ):
-            logger.error(
-                "%s is different than %s flag. I'm not sure which one is the right one.",
-                flag_var,
-                rename,
-            )
-        elif (
-            rename in dataset
-            and (dataset[flag_var].values == dataset[rename].values).all()
-        ):
-            dataset = dataset.drop_vars(flag_var)
-
-        # Update ancillary_variables attribute
-        for var in related_variables:
-            dataset[var].attrs["ancillary_variables"] = (
-                dataset[var].attrs["ancillary_variables"].replace(flag_var, rename)
-            )
-        return dataset
-
-    #  List of problematic flags that need to be renamed
-    temp_flag = {
-        "QTE90_01": "QTEMP_01",
-        "QTE90_02": "QTEMP_02",
-        "QFLOR_01": None,
-        "QFLOR_02": None,
-        "QFLOR_03": None,
-        "QCRAT_01": "QCNDC_01",
-        "QCRAT_02": "QCNDC_02",
-        "QTURB_01": None,
-        "QWETECOBB_01": None,
-        "QUNKN_01": None,
-        "QUNKN_02": None,
-    }
-    for flag, rename in temp_flag.items():
-        dataset = _replace_flag(dataset, flag, rename)
-
+    # TODO handle renamed variables associated flags
     return dataset
 
 
@@ -476,6 +383,14 @@ def get_vocabulary_attributes(ds, organizations=None, vocabulary=None):
         )
 
     def _get_matching_vocabularies():
+        """Match variable to vocabulary by:
+        - vocabulary
+        - gf3 code
+        - units
+        - scale
+        - long_name
+        - global instrument_type instrument_model
+        """
         # Among these matching terms find matching ones
         match_vocabulary = vocabulary["Vocabulary"].isin(organizations)
         match_code = (
@@ -637,19 +552,3 @@ def get_vocabulary_attributes(ds, organizations=None, vocabulary=None):
             f"Drop Parameters: {','.join(dropped_variables)}"
         )
     return ds[new_variable_order]
-
-
-def standardize_odf_units(unit_string):
-    """
-    Units strings were manually written within the ODF files.
-    We're trying to standardize all the different issues found.
-    """
-    if unit_string:
-        unit_string = unit_string.replace("**", "^")
-        unit_string = unit_string.replace("µ", "u")
-        unit_string = re.sub(r" /|/ ", "/", unit_string)
-        unit_string = re.sub(r" \^|\^ ", "^", unit_string)
-
-        if re.match(r"\(none\)|none|dimensionless", unit_string):
-            unit_string = "none"
-    return unit_string

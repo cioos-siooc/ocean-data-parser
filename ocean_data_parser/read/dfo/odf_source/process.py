@@ -196,15 +196,11 @@ def parse_odf(odf_path, config=None):
     dataset = geospatial.generate_geospatial_attributes(dataset, config)
 
     # Add Vocabulary attributes
-    if "vocabulary" in config:
-        dataset = odf_parser.get_vocabulary_attributes(
-            dataset,
-            organizations=config["organisationVocabulary"],
-            vocabulary=config["vocabulary"],
-        )
-
-    # Fix flag variables with some issues to map
-    dataset = odf_parser.fix_flag_variables(dataset)
+    dataset = odf_parser.get_vocabulary_attributes(
+        dataset,
+        organizations=config["organisationVocabulary"],
+        vocabulary=config["vocabulary"],
+    )
 
     # Instrument specific variables and attributes
     if dataset.attrs["instrument_manufacturer_header"].startswith("* Sea-Bird"):
