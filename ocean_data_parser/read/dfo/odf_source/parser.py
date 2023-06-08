@@ -359,6 +359,9 @@ def get_vocabulary_attributes(ds, organizations=None, vocabulary=None):
             "ITS-90": r"ITS\-90|TE90",
             "PSS-78": r"PSS\-78|practical.*salinity|psal",
         }
+        if var.startswith("TE90"):
+            ds[var].attrs["scale"] = "ITS-90"
+            return
         for scale, scale_search in scales.items():
             if re.search(
                 scale_search, ds[var].attrs.get("units"), re.IGNORECASE
@@ -432,7 +435,11 @@ def get_vocabulary_attributes(ds, organizations=None, vocabulary=None):
     # vocabulary["instrument"] = vocabulary["accepted_instrument"].str.split("|").str[0]
 
     # Find matching vocabulary
-    new_variable_order = []
+    vocabulary["apply_function"] = vocabulary["apply_function"].fillna("x")
+    new_variables_mapping = {}
+    new_variables = {}
+    new_variables_attributes = {}
+    variable_order = []
     for var in ds:
         # Ignore variables with no attributes and flag variables
         if (
@@ -441,7 +448,7 @@ def get_vocabulary_attributes(ds, organizations=None, vocabulary=None):
             or "legacy_gf3_code" not in ds[var].attrs
             or var.startswith(("QCFF", "FFFF"))
         ):
-            new_variable_order.append(var)
+            variable_order.append(var)
             continue
 
         # Retrieve standardize units and scale
@@ -457,7 +464,7 @@ def get_vocabulary_attributes(ds, organizations=None, vocabulary=None):
                 ds.attrs.get("instrument_type"),
                 ds.attrs.get("instrument_model"),
             )
-            new_variable_order.append(var)
+            variable_order.append(var)
             continue
 
         # Consider only the first organization that has this term
@@ -469,86 +476,46 @@ def get_vocabulary_attributes(ds, organizations=None, vocabulary=None):
         matching_terms = matching_terms.query(
             f"Vocabulary == '{selected_organization}'"
         )
-        gf3 = GF3Code(ds[var].attrs["legacy_gf3_code"])
-        # Generate new variables and update original variable attributes from vocabulary
-        for _, row in matching_terms.iterrows():
-            # Make a copy of original variable
-            if row["variable_name"]:
-                # Apply suffix number of original variable
-                if gf3 and gf3.code not in ("FLOR"):
-                    new_variable = update_variable_index(
-                        row["variable_name"], gf3.index
-                    )
-                else:
-                    # If variable already exist within dataset and is gf3.
-                    # Increment the trailing number until no similar named variable exist.
-                    if row["variable_name"] in ds and gf3:
-                        new_variable = None
-                        trailing_number = 2
-                        while new_variable is None or new_variable in ds:
-                            new_variable = update_variable_index(
-                                row["variable_name"], trailing_number
-                            )
-                            trailing_number += 1
-                    else:
-                        new_variable = row["variable_name"]
-
-                # Generate new variable
-                if row["apply_function"]:
-                    input_args = []
-                    extra_args = re.search(r"lambda (.*):", row["apply_function"])
-                    if extra_args:
-                        for item in extra_args[1].split(","):
-                            if item in var:
-                                input_args.append(ds[var])
-                            elif item in ds:
-                                input_args.append(ds[item])
-                            else:
-                                input_args.append(item)
-
-                    ds[new_variable] = xr.apply_ufunc(
-                        eval(row["apply_function"]), *tuple(input_args), keep_attrs=True
-                    )
-                    ds.attrs["history"] += history_input(
-                        f"Add Parameter: {new_variable} = {row['apply_function']}"
-                    )
-                else:
-                    ds[new_variable] = ds[var].copy()
-                    if var != new_variable:
-                        ds.attrs["history"] += history_input(
-                            f"Add Parameter: {new_variable} = {var}"
-                        )
-
-                new_attrs = ds[new_variable].attrs
-                new_variable_order.append(new_variable)
-            else:
-                # Apply vocabulary to original variable
-                new_attrs = ds[var].attrs
-                new_variable_order.append(var)
-
-            # Retrieve all attributes in vocabulary that have something
-            new_attrs.update(row[vocabulary_attribute_list].dropna().to_dict())
-
-            # If original data has units but vocabulary doesn't require one drop the units
-            if "units" in new_attrs and row["units"] is None:
-                new_attrs.pop("units")
-
-            # Update sdn_parameter_urn and long_name terms available
-            if (
-                "sdn_parameter_urn" in new_attrs
-                and "legacy_gf3_code" in new_attrs
-                and gf3.code not in ("FLOR")
-            ):
-                new_attrs["sdn_parameter_urn"] = update_variable_index(
-                    new_attrs["sdn_parameter_urn"], gf3.index
-                )
-                # Add index to long name if bigger than 1
-                if gf3.index > 1:
-                    new_attrs["long_name"] += f", {gf3.index}"
-
-    dropped_variables = [var for var in ds if var not in new_variable_order]
-    if dropped_variables:
-        ds.attrs["history"] += history_input(
-            f"Drop Parameters: {','.join(dropped_variables)}"
+        gf3 = GF3Code(var)
+        matching_terms["variable_name"] = (
+            matching_terms["variable_name"]
+            .fillna(var)
+            .apply(lambda x: update_variable_index(x, gf3.index))
         )
-    return ds[new_variable_order]
+        variable_order += [var] + matching_terms["variable_name"].tolist()
+
+        # Generate vocabulary variables
+        locals = {"gsw": gsw, "x": ds[var], **{item: ds[item] for item in ds.variables}}
+        new_variables_mapping.update(
+            {
+                var: f"with x={var} -> {item['apply_function']} = {item['variable_name']}"
+                if item["apply_function"] != "x"
+                else f"{var} = {item['variable_name']}"
+                for _, item in matching_terms.iterrows()
+            }
+        )
+        new_variables.update(
+            {
+                item["variable_name"]: eval(item["apply_function"], {}, locals)
+                for _, item in matching_terms.iterrows()
+            }
+        )
+        new_variables_attributes.update(
+            {
+                item["variable_name"]: {
+                    **ds[var].attrs,
+                    **item[vocabulary_attribute_list].to_dict(),
+                }
+                for _, item in matching_terms.iterrows()
+            }
+        )
+    # Include the new variables and their variable attributes
+    # TODO correct variable index>2 with no index below (FLOR)
+    ds = ds.assign(new_variables)
+    for variable, attrs in new_variables_attributes.items():
+        ds[variable].attrs = attrs
+
+    ds.attrs["history"] = history_input(
+        f"Generate new vocabulary variables: {'; '.join(new_variables_mapping.keys())}"
+    )
+    return ds[variable_order]
