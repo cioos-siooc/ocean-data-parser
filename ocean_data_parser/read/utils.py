@@ -103,6 +103,7 @@ def standardize_dataset(
                     pd.to_datetime(ds[var].values, utc=timezone_aware).tz_convert(None),
                 )
             ds[var].attrs = var_attrs
+            ds[var].attrs.pop("units", None)
             ds[var].encoding.update({"units": time_variables_encoding})
             if timezone_aware:
                 ds[var].attrs["timezone"] = "UTC"
