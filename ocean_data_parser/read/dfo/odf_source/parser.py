@@ -27,6 +27,21 @@ odf_dtypes = {
     "QQQQ": "int32",
 }
 
+vocabulary_attribute_list = [
+    "long_name",
+    "units",
+    "instrument",
+    "scale",
+    "standard_name",
+    "sdn_parameter_urn",
+    "sdn_parameter_name",
+    "sdn_uom_urn",
+    "sdn_uom_name",
+    "coverage_content_type",
+    "ioos_category",
+    "comments",
+]
+
 # Commonly date place holder used within the ODF file
 FLAG_LONG_NAME_PREFIX = "Quality_Flag: "
 ORIGINAL_PREFIX_VAR_ATTRIBUTE = "original_"
@@ -429,7 +444,8 @@ def get_vocabulary_attributes(ds, organizations=None, vocabulary=None):
     matching vocabulary terms available.
     """
 
-    def detect_reference_scale(variable_name, attributes):
+    def _add_reference_scale():
+        """Retrieve scale information from  either units or long_name"""
         scales = {
             "IPTS-48": r"IPTS\-48",
             "IPTS-68": r"IPTS\-68|ITS\-68",
@@ -437,15 +453,10 @@ def get_vocabulary_attributes(ds, organizations=None, vocabulary=None):
             "PSS-78": r"PSS\-78|practical.*salinity|psal",
         }
         for scale, scale_search in scales.items():
-            if re.search(scale_search, variable_name, re.IGNORECASE):
-                return scale
-
-            for _, value in attributes.items():
-                if isinstance(value, str) and re.search(
-                    scale_search, value, re.IGNORECASE
-                ):
-                    return scale
-        return None
+            if re.search(
+                scale_search, ds[var].attrs.get("units"), re.IGNORECASE
+            ) or re.search(scale_search, ds[var].attrs.get("long_name"), re.IGNORECASE):
+                ds[var].attrs["scale"] = scale
 
     def _review_term(term, accepted_terms, regexp=False, search_flag=None):
         """
@@ -455,59 +466,50 @@ def get_vocabulary_attributes(ds, organizations=None, vocabulary=None):
         - unknown if unit exists but the "accepted_units" input is empty.
         - False if not matching units
         """
-        if accepted_terms is None:
-            # No required term
-            return True
+        return bool(
+            accepted_terms is None
+            or any(
+                item in accepted_terms.split("|")
+                for item in ("none", "dimensionless", term)
+            )
+            or (regexp and re.search(accepted_terms, term, search_flag))
+        )
 
-        accepted_units_list = accepted_terms.split("|")
-        if any(unit in ["none", "dimensionless"] for unit in accepted_units_list):
-            # Include unitless data
-            return True
-        elif term in accepted_units_list:
-            # Match exactely one of the listed terms
-            return True
-        elif regexp and re.search(accepted_terms, term, search_flag):
-            # Match expected term
-            return True
-        else:
-            # term do not match expected terms
-            return False
-
-    def _match_term(units, scale, variable_instrument, global_instrument):
+    def _get_matching_vocabularies():
         # Among these matching terms find matching ones
-        match_units = matching_terms["accepted_units"].apply(
-            lambda x: _review_term(units, x)
+        match_vocabulary = vocabulary["Vocabulary"].isin(organizations)
+        match_code = (
+            vocabulary["name"] == ds[var].attrs["legacy_gf3_code"].split("_")[0]
         )
-        match_scale = matching_terms["accepted_scale"].apply(
-            lambda x: _review_term(scale, x)
+        match_units = vocabulary["accepted_units"].apply(
+            lambda x: _review_term(ds[var].attrs.get("units"), x)
         )
-        match_instrument = matching_terms["accepted_instruments"].apply(
+        match_scale = vocabulary["accepted_scale"].apply(
+            lambda x: _review_term(ds[var].attrs.get("scale"), x)
+        )
+        match_instrument = vocabulary["accepted_instruments"].apply(
             lambda x: _review_term(
-                variable_instrument, x, regexp=True, search_flag=re.IGNORECASE
+                ds[var].attrs.get("long_name"),
+                x,
+                regexp=True,
+                search_flag=re.IGNORECASE,
             )
         )
-        match_instrument_global = matching_terms["accepted_instruments"].apply(
+        match_instrument_global = vocabulary["accepted_instruments"].apply(
             lambda x: _review_term(
-                global_instrument, x, regexp=True, search_flag=re.IGNORECASE
+                f"{ds.attrs.get('instrument_type')} {ds.attrs.get('instrument_model')}".strip(),
+                x,
+                regexp=True,
+                search_flag=re.IGNORECASE,
             )
         )
-        return match_units & match_scale & (match_instrument | match_instrument_global)
-
-    # Define vocabulary default list of variables to import as attributes
-    vocabulary_attribute_list = [
-        "long_name",
-        "units",
-        "instrument",
-        "scale",
-        "standard_name",
-        "sdn_parameter_urn",
-        "sdn_parameter_name",
-        "sdn_uom_urn",
-        "sdn_uom_name",
-        "coverage_content_type",
-        "ioos_category",
-        "comments",
-    ]
+        return vocabulary.loc[
+            match_vocabulary
+            & match_code
+            & match_units
+            & match_scale
+            & (match_instrument | match_instrument_global)
+        ]
 
     # Generate Standardized Attributes from vocabulary table
     # # The very first item in the expected columns is the main term to use
@@ -519,7 +521,7 @@ def get_vocabulary_attributes(ds, organizations=None, vocabulary=None):
     for var in ds:
         # Ignore variables with no attributes and flag variables
         if (
-            ds[var].attrs == {}
+            not ds[var].attrs
             or "flag_values" in ds[var].attrs
             or "legacy_gf3_code" not in ds[var].attrs
             or var.startswith(("QCFF", "FFFF"))
@@ -528,22 +530,14 @@ def get_vocabulary_attributes(ds, organizations=None, vocabulary=None):
             continue
 
         # Retrieve standardize units and scale
-        scale = detect_reference_scale(var, ds[var].attrs)
-        if scale:
-            # Add scale to to scale attribute
-            ds[var].attrs["scale"] = scale
-
-        # Find matching vocabulary for that GF3 Code
-        gf3 = GF3Code(ds[var].attrs["legacy_gf3_code"])
-        matching_terms = vocabulary.query(
-            f"Vocabulary in {tuple(organizations)} and name == @gf3.code"
-        )
+        _add_reference_scale()
+        matching_terms = _get_matching_vocabularies()
 
         # If nothing matches, move to the next one
         if matching_terms.empty:
             logger.warning(
                 "No matching vocabulary term is available for variable %s: %s and instrument: {'type':%s,'model':%s}",
-                gf3.name,
+                ds[var].attrs["legacy_gf3_code"],
                 ds[var].attrs,
                 ds.attrs.get("instrument_type"),
                 ds.attrs.get("instrument_model"),
@@ -552,37 +546,17 @@ def get_vocabulary_attributes(ds, organizations=None, vocabulary=None):
             continue
 
         # Consider only the first organization that has this term
-        selected_organization = matching_terms.index.values[0][0]
-        matching_terms = matching_terms.loc[matching_terms.index.values[0][0]]
-
-        # Among these matching terms find matching ones
-        match_result = _match_term(
-            ds[var].attrs.get("units", "none"),
-            ds[var].attrs.get("scale"),
-            ds[var].attrs["long_name"],
-            (
-                f"{ds.attrs.get('instrument_type','')} {ds.attrs.get('instrument_model',)}"
-            ).strip(),
+        selected_organization = [
+            organization
+            for organization in organizations
+            if organization in matching_terms["Vocabulary"].tolist()
+        ][0]
+        matching_terms = matching_terms.query(
+            f"Vocabulary == '{selected_organization}'"
         )
-
-        # Select only the terms that matches all the units/scale/instrument conditions
-        matching_terms_and_units = matching_terms.loc[match_result]
-
-        # No matching term, give a warning if not a flag and move on to the next iteration
-        if len(matching_terms_and_units) == 0:
-            logger.warning(
-                "No Matching unit found in vocabulary %s for code: %s: %s and odf instrument: {'type':%s,'model':%s}",
-                var,
-                ({att: ds[var].attrs[att] for att in ["long_name", "units"]}),
-                selected_organization,
-                ds.attrs.get("instrument_type"),
-                ds.attrs.get("instrument_model"),
-            )
-            new_variable_order.append(var)
-            continue
-
+        gf3 = GF3Code(ds[var].attrs["legacy_gf3_code"])
         # Generate new variables and update original variable attributes from vocabulary
-        for _, row in matching_terms_and_units.iterrows():
+        for _, row in matching_terms.iterrows():
             # Make a copy of original variable
             if row["variable_name"]:
                 # Apply suffix number of original variable
