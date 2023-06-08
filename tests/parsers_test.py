@@ -53,7 +53,7 @@ def compare_xarray_datasets(ds1: xr.Dataset, ds2: xr.Dataset, **kwargs) -> list:
     return list(difflib.unified_diff(ds1_info, ds2_info, **kwargs))
 
 
-def compare_test_to_reference_netcdf(test: xr.Dataset, reference: xr.Dataset):
+def compare_test_to_reference_netcdf(reference: xr.Dataset, test: xr.Dataset):
     def standardize_attributes(value):
         if isinstance(value, str):
             value = value.strip()
@@ -383,7 +383,7 @@ def test_compare_test_to_reference_netcdf(reference_file):
 
     # Load test file and reference file
     ref = xr.open_dataset(reference_file)
-    difference_detected = compare_test_to_reference_netcdf(test, ref)
+    difference_detected = compare_test_to_reference_netcdf(ref, test)
     assert (
         not difference_detected
     ), f"Converted file {source_file} is different than the reference: " + "\n".join(
