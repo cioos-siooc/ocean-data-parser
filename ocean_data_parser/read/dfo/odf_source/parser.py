@@ -230,16 +230,14 @@ def read(filename, encoding_format="Windows-1252"):
         # Variable names and related attributes
         for att in metadata["PARAMETER_HEADER"]:
             # Generate variable name
-            if "CODE" in att:
-                var_name = GF3Code(att["CODE"]).name
-            elif "WMO_CODE" in att:
-                var_name = GF3Code(att["WMO_CODE"]).name
-            else:
+            var_name = GF3Code(att.get("CODE") or att.get("WMO_CODE")).name
+            if var_name is None:
                 raise RuntimeError("Unrecognizable ODF variable attributes")
 
-            attributes = {
+            # Generate variable attributes
+            metadata["variable_attributes"][var_name] = {
                 "long_name": att.get("NAME"),
-                "units": att.get("UNITS"),
+                "units": att.get("UNITS", "").replace("**", "^"),
                 "legacy_gf3_code": var_name,
                 "null_value": att["NULL_VALUE"],
                 "resolution": (
@@ -248,20 +246,9 @@ def read(filename, encoding_format="Windows-1252"):
                     else None
                 ),
             }
-
-            if attributes["units"]:
-                # Standardize units
-                attributes["units"] = attributes["units"].replace("**", "^")
-
-            # Add those variable attributes to the metadata output
-            metadata["variable_attributes"].update({var_name: attributes})
             # Time type column add to time variables to parse by pd.read_csv()
             if var_name.startswith("SYTM") or att["TYPE"] == "SYTM":
-                time_columns.append(var_name)
-
-        # If not time column replace by False
-        if not time_columns:
-            time_columns = False
+                time_columns += [var_name]
 
         # Read Data with Pandas
         data_raw = pd.read_csv(
