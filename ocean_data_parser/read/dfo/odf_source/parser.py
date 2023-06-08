@@ -324,7 +324,7 @@ def odf_flag_variables(dataset, flag_convention=None):
                 if not var.startswith("Q"):
                     _add_ancillary(variable, var)
         elif variable.startswith("Q") and variable[1:] in dataset:
-            dataset[variable] = _add_ancillary(variable, variable[1:])
+            dataset[variable[1:]] = _add_ancillary(variable, variable[1:])
             dataset[variable].attrs[
                 "long_name"
             ] = f"Quality_Flag: {dataset[variable[1:]].attrs['long_name']}"
