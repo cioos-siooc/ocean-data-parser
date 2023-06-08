@@ -107,7 +107,9 @@ def history_input(comment, date=datetime.now(timezone.utc)):
 
 def update_variable_index(varname, index):
     """Standardize variables trailing number to two digits"""
-    if varname.endswith(("XX", "01")):
+    if not varname:
+        return varname
+    elif varname.endswith(("XX", "01")):
         return f"{varname[:-2]}{index:02}"
     elif varname.endswith(("X", "1")):
         return f"{varname[:-1]}{index:01}"
@@ -325,7 +327,7 @@ def odf_flag_variables(dataset, flag_convention=None):
             dataset[variable[1:]] = _add_ancillary(variable, variable[1:])
             dataset[variable].attrs[
                 "long_name"
-            ] = f"Quality_Flag: {dataset[variable[1:]].attrs['long_name']}"
+            ] = f"Quality Flag for Parameter: {dataset[variable[1:]].attrs['long_name']}"
         else:
             # ignore normal variables
             continue
@@ -334,10 +336,8 @@ def odf_flag_variables(dataset, flag_convention=None):
         dataset[variable].attrs.update(
             flag_convention.get(variable, flag_convention["default"])
         )
-        dataset[variable] = dataset[variable].astype(int)
+        dataset[variable] = dataset[variable].astype("int32")
         dataset[variable].attrs.pop("units", None)
-
-    # TODO handle renamed variables associated flags
     return dataset
 
 
@@ -478,6 +478,12 @@ def get_vocabulary_attributes(ds, organizations=None, vocabulary=None):
             .fillna(var)
             .apply(lambda x: update_variable_index(x, gf3.index))
         )
+        matching_terms["sdn_parameter_urn"] = matching_terms["sdn_parameter_urn"].apply(
+            lambda x: update_variable_index(x, gf3.index)
+        )
+        if gf3.index > 1:
+            matching_terms["long_name"] += f", {gf3.index}"
+
         variable_order += [var] + matching_terms["variable_name"].tolist()
 
         # Generate vocabulary variables

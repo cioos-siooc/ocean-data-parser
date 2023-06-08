@@ -139,10 +139,10 @@ def standardize_variable_attributes(ds):
             ds[var].dtype in [float, int, "float32", "float64", "int64", "int32"]
             and "flag_values" not in ds[var].attrs
         ):
-            ds[var].attrs["actual_range"] = tuple(
-                np.array((ds[var].min().item(0), ds[var].max().item(0))).astype(
-                    ds[var].dtype
-                )
+            ds[var].attrs["actual_range"] = (
+                np.array((ds[var].min().item(0), ds[var].max().item(0)))
+                .astype(ds[var].dtype)
+                .tolist()
             )
 
         ds[var].attrs = _sort_attributes(ds[var].attrs, variable_attributes_order)
