@@ -103,7 +103,7 @@ def read_config(config_file: str = DEFAULT_CONFIG_PATH, institute=None) -> dict:
 
     # Read Vocabulary file
     if "vocabularyFile" in config:
-        vocab = pd.read_csv(config["vocabularyFile"], index_col=["Vocabulary", "name"])
+        vocab = pd.read_csv(config["vocabularyFile"])
         config["vocabulary"] = vocab.fillna(np.nan).replace({np.nan: None})
 
     # Read program logs
