@@ -64,7 +64,7 @@ ds = ocean_data_parser.read.file('Path to file')
 # Save to netcdf
 ds.to_netcdf('save-path.nc')
 ```
-** The parser detection method relies on the file extension and the first few lines present within the given file.
+> :warning: The parser detection method relies on the file extension and the first few lines present within the given file.
 
 Or specify the specific parser to use for this file format:
 ``` python
