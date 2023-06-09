@@ -302,7 +302,7 @@ def parser(file: str, encoding="UTF-8") -> xr.Dataset:
     for var in ds:
         apply_vocab.update(
             {
-                (vocab.pop("variable_name") or vocab["p_name"]): {
+                (vocab.pop("variable_name") or vocab["legacy_p_code"]): {
                     "apply": lambda x: x[var],
                     "attrs": {**variables_span[var], **vocab, "source": var},
                 }
