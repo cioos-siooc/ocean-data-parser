@@ -1,15 +1,14 @@
 import json
 import os
-from geographiclib.geodesic import Geodesic
 
-from shapely.geometry import shape, Point, Polygon
+from geographiclib.geodesic import Geodesic
+from shapely.geometry import Point, Polygon, shape
 
 
 def read_geojson(
     path: str,
     encoding: str = "UTF-8",
 ) -> dict:
-
     """Parse geojson files and return it as a dictionary.
 
     If features are available, generate a shapely feature object.

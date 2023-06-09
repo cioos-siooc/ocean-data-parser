@@ -214,7 +214,6 @@ def file(path, encoding="UTF-8", nmea_delimiter="$"):
     nmea = []
     long_names = {}
     with open(path, encoding=encoding) as f:
-
         for row, line in enumerate(f):
             if not line:
                 continue

@@ -1,26 +1,27 @@
 import logging
+import os
 import re
 import unittest
 from glob import glob
-import os
 
-import xarray as xr
-import pandas as pd
 import numpy as np
+import pandas as pd
+import xarray as xr
+
 from ocean_data_parser.read import (
-    seabird,
-    van_essen_instruments,
-    onset,
     amundsen,
-    electricblue,
-    star_oddi,
-    rbr,
-    sunburst,
     dfo,
+    electricblue,
+    file,
     nmea,
+    onset,
     pme,
+    rbr,
+    seabird,
+    star_oddi,
+    sunburst,
+    van_essen_instruments,
 )
-from ocean_data_parser.read import file
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
@@ -80,7 +81,6 @@ def compare_test_to_reference_netcdf(files):
         test = standardize_dataset(test)
 
         if not ref.identical(test):
-
             # Global attributes
             for key in ref.attrs.keys():
                 if not_identical(ref.attrs[key], test.attrs.get(key)):

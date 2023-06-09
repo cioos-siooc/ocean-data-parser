@@ -5,7 +5,7 @@ import re
 
 import pandas as pd
 
-from .utils import test_parsed_dataset, standardize_dataset
+from .utils import standardize_dataset, test_parsed_dataset
 
 logger = logging.getLogger(__name__)
 

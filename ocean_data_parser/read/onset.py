@@ -88,7 +88,6 @@ def _parse_onset_time(time, timezone="UTC"):
 
 
 def _parse_onset_csv_header(header_lines):
-
     full_header = "\n".join(header_lines)
     header = {
         "instrument_manufacturer": "Onset",
@@ -157,7 +156,6 @@ def csv(
     read_csv_kwargs: dict = None,
     standardize_variable_names: bool = True,
 ):
-
     """tidbit_csv parses the Onset Tidbit CSV format into a pandas dataframe
 
     Returns:

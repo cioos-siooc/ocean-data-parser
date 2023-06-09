@@ -1,7 +1,7 @@
-from importlib import import_module
-import re
-import os
 import logging
+import os
+import re
+from importlib import import_module
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +84,6 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
 
 
 def file(path, parser=None, **kwargs):
-
     # Review the file format if no parser is specified
     if parser is None:
         parser = detect_file_format(path)

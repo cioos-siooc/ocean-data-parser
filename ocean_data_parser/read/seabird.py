@@ -237,7 +237,6 @@ def _parse_seabird_file_header(f):
     header["history"] = []
     read_next_line = True
     while "*END*" not in line and line.startswith(("*", "#")):
-
         if read_next_line:
             line = f.readline()
         else:
@@ -490,7 +489,6 @@ def generate_binned_attributes(ds, seabird_header):
         ds.attrs["time_coverage_resolution"] = pd.Timedelta(bin_str).isoformat()
     for var in ds:
         if (len(ds.dims) == 1 and len(ds[var].dims) == 1) or binvar in ds[var].dims:
-
             ds[var].attrs["cell_method"] = f"{binvar}: mean (interval: {bin_str})"
     return ds
 

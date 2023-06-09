@@ -1,1 +1,1 @@
-from ocean_data_parser.read.auto import file, detect_file_format
+from ocean_data_parser.read.auto import detect_file_format, file

@@ -1,10 +1,11 @@
 import logging
+import re
 
 import pandas as pd
-import re
+
 from ocean_data_parser.read.utils import (
-    standardize_dataset,
     rename_variables_to_valid_netcdf,
+    standardize_dataset,
 )
 
 logger = logging.getLogger(__name__)
@@ -114,7 +115,6 @@ def csv(
 
 
 def log_csv(path, encoding="UTF-8", rename_variables=True):
-
     df = pd.read_csv(path, encoding=encoding, parse_dates=True, index_col=["time"])
     ds = df.to_xarray()
     # add default attributes
