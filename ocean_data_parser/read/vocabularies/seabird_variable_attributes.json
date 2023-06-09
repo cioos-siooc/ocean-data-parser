@@ -310,8 +310,8 @@
         "sdn_parameter_urn": "SDN:P01::CNDCST01",
         "sdn_parameter_name": "Electrical conductivity of the water body by CTD",
         "comments": "1st sensor",
-        "sdn_uom_urn": "SDN:P06::SCPM",
-        "sdn_uom_name": "Seconds per metre",
+        "sdn_uom_urn": "SDN:P06::UECA",
+        "sdn_uom_name": "Siemens per metre",
         "bodc_alternative_label": "CTDCond"
     },
     "c0S/m": {
@@ -322,8 +322,8 @@
         "standard_name": "sea_water_electrical_conductivity",
         "sdn_parameter_urn": "SDN:P01::CNDCST01",
         "sdn_parameter_name": "Electrical conductivity of the water body by CTD",
-        "sdn_uom_urn": "SDN:P06::SCPM",
-        "sdn_uom_name": "Seconds per metre",
+        "sdn_uom_urn": "SDN:P06::UECA",
+        "sdn_uom_name": "Siemens per metre",
         "comments": "1st sensor"
     },
     "cond0S/m": {
@@ -334,8 +334,8 @@
         "sdn_parameter_urn": "SDN:P01::CNDCST01",
         "sdn_parameter_name": "Electrical conductivity of the water body by CTD",
         "comments": "1st sensor",
-        "sdn_uom_urn": "SDN:P06::SCPM",
-        "sdn_uom_name": "Seconds per metre",
+        "sdn_uom_urn": "SDN:P06::UECA",
+        "sdn_uom_name": "Siemens per metre",
         "bodc_alternative_label": "CTDCond"
     },
     "c_mS/cm": {
@@ -421,8 +421,8 @@
         "standard_name": "sea_water_electrical_conductivity",
         "sdn_parameter_urn": "SDN:P01::CNDCST02",
         "sdn_parameter_name": "Electrical conductivity of the water body by CTD (sensor 2)",
-        "sdn_uom_urn": "SDN:P06::SCPM",
-        "sdn_uom_name": "Seconds per metre",
+        "sdn_uom_urn": "SDN:P06::UECA",
+        "sdn_uom_name": "Siemens per metre",
         "comments": "2nd sensor",
         "bodc_alternative_label": "CTDCond2"
     },
@@ -453,8 +453,8 @@
         "long_name": "Conductivity Difference, 2 - 1",
         "units": "S/m",
         "comments": "2nd sensor - 1st sensor",
-        "sdn_uom_urn": "SDN:P06::SCPM",
-        "sdn_uom_name": "Seconds per metre"
+        "sdn_uom_urn": "SDN:P06::UECA",
+        "sdn_uom_name": "Siemens per metre"
     },
     "C2-C1mS/cm": {
         "name": "C2-C1mSPercm",
