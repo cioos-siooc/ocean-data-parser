@@ -20,10 +20,7 @@ The `ocean-data-parser` is a set of tools capable of parsing oceanographic propr
 
 A more detailed documentation is available [here](https://hakaiinstitute.github.io/ocean-data-parser).
 
-Get in the environment:
-```console
-conda activate ocean_parser
-```
+---
 
 ## Table of Contents
 
@@ -37,6 +34,7 @@ conda activate ocean_parser
   - [How to](#how-to)
   - [Development](#development)
     - [Installation](#installation)
+    - [Documentation](#documentation)
     - [Testing](#testing)
       - [Parsers Tests](#parsers-tests)
   - [Contributing](#contributing)
@@ -86,15 +84,28 @@ Clone the project locally
 ```shell
   git clone git+https://github.com/HakaiInstitute/ocean-data-parser.git
 ```
-and install the package:
-```console
-cd ocean-data-parser
-pip install -e .
+
+Go to the project directory
+
+```shell
+  cd ocean-data-parser
 ```
-For development purposes, it is recommended to install the development requirements:
-```console
-pip install -e ".[dev]"
+
+Install dependencies
+
+```shell
+  pip install -e ".[dev]"
 ```
+
+### Documentation
+To run a local instance of the documentation webpage, run the command:
+
+```shell
+mike serve
+```
+
+Any documentation changes to the main and development branches will automatically update respectively the main and dev document pages.
+
 ### Testing
 The package use pytest to run a series of tests in order to help the development of the different aspect of the package. Within a developping environment, to run the different tests, run the pytest commmand through your terminal within the base directory of the repository. Pytest can also be integrated with different IDE and is run on any pushes and PR to the `main` and `development` branches.
 
