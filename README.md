@@ -1,6 +1,6 @@
 <!-- NOTE: All sections are placeholders. Use the relevant ones-->
 
-![Logo](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/th5xamgrr6se0x5ro4g6.png)
+![Logo](docs/images/logo_EN_FR-1024x208.png)
 
 <!-- Make a favicon/logo using something like:
 
@@ -8,19 +8,17 @@
 * https://www.shopify.com/tools/logo-maker/open-source-software
 * https://primitive.lol/ -->
 
-## Badges
+# ocean-data-parser
 
 <!-- You can get project relevant badges from: [shields.io](https://shields.io/) -->
 
 [![Update gh-pages Docs](https://github.com/HakaiInstitute/ocean-data-parser/actions/workflows/generate-documentation.yaml/badge.svg)](https://github.com/HakaiInstitute/ocean-data-parser/actions/workflows/generate-documentation.yaml)
-[![pages-build-deployment](https://github.com/HakaiInstitute/ocean-data-parser/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/HakaiInstitute/ocean-data-parser/actions/workflows/pages/pages-build-deployment)
 
-# Ocean Data Parser
+## What is it?
 
-The `Ocean Data Parser` is a set of tools capable of parsing oceanographic proprietary data formats to a xarray CIOOS Compliant object. This xarray object can then be use in a number of application.
+The `ocean-data-parser` is a set of tools capable of parsing oceanographic proprietary data formats to a xarray CIOOS Compliant object. This xarray object can then be use in a number of application and/or easily saved to a NetCDF format.
 
-For more detail, you can review the production documentation here: https://hakaiinstitute.github.io/ocean-data-parser/
-and the development documentation at [here](https://hakaiinstitute.github.io/ocean-data-parser/).
+A more detailed documentation is available [here](https://hakaiinstitute.github.io/ocean-data-parser).
 
 ---
 
@@ -30,26 +28,33 @@ and the development documentation at [here](https://hakaiinstitute.github.io/oce
 
 <summary>Table of Contents</summary>
 
-[Configuration](#configuration)
-[Development](#development)
-[Tests](#tests)
-[Deploying](#deploying)
+- [ocean-data-parser](#ocean-data-parser)
+  - [What is it?](#what-is-it)
+  - [Table of Contents](#table-of-contents)
+  - [How to](#how-to)
+  - [Development](#development)
+    - [Installation](#installation)
+    - [Documentation](#documentation)
+    - [Testing](#testing)
+      - [Parsers Tests](#parsers-tests)
+  - [Contributing](#contributing)
 
 </details>
 
 ---
 
-## Configuration
+## How to
 
-To run this project, you will need to add the following environment variables to your `.env` file
+Install the package with the following command, ideally within a virtual environment:
 
 ```env
 pip install git+https://github.com/HakaiInstitute/ocean-data-parser.git
 ```
-
+The `ocean-data-parser` can then be used within either a python package, script or jupyter notebook. See [documentation Notebook section](https://hakaiinstitute.github.io/ocean-data-parser) for examples on how to use the package within a jupyter notebook.
 ## Development
 
-Clone the project
+### Installation
+Clone the project locally
 
 ```shell
   git clone git+https://github.com/HakaiInstitute/ocean-data-parser.git
@@ -77,14 +82,15 @@ mike serve
 Any documentation changes to the main and development branches will automatically update respectively the main and dev document pages.
 
 ### Testing
-To run the different tests, you can use pytest with the command:
+The package use pytest to run a series of tests in order to help the development of the different aspect of the package. Within a developping environment, to run the different tests, run the pytest commmand through your terminal within the base directory of the repository. Pytest can also be integrated with different IDE and is run on any pushes and PR to the `main` and `development` branches.
 
-```
-pytest
-```
+#### Parsers Tests
+The package contains a number of different parsers compatible with different standard file formats. Each parser is tested on a series of test files made available within the [test file directory](tests/parsers_test_files) The different tests executed on each individual parsers can be subdivided in 3 main categories:
+1. Parse test file to an xarray dataset
+2. Parse test file to an xarray dataset and save to a NetCDF4 file.
+3. Parse test file to an xarray dataset and compare to a reference file ('*_reference.nc) if made available. Any differences are flagged
+4. *(in development)* Assess parsed xarray object compliance with the different convention by using the ioos-compliance checker, resulting objects should be to a minimum compliante to ACDD 1.3 and CF 1.6. Other conventions can be added by adding them to the xarray object global attribute `Convention`.
 
 ## Contributing
 
-Contributions are welcome!
-
-See `contributing.md` to get started.
+All contributions, bug reports, bug fixes, documentation improvements, enhancements, and ideas are welcome.
