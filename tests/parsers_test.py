@@ -22,7 +22,7 @@ from ocean_data_parser.read import (
     sunburst,
     van_essen_instruments,
     auto,
-    utils
+    utils,
 )
 
 logging.basicConfig(level=logging.DEBUG)
@@ -362,13 +362,13 @@ class TestDFOpFiles:
         """Test ship code mapping"""
         response = dfo.p._get_ship_code_metadata(55)
         assert isinstance(response, dict)
-        assert response["ship_name"] == "Discovery"
+        assert response["platform_name"] == "Discovery"
 
     def test_unknown_ship_code_mapping(self):
         """Test unknown ship code mapping"""
         response = dfo.p._get_ship_code_metadata(9999)
         assert isinstance(response, dict)
-        assert "ship_name" not in response
+        assert "platform_name" not in response
 
     @pytest.mark.parametrize(
         "line",
