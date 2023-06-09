@@ -25,8 +25,8 @@ p_file_vocabulary = pd.read_csv(
     MODULE_PATH / ".." / "vocabularies" / "dfo_p_files_vocabulary.csv"
 ).replace({"variable_name": {np.nan: None}})
 p_file_shipcode = pd.read_csv(
-    MODULE_PATH / "NL_BPO_shipcodes.csv", skiprows=[1]
-).set_index("Code")
+    MODULE_PATH / ".." / "vocabularies" / "dfo_platform.csv", skiprows=[1]
+).set_index("dfo_newfoundland_ship_code")
 global_attributes = {}
 
 
@@ -58,7 +58,7 @@ def _parse_pfile_header_line1(line: str) -> dict:
         station=_int(line[5:8]),
         latitude=_float(line[9:12]) + float(line[13:18]) / 60,
         longitude=_float(line[19:23]) + float(line[24:29]) / 60,
-        time=pd.to_datetime(line[30:46], format="%Y%m%d %H:%M", utc=True),
+        time=pd.to_datetime(line[30:46], format="%Y-%m-%d %H:%M", utc=True),
         depth=_int(line[47:51])
         if line[47:51] not in ("9999", "0000")
         else None,  # water depth in meters 9999 or 0000 = not known
@@ -213,9 +213,9 @@ def parser(file: str, encoding="UTF-8") -> xr.Dataset:
 
     def _get_variable_vocabulary(variable: str) -> dict:
         matching_vocabulary = p_file_vocabulary.query(
-            f"p_name == '{variable}' and "
-            f"(accepted_instrument.isna() or "
-            f"accepted_instrument in '{ds.attrs.get('instrument','')}' )"
+            f"legacy_p_code == '{variable}' and "
+            f"(accepted_instruments.isna() or "
+            f"accepted_instruments in '{ds.attrs.get('instrument','')}' )"
         )
         if matching_vocabulary.empty:
             logger.warning("No vocabulary is available for variable=%s", variable)
@@ -277,9 +277,23 @@ def parser(file: str, encoding="UTF-8") -> xr.Dataset:
     ds.attrs.update(_get_ship_code_metadata(ds.attrs.get("ship_code", {})))
 
     # Move coordinates to variables:
-    coords = ["time", "latitude", "longitude"]
-    for coord in coords:
-        ds[coord] = ds.attrs[coord]
+    coords = {
+        "time": {"long_name": "Time", "standard_name": "time"},
+        "latitude": {
+            "long_name": "Latitude",
+            "standard_name": "latitude",
+            "units": "degrees_north",
+        },
+        "longitude": {
+            "long_name": "Longitude",
+            "standard_name": "longitude",
+            "units": "degrees_east",
+        },
+    }
+    for coord, attrs in coords.items():
+        if coord in ds.attrs:
+            ds[coord] = ds.attrs[coord]
+            ds[coord].attrs = attrs
     ds = ds.set_coords(coords)
 
     # Populate variable attributes base on vocabulary
@@ -299,8 +313,6 @@ def parser(file: str, encoding="UTF-8") -> xr.Dataset:
     for new_var, items in apply_vocab.items():
         ds[new_var].attrs.update(items["attrs"])
 
-    # TODO Add newly generated variables to history
-
     # Drop not vocabulary related variables
-    ds = ds.drop_vars([var for var in ds.variables if var not in apply_vocab])
+    ds = ds.drop_vars([var for var in ds if var not in apply_vocab])
     return ds
