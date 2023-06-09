@@ -37,7 +37,6 @@ conda activate ocean_parser
   - [How to](#how-to)
   - [Development](#development)
     - [Installation](#installation)
-    - [Documentation](#documentation)
     - [Testing](#testing)
       - [Parsers Tests](#parsers-tests)
   - [Contributing](#contributing)
@@ -71,18 +70,6 @@ For development purposes, it is recommended to install the development requireme
 ```console
 pip install -e ".[dev]"
 ```
-
-## How to
-To parse seabird file:
-```python
-from ocean_data_parser.read import searbird
-
-PATH_TO_SEABIRD_CNV = "PATH_TO_SEABIRD_CNV"
-ds = seabird.cnv(PATH_TO_SEABIRD_CNV)
-```
-
-Any documentation changes to the main and development branches will automatically update respectively the main and dev document pages.
-
 ### Testing
 The package use pytest to run a series of tests in order to help the development of the different aspect of the package. Within a developping environment, to run the different tests, run the pytest commmand through your terminal within the base directory of the repository. Pytest can also be integrated with different IDE and is run on any pushes and PR to the `main` and `development` branches.
 
