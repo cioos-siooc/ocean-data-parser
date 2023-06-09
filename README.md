@@ -52,7 +52,32 @@ Install the package with the following command, ideally within a virtual environ
 ```env
 pip install git+https://github.com/HakaiInstitute/ocean-data-parser.git
 ```
+
+As an example, to load a compatible file you can use the automated parser detection method:
+
+```python
+import ocean_data_parser.read
+
+# Load a file to an xarray object
+ds = ocean_data_parser.read.file('Path to file')
+
+# Save to netcdf
+ds.to_netcdf('save-path.nc')
+```
+** The parser detection method relies on the file extension and the first few lines present within the given file.
+
+Or specify the specific parser to use for this file format:
+``` python
+from ocean_data_parser.read import seabird
+
+# Load a seabird cnv file as an xarray dataset
+ds = seabird.cnv('Path to seabird cnv file')
+
+# Save to netcdf
+ds.to_netcdf('save-path.nc')
+```
 The `ocean-data-parser` can then be used within either a python package, script or jupyter notebook. See [documentation Notebook section](https://hakaiinstitute.github.io/ocean-data-parser) for examples on how to use the package within a jupyter notebook.
+
 ## Development
 
 ### Installation
