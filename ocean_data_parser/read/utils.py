@@ -201,6 +201,9 @@ def get_spatial_coverage_attributes(
 
 
 def convert_datetime_str(time_str, **to_datetime_kwargs):
+    if time_str is None: 
+        logger.warning("Time string is None")
+        return None
     date_format = None
     if re.fullmatch(r"\d\d\d\d-\d\d-\d\d", time_str):
         date_format = "%Y-%m-%d"
