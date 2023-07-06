@@ -264,11 +264,12 @@ def parser(
 
         # Read data section
         # TODO confirm that 5+12 character width is constant
-        ds = pd.read_fwf(
+        ds = pd.read_csv(
             file_handle,
-            widths=[5] + (len(names) - 1) * [12],
+            sep="\s+",
+            engine="python",
             names=names,
-            dtypes={name: _get_dtype(name) for name in names},
+            dtype={name: _get_dtype(name) for name in names},
         ).to_xarray()
 
     # Review datatypes
