@@ -187,7 +187,9 @@ def _pfile_history_to_cf(lines: list) -> str:
     return "".join([f"{iso_timestamp} - {line}" for line in lines[1:]])
 
 
-def parser(file: str, encoding="UTF-8") -> xr.Dataset:
+def parser(
+    file: str, encoding="UTF-8", rename_variables=True, generate_extra_variables=True
+) -> xr.Dataset:
     """Convert P-File to an xarray Dataset object
 
     Args:
@@ -285,21 +287,45 @@ def parser(file: str, encoding="UTF-8") -> xr.Dataset:
 
     # Populate variable attributes base on vocabulary
     variables_span = _parse_channel_stats(header.get("CHANNEL STATS"))
-    apply_vocab = {}
+    extra_vocabulary_variables = []
     for var in ds:
-        apply_vocab.update(
+        ds[var].attrs.update(variables_span)
+        variable_attributes = _get_variable_vocabulary(var)
+        if not variable_attributes:
+            logger.warning("Missing vocabulary for p-file variable=%s", var)
+            continue
+        ds[var].attrs.update(variable_attributes[0])
+        for extra in variable_attributes[1:]:
+            extra_vocabulary_variables += [
+                [
+                    extra.pop("variable_name", var),
+                    ds[var],
+                    extra,
+                ]
+            ]
+
+    # Rename variables
+    if rename_variables:
+        ds = ds.rename(
             {
-                (vocab.pop("variable_name") or vocab["legacy_p_code"]): {
-                    "apply": lambda x: x[var],
-                    "attrs": {**variables_span[var], **vocab, "source": var},
-                }
-                for vocab in _get_variable_vocabulary(var)
+                var: ds[var].attrs.pop("variable_name", None) or var
+                for var in ds.variables
+                if "variable_name" in ds[var].attrs
             }
         )
-    ds = ds.assign({name: items["apply"] for name, items in apply_vocab.items()})
-    for new_var, items in apply_vocab.items():
-        ds[new_var].attrs.update(items["attrs"])
 
-    # Drop not vocabulary related variables
-    ds = ds.drop_vars([var for var in ds if var not in apply_vocab])
+    # Generate extra variables
+    if generate_extra_variables:
+        for name, var, attrs in extra_vocabulary_variables:
+            if name in ds:
+                logger.warning(
+                    (
+                        "Extra variable is already in dataset and will be ignored. "
+                        "name=%s, attrs=%s is already in dataset and will be ignored"
+                    ),
+                    var,
+                    attrs,
+                )
+            ds[name] = (var.dims, var.data, {**var.attrs, **attrs})
+
     return ds
