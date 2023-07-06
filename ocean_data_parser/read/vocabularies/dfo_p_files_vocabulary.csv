@@ -18,8 +18,13 @@ sal2,,sal11,PSALST02,"Salinity, Practical, 2",PSU,SDN:P06::UUUU,Dimensionless,,2
 scan,,scan,scan,Scan Count,,,,,,,,,,
 sig,,sigma-t00,SIGTEQST,Density,kg/m^3,SDN:P06::UKMC,Kilograms per cubic metre,,1st sensor,SDN:P01::SIGTEQST,Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm,Sigma-T,Computed by UNESCO SVAN function using in-situ temperature,sea_water_sigma_t
 sig2,,sigma-t11,SIGTEQST,Density 2 [sigma-t],kg/m^3,SDN:P06::UKMC,Kilograms per cubic metre,,2nd sensor,SDN:P01::SIGTEQST,Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm,Sigma-T,Computed by UNESCO SVAN function using in-situ temperature,sea_water_sigma_t
-temp,,t090C,TEMPS901,Temperature [ITS-90],deg C,SDN:P06::UPAA,Degrees Celsius,,1st sensor,SDN:P01::TEMPS901,Temperature (ITS-90) of the water body by CTD or STD,CTDTmp90,,sea_water_temperature
-temp2,,t190C,TEMPS902,"Temperature, 2",deg C,SDN:P06::UPAA,Degrees Celsius,,2nd sensor,SDN:P01::TEMPS902,Temperature (ITS-90) of the water body by CTD or STD (second sensor),CTDTmp90_2,,sea_water_temperature
+temp,,t090C,TEMPS901,Temperature [ITS-90],degrees_celsius,SDN:P06::UPAA,Degrees Celsius,,1st sensor,SDN:P01::TEMPS901,Temperature (ITS-90) of the water body by CTD or STD,CTDTmp90,,sea_water_temperature
+temp2,,t190C,TEMPS902,"Temperature, 2",degrees_celsius,SDN:P06::UPAA,Degrees Celsius,,2nd sensor,SDN:P01::TEMPS902,Temperature (ITS-90) of the water body by CTD or STD (second sensor),CTDTmp90_2,,sea_water_temperature
 tra,,CStarAt0,ATTNZS01,"Beam Attenuation, Wet Labs C-Star",1/m,SDN:P06::UPRM,per metre,WET Labs C-Star,1st sensor,SDN:P01::ATTNZS01,Attenuation (red light wavelength) per unit length of the water body by WET Labs transmissometer and calibration to read zero in clear water,RedPWCorr,WET Labs transmissometer calibrated to zero in clear water,volume_beam_attenuation_coefficient_of_radiative_flux_in_sea_water
 trp,,CStarTr0,,"Beam Transmission, Wet Labs C-Star",%,SDN:P06::UPCT,Percent,WET Labs C-Star,1st sensor,,,,,
 wet,,wetCDOM,CCOMD002,"Fluorescence, Wet Labs CDOM",mg/m^3,SDN:P06::UMMC,Milligrams per cubic metre,WET Labs CDOM,1st sensor,SDN:P01::CCOMD002,Concentration of coloured dissolved organic matter {CDOM Gelbstoff} per unit volume of the water body [dissolved plus reactive particulate phase] by in-situ WET Labs FDOM ECO fluorometer,CDOM_fluor_WETLabs,Quantity or mass of the specified analyte in a unit volume of an unfiltered sample of fresh or salt water.,concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate
+sigt,,,SIGTEQST,Sigma-T,kg/m^3,SDN:P06::UKMC,Kilograms per cubic metre,,,SDN:P01::SIGTEQST,Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm,Sigma-T,	Computed by UNESCO SVAN function using in-situ temperature,sea_water_sigma_t
+time,,,time,Time,,,,,,,,,,time
+latitude,,,latitude,Latitude,degrees_north,SDN:P06::DEGN,Degrees north,,,,,,,latitude
+longitude,,,longitude,Longitude,degrees_east,SDN:P06::DEGN,Degrees east,,,,,,,longitude
+index,,,index,P-File Data Row,,,,,,,,,,
