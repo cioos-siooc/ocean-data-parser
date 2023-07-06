@@ -277,24 +277,11 @@ def parser(file: str, encoding="UTF-8") -> xr.Dataset:
     ds.attrs.update(_get_ship_code_metadata(ds.attrs.get("ship_code", {})))
 
     # Move coordinates to variables:
-    coords = {
-        "time": {"long_name": "Time", "standard_name": "time"},
-        "latitude": {
-            "long_name": "Latitude",
-            "standard_name": "latitude",
-            "units": "degrees_north",
-        },
-        "longitude": {
-            "long_name": "Longitude",
-            "standard_name": "longitude",
-            "units": "degrees_east",
-        },
-    }
-    for coord, attrs in coords.items():
+    coords = ["time", "latitude", "longitude"]
+    for coord in coords:
         if coord in ds.attrs:
             ds[coord] = ds.attrs[coord]
-            ds[coord].attrs = attrs
-    ds = ds.set_coords(coords)
+    ds = ds.set_coords([coord for coord in coords if coord in ds])
 
     # Populate variable attributes base on vocabulary
     variables_span = _parse_channel_stats(header.get("CHANNEL STATS"))
