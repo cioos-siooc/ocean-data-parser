@@ -29,7 +29,7 @@ p_file_vocabulary = pd.read_csv(
 p_file_shipcode = pd.read_csv(
     MODULE_PATH / ".." / "vocabularies" / "dfo_platform.csv", skiprows=[1]
 ).set_index("dfo_newfoundland_ship_code")
-global_attributes = {}
+global_attributes = {"Conventions": "CF-1.6,ACDD-1.3"}
 
 
 def _int(value: str) -> int:
