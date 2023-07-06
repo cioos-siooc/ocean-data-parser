@@ -52,6 +52,10 @@ def _float(value: str) -> float:
         logger.error("Failed to convert string=%s to float", value)
 
 
+def _get_dtype(var: str):
+    return int if var == "scan" else float
+
+
 def _parse_pfile_header_line1(line: str) -> dict:
     """Parse first row of the p file format which contains location and instrument information."""
     return dict(
@@ -224,9 +228,6 @@ def parser(
             logger.warning("No vocabulary is available for variable=%s", variable)
             return []
         return matching_vocabulary.to_dict(orient="records")
-
-    def _get_dtype(var: str):
-        return int if var == "scan" else float
 
     line = None
     header = {}
