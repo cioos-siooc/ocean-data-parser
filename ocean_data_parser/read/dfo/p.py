@@ -303,8 +303,8 @@ def parser(
     # Populate variable attributes base on vocabulary
     variables_span = _parse_channel_stats(header.get("CHANNEL STATS"))
     extra_vocabulary_variables = []
-    for var in ds:
-        ds[var].attrs.update(variables_span)
+    for var in ds.variables:
+        ds[var].attrs.update(variables_span.get(var, {}))
         variable_attributes = _get_variable_vocabulary(var)
         if not variable_attributes:
             logger.warning("Missing vocabulary for p-file variable=%s", var)
