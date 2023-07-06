@@ -152,7 +152,7 @@ def _parse_channel_stats(lines: list) -> dict:
     if not lines:
         return {}
     read_stats = re.compile(
-        r"# span\s+(?P<name>\w+)\s\=\s*(?P<min>[+-\.\d]+),\s+(?P<max>[+-\.\d]+)"
+        r"# span\s+(?P<name>\w+)\s\=\s*(?P<min>[+-\.\d]+),\s*(?P<max>[+-\.\d]+)"
     )
     spans = [read_stats.search(line).groupdict() for line in lines if "span" in line]
     # Convert it to cf standard
