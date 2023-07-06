@@ -126,10 +126,6 @@ def _parse_pfile_header_line3(line: str) -> dict:
     )
 
 
-def _get_dtype(var):
-    return int if var == "scan" else float
-
-
 def _parse_channel_stats(lines: list) -> dict:
     """Parse p file CHANNEL STATISTIC header section to cf variable dictionary"""
 
@@ -190,7 +186,10 @@ def _pfile_history_to_cf(lines: list) -> str:
 
 
 def parser(
-    file: str, encoding="UTF-8", rename_variables=True, generate_extra_variables=True
+    file: str,
+    encoding: str = "UTF-8",
+    rename_variables: bool = True,
+    generate_extra_variables: bool = True,
 ) -> xr.Dataset:
     """Convert P-File to an xarray Dataset object
 
@@ -226,6 +225,9 @@ def parser(
             return []
         return matching_vocabulary.to_dict(orient="records")
 
+    def _get_dtype(var: str):
+        return int if var == "scan" else float
+
     line = None
     header = {}
     section = None
@@ -252,10 +254,22 @@ def parser(
             header[section] += [line]
 
         # Define each fields width based on the column names
-        widths = [len(item) + 1 for item in re.split("\w\s", previous_line)[:-1]]
+        names = re.findall("\w+", previous_line)
 
         # Read data section
-        df = pd.read_fwf(file_handle, widths=widths)
+        # TODO confirm that 5+12 character width is constant
+        ds = pd.read_fwf(
+            file_handle,
+            widths=[5] + (len(names) - 1) * [12],
+            names=names,
+            dtypes={name: _get_dtype(name) for name in names},
+        ).to_xarray()
+
+    # Review datatypes
+    if any([dtype == object for var, dtype in ds.dtypes.items()]):
+        logger.warning(
+            "Some columns dtype=object which suggest that the file data wasn't correctely parsed."
+        )
 
     # Review metadata
     if metadata_lines[0] == "NAFC_Y2K_HEADER":
@@ -264,12 +278,7 @@ def parser(
         )
     _check_ship_trip_stn()
 
-    # Get column names and define data types
-    df.columns = re.split(r"\s+", previous_line.strip())
-    df = df.astype({col: _get_dtype(col) for col in df})
-
     # Convert dataframe to an xarray and populate information
-    ds = df.to_xarray()
     ds.attrs.update(
         {
             **global_attributes,
