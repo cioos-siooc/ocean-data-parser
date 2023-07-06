@@ -112,7 +112,9 @@ def _parse_pfile_header_line3(line: str) -> dict:
         trip=_int(line[2:5]),
         station=_int(line[5:8]),
         cloud=_int(line[9]),  # i1,
-        wind_dir=_int(line[11:13]) * 10,  # in 10 degree steps (eg 270 is=27)
+        wind_dir=_int(line[11:13]) * 10
+        if line[11:13].strip()
+        else None,  # in 10 degree steps (eg 270 is=27)
         wind_speed_knots=_int(line[14:16]),  # i2,knots s= cale
         ww_code=_int(line[17:19]),  # i2,
         pressure_bars=_float(line[20:26]),  # pressure mil-= bars
