@@ -1,10 +1,10 @@
 import logging
-from pathlib import Path
 import unittest
+from pathlib import Path
 
 from click.testing import CliRunner
 
-from ocean_data_parser.compile.netcdf import variables, cli_variables
+from ocean_data_parser.compile.netcdf import cli_variables, variables
 
 PACKAGE_PATH = Path(__file__).parent
 logger = logging.getLogger(__name__)
