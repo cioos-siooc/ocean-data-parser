@@ -179,17 +179,19 @@ def _pfile_history_to_cf(lines: list) -> str:
     # """Convert history to cf format: 2022-02-02T00:00:00Z - ..."""
 
     history_timestamp = re.search(
-        "-- HISTORY --> (\w+ \w+ \d+ \d{2}:\d{2}:\d{2} \d{4})", lines[0]
+        "-- HISTORY --> (\w+ \w\w\w \d+ \d{2}:\d{2}:\d{2} \d{4})", lines[0]
     )
     if not history_timestamp:
         logger.error("Failed to retrieve the history associated timestamp from header")
         return "".join(lines)
-    iso_timestamp = (
-        pd.to_datetime(history_timestamp[1], format="%a %B %d %H:%M:%S %Y", utc=True)
+
+    timestamp = (
+        pd.to_datetime(history_timestamp[1], format="%a %b %d %H:%M:%S %Y", utc=True)
         .isoformat()
         .replace("+00:00", "Z")
     )
-    return "".join([f"{iso_timestamp} - {line}" for line in lines[1:]])
+
+    return "".join([f"{timestamp} - {line}" for line in lines[1:]])
 
 
 def parser(
