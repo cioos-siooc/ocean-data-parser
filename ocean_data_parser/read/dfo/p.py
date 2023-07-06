@@ -18,6 +18,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import xarray as xr
+import gsw
 
 from ocean_data_parser.read.utils import standardize_dataset
 
@@ -255,7 +256,7 @@ def parser(
             header[section] += [line]
 
         # Define each fields width based on the column names
-        names = re.findall("\w+", previous_line)
+        names = re.findall(r"\w+", previous_line)
 
         # Read data section
         # TODO confirm that 5+12 character width is constant
@@ -341,7 +342,25 @@ def parser(
                     var,
                     attrs,
                 )
-            ds[name] = (var.dims, var.data, {**var.attrs, **attrs})
+            apply_func = attrs.pop("apply_func", None)
+            new_data = (
+                eval(
+                    apply_func,
+                    {},
+                    {
+                        "gsw": gsw,
+                        **{
+                            ds[variable].attrs.get("legacy_p_code", variable): ds[
+                                variable
+                            ]
+                            for variable in ds.variables
+                        },
+                    },
+                )
+                if apply_func not in (None, np.nan)
+                else var
+            )
+            ds[name] = (var.dims, new_data.data, {**var.attrs, **attrs})
 
     # standardize
     ds = standardize_dataset(ds)
