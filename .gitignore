@@ -22,3 +22,5 @@ tests/parsers_test_files/amundsen/12713/**/*
 output/
 site/**
 docs/read/**/*-hook.md
+temp/**
+*.log
