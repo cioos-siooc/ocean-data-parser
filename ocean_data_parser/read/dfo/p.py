@@ -15,10 +15,10 @@ import logging
 import re
 from pathlib import Path
 
+import gsw
 import numpy as np
 import pandas as pd
 import xarray as xr
-import gsw
 
 from ocean_data_parser.read.utils import standardize_dataset
 
