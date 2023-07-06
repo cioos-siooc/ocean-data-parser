@@ -179,7 +179,7 @@ def _pfile_history_to_cf(lines: list) -> str:
     # """Convert history to cf format: 2022-02-02T00:00:00Z - ..."""
 
     history_timestamp = re.search(
-        "-- HISTORY --> (\w+ \w\w\w \d+ \d{2}:\d{2}:\d{2} \d{4})", lines[0]
+        "-- HISTORY --> (\w+ \w\w\w\s+\d+ \d{2}:\d{2}:\d{2} \d{4})", lines[0]
     )
     if not history_timestamp:
         logger.error("Failed to retrieve the history associated timestamp from header")
