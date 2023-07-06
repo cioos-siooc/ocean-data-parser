@@ -19,6 +19,8 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
+from ocean_data_parser.read.utils import standardize_dataset
+
 logger = logging.getLogger(__name__)
 MODULE_PATH = Path(__file__).parent
 p_file_vocabulary = pd.read_csv(
@@ -327,5 +329,8 @@ def parser(
                     attrs,
                 )
             ds[name] = (var.dims, var.data, {**var.attrs, **attrs})
+
+    # standardize
+    ds = standardize_dataset(ds)
 
     return ds
