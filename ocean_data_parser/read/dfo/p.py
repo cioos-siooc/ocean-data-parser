@@ -360,6 +360,7 @@ def parser(
                 if apply_func not in (None, np.nan)
                 else var
             )
+            # TODO add to this history new variables generated
             ds[name] = (var.dims, new_data.data, {**var.attrs, **attrs})
 
     # standardize
