@@ -329,9 +329,11 @@ def parser(
     if rename_variables:
         ds = ds.rename(
             {
-                var: ds[var].attrs.pop("variable_name", None) or var
+                var: ds[var].attrs.pop("variable_name")
                 for var in ds.variables
                 if "variable_name" in ds[var].attrs
+                and ds[var].attrs["variable_name"]
+                and ds[var].attrs["variable_name"] != var
             }
         )
 
