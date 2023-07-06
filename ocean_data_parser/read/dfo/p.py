@@ -251,8 +251,11 @@ def parser(
 
             header[section] += [line]
 
+        # Define each fields width based on the column names
+        widths = [len(item) + 1 for item in re.split("\w\s", previous_line)[:-1]]
+
         # Read data section
-        df = pd.read_fwf(file_handle)
+        df = pd.read_fwf(file_handle, widths=widths)
 
     # Review metadata
     if metadata_lines[0] == "NAFC_Y2K_HEADER":
