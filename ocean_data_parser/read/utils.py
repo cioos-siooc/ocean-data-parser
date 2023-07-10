@@ -90,6 +90,7 @@ def standardize_dataset(
             ds[var].encoding.update({"units": time_variables_encoding})
             if "tz" in ds[var].dtype.name:
                 ds[var].encoding["units"] += "Z"
+            ds[var].attrs.pop("units")
         elif isinstance(ds[var].dtype, object) and isinstance(
             ds[var].item(0), pd.Timestamp
         ):
@@ -104,6 +105,7 @@ def standardize_dataset(
                 )
             ds[var].attrs = var_attrs
             ds[var].encoding.update({"units": time_variables_encoding})
+            ds[var].attrs.pop("units")
             if timezone_aware:
                 ds[var].attrs["timezone"] = "UTC"
                 ds[var].encoding["units"] += "Z"
