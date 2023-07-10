@@ -13,7 +13,7 @@ from xarray import Dataset
 from ocean_data_parser import process
 from ocean_data_parser.batch.config import load_config
 from ocean_data_parser.batch.registry import FileConversionRegistry
-from ocean_data_parser.batch.utils import _generate_output_path
+from ocean_data_parser.batch.utils import generate_output_path
 from ocean_data_parser.read import auto, utils
 
 MODULE_PATH = Path(__file__).parent
