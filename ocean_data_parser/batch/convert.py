@@ -204,18 +204,28 @@ def convert_file(file: str, parser: str, config: dict) -> str:
             return {}
         return config["file_specific_attributes"].loc[file].dropna().to_dict()
 
-    def _get_mapped_global_attributes(mapping, by, log_level="WARNING"):
+    def _get_mapped_global_attributes(
+        mapping: pd.DataFrame = None, by: list = None, log_level="WARNING"
+    ):
+        if mapping is None and by is None:
+            return {}
+
         query = " and ".join(
             [f"( {attr} == {ds.attrs.get(attr)} or {attr}.isna() )" for attr in by]
         )
         matched_mapping = mapping.query(query)
         if matched_mapping.empty and log_level:
             logger.log(log_level, "No mapping match exist for global attributes: ")
+            return {}
 
-        return {}
+        # Regroup all matched rows within a single dictionary
+        return {
+            k: v
+            for row in matched_mapping.iterrows()
+            for k, v in row.dropna().to_dict()
+        }
 
-    # parse file to xarray
-    logger.extra["file"] = file
+    # Parse file to xarray
     ds = parser(file)
     if not isinstance(ds, Dataset):
         raise RuntimeError(
@@ -237,7 +247,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
         # TODO add to history
 
     # IOOS QC
-    if config["ioos_qc"]:
+    if config.get("ioos_qc"):
         ds = ds.process.ioos_qc(config["ioos_qc"])
     # TODO add ioos_qc
 
@@ -252,9 +262,9 @@ def convert_file(file: str, parser: str, config: dict) -> str:
 
     # Save to
     output_path = None
-    if config.get("file_output") and "path":
+    if config.get("file_output").get("path"):
         overwrite = config["file_output"].pop("overwrite", False)
-        output_path = _generate_output_path(ds, source=file, **config["file_output"])
+        output_path = generate_output_path(ds, source=file, **config["file_output"])
         if output_path.exists() and not overwrite:
             logger.info(
                 "Converted output file already exist and won't be overwritten. (output_path=%s)",
