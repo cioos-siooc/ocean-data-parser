@@ -97,9 +97,7 @@ class FileConversionRegistry:
             source = source.name
 
         source = Path(source)
-        if not source.exists():
-            return None
-        return Path(source).stat().st_mtime
+        return source.stat().st_mtime if source.exists() else None
 
     def add(self, sources: list):
         """Add add sources to file registry and ignore already known sources
@@ -134,6 +132,13 @@ class FileConversionRegistry:
             .last()
         )
 
+    def _get_sources(self, sources: list):
+        if not sources:
+            return self.data.index.to_list()
+        elif isinstance(sources, list):
+            return sources
+        return [sources]
+
     def update(self, sources: list = None):
         """Update registry hash and last_update attributes
 
@@ -141,8 +146,7 @@ class FileConversionRegistry:
             sources (list, optional): Subset of file sources to update.
               Defaults to all entries.
         """
-        if not sources:
-            sources = self.data.index.tolist()
+        sources = self._get_sources(sources)
         self.data.loc[sources, "hash"] = self.data.loc[sources].apply(
             self._get_hash, axis="columns"
         )
@@ -157,14 +161,14 @@ class FileConversionRegistry:
         Args:
             sources (_type_): _description_
         """
-        if not sources:
-            sources = self.data.index.tolist()
+        sources = self._get_sources(sources)
         for field, value in kwargs.items():
             if field not in self.data:
                 self.data[field] = None
             self.data.loc[sources, field] = value
 
     def get_modified_sources(self, sources: list = None):
+        sources = self._get_sources(sources)
         if self.since:
             return self.get_sources_modified_since(sources)
         return self.get_sources_with_modified_hash(sources)
@@ -178,8 +182,7 @@ class FileConversionRegistry:
         Returns:
             list: list of files with modified hash
         """
-        if not sources:
-            sources = self.data.index
+        sources = self._get_sources(sources)
         subset = self.data.loc[sources]
         is_different = subset["hash"] != subset.index.to_series().apply(self._get_hash)
         return subset.loc[is_different].index.tolist()
@@ -197,6 +200,7 @@ class FileConversionRegistry:
         Returns:
             list: list of source files modified since given timestamp.
         """
+        sources = self._get_sources(sources)
         if not since:
             since = self.since
 
