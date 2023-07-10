@@ -67,6 +67,18 @@ class BatchModeTests(unittest.TestCase):
         assert result.exit_code == 0, result
         assert "Run batch conversion" in result.output
 
+    def test_batch_cli_new_config_creation(self):
+        runner = CliRunner()
+        new_config_test_file = Path("temp/test_config_copy.yaml")
+        assert not new_config_test_file.exists()
+        result = runner.invoke(
+            cli_files, ["--new_config", new_config_test_file.as_posix()]
+        )
+        assert result.exit_code == 0, result
+        assert new_config_test_file.exists()
+        new_config_test_file.unlink()
+        assert not new_config_test_file.exists()
+
 
 def get_test_file_registry():
     test_file_registry = FileConversionRegistry(
