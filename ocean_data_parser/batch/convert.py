@@ -3,6 +3,7 @@ from glob import glob
 from importlib import import_module
 from pathlib import Path
 from multiprocessing import Pool
+import shutil
 
 import click
 import pandas as pd
@@ -40,7 +41,17 @@ def _get_paths(paths: str) -> list:
     multiple=True,
     help="Extra parameters to include within the configuration",
 )
-def cli_files(config=None, add=None):
+@click.option(
+    "--new_config",
+    type=click.Path(exists=False),
+    help="Generate a new configuration file at the given path",
+)
+def cli_files(config=None, add=None, new_config=None):
+    if new_config:
+        logger.info("Copy a default config to given path")
+        shutil.copy(DEFAULT_CONFIG_PATH, new_config)
+        return
+
     add = () if add is None else add
     added_inputs = dict((item.split("=", 1) for item in add))
     logger.info("Run config=%s", config)
