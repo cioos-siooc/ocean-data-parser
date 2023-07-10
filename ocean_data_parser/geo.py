@@ -9,7 +9,6 @@ def read_geojson(
     path: str,
     encoding: str = "UTF-8",
 ) -> dict:
-
     """Parse geojson files and return it as a dictionary.
 
     If features are available, generate a shapely feature object.

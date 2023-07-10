@@ -93,7 +93,6 @@ def _parse_onset_time(time, timezone="UTC"):
 
 
 def _parse_onset_csv_header(header_lines):
-
     full_header = "\n".join(header_lines)
     header = {
         "instrument_manufacturer": "Onset",
@@ -162,7 +161,6 @@ def csv(
     read_csv_kwargs: dict = None,
     standardize_variable_names: bool = True,
 ) -> xarray.Dataset:
-
     """Parses the Onset CSV format generate by HOBOware into a xarray object
     Inputs:
         path: The path to the CSV file

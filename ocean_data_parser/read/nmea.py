@@ -232,7 +232,6 @@ def file(
     nmea = []
     long_names = {}
     with open(path, encoding=encoding) as f:
-
         for row, line in enumerate(f):
             if not line:
                 continue

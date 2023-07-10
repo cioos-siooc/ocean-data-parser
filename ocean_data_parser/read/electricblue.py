@@ -124,7 +124,6 @@ def csv(
 def log_csv(
     path: str, encoding: str = "UTF-8", rename_variables: bool = True
 ) -> xarray.Dataset:
-
     df = pd.read_csv(path, encoding=encoding, parse_dates=True, index_col=["time"])
     ds = df.to_xarray()
     # add default attributes

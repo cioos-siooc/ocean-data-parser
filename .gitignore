@@ -26,3 +26,5 @@ docs/read/**/*-hook.md
 file_registry.csv
 temp/**
 tests/test_file_registry_temp.csv
+
+temp/**
