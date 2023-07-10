@@ -105,6 +105,13 @@ class FileRegistryTests(unittest.TestCase):
             file_registry, FileConversionRegistry
         ), "Didn't return  FileConversionRegistry object"
 
+    def test_empty_registry(slef):
+        file_registry = FileConversionRegistry(path="test_empty_registry.csv")
+        file_registry.save()
+        file_registry.load()
+        file_registry.update()
+        file_registry.save()
+
     def test_init_missing_csv(self):
         file_registry = FileConversionRegistry(path="test_registry.csv")
         assert isinstance(

@@ -17,7 +17,7 @@ EMPTY_FILE_REGISTRY = pd.DataFrame(
 class FileConversionRegistry:
     def __init__(
         self,
-        path: str = "ocean_parser_file_registry.parquet",
+        path: str = "ocean_parser_file_registry.csv",
         data: pd.DataFrame = EMPTY_FILE_REGISTRY,
         hashtype: str = "sha256",
         block_size: int = 65536,

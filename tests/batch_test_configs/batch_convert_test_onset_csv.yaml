@@ -1,7 +1,8 @@
 # File input
 input_path: tests/parsers_test_files/onset/**/*.csv
 parser: auto
-file_registry: file_registry.csv
+registry:
+  path: file_registry.csv
 overwrite: True
 
 # Log
