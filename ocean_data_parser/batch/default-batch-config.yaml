@@ -1,8 +1,15 @@
 # File input
 input_path: tests/parsers_test_files/onset/**/*.csv,tests/parsers_test_files/onset/**/*.MON
 parser: auto,auto
-file_registry: file_registry.csv
+registry:
+  path: file_registry.csv
+  since: null # pandas.Timedelta expression (ex: '24h') or datetime ('2022-01-01T00:00:00Z')
 
+multiprocessing:
+  active: true
+  processes: 3
+
+debug: on
 # Log
 
 logging:
@@ -43,9 +50,12 @@ sentry:
 # Attributes and Metadata
 variable_attributes: {}
 global_attributes: {}
-attribute_corrections:
-  file_specific: {}
-  global_attribute_mappings: {}
+file_specific_attributes_path: null # Path to csv file with one column called "file"
+global_attribute_mapping:
+  path: null # Path to csv file (accept glob parameter for multiple files)
+  mapping: null # mapping dataframe
+  by: [] # global attributes list
+  log_level: WARNING # [null, WARNING,ERROR] level log when no mapping exist
 
 # Transformations
 xarray_pipe: []
