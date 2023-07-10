@@ -104,6 +104,7 @@ test_ds = xr.Dataset()
 test_ds.attrs["organization"] = "organization"
 test_ds.attrs["instrument"] = "InstrumentName"
 test_ds.attrs["instrument_serial_number"] = "64651354"
+test_ds.attrs["source"] = "source_file.csv"
 test_ds["time"] = pd.to_datetime(
     pd.Series(["2022-01-01T00:00:00Z", "2022-03-02T00:00:00Z"])
 )
@@ -151,4 +152,24 @@ class TestBatchGenerateName:
         fail_ds = test_ds.copy()
         fail_ds.attrs["source"] = None
         with pytest.raises(Exception) as e_info:
-            name = generate_output_path(fail_ds)
+            generate_output_path(fail_ds)
+
+    def test_generate_filename_with_prefix(self):
+        name = generate_output_path(test_ds, file_preffix="test_")
+        assert str(name) == "test_source_file.nc"
+
+    def test_generate_filename_with_suffix(self):
+        name = generate_output_path(test_ds, file_suffix="_test")
+        assert str(name) == "source_file_test.nc"
+
+    def test_generate_filename_with_prefix_and_suffix(self):
+        name = generate_output_path(test_ds, file_preffix="test_", file_suffix="_test")
+        assert str(name) == "test_source_file_test.nc"
+
+    def test_generate_filename_with_defaults(self):
+        name = generate_output_path(
+            test_ds,
+            source="test_{missing_global}",
+            defaults={"missing_global": "this-is-the-default"},
+        )
+        assert str(name) == "test_this-is-the-default.nc"

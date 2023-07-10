@@ -263,9 +263,8 @@ def convert_file(file: str, parser: str, config: dict) -> str:
     # Save to
     output_path = None
     if config.get("file_output").get("path"):
-        overwrite = config["file_output"].pop("overwrite", False)
-        output_path = generate_output_path(ds, source=file, **config["file_output"])
-        if output_path.exists() and not overwrite:
+        output_path = generate_output_path(ds, **config["file_output"])
+        if output_path.exists() and not config["overwrite"]:
             logger.info(
                 "Converted output file already exist and won't be overwritten. (output_path=%s)",
                 output_path,

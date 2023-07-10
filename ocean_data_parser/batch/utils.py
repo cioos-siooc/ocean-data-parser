@@ -7,7 +7,7 @@ import pandas as pd
 def generate_output_path(
     ds: xarray.Dataset,
     source: str = None,
-    path: str = ".",
+    path: str = None,
     defaults: dict = None,
     file_preffix: str = "",
     file_suffix: str = "",
@@ -17,15 +17,15 @@ def generate_output_path(
 
     Args:
         ds (xr.Dataset): Dataset
+        source (str, optional): original source file path. Defaults to None.
         path (str): Output path where to save the directory.
             The output path uses the python String format method to reference
             attributes accoding to the convention:
-              - source_filename: pathlib.Path of original parsed file filename
-              - source_filename_stem: original parsed file filename without the extension
-              - global attributes: `global:{Attribute}`
-              - variable attributes: `variable:{variable}:{attribute}`
-            ex: ".\{global:program}\{global:project}\{source_filename.name}.nc"
-        source (str, optional): original source file path. Defaults to None.
+              - source_path: pathlib.Path of original parsed file filename
+              - source_stem: original parsed file filename without the extension
+              - global attributes: `{global_asttribute}`
+              - variable attributes: `{variable_[variable]_[attribute]}`
+            ex: ".\{program}\{project}\{source_stem}.nc"
         defaults (dict, optional): Placeholder for any global
             attributes or variable attributes used in output path. Defaults to None.
         file_preffix (str, optional): Preffix to add to file name. Defaults to "".
@@ -36,15 +36,19 @@ def generate_output_path(
         Path (Path): Generated path
     """
 
-    if source is None and ds.attrs.get("source"):
-        source = Path(ds.attrs["source"]).stem
+    # handle defaults
+    original_source = Path(ds.attrs.get("source")) if ds.attrs.get("source") else None
+    if source is None and original_source:
+        source = str(original_source.stem)
 
     if source is None:
         raise RuntimeError("No output source available. Please define source output.")
 
+    if path is None and ds.attrs.get("source"):
+        path = str(Path(ds.attrs["source"]).parent)
+
     # Review file_output path given by config
     path_generation_inputs = {
-        "source_filename": source or ".",
         **(defaults or {}),
         **{f"{key}": value for key, value in ds.attrs.items() if value},
         **{
@@ -53,6 +57,14 @@ def generate_output_path(
             for key, value in ds[var].attrs.items()
             if value
         },
+        **(
+            {
+                "source_path": original_source.parent,
+                "source_stem": original_source.stem,
+            }
+            if original_source
+            else {}
+        ),
         **(
             {
                 "time_min": pd.to_datetime(ds["time"].min().values),
