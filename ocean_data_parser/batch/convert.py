@@ -1,9 +1,9 @@
 import logging.config
+import shutil
 from glob import glob
 from importlib import import_module
-from pathlib import Path
 from multiprocessing import Pool
-import shutil
+from pathlib import Path
 
 import click
 import pandas as pd

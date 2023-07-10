@@ -1,7 +1,7 @@
 from pathlib import Path
 
-import xarray
 import pandas as pd
+import xarray
 
 
 def generate_output_path(

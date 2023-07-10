@@ -5,9 +5,7 @@ from time import sleep
 import pandas as pd
 from utils import compare_text_files
 
-from ocean_data_parser.batch.convert import (
-    FileConversionRegistry,
-)
+from ocean_data_parser.batch.convert import FileConversionRegistry
 
 PACKAGE_PATH = Path(__file__).parent
 TEST_REGISTRY_PATH = Path("tests/test_file_registry.csv")

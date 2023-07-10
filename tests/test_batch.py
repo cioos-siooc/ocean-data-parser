@@ -3,10 +3,10 @@ import logging.config
 import unittest
 from pathlib import Path
 
-import xarray as xr
 import pandas as pd
-from click.testing import CliRunner
 import pytest
+import xarray as xr
+from click.testing import CliRunner
 
 from ocean_data_parser.batch.convert import (
     FileConversionRegistry,
@@ -51,7 +51,6 @@ class BatchModeTests(unittest.TestCase):
         assert not registry.data.empty
         assert not registry.data["error_message"].any()
 
-
     def test_batch_conversion_onset_parser_multiprocessing_2_workers(self):
         config = load_config()
         config["input_path"] = "tests/parsers_test_files/onset/**/*.csv"
@@ -64,7 +63,6 @@ class BatchModeTests(unittest.TestCase):
         registry = main(config=config)
         assert not registry.data.empty
         assert not registry.data["error_message"].any()
-
 
     def test_batch_conversion_onset_parser_multiprocessing_all_workers(self):
         config = load_config()
