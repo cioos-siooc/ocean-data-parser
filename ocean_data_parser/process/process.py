@@ -2,26 +2,12 @@ import logging
 from pathlib import Path
 from typing import Callable, Union
 
-import gsw_xarray as gsw
 import numpy as np
 import pandas as pd
 import xarray as xr
-from ioos_qc.config import Config
-from ioos_qc.qartod import QartodFlags, qartod_compare
-from ioos_qc.results import collect_results
-from ioos_qc.streams import XarrayStream
 
 from ocean_data_parser.read import seabird, utils
 
-QARTOD_FLAGS = {
-    name: value
-    for name, value in QartodFlags.__dict__.items()
-    if not name.startswith("__")
-}
-QARTOD_ATTRIBUTES = {
-    "flag_meaning": " ".join(QARTOD_FLAGS.keys()),
-    "flag_value": list(QARTOD_FLAGS.values()),
-}
 logger = logging.getLogger(__name__)
 
 
@@ -294,6 +280,11 @@ class Processing:
             xr.DataArray: New
         """
 
+        try:
+            import gsw_xarray as gsw
+        except ImportError:
+            raise RuntimeError("Optional package gsw_xarray is required.")
+
         def _get_arg(arg):
             if arg in self._obj or arg in self._obj.coords:
                 return self._obj[arg]
@@ -342,6 +333,25 @@ class Processing:
         Returns:
             xr.Dataset: New dataset with the added aggregatd flags.
         """
+        try:
+            from ioos_qc.config import Config
+            from ioos_qc.qartod import QartodFlags, qartod_compare
+            from ioos_qc.results import collect_results
+            from ioos_qc.streams import XarrayStream
+        except ImportError:
+            raise RuntimeError(
+                "Optional package ioos_qc is required: run `pip install ioos_qc`"
+            )
+
+        QARTOD_FLAGS = {
+            name: value
+            for name, value in QartodFlags.__dict__.items()
+            if not name.startswith("__")
+        }
+        QARTOD_ATTRIBUTES = {
+            "flag_meaning": " ".join(QARTOD_FLAGS.keys()),
+            "flag_value": list(QARTOD_FLAGS.values()),
+        }
 
         def _get_test_result(var, module, test):
             """
