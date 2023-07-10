@@ -4,9 +4,10 @@ QC Module present a set of tools to manually qc data.
 import plotly.graph_objects as go
 from IPython.display import display
 from ipywidgets import HBox, VBox, interactive, widgets
-from .process import xr
 
 from ocean_data_parser.read import utils
+
+from .process import xr
 
 flag_conventions = {
     "QARTOD": {
