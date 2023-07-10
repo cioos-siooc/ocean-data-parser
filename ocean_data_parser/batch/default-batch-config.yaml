@@ -3,6 +3,7 @@ input_path: tests/parsers_test_files/onset/**/*.csv,tests/parsers_test_files/ons
 parser: auto,auto
 overwrite: False
 multiprocessing: 3 # n processes to run [int]
+errors: "raise"
 registry:
   path: file_registry.csv
   since: null # pandas.Timedelta expression (ex: '24h') or datetime ('2022-01-01T00:00:00Z')

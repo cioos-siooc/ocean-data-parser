@@ -71,14 +71,16 @@ def main(config=None, **kwargs):
             matching first level key.
     """
 
-    def _convert_file(*args):
+    def _convert_file(args):
         try:
             logger.extra["file"] = args[0]
             output_file = convert_file(args[0], args[1], args[2])
             file_registry.update(args[0])
             file_registry.update_fields(args[0], output_file=output_file)
         except Exception as error:
-            logger.exception("Conversion failed")
+            if config.get("errors") == "raise":
+                raise error
+            logger.exception("Conversion failed", exc_info=True)
             file_registry.update_fields(args[0], error_message=error)
 
     # load config
