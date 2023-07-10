@@ -1,17 +1,13 @@
 # File input
 input_path: tests/parsers_test_files/onset/**/*.csv,tests/parsers_test_files/onset/**/*.MON
 parser: auto,auto
+overwrite: False
+multiprocessing: 3 # n processes to run [int]
 registry:
   path: file_registry.csv
   since: null # pandas.Timedelta expression (ex: '24h') or datetime ('2022-01-01T00:00:00Z')
 
-multiprocessing:
-  active: true
-  processes: 3
-
-debug: on
 # Log
-
 logging:
   version: 1
   loggers:
@@ -40,6 +36,7 @@ logging:
   formatters:
     default_formatter:
       "format": "%(asctime)s-%(levelname)s-%(name)s::%(module)s|%(lineno)s:: %(message)s"
+
 sentry:
   # https://docs.sentry.io/platforms/python/configuration/options/
   dsn: null

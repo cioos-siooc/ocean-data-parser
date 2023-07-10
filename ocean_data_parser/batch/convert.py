@@ -158,21 +158,16 @@ def main(config=None, **kwargs):
                 return
         inputs = ((file, parser_func, config) for file in input["files"])
         tqdm_parameters = dict(
-            desc="Run batch conversion",
-            unit="file",
-            total=len(input["files"])
-
+            desc="Run batch conversion", unit="file", total=len(input["files"])
         )
-        if config.get("multiprocessing").get("active", True):
+        if config.get("multiprocessing"):
             logger.debug("Run conversion in parallel with multiprocessing")
-            with Pool(config["multiprocessing"].get("processes")) as pool:
-                tqdm(pool.imap(_convert_file,inputs),**tqdm_parameters)
-                
+            with Pool(config["multiprocessing"]) as pool:
+                tqdm(pool.imap(_convert_file, inputs), **tqdm_parameters)
+
         else:
             logger.debug("Run conversion ")
-            for item in tqdm(
-                inputs, **tqdm_parameters
-            ):
+            for item in tqdm(inputs, **tqdm_parameters):
                 _convert_file(item)
 
     file_registry.save()
