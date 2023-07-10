@@ -71,18 +71,6 @@ def main(config=None, **kwargs):
             matching first level key.
     """
 
-    def _convert_file(args):
-        try:
-            logger.extra["file"] = args[0]
-            output_file = convert_file(args[0], args[1], args[2])
-            file_registry.update(args[0])
-            file_registry.update_fields(args[0], output_file=output_file)
-        except Exception as error:
-            if config.get("errors") == "raise":
-                raise error
-            logger.exception("Conversion failed", exc_info=True)
-            file_registry.update_fields(args[0], error_message=error)
-
     # load config
     config = {
         **load_config(DEFAULT_CONFIG_PATH),
@@ -144,9 +132,9 @@ def main(config=None, **kwargs):
     ):
         source_files = glob(input_path, recursive=config.get("recursive"))
         total_files = len(source_files)
+        file_registry.add(source_files)
         if not config.get("overwrite"):
             # Ignore files already parsed
-            file_registry.add(source_files)
             source_files = file_registry.get_sources_with_modified_hash()
         to_parse += [
             {"files": source_files, "input_path": input_path, "parser": parser}
@@ -169,21 +157,56 @@ def main(config=None, **kwargs):
             except Exception:
                 logger.exception("Failed to load module %s", parser)
                 return
-        inputs = ((file, parser_func, config) for file in input["files"])
-        tqdm_parameters = dict(
-            desc="Run batch conversion", unit="file", total=len(input["files"])
-        )
+
+        inputs = [(file, parser_func, config) for file in input["files"]]
+        tqdm_parameters = dict(unit="file", total=len(input["files"]))
         if config.get("multiprocessing"):
             logger.debug("Run conversion in parallel with multiprocessing")
-            with Pool(config["multiprocessing"]) as pool:
-                tqdm(pool.imap(_convert_file, inputs), **tqdm_parameters)
+            n_workers = (
+                config["multiprocessing"]
+                if isinstance(config["multiprocessing"], int)
+                else None
+            )
+            with Pool(n_workers) as pool:
+                response = list(
+                    tqdm(
+                        pool.imap(_convert_file, inputs),
+                        **tqdm_parameters,
+                        desc=f"Run parallel batch conversion with {n_workers or 'All'} workers",
+                    )
+                )
 
         else:
             logger.debug("Run conversion ")
-            for item in tqdm(inputs, **tqdm_parameters):
-                _convert_file(item)
+            response = []
+            for item in tqdm(
+                inputs,
+                **tqdm_parameters,
+                desc="Run batch conversion",
+            ):
+                response += [_convert_file(item)]
+
+    # Update registry
+    for source, output_file, error_message in response:
+        if output_file:
+            file_registry.update_fields(source, output_file=output_file)
+        else:
+            file_registry.update_fields(source, error_message=error_message)
 
     file_registry.save()
+    return file_registry
+
+
+def _convert_file(args):
+    try:
+        logger.extra["file"] = args[0]
+        output_file = convert_file(args[0], args[1], args[2])
+        return (args[0], output_file, None)
+    except Exception as error:
+        if args[2].get("errors") == "raise":
+            raise error
+        logger.exception("Conversion failed", exc_info=True)
+        return (args[0], None, error)
 
 
 def convert_file(file: str, parser: str, config: dict) -> str:
@@ -273,7 +296,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
 
         elif not output_path.parent.exists():
             logger.info("Create new directory: %s", output_path.parent)
-            output_path.parent.mkdir()
+            output_path.parent.mkdir(parents=True)
         logger.info("Save to: %s", output_path)
         ds.to_netcdf(output_path)
 

@@ -45,16 +45,39 @@ class BatchModeTests(unittest.TestCase):
         config["overwrite"] = True
         config["multiprocessing"] = None
         config["file_output"]["path"] = "temp/batch/single_files/"
-        main(config=config)
+        config["file_output"]["source"] = "{instrument_sn}"
+        config["registry"]["path"] = "temp/batch/single_registry.csv"
+        registry = main(config=config)
+        assert not registry.data.empty
+        assert not registry.data["error_message"].any()
 
-    def test_batch_conversion_onset_parser_multiprocessing(self):
+
+    def test_batch_conversion_onset_parser_multiprocessing_2_workers(self):
         config = load_config()
         config["input_path"] = "tests/parsers_test_files/onset/**/*.csv"
         config["parser"] = "onset.csv"
         config["overwrite"] = True
-        config["multiprocessing"] = 3
+        config["multiprocessing"] = 2
         config["file_output"]["path"] = "temp/batch/multiprocessing_files/"
-        main(config=config)
+        config["file_output"]["source"] = "{instrument_sn}"
+        config["registry"]["path"] = "temp/batch/multi_registry.csv"
+        registry = main(config=config)
+        assert not registry.data.empty
+        assert not registry.data["error_message"].any()
+
+
+    def test_batch_conversion_onset_parser_multiprocessing_all_workers(self):
+        config = load_config()
+        config["input_path"] = "tests/parsers_test_files/onset/**/*.csv"
+        config["parser"] = "onset.csv"
+        config["overwrite"] = True
+        config["multiprocessing"] = True
+        config["file_output"]["path"] = "temp/batch/multiprocessing_files/"
+        config["file_output"]["source"] = "{instrument_sn}"
+        config["registry"]["path"] = "temp/batch/multi_registry.csv"
+        registry = main(config=config)
+        assert not registry.data.empty
+        assert not registry.data["error_message"].any()
 
     def test_batch_cli_conversion_onset_parser(self):
         runner = CliRunner()
