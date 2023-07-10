@@ -65,7 +65,7 @@ manual_qc: {}
 # Outputs
 file_output:
   path: null
-  overwrite: true
+  source: null
   file_preffix: ""
   file_suffix: _test
   output_format: .nc
