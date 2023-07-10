@@ -186,7 +186,7 @@ class FileConversionRegistry:
 
     def get_sources_modified_since(
         self,
-        since: Union[pd.Timedelta, pd.Timestamp, str],
+        since: Union[pd.Timedelta, pd.Timestamp, str] = None,
         sources=None,
     ):
         """Return list of modified source files since given timestamp or time interval.
