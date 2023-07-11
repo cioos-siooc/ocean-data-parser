@@ -125,9 +125,6 @@ def compare_test_to_reference_netcdf(test: xr.Dataset, reference: xr.Dataset):
             for attr, value in test[var].attrs.items()
             if attr in reference[var].attrs
         }
-
-    if reference.identical(test):
-        return []
     differences = compare_xarray_datasets(
         reference, test, fromfile="reference", tofile="test", n=0
     )
@@ -383,7 +380,8 @@ def test_compare_test_to_reference_netcdf(reference_file):
 
     # Run Test conversion
     source_file = reference_file.replace("_reference.nc", "")
-    test = utils.standardize_dataset(auto.file(source_file))
+    test = auto.file(source_file)
+    test = utils.standardize_dataset(test)
 
     # Load test file and reference file
     ref = xr.open_dataset(reference_file)
