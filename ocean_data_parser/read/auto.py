@@ -1,6 +1,6 @@
 import logging
-import os
 import re
+from pathlib import Path
 from importlib import import_module
 
 from xarray import Dataset
@@ -22,8 +22,8 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
         str: Parser compatible with this file format
     """
     # Retrieve file extension and the first few lines of the file header
-    _, ext = os.path.splitext(file)
-    ext = ext[1:]
+    file = Path(file)
+    ext = file.suffix[1:]
     with open(file, encoding=encoding, errors="ignore") as file_handle:
         header = "".join((next(file_handle) for _ in range(5)))
 
