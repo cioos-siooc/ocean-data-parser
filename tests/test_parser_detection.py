@@ -28,6 +28,7 @@ auto_detection_ignore = [
 )
 def test_automated_parser_detection(file):
     parser = detect_file_format(file)
+    assert parser, "No parser was associated"
     parser = parser.replace("_format", "")
     assert parser, f"Test file {file} doesn't match any parser"
     assert all(
