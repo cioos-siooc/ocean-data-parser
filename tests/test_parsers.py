@@ -95,6 +95,11 @@ def compare_test_to_reference_netcdf(test: xr.Dataset, reference: xr.Dataset):
     reference.attrs["date_created"] = "TIMESTAMP"
     test.attrs["date_created"] = "TIMESTAMP"
 
+    # Replace variables decoded as object to objects also in test
+    for variable in reference.variables:
+        if variable in test and reference[variable].dtype == object:
+            test[variable] = test[variable].astype(object)
+
     reference = standardize_dataset(reference)
     test = standardize_dataset(test)
 
