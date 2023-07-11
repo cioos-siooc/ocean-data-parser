@@ -50,13 +50,17 @@ def standardize_dataset(
     """Standardize dataset to be easily serializable to netcdf and compatible with ERDDAP"""
 
     def _consider_attribute(value):
-        return type(value) in (dict, list) or (
+        return type(value) in (dict, tuple, list, np.ndarray) or (
             (pd.notnull(value) or value in (0, 0.0)) and value != ""
         )
 
     def _encode_attribute(value):
         if isinstance(value, dict):
             return json.dumps(value)
+        elif isinstance(value, (list, tuple)):
+            if all(isinstance(item, type(value[0])) for item in value):
+                return np.array(value).astype(value[0])
+            return value
         elif type(value) in (datetime, pd.Timestamp):
             return value.isoformat().replace("+00:00", "Z")
         elif isinstance(value, bool):
@@ -140,7 +144,7 @@ def standardize_variable_attributes(ds):
             ds[var].dtype in [float, int, "float32", "float64", "int64", "int32"]
             and "flag_values" not in ds[var].attrs
         ):
-            ds[var].attrs["actual_range"] = tuple(
+            ds[var].attrs["actual_range"] = np.array(
                 np.array((ds[var].min().item(0), ds[var].max().item(0))).astype(
                     ds[var].dtype
                 )
