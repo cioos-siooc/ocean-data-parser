@@ -15,6 +15,7 @@ from ocean_data_parser.batch.config import load_config
 from ocean_data_parser.batch.registry import FileConversionRegistry
 from ocean_data_parser.batch.utils import generate_output_path
 from ocean_data_parser.read import auto, utils
+from ocean_data_parser import geo
 
 MODULE_PATH = Path(__file__).parent
 DEFAULT_CONFIG_PATH = MODULE_PATH / "default-batch-config.yaml"
@@ -263,6 +264,19 @@ def convert_file(file: str, parser: str, config: dict) -> str:
 
     # Attribute Corrections
     ds.attrs.update(_get_mapped_global_attributes())
+
+    # Add Geospatial Attributes
+    if config.get("geographical_areas") and "latitude" in ds and "longitude" in ds:
+        ds.attrs["geographical_areas"] = geo.get_geo_code(
+            (ds["longitude"], ds["latitude"]), config["geographical_areas"]["regions"]
+        )
+    if config.get("reference_stations") and "latitude" in ds and "longitude" in ds:
+        ds.attrs["reference_stations"] = geo.get_nearest_station(
+            ds["longitude"],
+            ds["latitude"],
+            config["reference_stations"]["stations"],
+            config["reference_stations"]["maximum_distance_from_reference_station_km"],
+        )
 
     # Processing
     for pipe in config["xarray_pipe"]:

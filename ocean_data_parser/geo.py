@@ -1,5 +1,8 @@
 import json
 import os
+from typing import Union
+
+import pandas as pd
 
 from geographiclib.geodesic import Geodesic
 
@@ -69,17 +72,18 @@ def get_geo_code(position: list, geographical_areas_collections: list) -> str:
 
 def get_nearest_station(
     latitude: float,
-    longigude: float,
-    stations: list,
+    longitude: float,
+    stations: Union[list[tuple[str, float, float]], pd.DataFrame],
     max_distance_from_station_km: float = None,
     geod: Geodesic = None,
 ) -> str:
-    """AI is creating summary for get_nearest_station
+    """Get the nearest station from a list of reference stations
 
     Args:
         latitude (float): [description]
         longigude (float): [description]
-        stations (list): [description]
+        stations Union[list, pd.DataFrame]: List of reference stations [(station, latitude, longitude)] or pandas DataFrame
+            if a dataframe is passed, the expected colums should be respectively called (station, latitude,longitude)
         max_distance_from_station_km (float, optional): Max distance [km] from station to be matched.
         geod (Geodesic, optional): [description]. Defaults to None.
 
@@ -89,8 +93,11 @@ def get_nearest_station(
     if geod is None:
         geod = Geodesic.WGS84  # define the WGS84 ellipsoid
 
+    if isinstance(stations, pd.DataFrame):
+        stations = stations[["station", "latitude", "longitude"]].values
+
     station_distance = {
-        station: geod.Inverse(latitude, longigude, slat, slon)["s12"]
+        station: geod.Inverse(latitude, longitude, slat, slon)["s12"]
         for station, slat, slon in stations
     }
 

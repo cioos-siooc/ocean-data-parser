@@ -55,6 +55,14 @@ global_attribute_mapping:
   by: [] # global attributes list
   log_level: WARNING # [null, WARNING,ERROR] level log when no mapping exist
 
+# Geospatial References
+reference_stations:
+  path: null
+  maximum_distance_from_reference_station_km: null
+
+reference_geograhical_areas:
+  path: null
+
 # Transformations
 xarray_pipe: []
 

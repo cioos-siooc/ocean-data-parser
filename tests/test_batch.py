@@ -14,6 +14,7 @@ from ocean_data_parser.batch.convert import (
     load_config,
     main,
 )
+from ocean_data_parser.batch.config import glob
 from ocean_data_parser.batch.utils import generate_output_path
 
 PACKAGE_PATH = Path(__file__).parent
@@ -35,6 +36,14 @@ class ConfigLoadTests(unittest.TestCase):
     def test_default_config_logging(self):
         config = load_config()
         logging.config.dictConfig(config["logging"])
+
+    def test_config_glob(self):
+        paths = glob("ocean_data_parser/**/*.py")
+        assert paths
+        path_list = list(paths)
+        assert all(isinstance(path, Path) for path in path_list)
+        assert path_list
+        assert len(path_list) > 10
 
 
 class BatchModeTests(unittest.TestCase):
@@ -84,7 +93,8 @@ class BatchModeTests(unittest.TestCase):
             ["--config=tests/batch_test_configs/batch_convert_test_onset_csv.yaml"],
         )
         assert result.exit_code == 0, result
-        assert "Run batch conversion" in result.output
+        assert "Run conversion" in result.output
+        assert "Completed" in result.output
 
     def test_batch_cli_conversion_onset_parser_added_input(self):
         runner = CliRunner()
@@ -97,7 +107,8 @@ class BatchModeTests(unittest.TestCase):
             ],
         )
         assert result.exit_code == 0, result
-        assert "Run batch conversion" in result.output
+        assert "Run conversion" in result.output
+        assert "Completed" in result.output
 
     def test_batch_cli_new_config_creation(self):
         runner = CliRunner()
