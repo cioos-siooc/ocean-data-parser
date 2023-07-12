@@ -13,17 +13,16 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
 
 auto_detection_ignore = [
-    "tests/parsers_test_files/dfo/odf/bio/CTD/CTD_1994038_147_1_DN.ODF",
-    "tests/parsers_test_files/dfo/odf/bio/CTD/CTD_2020003_004_1_DN.ODF",
+    "CTD_1994038_147_1_DN.ODF",
+    "CTD_2020003_004_1_DN.ODF",
 ]
-
-
+auto_detection_ignore_extensions = ('.nc','.DS_Store')
 @pytest.mark.parametrize(
     "file",
     [
-        file
-        for file in glob("tests/parsers_test_files/**/*.*", recursive=True)
-        if not file.endswith("nc") and file not in auto_detection_ignore
+        str(file)
+        for file in Path("tests/parsers_test_files").glob("**/*.*")
+        if not file.name.endswith(auto_detection_ignore_extensions) and file.name not in auto_detection_ignore
     ],
 )
 def test_automated_parser_detection(file):
@@ -39,9 +38,9 @@ def test_automated_parser_detection(file):
 @pytest.mark.parametrize(
     "file",
     [
-        file
-        for file in glob("tests/parsers_test_files/**/*.*", recursive=True)
-        if not file.endswith("nc") and "geojson" not in file and Path(file).exists()
+        str(file)
+        for file in Path("tests/parsers_test_files").glob("**/*.*")
+        if not file.name.endswith(auto_detection_ignore_extensions) and "geojson" not in file.name
     ],
 )
 def test_detect_and_parse(file):
