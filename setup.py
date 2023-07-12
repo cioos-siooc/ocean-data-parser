@@ -41,6 +41,7 @@ setup(
             "pylint",
             "flake8",
             "black",
+            "ioos_qc",
             "pytest-benchmark",
             "mkdocs",
             "mkdocs-material",
