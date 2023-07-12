@@ -58,9 +58,9 @@ def standardize_dataset(
         if isinstance(value, dict):
             return json.dumps(value)
         elif isinstance(value, (list, tuple)):
-            if all(isinstance(item, type(value[0])) for item in value) and type(
-                value[0]
-            ) in (int, float):
+            if all(
+                isinstance(item, type(value[0])) for item in value
+            ) and not isinstance(value[0], str):
                 return np.array(value).astype(value[0])
             return value
         elif type(value) in (datetime, pd.Timestamp):
