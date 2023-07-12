@@ -213,7 +213,7 @@ class FileRegistryTests(unittest.TestCase):
             not differences
         ), f"Resaving the intial test registry didn't produce a similar file: {differences}"
 
-        file_registry.data["last_update"].iloc[-1] += 100
+        file_registry.data.loc[file_registry.data.index[-1],'last_update'] += 100
         file_registry.save()
         differences = compare_text_files(
             str(TEST_REGISTRY.path), str(file_registry.path)
