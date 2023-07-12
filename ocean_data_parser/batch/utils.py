@@ -55,7 +55,6 @@ def generate_output_path(
             f"variable_{var}_{key}": value
             for var in ds.variables
             for key, value in ds[var].attrs.items()
-            if value
         },
         **(
             {
