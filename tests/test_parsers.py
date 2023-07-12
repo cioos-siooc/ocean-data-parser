@@ -125,10 +125,9 @@ def compare_test_to_reference_netcdf(test: xr.Dataset, reference: xr.Dataset):
             for attr, value in test[var].attrs.items()
             if attr in reference[var].attrs
         }
-    differences = compare_xarray_datasets(
+    return compare_xarray_datasets(
         reference, test, fromfile="reference", tofile="test", n=0
     )
-    return "Unknown differences" if not differences else differences
 
 
 class TestCompareDatasets:
