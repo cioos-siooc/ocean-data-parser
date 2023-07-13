@@ -1,7 +1,9 @@
 import logging
-import os
 import re
+from pathlib import Path
 from importlib import import_module
+
+from xarray import Dataset
 
 logger = logging.getLogger(__name__)
 
@@ -20,8 +22,8 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
         str: Parser compatible with this file format
     """
     # Retrieve file extension and the first few lines of the file header
-    _, ext = os.path.splitext(file)
-    ext = ext[1:]
+    file = Path(file)
+    ext = file.suffix[1:]
     with open(file, encoding=encoding, errors="ignore") as file_handle:
         header = "".join((next(file_handle) for _ in range(5)))
 
@@ -75,6 +77,8 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
         parser = "sunburst.superCO2_notes"
     elif ext == "txt" and "CO2 surface underway data" in header:
         parser = "sunburst.superCO2"
+    elif all(re.search("\$.*,.*,", line) for line in header.split("\n") if line):
+        parser = "nmea.file"
     else:
         logger.error("Unable to match file to a specific data parser")
         return
@@ -83,7 +87,19 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
     return parser
 
 
-def file(path, parser=None, **kwargs):
+def file(path: str, parser: str = None, kwargs=None) -> Dataset:
+    """Automatically detect file format and load it as an xarray dataset.
+
+    Args:
+        path (str): path to file to parse
+        parser (str, optional): Give parser to use to parse the given data.
+                Defaults to auto mode which is looking at the extension
+                and file header to asses the appropriate parser to use.
+        **kwargs: extra keyword arguments to pass to parser.
+
+    Returns:
+        xarray.Dataset: Parsed xarray dataset for provided file
+    """
     # Review the file format if no parser is specified
     if parser is None:
         parser = detect_file_format(path)
@@ -97,12 +113,8 @@ def file(path, parser=None, **kwargs):
 
     # Load the appropriate parser and read the file
     read_module, filetype = parser.rsplit(".", 1)
-    try:
-        mod = import_module(f"ocean_data_parser.read.{read_module}")
-        parser_func = getattr(mod, filetype)
-    except Exception:
-        logger.exception("Failed to load module %s", parser)
-        return
+    mod = import_module(f"ocean_data_parser.read.{read_module}")
+    parser_func = getattr(mod, filetype)
 
     if kwargs:
         return parser_func(path, **kwargs)

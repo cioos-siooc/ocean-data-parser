@@ -1,0 +1,71 @@
+# File input
+input_path: tests/parsers_test_files/onset/**/*.csv
+parser: auto
+registry:
+  path: file_registry.csv
+overwrite: True
+
+# Log
+logging:
+  version: 1
+  loggers:
+    "":
+      level: DEBUG
+      propagate: False
+      handlers:
+        - stream_handler
+        - file_handler
+    custom_logger:
+      level: DEBUG
+      propagate: False
+      handlers: [stream_handler]
+  handlers:
+    stream_handler:
+      class: logging.StreamHandler
+      stream: "ext://sys.stdout"
+      level: DEBUG
+      formatter: default_formatter
+    file_handler:
+      class: logging.FileHandler
+      filename: batch_conversion_output.log
+      mode: "w"
+      level: DEBUG
+      formatter: default_formatter
+  formatters:
+    default_formatter:
+      "format": "%(asctime)s-%(levelname)s-%(name)s::%(module)s|%(lineno)s:: %(message)s"
+sentry:
+  # https://docs.sentry.io/platforms/python/configuration/options/
+  dsn: null
+  level: WARNING
+  event_level: ERROR
+  traces_sample_rate: 1.0,
+
+# Attributes and Metadata
+variable_attributes: {}
+global_attributes: {}
+attribute_corrections:
+  file_specific: {}
+  global_attribute_mappings: {}
+
+# Transformations
+xarray_pipe: []
+
+# QC
+ioos_qc: {}
+manual_qc: {}
+
+# Outputs
+file_output:
+  path: null
+  file_preffix: ""
+  file_suffix: _test
+  output_format: .nc
+
+upload_to_database:
+  name: null
+  username: null
+  password: null
+  table: null
+  append: True
+  on_conflict: "UPDATE"

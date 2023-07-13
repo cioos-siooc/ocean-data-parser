@@ -1,0 +1,87 @@
+# File input
+input_path: tests/parsers_test_files/onset/**/*.csv,tests/parsers_test_files/onset/**/*.MON
+parser: auto,auto
+overwrite: False
+multiprocessing: 3 # n processes to run [int]
+errors: "raise"
+registry:
+  path: file_registry.csv
+  since: null # pandas.Timedelta expression (ex: '24h') or datetime ('2022-01-01T00:00:00Z')
+
+# Log
+logging:
+  version: 1
+  loggers:
+    "":
+      level: DEBUG
+      propagate: False
+      handlers:
+        - stream_handler
+        - file_handler
+    custom_logger:
+      level: DEBUG
+      propagate: False
+      handlers: [stream_handler]
+  handlers:
+    stream_handler:
+      class: logging.StreamHandler
+      stream: "ext://sys.stdout"
+      level: DEBUG
+      formatter: default_formatter
+    file_handler:
+      class: logging.FileHandler
+      filename: batch_conversion_output.log
+      mode: "w"
+      level: DEBUG
+      formatter: default_formatter
+  formatters:
+    default_formatter:
+      "format": "%(asctime)s-%(levelname)s-%(name)s::%(module)s|%(lineno)s:: %(message)s"
+
+sentry:
+  # https://docs.sentry.io/platforms/python/configuration/options/
+  dsn: null
+  level: WARNING
+  event_level: ERROR
+  traces_sample_rate: 1.0,
+
+# Attributes and Metadata
+variable_attributes: {}
+global_attributes: {}
+file_specific_attributes_path: null # Path to csv file with one column called "file"
+global_attribute_mapping:
+  path: null # Path to csv file (accept glob parameter for multiple files)
+  mapping: null # mapping dataframe
+  by: [] # global attributes list
+  log_level: WARNING # [null, WARNING,ERROR] level log when no mapping exist
+
+# Geospatial References
+reference_stations:
+  path: null
+  maximum_distance_from_reference_station_km: null
+
+reference_geograhical_areas:
+  path: null
+
+# Transformations
+xarray_pipe: []
+
+# QC
+ioos_qc: {}
+manual_qc: {}
+
+# Outputs
+file_output:
+  path: null
+  source: null
+  file_preffix: ""
+  file_suffix: _test
+  output_format: .nc
+
+upload_to_database:
+  name: null
+  username: null
+  password: null
+  table: null
+  append: True
+  on_conflict: "UPDATE"
