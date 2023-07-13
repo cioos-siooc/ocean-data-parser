@@ -95,6 +95,11 @@ def compare_test_to_reference_netcdf(test: xr.Dataset, reference: xr.Dataset):
     reference.attrs["date_created"] = "TIMESTAMP"
     test.attrs["date_created"] = "TIMESTAMP"
 
+    # Replace variables decoded as object to objects also in test
+    for variable in reference.variables:
+        if variable in test and reference[variable].dtype == object:
+            test[variable] = test[variable].astype(object)
+
     reference = standardize_dataset(reference)
     test = standardize_dataset(test)
 
@@ -120,13 +125,9 @@ def compare_test_to_reference_netcdf(test: xr.Dataset, reference: xr.Dataset):
             for attr, value in test[var].attrs.items()
             if attr in reference[var].attrs
         }
-
-    if reference.identical(test):
-        return []
-    differences = compare_xarray_datasets(
+    return compare_xarray_datasets(
         reference, test, fromfile="reference", tofile="test", n=0
     )
-    return "Unknown differences" if not differences else differences
 
 
 class TestCompareDatasets:
@@ -378,7 +379,8 @@ def test_compare_test_to_reference_netcdf(reference_file):
 
     # Run Test conversion
     source_file = reference_file.replace("_reference.nc", "")
-    test = utils.standardize_dataset(auto.file(source_file))
+    test = auto.file(source_file)
+    test = utils.standardize_dataset(test)
 
     # Load test file and reference file
     ref = xr.open_dataset(reference_file)

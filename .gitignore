@@ -22,5 +22,10 @@ tests/parsers_test_files/amundsen/12713/**/*
 output/
 site/**
 docs/read/**/*-hook.md
+*.log
+file_registry.csv
+temp/**
+tests/test_file_registry_temp.csv
+
 temp/**
 *.log

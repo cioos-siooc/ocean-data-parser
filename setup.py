@@ -20,21 +20,28 @@ setup(
         "pytz",
         "NetCDF4",
         "pynmea2",
-        "gsw",
+        "gsw-xarray",
         "tabulate",
         "lxml",
+        "pyyaml",
+        "click",
         "cioos_data_transform @ git+https://github.com/cioos-siooc/cioos-siooc_data_transform.git@ios-parser-extra-vocabulary#egg=cioos_data_transform&subdirectory=cioos_data_transform",
         "cioos_data_transform_projects @ git+https://github.com/cioos-siooc/cioos-siooc_data_transform.git@ios-parser-extra-vocabulary#egg=cioos_data_transform_projects&subdirectory=projects",
     ],
     extras_require={
         "odf": ["geographicLib", "shapely"],
+        "process": ["plotly", "ipywidgets", "IPython", "ipywidgets"],
         "dev": [
+            "plotly",
+            "ipywidgets",
+            "IPython",
             "geographicLib",
             "shapely",
             "pytest",
             "pylint",
             "flake8",
             "black",
+            "ioos_qc",
             "pytest-benchmark",
             "mkdocs",
             "mkdocs-material",
@@ -53,6 +60,7 @@ setup(
     zip_safe=True,
     entry_points={
         "console_scripts": [
+            "odpy.convert = ocean_data_parser.batch.convert:cli_files",
             "odpy.compile.nc.variables = ocean_data_parser.compile.netcdf:cli_variables",
         ]
     },
