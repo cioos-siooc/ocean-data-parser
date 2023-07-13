@@ -16,13 +16,16 @@ auto_detection_ignore = [
     "CTD_1994038_147_1_DN.ODF",
     "CTD_2020003_004_1_DN.ODF",
 ]
-auto_detection_ignore_extensions = ('.nc','.DS_Store')
+auto_detection_ignore_extensions = (".nc", ".DS_Store")
+
+
 @pytest.mark.parametrize(
     "file",
     [
         str(file)
         for file in Path("tests/parsers_test_files").glob("**/*.*")
-        if not file.name.endswith(auto_detection_ignore_extensions) and file.name not in auto_detection_ignore
+        if not file.name.endswith(auto_detection_ignore_extensions)
+        and file.name not in auto_detection_ignore
     ],
 )
 def test_automated_parser_detection(file):
@@ -40,7 +43,8 @@ def test_automated_parser_detection(file):
     [
         str(file)
         for file in Path("tests/parsers_test_files").glob("**/*.*")
-        if not file.name.endswith(auto_detection_ignore_extensions) and "geojson" not in file.name
+        if not file.name.endswith(auto_detection_ignore_extensions)
+        and "geojson" not in file.name
     ],
 )
 def test_detect_and_parse(file):
