@@ -44,7 +44,7 @@ def _get_paths(paths: str) -> list:
 )
 @click.option(
     "--new_config",
-    type=click.Path(),
+    type=click.Path(exists=False),
     help="Generate a new configuration file at the given path",
 )
 def cli_files(config=None, add=None, new_config=None):
