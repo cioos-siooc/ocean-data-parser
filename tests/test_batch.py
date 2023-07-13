@@ -115,12 +115,12 @@ class BatchModeTests(unittest.TestCase):
         new_config_test_file = Path("temp/test_config_copy.yaml")
         if new_config_test_file.exists():
             new_config_test_file.unlink()
-            
+
         assert not new_config_test_file.exists()
-        result = runner.invoke(
-            cli_files, ["--new_config", str(new_config_test_file)]
-        )
-        assert result.exit_code == 0, result
+        result = runner.invoke(cli_files, ["--new_config", str(new_config_test_file)])
+        assert (
+            result.exit_code == 0
+        ), f"new config failed with result.exit_code={result.exit_code} and result={result}"
         assert new_config_test_file.exists()
         new_config_test_file.unlink()
         assert not new_config_test_file.exists()

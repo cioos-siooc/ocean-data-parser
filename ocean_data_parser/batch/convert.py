@@ -44,12 +44,20 @@ def _get_paths(paths: str) -> list:
 )
 @click.option(
     "--new_config",
-    type=click.Path(exists=False),
+    type=click.Path(),
     help="Generate a new configuration file at the given path",
 )
 def cli_files(config=None, add=None, new_config=None):
     if new_config:
-        logger.info("Copy a default config to given path")
+        new_config = Path(new_config)
+        logger.info(
+            "Copy a default config to given path %s to %s",
+            DEFAULT_CONFIG_PATH,
+            new_config,
+        )
+        if not new_config.parent.exists():
+            logger.info("Generate new directory")
+            new_config.parent.mkdir(parents=True)
         shutil.copy(DEFAULT_CONFIG_PATH, new_config)
         return
 
