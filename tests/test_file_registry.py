@@ -251,7 +251,7 @@ class FileRegistryTests(unittest.TestCase):
     def test_get_sources_with_modified_hash_with_new_file(self):
         file_registry = TEST_REGISTRY.deepcopy()
         file_registry.update()
-        file_registry.data.loc[file_registry.data.index[-1],'output_path'] = None
+        file_registry.data.loc[file_registry.data.index[-1], "output_path"] = None
         changed_files = file_registry.get_sources_with_modified_hash()
         assert changed_files == [file_registry.data.index[-1]]
 
@@ -318,8 +318,8 @@ class FileRegistryTests(unittest.TestCase):
     def test_get_sources_since_with_new_file(self):
         file_registry = TEST_REGISTRY.deepcopy()
         file_registry.update()
-        file_registry.data.loc[file_registry.data.index[-1],'output_path'] = None
-        changed_files = file_registry.get_sources_modified_since(since='10min')
+        file_registry.data.loc[file_registry.data.index[-1], "output_path"] = None
+        changed_files = file_registry.get_sources_modified_since(since="10min")
         assert changed_files == [file_registry.data.index[-1]]
 
     def test_get_missing_files(self):
