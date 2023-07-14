@@ -4,11 +4,15 @@ from glob import glob
 from importlib import import_module
 from multiprocessing import Pool
 from pathlib import Path
+import os
+import sys
 
 import click
 import pandas as pd
 from tqdm import tqdm
 from xarray import Dataset
+from loguru import logger
+from dotenv import load_dotenv
 
 from ocean_data_parser import process
 from ocean_data_parser.batch.config import load_config
@@ -21,8 +25,20 @@ from ocean_data_parser._version import __version__
 MODULE_PATH = Path(__file__).parent
 DEFAULT_CONFIG_PATH = MODULE_PATH / "default-batch-config.yaml"
 
-main_logger = logging.getLogger()
-logger = logging.LoggerAdapter(main_logger, {"file": None})
+# Set logging configuration
+load_dotenv(".env")
+logger.configure(extra={"source_file": ""})
+logger.remove()
+logger.add(
+    sys.stderr,
+    level=os.getenv("LOGURU_LEVEL", "INFO"),
+    format='<level>{level.icon}</level> <blue>"{file.path}"</blue>: <yellow>line {line}</yellow> | <cyan>"{extra[source_file]}"</cyan> - <level>{message}</level>',
+)
+logger.add(
+    "ocean_data_parser.log",
+    level=os.getenv("LOGURU_LEVEL", "WARNING"),
+    format="{time}|{level}|{file.path}:{line}| {extra[source_file]} - {message}",
+)
 
 
 def _get_paths(paths: str) -> list:
@@ -38,21 +54,15 @@ def _get_paths(paths: str) -> list:
     "--config", "-c", type=click.Path(exists=True), help="Path to configuration file"
 )
 @click.option(
-    "--add",
-    "-a",
-    multiple=True,
-    help="Extra parameters to include within the configuration",
-)
-@click.option(
     "--new_config",
     type=click.Path(),
     help="Generate a new configuration file at the given path",
 )
-def cli_files(config=None, add=None, new_config=None):
+def cli_files(config=None, new_config=None):
     if new_config:
         new_config = Path(new_config)
         logger.info(
-            "Copy a default config to given path %s to %s",
+            "Copy a default config to given path {} to {}",
             DEFAULT_CONFIG_PATH,
             new_config,
         )
@@ -62,13 +72,8 @@ def cli_files(config=None, add=None, new_config=None):
         shutil.copy(DEFAULT_CONFIG_PATH, new_config)
         return
 
-    add = () if add is None else add
-    added_inputs = dict((item.split("=", 1) for item in add))
-    logger.info("Run config=%s", config)
-    if add:
-        logger.info("Modify configuration with added inputs=%s", added_inputs)
-    main(config=config, **added_inputs)
-    logger.info("Completed")
+    logger.info("Run config={}", config)
+    main(config=config)
 
 
 def main(config=None, **kwargs):
@@ -88,20 +93,25 @@ def main(config=None, **kwargs):
         **kwargs,
     }
 
-    ## Setup logging configuration
-    if config.get("logging"):
-        logging.config.dictConfig(config["logging"])
+    logger.info("Run ocean-data-parser[{}] batch conversion", __version__)
 
     # Sentry
     if config.get("sentry", {}).get("dsn"):
         import sentry_sdk
-        from sentry_sdk.integrations.logging import LoggingIntegration
+        from sentry_sdk.integrations.loguru import LoguruIntegration
+        from sentry_sdk.integrations.loguru import LoggingLevels
 
-        sentry_logging = LoggingIntegration(
-            level=config["sentry"].pop("level"),
-            event_level=config["sentry"].pop("event_level"),
+        sentry_loguru = LoguruIntegration(
+            level=getattr(
+                LoggingLevels, config["sentry"].get("level", "INFO")
+            ).value,  # Capture info and above as breadcrumbs
+            event_level=getattr(
+                LoggingLevels, config["sentry"].get("event_level", "WARNING")
+            ).value,  # Send errors as events
         )
-        sentry_sdk.init(**config["sentry"], integrations=[sentry_logging])
+
+        logger.info("Connect to sentry: {}", sentry_loguru)
+        sentry_sdk.init(config["sentry"]["dsn"], integrations=[sentry_loguru])
 
     # Load config components
     if config.get("file_specific_attributes_path"):
@@ -129,10 +139,8 @@ def main(config=None, **kwargs):
                 config["global_attribute_mapping"]["path"],
             )
 
-    # Connect to database if given
-    # TODO Establish connection to database
-
     # Load file registry
+    logger.debug("Load file registry: {}", config["registry"])
     file_registry = FileConversionRegistry(**config["registry"])
 
     # Get Files
@@ -140,6 +148,7 @@ def main(config=None, **kwargs):
     for input_path, parser in zip(
         config["input_path"].split(","), config["parser"].split(",")
     ):
+        logger.info("Load parser={}", parser)
         source_files = glob(input_path, recursive=config.get("recursive"))
         total_files = len(source_files)
         file_registry.add(source_files)
@@ -149,7 +158,7 @@ def main(config=None, **kwargs):
         to_parse += [
             {"files": source_files, "input_path": input_path, "parser": parser}
         ]
-        logger.info("%s.%s will be parse", len(source_files), total_files)
+        logger.info("Detected {}/{} needs to be parse", len(source_files), total_files)
 
     # Import parser module and load each files:
     for input in to_parse:
@@ -158,14 +167,14 @@ def main(config=None, **kwargs):
         if parser == "auto":
             parser_func = auto.file
         else:
-            logging.info("Load parser %s", input["parser"])
+            logger.info("Load parser %s", input["parser"])
             # Load the appropriate parser and read the file
             read_module, filetype = input["parser"].rsplit(".", 1)
             try:
                 mod = import_module(f"ocean_data_parser.read.{read_module}")
                 parser_func = getattr(mod, filetype)
             except Exception:
-                logger.exception("Failed to load module %s", parser)
+                logger.exception("Failed to load module {}", parser)
                 return
 
         inputs = [(file, parser_func, config) for file in input["files"]]
@@ -197,28 +206,33 @@ def main(config=None, **kwargs):
                 response += [_convert_file(item)]
 
     # Update registry
-    for source, output_file, error_message in response:
-        if output_file:
-            file_registry.update_fields(source, output_file=output_file)
+    logger.info("Update file registry")
+    for source, output_path, error_message in response:
+        if output_path:
+            file_registry.update_fields(source, output_path=output_path)
         else:
+            with logger.contextualize(source_file=source):
+                logger.error("Failed conversion: {}", error_message)
             file_registry.update_fields(source, error_message=error_message)
-
+    logger.info("Save file registry")
     file_registry.save()
+    logger.info("Conversion completed")
     return file_registry
 
 
 def _convert_file(args):
-    try:
-        logger.extra["file"] = args[0]
-        output_file = convert_file(args[0], args[1], args[2])
-        return (args[0], output_file, None)
-    except Exception as error:
-        if args[2].get("errors") == "raise":
-            raise error
-        logger.exception("Conversion failed", exc_info=True)
-        return (args[0], None, error)
+    with logger.contextualize(source_file=args[0]):
+        try:
+            output_file = convert_file(args[0], args[1], args[2])
+            return (args[0], output_file, None)
+        except Exception as error:
+            if args[2].get("errors") == "raise":
+                raise error
+            logger.exception("Conversion failed", exc_info=True)
+            return (args[0], None, error)
 
 
+@logger.catch
 def convert_file(file: str, parser: str, config: dict) -> str:
     """Parse file with given parser and configuration
 
@@ -259,6 +273,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
         }
 
     # Parse file to xarray
+    logger.debug("Parse file: {}", file)
     ds = parser(file)
     if not isinstance(ds, Dataset):
         raise RuntimeError(
@@ -266,7 +281,13 @@ def convert_file(file: str, parser: str, config: dict) -> str:
         )
 
     # Update global and variable attributes from config
-    ds.attrs.update({**config.get("global_attributes", {}), **_get_file_attributes()})
+    ds.attrs.update(
+        {
+            **config.get("global_attributes", {}),
+            **_get_file_attributes(),
+            "source": file,
+        }
+    )
     for var, attrs in config.get("variable_attributes").items():
         if var in ds:
             ds[var].attrs.update(attrs)
@@ -279,7 +300,11 @@ def convert_file(file: str, parser: str, config: dict) -> str:
         ds.attrs["geographical_areas"] = geo.get_geo_code(
             (ds["longitude"], ds["latitude"]), config["geographical_areas"]["regions"]
         )
-    if config.get("reference_stations") and "latitude" in ds and "longitude" in ds:
+    if (
+        config.get("reference_stations").get("path")
+        and "latitude" in ds
+        and "longitude" in ds
+    ):
         ds.attrs["reference_stations"] = geo.get_nearest_station(
             ds["longitude"],
             ds["latitude"],
@@ -312,15 +337,15 @@ def convert_file(file: str, parser: str, config: dict) -> str:
         output_path = generate_output_path(ds, **config["file_output"])
         if output_path.exists() and not config["overwrite"]:
             logger.info(
-                "Converted output file already exist and won't be overwritten. (output_path=%s)",
+                "Converted output file already exist and won't be overwritten. ({})",
                 output_path,
             )
             return output_path
 
         elif not output_path.parent.exists():
-            logger.info("Create new directory: %s", output_path.parent)
+            logger.info("Create new directory: {}", output_path.parent)
             output_path.parent.mkdir(parents=True)
-        logger.info("Save to: %s", output_path)
+        logger.trace("Save to: {}", output_path)
         ds.to_netcdf(output_path)
 
     if config.get("upload_to_database"):

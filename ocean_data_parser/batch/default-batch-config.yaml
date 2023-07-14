@@ -39,10 +39,9 @@ logging:
       "format": "%(asctime)s-%(levelname)s-%(name)s::%(module)s|%(lineno)s:: %(message)s"
 
 sentry:
-  # https://docs.sentry.io/platforms/python/configuration/options/
-  dsn: null
-  level: WARNING
-  event_level: ERROR
+  dsn: https://cd67597c647c4767adf0b3acf5d3f6a6@o56764.ingest.sentry.io/4505529390137344
+  level: INFO
+  event_level: WARNING
   traces_sample_rate: 1.0,
 
 # Attributes and Metadata

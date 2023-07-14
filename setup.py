@@ -1,12 +1,12 @@
 from setuptools import find_packages, setup
 
-pkg_vars  = {}
+pkg_vars = {}
 with open("ocean_data_parser/_version.py") as fp:
     exec(fp.read(), pkg_vars)
 
 setup(
     name="ocean_data_parser",
-    version=pkg_vars['__version__'],
+    version=pkg_vars["__version__"],
     description="Package used to parse different Ocean Instruments Propriatary format to an xarray dataset.",
     url="https://github.com/HakaiInstitute/ocean-data-parser",
     author="Jessy Barrette",
@@ -29,6 +29,9 @@ setup(
         "lxml",
         "pyyaml",
         "click",
+        "loguru",
+        "python-dotenv",
+        "sentry-sdk[loguru]",
         "cioos_data_transform @ git+https://github.com/cioos-siooc/cioos-siooc_data_transform.git@ios-parser-extra-vocabulary#egg=cioos_data_transform&subdirectory=cioos_data_transform",
         "cioos_data_transform_projects @ git+https://github.com/cioos-siooc/cioos-siooc_data_transform.git@ios-parser-extra-vocabulary#egg=cioos_data_transform_projects&subdirectory=projects",
     ],
