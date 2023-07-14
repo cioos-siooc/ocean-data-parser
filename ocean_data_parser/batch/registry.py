@@ -167,6 +167,9 @@ class FileConversionRegistry:
                 self.data[field] = None
             self.data.loc[sources, field] = value
 
+    def get_new_sources(self):
+        return self.data[['error_message','output_path']].isna().all(axis=1)
+
     def get_modified_sources(self, sources: list = None):
         sources = self._get_sources(sources)
         if self.since:
@@ -184,7 +187,7 @@ class FileConversionRegistry:
         """
         sources = self._get_sources(sources)
         subset = self.data.loc[sources]
-        is_different = subset["hash"] != subset.index.to_series().apply(self._get_hash)
+        is_different = (subset["hash"] != subset.index.to_series().apply(self._get_hash)) | self.data[['error_message','output_path']].isna().all(axis=1)
         return subset.loc[is_different].index.tolist()
 
     def get_sources_modified_since(
@@ -219,7 +222,7 @@ class FileConversionRegistry:
 
         logger.debug("Retrieve list of files modified since %s", since)
         subset = self.data.loc[self.data.index if not sources else sources]
-        is_udpdated = subset["last_update"] - since.timestamp() > 0
+        is_udpdated = (subset["last_update"] - since.timestamp() > 0) | self.data[['error_message','output_path']].isna().all(axis=1)
         return subset.loc[is_udpdated].index.tolist()
 
     def get_missing_sources(self):

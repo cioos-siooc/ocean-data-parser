@@ -248,6 +248,13 @@ class FileRegistryTests(unittest.TestCase):
         assert modified_sources
         assert modified_sources == [TEST_SAVE_PATH]
 
+    def test_get_sources_with_modified_hash_with_new_file(self):
+        file_registry = TEST_REGISTRY.deepcopy()
+        file_registry.update()
+        file_registry.data.loc[file_registry.data.index[-1],'output_path'] = None
+        changed_files = file_registry.get_sources_with_modified_hash()
+        assert changed_files == [file_registry.data.index[-1]]
+
     def update_test_file(
         self,
         file_registry,
@@ -307,6 +314,13 @@ class FileRegistryTests(unittest.TestCase):
         modified_sources = file_registry.get_sources_modified_since()
         assert modified_sources, "mtime check failed to return something"
         assert modified_sources == [test_file]
+
+    def test_get_sources_since_with_new_file(self):
+        file_registry = TEST_REGISTRY.deepcopy()
+        file_registry.update()
+        file_registry.data.loc[file_registry.data.index[-1],'output_path'] = None
+        changed_files = file_registry.get_sources_modified_since(since='10min')
+        assert changed_files == [file_registry.data.index[-1]]
 
     def test_get_missing_files(self):
         file_registry = TEST_REGISTRY.deepcopy()
