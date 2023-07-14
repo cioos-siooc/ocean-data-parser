@@ -1,0 +1,1 @@
+from ocean_data_parser._version import __version__

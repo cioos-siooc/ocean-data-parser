@@ -16,6 +16,7 @@ from ocean_data_parser.batch.registry import FileConversionRegistry
 from ocean_data_parser.batch.utils import generate_output_path
 from ocean_data_parser.read import auto, utils
 from ocean_data_parser import geo
+from ocean_data_parser._version import __version__
 
 MODULE_PATH = Path(__file__).parent
 DEFAULT_CONFIG_PATH = MODULE_PATH / "default-batch-config.yaml"

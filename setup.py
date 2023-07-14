@@ -1,8 +1,12 @@
 from setuptools import find_packages, setup
 
+pkg_vars  = {}
+with open("ocean_data_parser/_version.py") as fp:
+    exec(fp.read(), pkg_vars)
+
 setup(
     name="ocean_data_parser",
-    version="0.2.0",
+    version=pkg_vars['__version__'],
     description="Package used to parse different Ocean Instruments Propriatary format to an xarray dataset.",
     url="https://github.com/HakaiInstitute/ocean-data-parser",
     author="Jessy Barrette",
