@@ -60,7 +60,7 @@ def _get_dtype(var: str):
 def _parse_pfile_header_line1(line: str) -> dict:
     """Parse first row of the p file format which contains location and instrument information."""
     return dict(
-        ship_code=_int(line[:2]),
+        ship_code=line[:2],
         trip=_int(line[2:5]),
         station=_int(line[5:8]),
         latitude=_float(line[9:12]) + float(line[13:18]) / 60,
@@ -81,7 +81,7 @@ def _parse_pfile_header_line1(line: str) -> dict:
 
 def _parse_pfile_header_line2(line: str) -> dict:
     return dict(
-        ship_code=_int(line[:2]),
+        ship_code=line[:2],
         trip=_int(line[2:5]),
         station=_int(line[5:8]),
         scan_cnt=_int(line[9:15]),  # number of scan lines in file
@@ -108,7 +108,7 @@ def _parse_pfile_header_line2(line: str) -> dict:
 def _parse_pfile_header_line3(line: str) -> dict:
     """Parse P file 3 metadata line which present environment metadata"""
     return dict(
-        ship_code=_int(line[:2]),
+        ship_code=line[:2],
         trip=_int(line[2:5]),
         station=_int(line[5:8]),
         cloud=_int(line[9]),  # i1,
