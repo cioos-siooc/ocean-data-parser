@@ -115,11 +115,13 @@ def main(config=None, **kwargs):
 
     # Load config components
     if config.get("file_specific_attributes_path"):
+        logger.info("Load file specific attributes")
         config["file_specific_attributes"] = pd.read_csv(
             config["file_specific_attributes_path"]
         ).set_index("file")
 
     if config.get("global_attribute_mapping").get("path"):
+        logger.info("Load global attribute mapping")
         config["globab_attribute_mapping"]["dataframe"] = pd.concat(
             [
                 pd.read_csv(path)
@@ -180,7 +182,7 @@ def main(config=None, **kwargs):
         inputs = [(file, parser_func, config) for file in input["files"]]
         tqdm_parameters = dict(unit="file", total=len(input["files"]))
         if config.get("multiprocessing"):
-            logger.debug("Run conversion in parallel with multiprocessing")
+            logger.info("Run conversion in parallel with multiprocessing on %s files", len(inputs))
             n_workers = (
                 config["multiprocessing"]
                 if isinstance(config["multiprocessing"], int)
@@ -196,7 +198,7 @@ def main(config=None, **kwargs):
                 )
 
         else:
-            logger.debug("Run conversion ")
+            logger.info("Run conversion on %s files", len(inputs))
             response = []
             for item in tqdm(
                 inputs,
