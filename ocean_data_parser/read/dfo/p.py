@@ -33,22 +33,28 @@ p_file_shipcode = pd.read_csv(
 global_attributes = {"Conventions": "CF-1.6,ACDD-1.3"}
 
 
-def _int(value: str) -> int:
+def _int(value: str, null_values=None) -> int:
     """Attemp to convert string to int, return None if empty or failed"""
     if not value.strip():
         return
     try:
-        return int(value)
+        value = int(value)
+        if null_values and value in null_values:
+            return None
+        return value
     except TypeError:
         logger.error("Failed to convert string=%s to int", value)
 
 
-def _float(value: str) -> float:
+def _float(value: str, null_values=None) -> float:
     """Attemp to convert string to float, return None if empty or failed"""
     if not value.strip():
         return
     try:
-        return float(value)
+        value = float(value)
+        if null_values and value in null_values:
+            return None
+        return value
     except TypeError:
         logger.error("Failed to convert string=%s to float", value)
 
@@ -113,18 +119,18 @@ def _parse_pfile_header_line3(line: str) -> dict:
         station=_int(line[5:8]),
         cloud=_int(line[9]),  # i1,
         wind_dir=_int(line[11:13]) * 10
-        if line[11:13].strip()
+        if line[11:13].strip() and line[11:13] != "99"
         else None,  # in 10 degree steps (eg 270 is=27)
         wind_speed_knots=_int(line[14:16]),  # i2,knots s= cale
         ww_code=_int(line[17:19]),  # i2,
-        pressure_bars=_float(line[20:26]),  # pressure mil-= bars
-        air_dry_temp_celsius=_float(line[27:32]),  # f5.1,tem= p °C
-        air_wet_temp_celsius=_float(line[33:38]),  # f5.1,tem= p °C
+        pressure_bars=_float(line[20:26], [-999.0]),  # pressure mil-= bars
+        air_dry_temp_celsius=_float(line[27:32], [-99.0]),  # f5.1,tem= p °C
+        air_wet_temp_celsius=_float(line[33:38], [-99.0, 99.9]),  # f5.1,tem= p °C
         waves_period=_int(line[39:41]),  # i2,
         waves_height=_int(line[42:44]),  # i2,
-        swell_dir=_int(line[45:47]),  # i2,
+        swell_dir=_int(line[45:47]) * 10,  # i2,
         swell_period=_int(line[48:50]),  # i2,
-        swell_height=_int(line[51:53]),  # i2,
+        swell_height=_float(line[51:53]),  # i2,
         ice_conc=_int(line[54]),  # i1,
         ice_stage=_int(line[56]),  # i1,
         ice_bergs=_int(line[58]),  # i1,
