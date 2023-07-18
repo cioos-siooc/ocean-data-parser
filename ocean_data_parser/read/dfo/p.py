@@ -30,9 +30,9 @@ p_file_vocabulary = pd.read_csv(
 p_file_shipcode = pd.read_csv(
     MODULE_PATH / ".." / "vocabularies" / "dfo_platform.csv", skiprows=[1]
 ).set_index("dfo_newfoundland_ship_code")
-nafc_instruments = pd.read_csv(
-    MODULE_PATH / ".." / "vocabularies" / "dfo_nafc_instruments.csv"
-).set_index("instrument_id")
+# nafc_instruments = pd.read_csv(
+#     MODULE_PATH / ".." / "vocabularies" / "dfo_nafc_instruments.csv"
+# ).set_index("instrument_id")
 global_attributes = {"Conventions": "CF-1.6,ACDD-1.3"}
 
 
