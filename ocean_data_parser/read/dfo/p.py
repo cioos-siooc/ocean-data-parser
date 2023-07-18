@@ -30,6 +30,9 @@ p_file_vocabulary = pd.read_csv(
 p_file_shipcode = pd.read_csv(
     MODULE_PATH / ".." / "vocabularies" / "dfo_platform.csv", skiprows=[1]
 ).set_index("dfo_newfoundland_ship_code")
+nafc_instruments = pd.read_csv(
+    MODULE_PATH / ".." / "vocabularies" / "dfo_nafc_instruments.csv"
+).set_index("instrument_id")
 global_attributes = {"Conventions": "CF-1.6,ACDD-1.3"}
 
 
@@ -128,7 +131,7 @@ def _parse_pfile_header_line3(line: str) -> dict:
         air_wet_temp_celsius=_float(line[33:38], [-99.0, 99.9]),  # f5.1,tem= p °C
         waves_period=_int(line[39:41]),  # i2,
         waves_height=_int(line[42:44]),  # i2,
-        swell_dir=_int(line[45:47]) * 10,  # i2,
+        swell_dir=_int(line[45:47]) * 10 if line[45:47].strip() else None,  # i2,
         swell_period=_int(line[48:50]),  # i2,
         swell_height=_float(line[51:53]),  # i2,
         ice_conc=_int(line[54]),  # i1,
