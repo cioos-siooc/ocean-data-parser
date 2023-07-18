@@ -234,14 +234,14 @@ def manual_qc_interface(
 
     try:
         import plotly.graph_objects as go
-    except ImportError: 
+    except ImportError:
         logger.error("Failed to import plotly")
 
     try:
         from IPython.display import display
-    except ImportError: 
-        logger.error('Failed to import IPython.')
-    
+    except ImportError:
+        logger.error("Failed to import IPython.")
+
     try:
         from ipywidgets import HBox, VBox, interactive, widgets
     except ImportError:

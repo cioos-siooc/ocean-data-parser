@@ -142,17 +142,20 @@ def main(config=None, **kwargs):
             )
 
     # Load file registry
-    logger.debug("Load file registry: {}", config["registry"])
+    logger.info("Load file registry")
     file_registry = FileConversionRegistry(**config["registry"])
 
     # Get Files
     to_parse = []
+    logger.info("Compile files to parse")
     for input_path, parser in zip(
         config["input_path"].split(","), config["parser"].split(",")
     ):
         logger.info("Load parser={}", parser)
+        logger.debug("Search files: {input_path}")
         source_files = glob(input_path, recursive=config.get("recursive"))
         total_files = len(source_files)
+        logger.debug("{} files deteted",len(source_files))
         file_registry.add(source_files)
         if not config.get("overwrite"):
             # Ignore files already parsed
@@ -169,7 +172,7 @@ def main(config=None, **kwargs):
         if parser == "auto":
             parser_func = auto.file
         else:
-            logger.info("Load parser %s", input["parser"])
+            logger.info("Load parser {input[parser]}")
             # Load the appropriate parser and read the file
             read_module, filetype = input["parser"].rsplit(".", 1)
             try:
@@ -182,7 +185,9 @@ def main(config=None, **kwargs):
         inputs = [(file, parser_func, config) for file in input["files"]]
         tqdm_parameters = dict(unit="file", total=len(input["files"]))
         if config.get("multiprocessing"):
-            logger.info("Run conversion in parallel with multiprocessing on %s files", len(inputs))
+            logger.info(
+                "Run conversion in parallel with multiprocessing on {} files",len(inputs)
+            )
             n_workers = (
                 config["multiprocessing"]
                 if isinstance(config["multiprocessing"], int)
@@ -198,7 +203,7 @@ def main(config=None, **kwargs):
                 )
 
         else:
-            logger.info("Run conversion on %s files", len(inputs))
+            logger.info("Run conversion on {} files",len(inputs))
             response = []
             for item in tqdm(
                 inputs,
