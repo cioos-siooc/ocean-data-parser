@@ -40,14 +40,6 @@ logger.add(
 )
 
 
-def _get_paths(paths: str) -> list:
-    if "*" in paths:
-        path, glob_expr = paths.split("*", 1)
-        glob_expr = f"*{glob_expr}"
-        return [Path(path).glob(glob_expr)]
-    return [Path(paths)]
-
-
 @click.command()
 @click.option(
     "--config", "-c", type=click.Path(exists=True), help="Path to configuration file"
@@ -84,7 +76,6 @@ def main(config=None, **kwargs):
         **kwargs (optiona): Overwrite any configuration parameter by
             matching first level key.
     """
-
     # load config
     config = {
         **load_config(DEFAULT_CONFIG_PATH),
@@ -93,52 +84,6 @@ def main(config=None, **kwargs):
     }
 
     logger.info("Run ocean-data-parser[{}] batch conversion", __version__)
-
-    # Sentry
-    if config.get("sentry", {}).get("dsn"):
-        import sentry_sdk
-        from sentry_sdk.integrations.loguru import LoguruIntegration
-        from sentry_sdk.integrations.loguru import LoggingLevels
-
-        sentry_loguru = LoguruIntegration(
-            level=getattr(
-                LoggingLevels, config["sentry"].get("level", "INFO")
-            ).value,  # Capture info and above as breadcrumbs
-            event_level=getattr(
-                LoggingLevels, config["sentry"].get("event_level", "WARNING")
-            ).value,  # Send errors as events
-        )
-
-        logger.info("Connect to sentry: {}", sentry_loguru)
-        sentry_sdk.init(config["sentry"]["dsn"], integrations=[sentry_loguru])
-
-    # Load config components
-    if config.get("file_specific_attributes_path"):
-        logger.info("Load file specific attributes")
-        config["file_specific_attributes"] = pd.read_csv(
-            config["file_specific_attributes_path"]
-        ).set_index("file")
-
-    if config.get("global_attribute_mapping").get("path"):
-        logger.info("Load global attribute mapping")
-        config["globab_attribute_mapping"]["dataframe"] = pd.concat(
-            [
-                pd.read_csv(path)
-                for path in _get_paths(config["global_attribute_mapping"]["path"])
-            ]
-        )
-        missing_mapping_variables = [
-            var not in config["globab_attribute_mapping"]["dataframe"]
-            for var in config["globab_attribute_mapping"]["by_variables"]
-        ]
-        if any(missing_mapping_variables):
-            raise KeyError(
-                "Missing variables: %s from %s",
-                config["globab_attribute_mapping"]["by_variables"][
-                    missing_mapping_variables
-                ],
-                config["global_attribute_mapping"]["path"],
-            )
 
     # Load file registry
     logger.info("Load file registry")
@@ -368,7 +313,6 @@ def convert_file(file: str, parser: str, config: dict) -> str:
         pass
 
     return output_path
-
 
 if __name__ == "__main__":
     cli_files()

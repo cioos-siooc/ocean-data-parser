@@ -12,6 +12,12 @@ DEFAULT_CONFIG_PATH = MODULE_PATH / "default-batch-config.yaml"
 
 logger = logging.getLogger(__name__)
 
+def _get_paths(paths: str) -> list:
+    if "*" in paths:
+        path, glob_expr = paths.split("*", 1)
+        glob_expr = f"*{glob_expr}"
+        return [Path(path).glob(glob_expr)]
+    return [Path(paths)]
 
 def glob(paths: str) -> Generator[Path]:
     """Create a generator of paths from a glob path expression
@@ -51,7 +57,53 @@ def load_config(config_path: str = None, encoding="UTF-8"):
             ]
         )
 
+    # Sentry
+    if config.get("sentry", {}).get("dsn"):
+        import sentry_sdk
+        from sentry_sdk.integrations.loguru import LoguruIntegration
+        from sentry_sdk.integrations.loguru import LoggingLevels
+
+        sentry_loguru = LoguruIntegration(
+            level=getattr(
+                LoggingLevels, config["sentry"].get("level", "INFO")
+            ).value,  # Capture info and above as breadcrumbs
+            event_level=getattr(
+                LoggingLevels, config["sentry"].get("event_level", "WARNING")
+            ).value,  # Send errors as events
+        )
+
+        logger.info("Connect to sentry: {}", sentry_loguru)
+        sentry_sdk.init(config["sentry"]["dsn"], integrations=[sentry_loguru])
+
+    # Load config components
+    if config.get("file_specific_attributes_path"):
+        logger.info("Load file specific attributes")
+        config["file_specific_attributes"] = pd.read_csv(
+            config["file_specific_attributes_path"]
+        ).set_index("file")
+
+    if config.get("global_attribute_mapping").get("path"):
+        logger.info("Load global attribute mapping")
+        config["globab_attribute_mapping"]["dataframe"] = pd.concat(
+            [
+                pd.read_csv(path)
+                for path in _get_paths(config["global_attribute_mapping"]["path"])
+            ]
+        )
+        missing_mapping_variables = [
+            var not in config["globab_attribute_mapping"]["dataframe"]
+            for var in config["globab_attribute_mapping"]["by_variables"]
+        ]
+        if any(missing_mapping_variables):
+            raise KeyError(
+                "Missing variables: %s from %s",
+                config["globab_attribute_mapping"]["by_variables"][
+                    missing_mapping_variables
+                ],
+                config["global_attribute_mapping"]["path"],
+            )
+
     return config
 
 
-config = load_config(DEFAULT_CONFIG_PATH)
+# config = load_config(DEFAULT_CONFIG_PATH)
