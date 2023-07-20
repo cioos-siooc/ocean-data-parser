@@ -129,7 +129,7 @@ def main(config=None, **kwargs):
             try:
                 mod = import_module(f"ocean_data_parser.read.{read_module}")
                 parser_func = getattr(mod, filetype)
-            except Exception:
+            except ImportError:
                 logger.exception("Failed to load module {}", parser)
                 return
 
