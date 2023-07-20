@@ -75,14 +75,14 @@ def _parse_pfile_header_line1(line: str) -> dict:
         latitude=_float(line[9:12]) + float(line[13:18]) / 60,
         longitude=_float(line[19:23]) + float(line[24:29]) / 60,
         time=pd.to_datetime(line[30:46], format="%Y-%m-%d %H:%M", utc=True),
-        depth=_int(line[47:51])
+        sounder_depth=_int(line[47:51])
         if line[47:51] not in ("9999", "0000")
         else None,  # water depth in meters 9999 or 0000 = not known
-        probe=line[
+        instrument=line[
             52:57
         ],  # Sxxxxx is a seabird ctd XBTxx is an XBT for an XBT, A&C= Sippican probe, A&B mk9, B&D= Spartan probe, C&D mk12"
-        fish_set=_int(line[58:61]),  # usually same as stn
-        format=line[62],  # V vertical profile T for tow
+        set_number=_int(line[58:61]),  # usually same as stn
+        cast_type=line[62],  # V vertical profile T for tow
         comment=line[62:78],
         card_1_id=line[79],
     )
@@ -93,13 +93,13 @@ def _parse_pfile_header_line2(line: str) -> dict:
         ship_code=line[:2],
         trip=_int(line[2:5]),
         station=_int(line[5:8]),
-        scan_cnt=_int(line[9:15]),  # number of scan lines in file
-        scan_rate=_float(line[16:21]),  # 00.00 for unknown
-        data_format=line[22],  # A for ASCII B for binary data
-        chan_cnt=_int(line[24:26]),  # number of data channels in file including dummies
-        chan_ids=line[27:47],  # id codes as described above in same order as channels
-        chan_extra=line[47:58],
-        direction=line[59],  # "U for up cast only, D for down cast only, B bot"
+        scan_count=_int(line[9:15]),  # number of scan lines in file
+        sampling_rate=_float(line[16:21]),  # 00.00 for unknown
+        file_type=line[22],  # A for ASCII B for binary data
+        channel_count=_int(line[24:26]),  # number of data channels in file including dummies
+        channel_ids=line[28:47],  # id codes as described above in same order as channels
+        channel_extra=line[47:58],
+        cast_direction=line[59],  # "U for up cast only, D for down cast only, B bot"
         sub_interval=_int(
             line[61:64]
         ),  # sub sample interval, 000 if irregular stream or unknown"
@@ -109,7 +109,7 @@ def _parse_pfile_header_line2(line: str) -> dict:
         max_depth=_int(
             line[70:74]
         ),  # integral max depth in file from pres or depth channel
-        strata_number=_int(line[75:78]),  # ground fish specified strata number
+        fishing_strata=_int(line[75:78]),  # ground fish specified strata number
         card_4_id=line[79],  # ,i1,4
     )
 
