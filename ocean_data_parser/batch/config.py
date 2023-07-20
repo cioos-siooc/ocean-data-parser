@@ -82,7 +82,7 @@ def load_config(config_path: str = None, encoding="UTF-8"):
             config["file_specific_attributes_path"]
         ).set_index("file")
 
-    if config.get("global_attribute_mapping").get("path"):
+    if config.get("global_attribute_mapping",{}).get("path"):
         logger.info("Load global attribute mapping")
         config["globab_attribute_mapping"]["dataframe"] = pd.concat(
             [
