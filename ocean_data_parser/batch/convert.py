@@ -86,7 +86,7 @@ def main(config=None, **kwargs):
     logger.info("Run ocean-data-parser[{}] batch conversion", __version__)
 
     # Load file registry
-    logger.info("Load file registry")
+    logger.debug("Load file registry")
     file_registry = FileConversionRegistry(**config["registry"])
 
     # Get Files
@@ -95,11 +95,11 @@ def main(config=None, **kwargs):
     for input_path, parser in zip(
         config["input_path"].split(","), config["parser"].split(",")
     ):
-        logger.info("Load parser={}", parser)
-        logger.debug("Search files: {input_path}")
+        logger.info("Search files: '{}'",input_path)
         source_files = glob(input_path, recursive=config.get("recursive"))
         total_files = len(source_files)
-        logger.debug("{} files deteted",len(source_files))
+        logger.info("{} files detected",len(source_files))
+        logger.info("Add {} unknown files to registry", len([file for file in source_files if file not in file_registry.data.index]))
         file_registry.add(source_files)
         
         # Ignore files already parsed
@@ -119,11 +119,10 @@ def main(config=None, **kwargs):
     # Import parser modules and load each files:
     for input in to_parse:
         parser = input["parser"]
-
+        logger.info("Load parser {parser}")
         if parser == "auto":
             parser_func = auto.file
         else:
-            logger.info("Load parser {input[parser]}")
             # Load the appropriate parser and read the file
             read_module, filetype = input["parser"].rsplit(".", 1)
             try:

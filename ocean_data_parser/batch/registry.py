@@ -128,7 +128,9 @@ class FileConversionRegistry:
         if not sources:
             return
         new_data = pd.DataFrame({"source":sources})
+        logger.debug("Get new files mtime")
         new_data['last_update'] = new_data['source'].apply(self._get_mtime)
+        logger.debug("Get new files hash")
         new_data['hash'] = new_data['source'].apply(self._get_hash)
         self.data = (
             pd.concat(
