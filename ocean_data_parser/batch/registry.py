@@ -185,8 +185,7 @@ class FileConversionRegistry:
         Returns:
             list: list of files with modified hash
         """
-        sources = self._get_sources(sources)
-        subset = self.data.loc[sources]
+        subset = self.data.loc[self.data.index.isin(sources)] if sources else self.data
         is_different = (
             subset["hash"] != subset.index.to_series().apply(self._get_hash)
         ) | self.data[["error_message", "output_path"]].isna().all(axis=1)
@@ -223,7 +222,7 @@ class FileConversionRegistry:
             since = pd.Timestamp.utcnow() - since
 
         logger.debug("Retrieve list of files modified since %s", since)
-        subset = self.data.loc[self.data.index if not sources else sources]
+        subset = self.data.loc[self.data.index.isin(sources)] if sources else self.data
         is_udpdated = (subset["last_update"] - since.timestamp() > 0) | self.data[
             ["error_message", "output_path"]
         ].isna().all(axis=1)
