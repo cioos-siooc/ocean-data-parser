@@ -225,16 +225,17 @@ class FileRegistryTests(unittest.TestCase):
     def test_get_sources_with_modified_hash_unchanged(self):
         file_registry = TEST_REGISTRY.deepcopy()
         file_registry.update()
-        changed_files = file_registry.get_sources_with_modified_hash()
-        assert changed_files == []
+        changed_files = file_registry._is_different_hash()
+        assert changed_files.any() == False
+        assert file_registry.get_source_files_to_parse() == []
 
-    def test_get_sources_with_modified_hash_single_source(self):
-        file_registry = TEST_REGISTRY.deepcopy()
-        file_registry.update()
-        changed_files = file_registry.get_sources_with_modified_hash(
-            [file_registry.data.index[0]]
-        )
-        assert changed_files == []
+    # def test_get_sources_with_modified_hash_single_source(self):
+    #     file_registry = TEST_REGISTRY.deepcopy()
+    #     file_registry.update()
+    #     changed_files = file_registry.get_sources_with_modified_hash(
+    #         [file_registry.data.index[0]]
+    #     )
+    #     assert changed_files == []
 
     def test_get_sources_with_modified_hash(self):
         file_registry = TEST_REGISTRY.deepcopy()
@@ -244,16 +245,10 @@ class FileRegistryTests(unittest.TestCase):
         )
         file_registry.add([TEST_SAVE_PATH])
         self.make_test_file(TEST_SAVE_PATH, " this is more content", mode="a")
-        modified_sources = file_registry.get_sources_with_modified_hash()
-        assert modified_sources
-        assert modified_sources == [TEST_SAVE_PATH]
-
-    def test_get_sources_with_modified_hash_with_new_file(self):
-        file_registry = TEST_REGISTRY.deepcopy()
-        file_registry.update()
-        file_registry.data.loc[file_registry.data.index[-1], "output_path"] = None
-        changed_files = file_registry.get_sources_with_modified_hash()
-        assert changed_files == [file_registry.data.index[-1]]
+        modified_sources = file_registry._is_different_hash()
+        assert modified_sources.any()
+        assert modified_sources[TEST_SAVE_PATH]
+        assert file_registry.get_source_files_to_parse() == [TEST_SAVE_PATH]
 
     def update_test_file(
         self,
@@ -271,38 +266,30 @@ class FileRegistryTests(unittest.TestCase):
 
     def test_get_sources_with_since_timestamp_no_changes(self):
         file_registry = TEST_REGISTRY.deepcopy()
-        file_registry.since = pd.Timestamp.utcnow()
-        modified_sources = file_registry.get_sources_modified_since()
-        assert modified_sources == []
+        file_registry.since = pd.Timestamp.utcnow().timestamp()
+        modified_sources = file_registry._is_modified_since()
+        assert modified_sources.any() == False 
+        assert file_registry.get_source_files_to_parse() == []
 
     def test_get_sources_with_since_timestamp(self):
         file_registry = TEST_REGISTRY.deepcopy()
         file_registry.since = pd.Timestamp.utcnow()
         test_file = Path("temp/timestamp_test.csv")
         file_registry = self.update_test_file(file_registry, test_file)
-        modified_sources = file_registry.get_sources_modified_since()
-        assert modified_sources, "mtime check failed to return something"
-        assert modified_sources == [test_file]
+        modified_sources = file_registry._is_modified_since()
+        assert modified_sources.any(), "mtime check failed to return something"
+        assert modified_sources.loc[test_file]
+        assert file_registry.get_source_files_to_parse() == [test_file]
 
     def test_get_sources_with_since_timestamp_str(self):
         file_registry = TEST_REGISTRY.deepcopy()
         file_registry.since = pd.Timestamp.utcnow().isoformat()
         test_file = Path("temp/timestamp_test.csv")
         file_registry = self.update_test_file(file_registry, test_file)
-        modified_sources = file_registry.get_sources_modified_since()
-        assert modified_sources, "mtime check failed to return something"
-        assert modified_sources == [test_file]
-
-    def test_get_sources_with_since_timedelta(self):
-        file_registry = TEST_REGISTRY.deepcopy()
-        file_registry.since = pd.Timedelta("10s")
-        test_file = Path(
-            "temp/test_get_sources_with_modified_mtime_time_difference.csv"
-        )
-        file_registry = self.update_test_file(file_registry, test_file)
-        modified_sources = file_registry.get_sources_modified_since()
-        assert modified_sources, "mtime check failed to return something"
-        assert modified_sources == [test_file]
+        modified_sources = file_registry._is_modified_since()
+        assert modified_sources.any(), "mtime check failed to return something"
+        assert modified_sources.loc[test_file]
+        assert file_registry.get_source_files_to_parse() == [test_file]
 
     def test_get_sources_with_since_timedelta(self):
         file_registry = TEST_REGISTRY.deepcopy()
@@ -311,16 +298,10 @@ class FileRegistryTests(unittest.TestCase):
             "temp/test_get_sources_with_modified_mtime_time_difference.csv"
         )
         file_registry = self.update_test_file(file_registry, test_file)
-        modified_sources = file_registry.get_sources_modified_since()
-        assert modified_sources, "mtime check failed to return something"
-        assert modified_sources == [test_file]
-
-    def test_get_sources_since_with_new_file(self):
-        file_registry = TEST_REGISTRY.deepcopy()
-        file_registry.update()
-        file_registry.data.loc[file_registry.data.index[-1], "output_path"] = None
-        changed_files = file_registry.get_sources_modified_since(since="10min")
-        assert changed_files == [file_registry.data.index[-1]]
+        modified_sources = file_registry._is_modified_since()
+        assert modified_sources.any(), "mtime check failed to return something"
+        assert modified_sources.loc[test_file]
+        assert file_registry.get_source_files_to_parse() == [test_file]
 
     def test_get_missing_files(self):
         file_registry = TEST_REGISTRY.deepcopy()

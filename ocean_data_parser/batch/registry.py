@@ -13,7 +13,6 @@ EMPTY_FILE_REGISTRY = pd.DataFrame(
     columns=["source", "last_update", "hash", "error_message", "output_path"]
 ).set_index("source")
 
-
 class FileConversionRegistry:
     def __init__(
         self,
@@ -46,8 +45,7 @@ class FileConversionRegistry:
         elif self.path.suffix == ".parquet":
             self.data = pd.read_parquet(self.path)
         else:
-            logger.warning("Unknown registry type")
-            self.data = pd.DataFrame()
+            raise TypeError("Unknown registry type")
 
         if "source" in self.data:
             self.data = self.data.set_index(["source"])
@@ -70,8 +68,6 @@ class FileConversionRegistry:
         return copy.deepcopy(self)
 
     def _get_hash(self, file):
-        if isinstance(file, pd.Series):
-            file = file.name
 
         file = Path(file)
         if not file.exists():
@@ -93,11 +89,31 @@ class FileConversionRegistry:
         Returns:
             float: time in unix time
         """
-        if isinstance(source, pd.Series):
-            source = source.name
-
         source = Path(source)
         return source.stat().st_mtime if source.exists() else None
+    
+    def _get_since_timestamp(self, since=None) -> pd.Timestamp:
+        """Convert since attribute to a pd.Timestamp"""
+        if not since:
+            since = self.since
+        if isinstance(since, str):
+            # Detect string input type
+            # - format "1231 ad" is likely a timedelta
+            # - otherwise assume it's a date
+            if re.fullmatch(r"[\d\.]+\s*\w+", since):
+                since = pd.Timedelta(since)
+            else:
+                since = pd.Timestamp(since)
+
+        # Convert timedelta to present time
+        if isinstance(since, pd.Timedelta):
+            return (pd.Timestamp.utcnow() - since).timestamp()
+        elif isinstance(since, pd.Timestamp):
+            return since.timestamp()
+        return since
+
+    def _file_exists(self, file):
+        return Path(file).exists() if isinstance(file,(str,Path)) else False
 
     def add(self, sources: list):
         """Add add sources to file registry and ignore already known sources
@@ -111,21 +127,14 @@ class FileConversionRegistry:
         sources = [source for source in sources if source not in self.data.index]
         if not sources:
             return
-
+        new_data = pd.DataFrame({"source":sources})
+        new_data['last_update'] = new_data['source'].apply(self._get_mtime)
+        new_data['hash'] = new_data['source'].apply(self._get_hash)
         self.data = (
             pd.concat(
                 [
                     self.data,
-                    pd.DataFrame(
-                        [
-                            {
-                                "source": source,
-                                "last_update": self._get_mtime(source),
-                                "hash": self._get_hash(source),
-                            }
-                            for source in sources
-                        ]
-                    ).set_index(["source"]),
+                    new_data.set_index(["source"]),
                 ],
             )
             .groupby(level=0)
@@ -139,6 +148,25 @@ class FileConversionRegistry:
             return sources
         return [sources]
 
+    def _is_different_hash(self):
+        return self.data["hash"] != self.data.index.map(self._get_hash)
+
+    def _is_different_mtime(self):
+        return self.data['last_update'] != self.data.index.map(self._get_mtime)
+    
+    def _is_modified_since(self):
+        since = self._get_since_timestamp()
+        return self.data.index.to_series().apply(self._get_mtime) - since >= 0
+    
+    def _source_exist(self):
+        return self.data.index.to_series().apply(self._file_exists)
+
+    def _output_file_exists(self):
+        return self.data['output_path'].apply(self._file_exists)
+    
+    def _has_no_error(self):
+        return self.data["error_message"].isna()
+    
     def update(self, sources: list = None):
         """Update registry hash and last_update attributes
 
@@ -147,12 +175,8 @@ class FileConversionRegistry:
               Defaults to all entries.
         """
         sources = self._get_sources(sources)
-        self.data.loc[sources, "hash"] = self.data.loc[sources].apply(
-            self._get_hash, axis="columns"
-        )
-        self.data.loc[sources, "last_update"] = self.data.loc[sources].apply(
-            self._get_mtime, axis="columns"
-        )
+        self.data.loc[sources, "hash"] = list(map(self._get_hash, sources))
+        self.data.loc[sources, "last_update"] = list(map(self._get_mtime, sources))
         return
 
     def update_fields(self, sources=None, **kwargs):
@@ -166,67 +190,18 @@ class FileConversionRegistry:
             if field not in self.data:
                 self.data[field] = None
             self.data.loc[sources, field] = value
+    
+    def get_source_files_to_parse(self, overwrite=True):
+        is_new = ~self._output_file_exists() & self._has_no_error()
+        if not overwrite:
+            return self.data.loc[is_new].index.to_list()
 
-    def get_new_sources(self):
-        return self.data[["error_message", "output_path"]].isna().all(axis=1)
-
-    def get_modified_sources(self, sources: list = None):
-        sources = self._get_sources(sources)
         if self.since:
-            return self.get_sources_modified_since(sources)
-        return self.get_sources_with_modified_hash(sources)
-
-    def get_sources_with_modified_hash(self, sources: list = None) -> list:
-        """Return list of source files with modified hash
-
-        Args:
-            sources (list, optional): Subset list of source files to review. Defaults to all.
-
-        Returns:
-            list: list of files with modified hash
-        """
-        subset = self.data.loc[self.data.index.isin(sources)] if sources else self.data
-        is_different = (
-            subset["hash"] != subset.index.to_series().apply(self._get_hash)
-        ) | self.data[["error_message", "output_path"]].isna().all(axis=1)
-        return subset.loc[is_different].index.tolist()
-
-    def get_sources_modified_since(
-        self,
-        since: Union[pd.Timedelta, pd.Timestamp, str] = None,
-        sources=None,
-    ):
-        """Return list of modified source files since given timestamp or time interval.
-
-        Args:
-            sources (_type_, optional): subset of source files . Defaults to all.
-
-        Returns:
-            list: list of source files modified since given timestamp.
-        """
-        sources = self._get_sources(sources)
-        if not since:
-            since = self.since
-
-        if isinstance(since, str):
-            # Detect string input type
-            # - format "1231 ad" is likely a timedelta
-            # - otherwise assume it's a date
-            if re.fullmatch(r"[\d\.]+\s*\w+", since):
-                since = pd.Timedelta(since)
-            else:
-                since = pd.Timestamp(since)
-
-        # Convert timedelta to present time
-        if isinstance(since, pd.Timedelta):
-            since = pd.Timestamp.utcnow() - since
-
-        logger.debug("Retrieve list of files modified since %s", since)
-        subset = self.data.loc[self.data.index.isin(sources)] if sources else self.data
-        is_udpdated = (subset["last_update"] - since.timestamp() > 0) | self.data[
-            ["error_message", "output_path"]
-        ].isna().all(axis=1)
-        return subset.loc[is_udpdated].index.tolist()
+            is_modified = self._is_modified_since()
+        else:
+            is_modified = self._is_different_hash()
+        
+        return self.data.loc[is_new | is_modified].index.to_list()
 
     def get_missing_sources(self):
         """Get list of missing sources
