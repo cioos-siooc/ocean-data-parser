@@ -159,13 +159,20 @@ def main(config=None, **kwargs):
         file_registry.add(source_files)
         if not config.get("overwrite"):
             # Ignore files already parsed
+            logger.info("Compare files with registry hashes and ignore already parsed files")
             source_files = file_registry.get_sources_with_modified_hash()
+        if not source_files:
+            continue
         to_parse += [
             {"files": source_files, "input_path": input_path, "parser": parser}
         ]
         logger.info("Detected {}/{} needs to be parse", len(source_files), total_files)
+    
+    if not to_parse:
+        logger.info("No files need to be parsed")
+        return
 
-    # Import parser module and load each files:
+    # Import parser modules and load each files:
     for input in to_parse:
         parser = input["parser"]
 
@@ -212,17 +219,18 @@ def main(config=None, **kwargs):
             ):
                 response += [_convert_file(item)]
 
-    # Update registry
-    logger.info("Update file registry")
-    for source, output_path, error_message in response:
-        if output_path:
-            file_registry.update_fields(source, output_path=output_path)
-        else:
-            with logger.contextualize(source_file=source):
-                logger.error("Failed conversion: {}", error_message)
-            file_registry.update_fields(source, error_message=error_message)
-    logger.info("Save file registry")
-    file_registry.save()
+        # Update registry
+        logger.info("Update file registry")
+        for source, output_path, error_message in response:
+            if output_path:
+                file_registry.update_fields(source, output_path=output_path)
+            else:
+                with logger.contextualize(source_file=source):
+                    logger.error("Failed conversion: {}", error_message)
+                file_registry.update_fields(source, error_message=error_message)
+        logger.info("Save file registry")
+        file_registry.save()
+        
     logger.info("Conversion completed")
     return file_registry
 
