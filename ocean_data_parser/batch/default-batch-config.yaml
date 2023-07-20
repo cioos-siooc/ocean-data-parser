@@ -8,36 +8,6 @@ registry:
   path: file_registry.csv
   since: null # pandas.Timedelta expression (ex: '24h') or datetime ('2022-01-01T00:00:00Z')
 
-# Log
-logging:
-  version: 1
-  loggers:
-    "":
-      level: DEBUG
-      propagate: False
-      handlers:
-        - stream_handler
-        - file_handler
-    custom_logger:
-      level: DEBUG
-      propagate: False
-      handlers: [stream_handler]
-  handlers:
-    stream_handler:
-      class: logging.StreamHandler
-      stream: "ext://sys.stdout"
-      level: DEBUG
-      formatter: default_formatter
-    file_handler:
-      class: logging.FileHandler
-      filename: batch_conversion_output.log
-      mode: "w"
-      level: DEBUG
-      formatter: default_formatter
-  formatters:
-    default_formatter:
-      "format": "%(asctime)s-%(levelname)s-%(name)s::%(module)s|%(lineno)s:: %(message)s"
-
 sentry:
   dsn: https://cd67597c647c4767adf0b3acf5d3f6a6@o56764.ingest.sentry.io/4505529390137344
   level: INFO
