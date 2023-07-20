@@ -101,10 +101,10 @@ def main(config=None, **kwargs):
         total_files = len(source_files)
         logger.debug("{} files deteted",len(source_files))
         file_registry.add(source_files)
-        if not config.get("overwrite"):
-            # Ignore files already parsed
-            logger.info("Compare files with registry hashes and ignore already parsed files")
-            source_files = file_registry.get_sources_with_modified_hash()
+        
+        # Ignore files already parsed
+        logger.info("Compare files with registry hashes and ignore already parsed files")
+        source_files = file_registry.get_source_files_to_parse(overwrite=config.get('overwrite','False'))
         if not source_files:
             continue
         to_parse += [
@@ -294,14 +294,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
     output_path = None
     if config.get("file_output").get("path"):
         output_path = generate_output_path(ds, **config["file_output"])
-        if output_path.exists() and not config["overwrite"]:
-            logger.info(
-                "Converted output file already exist and won't be overwritten. ({})",
-                output_path,
-            )
-            return output_path
-
-        elif not output_path.parent.exists():
+        if not output_path.parent.exists():
             logger.info("Create new directory: {}", output_path.parent)
             output_path.parent.mkdir(parents=True)
         logger.trace("Save to: {}", output_path)
