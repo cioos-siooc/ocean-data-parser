@@ -239,7 +239,7 @@ def _convert_file(args):
             return (args[0], None, error)
 
 
-@logger.catch
+@logger.catch(reraise=True)
 def convert_file(file: str, parser: str, config: dict) -> str:
     """Parse file with given parser and configuration
 
