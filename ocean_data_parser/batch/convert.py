@@ -102,7 +102,7 @@ def cli_files(config=None, new_config=None):
     main(config=config)
 
 
-def main(config=None, **kwargs):
+def main(config=None, **kwargs) -> FileConversionRegistry:
     """Ocean Data Parser batch conversion method
 
     Args:
@@ -158,7 +158,7 @@ def main(config=None, **kwargs):
 
     if not to_parse:
         logger.info("No files need to be parsed")
-        return
+        return file_registry
 
     # Import parser modules and load each files:
     for input in to_parse:
