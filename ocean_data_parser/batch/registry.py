@@ -8,6 +8,7 @@ from typing import Union
 
 
 import pandas as pd
+
 tqdm.pandas()
 logger = logging.getLogger(__name__)
 
@@ -156,7 +157,10 @@ class FileConversionRegistry:
     def _is_different_hash(self):
         # Speed up hash difference by first filtering out data with unchanged mtime
         is_different = self._is_different_mtime()
-        is_different.loc[is_different] = self.data.loc[is_different].index.map(self._get_hash) != self.data.loc[is_different]['hash']
+        is_different.loc[is_different] = (
+            self.data.loc[is_different].index.map(self._get_hash)
+            != self.data.loc[is_different]["hash"]
+        )
         return is_different
 
     def _is_different_mtime(self):
