@@ -111,6 +111,8 @@ def main(config=None, **kwargs):
         **kwargs (optiona): Overwrite any configuration parameter by
             matching first level key.
     """
+    logger.info("Run ocean-data-parser[{}] batch conversion", __version__)
+
     # load config
     config = {
         **load_config(DEFAULT_CONFIG_PATH),
@@ -118,7 +120,6 @@ def main(config=None, **kwargs):
         **kwargs,
     }
 
-    logger.info("Run ocean-data-parser[{}] batch conversion", __version__)
 
     # Load file registry
     logger.debug("Load file registry")
