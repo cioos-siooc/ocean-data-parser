@@ -349,7 +349,7 @@ class TestDFOpFiles:
         [
             file
             for file in glob(
-                "tests/parsers_test_files/dfo/odf/p/**/*.p*",
+                "tests/parsers_test_files/dfo/nafc/pfile/**/*.p*",
                 recursive=True,
             )
             if not file.endswith(".nc")
