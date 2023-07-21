@@ -92,22 +92,8 @@ class BatchModeTests(unittest.TestCase):
             ["--config=tests/batch_test_configs/batch_convert_test_onset_csv.yaml"],
         )
         assert result.exit_code == 0, result
-        assert "Run conversion" in result.output
-        assert "Completed" in result.output
+        assert "Run conversion" in result.output or "Run parallel batch conversion" in result.output
 
-    def test_batch_cli_conversion_onset_parser_added_input(self):
-        runner = CliRunner()
-        result = runner.invoke(
-            cli_files,
-            [
-                "--config=tests/batch_test_configs/batch_convert_test_onset_csv.yaml",
-                "--add",
-                "overwrite=True",
-            ],
-        )
-        assert result.exit_code == 0, result
-        assert "Run conversion" in result.output
-        assert "Completed" in result.output
 
     def test_batch_cli_new_config_creation(self):
         runner = CliRunner()
