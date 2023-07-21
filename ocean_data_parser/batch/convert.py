@@ -120,7 +120,6 @@ def main(config=None, **kwargs):
         **kwargs,
     }
 
-
     # Load file registry
     logger.debug("Load file registry")
     file_registry = FileConversionRegistry(**config["registry"])
@@ -179,7 +178,7 @@ def main(config=None, **kwargs):
 
         inputs = [(file, parser_func, config) for file in input["files"]]
         tqdm_parameters = dict(unit="file", total=len(input["files"]))
-        if config.get("multiprocessing"):
+        if config.get("multiprocessing") not in (None, [], 1):
             logger.info(
                 "Run conversion in parallel with multiprocessing on {} files",
                 len(inputs),
