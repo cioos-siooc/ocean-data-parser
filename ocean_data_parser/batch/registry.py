@@ -154,7 +154,10 @@ class FileConversionRegistry:
         return [sources]
 
     def _is_different_hash(self):
-        return self.data["hash"] != self.data.index.map(self._get_hash)
+        # Speed up hash difference by first filtering out data with unchanged mtime
+        is_different = self._is_different_mtime()
+        is_different.loc[is_different] = self.data.loc[is_different].index.map(self._get_hash) != self.data.loc[is_different]['hash']
+        return is_different
 
     def _is_different_mtime(self):
         return self.data["last_update"] != self.data.index.map(self._get_mtime)
