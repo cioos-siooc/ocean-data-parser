@@ -28,12 +28,12 @@ p_file_vocabulary = pd.read_csv(
     MODULE_PATH / ".." / "vocabularies" / "dfo_p_files_vocabulary.csv"
 ).replace({"variable_name": {np.nan: None}})
 p_file_shipcode = pd.read_csv(
-    MODULE_PATH / ".." / "vocabularies" / "dfo_platform.csv", skiprows=[1]
+    MODULE_PATH / ".." / "vocabularies" / "dfo_platform.csv", skiprows=[1], dtype={"wmo_platform_code": str}
 ).set_index("dfo_newfoundland_ship_code")
 # nafc_instruments = pd.read_csv(
 #     MODULE_PATH / ".." / "vocabularies" / "dfo_nafc_instruments.csv"
 # ).set_index("instrument_id")
-global_attributes = {"Conventions": "CF-1.6,ACDD-1.3"}
+global_attributes = {"Conventions": "CF-1.6,CF-1.7,CF-1.8,ACDD-1.3,IOOS 1.2","naming_authority": "ca.gc.nafc"}
 
 
 def _int(value: str, null_values=None) -> int:
@@ -301,6 +301,7 @@ def parser(
     # Convert dataframe to an xarray and populate information
     ds.attrs.update(
         {
+            "id": metadata_lines[1][:8],
             **global_attributes,
             **_parse_pfile_header_line1(metadata_lines[1]),
             **_parse_pfile_header_line2(metadata_lines[2]),
