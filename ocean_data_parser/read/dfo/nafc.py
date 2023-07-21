@@ -207,7 +207,7 @@ def _pfile_history_to_cf(lines: list) -> str:
     return "".join([f"{timestamp} - {line}" for line in lines[1:]])
 
 
-def parser(
+def pfile(
     file: str,
     encoding: str = "UTF-8",
     rename_variables: bool = True,

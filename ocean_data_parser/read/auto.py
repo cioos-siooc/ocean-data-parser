@@ -53,7 +53,7 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
     elif ext == "int" and "% Cruise_Number:" in header:
         parser = "amundsen.int_format"
     elif ext[0] == "p" and "NAFC_Y2K_HEADER" in header:
-        parser = "dfo.p.parser"
+        parser = "dfo.nafc.pfile"
     elif ext == "ODF" and re.search(r"COUNTRY_INSTITUTE_CODE\s*=\s*1810", header):
         parser = "dfo.odf.bio_odf"
     elif (

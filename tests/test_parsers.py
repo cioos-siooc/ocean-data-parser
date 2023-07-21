@@ -355,19 +355,19 @@ class TestDFOpFiles:
             if not file.endswith(".nc")
         ],
     )
-    def test_dfo_nl_p(self, file):
+    def test_dfo_nafc_pfile(self, file):
         """Test DFO BIO ODF Parser"""
-        dfo.p.parser(file)
+        dfo.nafc.pfile(file)
 
     def test_ship_code_mapping(self):
         """Test ship code mapping"""
-        response = dfo.p._get_ship_code_metadata(55)
+        response = dfo.nafc._get_ship_code_metadata(55)
         assert isinstance(response, dict)
         assert response["platform_name"] == "Discovery"
 
     def test_unknown_ship_code_mapping(self):
         """Test unknown ship code mapping"""
-        response = dfo.p._get_ship_code_metadata(9999)
+        response = dfo.nafc._get_ship_code_metadata(9999)
         assert isinstance(response, dict)
         assert "platform_name" not in response
 
@@ -378,7 +378,7 @@ class TestDFOpFiles:
         ],
     )
     def test_p_file_metadata_parser_line1(self, line):
-        response = dfo.p._parse_pfile_header_line1(line)
+        response = dfo.nafc._parse_pfile_header_line1(line)
         assert isinstance(response, dict)
 
     @pytest.mark.parametrize(
@@ -388,7 +388,7 @@ class TestDFOpFiles:
         ],
     )
     def test_p_file_metadata_parser_line2(self, line):
-        response = dfo.p._parse_pfile_header_line2(line)
+        response = dfo.nafc._parse_pfile_header_line2(line)
         assert isinstance(response, dict)
 
     @pytest.mark.parametrize(
@@ -398,7 +398,7 @@ class TestDFOpFiles:
         ],
     )
     def test_p_file_metadata_parser_line3(self, line):
-        response = dfo.p._parse_pfile_header_line3(line)
+        response = dfo.nafc._parse_pfile_header_line3(line)
         assert isinstance(response, dict)
 
 
