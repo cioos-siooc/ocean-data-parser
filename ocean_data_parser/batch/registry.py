@@ -3,10 +3,12 @@ import hashlib
 import logging
 import re
 from pathlib import Path
+from tqdm import tqdm
 from typing import Union
 
-import pandas as pd
 
+import pandas as pd
+tqdm.pandas()
 logger = logging.getLogger(__name__)
 
 EMPTY_FILE_REGISTRY = pd.DataFrame(
@@ -129,10 +131,10 @@ class FileConversionRegistry:
         if not sources:
             return
         new_data = pd.DataFrame({"source": sources})
-        logger.debug("Get new files mtime")
-        new_data["last_update"] = new_data["source"].apply(self._get_mtime)
-        logger.debug("Get new files hash")
-        new_data["hash"] = new_data["source"].apply(self._get_hash)
+        logger.info("Get new files mtime")
+        new_data["last_update"] = new_data["source"].progress_apply(self._get_mtime)
+        logger.info("Get new files hash")
+        new_data["hash"] = new_data["source"].progress_apply(self._get_hash)
         self.data = (
             pd.concat(
                 [
