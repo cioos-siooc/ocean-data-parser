@@ -13,6 +13,7 @@ EMPTY_FILE_REGISTRY = pd.DataFrame(
     columns=["source", "last_update", "hash", "error_message", "output_path"]
 ).set_index("source")
 
+
 class FileConversionRegistry:
     def __init__(
         self,
@@ -91,7 +92,7 @@ class FileConversionRegistry:
         """
         source = Path(source)
         return source.stat().st_mtime if source.exists() else None
-    
+
     def _get_since_timestamp(self, since=None) -> pd.Timestamp:
         """Convert since attribute to a pd.Timestamp"""
         if not since:
@@ -113,7 +114,7 @@ class FileConversionRegistry:
         return since
 
     def _file_exists(self, file):
-        return Path(file).exists() if isinstance(file,(str,Path)) else False
+        return Path(file).exists() if isinstance(file, (str, Path)) else False
 
     def add(self, sources: list):
         """Add add sources to file registry and ignore already known sources
@@ -127,11 +128,11 @@ class FileConversionRegistry:
         sources = [source for source in sources if source not in self.data.index]
         if not sources:
             return
-        new_data = pd.DataFrame({"source":sources})
+        new_data = pd.DataFrame({"source": sources})
         logger.debug("Get new files mtime")
-        new_data['last_update'] = new_data['source'].apply(self._get_mtime)
+        new_data["last_update"] = new_data["source"].apply(self._get_mtime)
         logger.debug("Get new files hash")
-        new_data['hash'] = new_data['source'].apply(self._get_hash)
+        new_data["hash"] = new_data["source"].apply(self._get_hash)
         self.data = (
             pd.concat(
                 [
@@ -154,21 +155,21 @@ class FileConversionRegistry:
         return self.data["hash"] != self.data.index.map(self._get_hash)
 
     def _is_different_mtime(self):
-        return self.data['last_update'] != self.data.index.map(self._get_mtime)
-    
+        return self.data["last_update"] != self.data.index.map(self._get_mtime)
+
     def _is_modified_since(self):
         since = self._get_since_timestamp()
         return self.data.index.to_series().apply(self._get_mtime) - since >= 0
-    
+
     def _source_exist(self):
         return self.data.index.to_series().apply(self._file_exists)
 
     def _output_file_exists(self):
-        return self.data['output_path'].apply(self._file_exists)
-    
+        return self.data["output_path"].apply(self._file_exists)
+
     def _has_no_error(self):
         return self.data["error_message"].isna()
-    
+
     def update(self, sources: list = None):
         """Update registry hash and last_update attributes
 
@@ -192,7 +193,7 @@ class FileConversionRegistry:
             if field not in self.data:
                 self.data[field] = None
             self.data.loc[sources, field] = value
-    
+
     def get_source_files_to_parse(self, overwrite=True):
         is_new = ~self._output_file_exists() & self._has_no_error()
         if not overwrite:
@@ -202,7 +203,7 @@ class FileConversionRegistry:
             is_modified = self._is_modified_since()
         else:
             is_modified = self._is_different_hash()
-        
+
         return self.data.loc[is_new | is_modified].index.to_list()
 
     def get_missing_sources(self):

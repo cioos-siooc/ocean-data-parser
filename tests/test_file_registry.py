@@ -268,7 +268,7 @@ class FileRegistryTests(unittest.TestCase):
         file_registry = TEST_REGISTRY.deepcopy()
         file_registry.since = pd.Timestamp.utcnow().timestamp()
         modified_sources = file_registry._is_modified_since()
-        assert modified_sources.any() == False 
+        assert modified_sources.any() == False
         assert file_registry.get_source_files_to_parse() == []
 
     def test_get_sources_with_since_timestamp(self):

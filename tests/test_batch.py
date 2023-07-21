@@ -8,13 +8,13 @@ import pytest
 import xarray as xr
 from click.testing import CliRunner
 
+from ocean_data_parser.batch.config import glob
 from ocean_data_parser.batch.convert import (
     FileConversionRegistry,
     cli_files,
     load_config,
     main,
 )
-from ocean_data_parser.batch.config import glob
 from ocean_data_parser.batch.utils import generate_output_path
 
 PACKAGE_PATH = Path(__file__).parent

@@ -1,7 +1,7 @@
 import logging
 import re
-from pathlib import Path
 from importlib import import_module
+from pathlib import Path
 
 from xarray import Dataset
 

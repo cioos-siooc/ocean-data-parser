@@ -3,7 +3,6 @@ import os
 from typing import Union
 
 import pandas as pd
-
 from geographiclib.geodesic import Geodesic
 
 
@@ -56,7 +55,7 @@ def get_geo_code(position: list, geographical_areas_collections: list) -> str:
         geographical_areas list (str): comma separated list of matching geographical areas
     """
     try:
-        from shapely.geometry import Polygon, Point
+        from shapely.geometry import Point, Polygon
     except ImportError:
         raise RuntimeError(
             "Shapely is necessary to retrieve geograpical areas. Install shapely with `pip install shapely`"

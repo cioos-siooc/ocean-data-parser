@@ -1,9 +1,9 @@
 import logging
-from pathlib import Path
 from collections.abc import Generator
+from pathlib import Path
 
-import yaml
 import pandas as pd
+import yaml
 
 from ocean_data_parser.geo import read_geojson
 
@@ -12,12 +12,14 @@ DEFAULT_CONFIG_PATH = MODULE_PATH / "default-batch-config.yaml"
 
 logger = logging.getLogger(__name__)
 
+
 def _get_paths(paths: str) -> list:
     if "*" in paths:
         path, glob_expr = paths.split("*", 1)
         glob_expr = f"*{glob_expr}"
         return [Path(path).glob(glob_expr)]
     return [Path(paths)]
+
 
 def glob(paths: str) -> Generator[Path]:
     """Create a generator of paths from a glob path expression
@@ -60,8 +62,7 @@ def load_config(config_path: str = None, encoding="UTF-8"):
     # Sentry
     if config.get("sentry", {}).get("dsn"):
         import sentry_sdk
-        from sentry_sdk.integrations.loguru import LoguruIntegration
-        from sentry_sdk.integrations.loguru import LoggingLevels
+        from sentry_sdk.integrations.loguru import LoggingLevels, LoguruIntegration
 
         sentry_loguru = LoguruIntegration(
             level=getattr(
@@ -82,7 +83,7 @@ def load_config(config_path: str = None, encoding="UTF-8"):
             config["file_specific_attributes_path"]
         ).set_index("file")
 
-    if config.get("global_attribute_mapping",{}).get("path"):
+    if config.get("global_attribute_mapping", {}).get("path"):
         logger.info("Load global attribute mapping")
         config["globab_attribute_mapping"]["dataframe"] = pd.concat(
             [

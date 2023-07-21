@@ -96,8 +96,12 @@ def _parse_pfile_header_line2(line: str) -> dict:
         scan_count=_int(line[9:15]),  # number of scan lines in file
         sampling_rate=_float(line[16:21]),  # 00.00 for unknown
         file_type=line[22],  # A for ASCII B for binary data
-        channel_count=_int(line[24:26]),  # number of data channels in file including dummies
-        channel_ids=line[28:47],  # id codes as described above in same order as channels
+        channel_count=_int(
+            line[24:26]
+        ),  # number of data channels in file including dummies
+        channel_ids=line[
+            28:47
+        ],  # id codes as described above in same order as channels
         channel_extra=line[47:58],
         cast_direction=line[59],  # "U for up cast only, D for down cast only, B bot"
         sub_interval=_int(

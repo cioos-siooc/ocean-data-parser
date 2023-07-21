@@ -1,26 +1,25 @@
+import logging
+import os
 import shutil
+import sys
 from glob import glob
 from importlib import import_module
 from multiprocessing import Pool
 from pathlib import Path
-import os
-import sys
-import logging
 
 import click
 import pandas as pd
+from dotenv import load_dotenv
+from loguru import logger
 from tqdm import tqdm
 from xarray import Dataset
-from loguru import logger
-from dotenv import load_dotenv
 
-from ocean_data_parser import process
+from ocean_data_parser import geo, process
+from ocean_data_parser._version import __version__
 from ocean_data_parser.batch.config import load_config
 from ocean_data_parser.batch.registry import FileConversionRegistry
 from ocean_data_parser.batch.utils import generate_output_path
 from ocean_data_parser.read import auto, utils
-from ocean_data_parser import geo
-from ocean_data_parser._version import __version__
 
 MODULE_PATH = Path(__file__).parent
 DEFAULT_CONFIG_PATH = MODULE_PATH / "default-batch-config.yaml"
@@ -32,7 +31,7 @@ logger.remove()
 logger.add(
     sys.stderr,
     level=os.getenv("LOGURU_LEVEL", "INFO"),
-    format='<level>{level.icon}</level> <blue>\"{file.path}\"</blue>: <yellow>line {line}</yellow> | <cyan>"{extra[source_file]}"</cyan> - <level>{message}</level>',
+    format='<level>{level.icon}</level> <blue>"{file.path}"</blue>: <yellow>line {line}</yellow> | <cyan>"{extra[source_file]}"</cyan> - <level>{message}</level>',
 )
 logger.add(
     "ocean_data_parser.log",
@@ -65,9 +64,14 @@ class InterceptHandler(logging.Handler):
             frame = frame.f_back
             depth += 1
 
-        logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
+        logger.opt(depth=depth, exception=record.exc_info).log(
+            level, record.getMessage()
+        )
 
-logging.basicConfig(handlers=[InterceptHandler()],level=os.getenv("LOGURU_LEVEL", "INFO"))
+
+logging.basicConfig(
+    handlers=[InterceptHandler()], level=os.getenv("LOGURU_LEVEL", "INFO")
+)
 classic_logger = logging.getLogger()
 
 
@@ -97,6 +101,7 @@ def cli_files(config=None, new_config=None):
     logger.info("Run config={}", config)
     main(config=config)
 
+
 def main(config=None, **kwargs):
     """Ocean Data Parser batch conversion method
 
@@ -125,23 +130,32 @@ def main(config=None, **kwargs):
     for input_path, parser in zip(
         config["input_path"].split(","), config["parser"].split(",")
     ):
-        logger.info("Search files: '{}'",input_path)
+        logger.info("Search files: '{}'", input_path)
         source_files = glob(input_path, recursive=config.get("recursive"))
         total_files = len(source_files)
-        logger.info("{} files detected",len(source_files))
-        logger.info("Add {} unknown files to registry", len([file for file in source_files if file not in file_registry.data.index]))
+        logger.info("{} files detected", len(source_files))
+        logger.info(
+            "Add {} unknown files to registry",
+            len(
+                [file for file in source_files if file not in file_registry.data.index]
+            ),
+        )
         file_registry.add(source_files)
-        
+
         # Ignore files already parsed
-        logger.info("Compare files with registry hashes and ignore already parsed files")
-        source_files = file_registry.get_source_files_to_parse(overwrite=config.get('overwrite','False'))
+        logger.info(
+            "Compare files with registry hashes and ignore already parsed files"
+        )
+        source_files = file_registry.get_source_files_to_parse(
+            overwrite=config.get("overwrite", "False")
+        )
         if not source_files:
             continue
         to_parse += [
             {"files": source_files, "input_path": input_path, "parser": parser}
         ]
         logger.info("Detected {}/{} needs to be parse", len(source_files), total_files)
-    
+
     if not to_parse:
         logger.info("No files need to be parsed")
         return
@@ -149,7 +163,7 @@ def main(config=None, **kwargs):
     # Import parser modules and load each files:
     for input in to_parse:
         parser = input["parser"]
-        logger.info("Load parser={}",parser)
+        logger.info("Load parser={}", parser)
         if parser == "auto":
             parser_func = auto.file
         else:
@@ -166,7 +180,8 @@ def main(config=None, **kwargs):
         tqdm_parameters = dict(unit="file", total=len(input["files"]))
         if config.get("multiprocessing"):
             logger.info(
-                "Run conversion in parallel with multiprocessing on {} files",len(inputs)
+                "Run conversion in parallel with multiprocessing on {} files",
+                len(inputs),
             )
             n_workers = (
                 config["multiprocessing"]
@@ -183,7 +198,7 @@ def main(config=None, **kwargs):
                 )
 
         else:
-            logger.info("Run conversion on {} files",len(inputs))
+            logger.info("Run conversion on {} files", len(inputs))
             response = []
             for item in tqdm(
                 inputs,
@@ -203,7 +218,7 @@ def main(config=None, **kwargs):
                 file_registry.update_fields(source, error_message=error_message)
         logger.info("Save file registry")
         file_registry.save()
-        
+
     logger.info("Conversion completed")
     return file_registry
 
@@ -334,6 +349,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
         pass
 
     return output_path
+
 
 if __name__ == "__main__":
     cli_files()
