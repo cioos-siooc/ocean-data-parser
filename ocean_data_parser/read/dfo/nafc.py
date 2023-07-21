@@ -14,6 +14,7 @@ According to the pfile documentation, the format is:
 import logging
 import re
 from pathlib import Path
+from typing import Union
 
 import gsw
 import numpy as np
@@ -172,7 +173,8 @@ def _parse_channel_stats(lines: list) -> dict:
     return {item["name"]: {"actual_range": _get_range(item)} for item in spans}
 
 
-def _get_ship_code_metadata(shipcode: int) -> dict:
+def _get_ship_code_metadata(shipcode: Union[int,str]) -> dict:
+    shipcode = f"{shipcode:02g}" if isinstance(shipcode,int) else shipcode
     if shipcode in p_file_shipcode.index:
         return p_file_shipcode.loc[shipcode].to_dict()
     logger.warning("Unknown p-file shipcode=%s", shipcode)
