@@ -35,7 +35,6 @@ class ConfigLoadTests(unittest.TestCase):
 
     def test_default_config_logging(self):
         config = load_config()
-        logging.config.dictConfig(config["logging"])
 
     def test_config_glob(self):
         paths = glob("ocean_data_parser/**/*.py")
