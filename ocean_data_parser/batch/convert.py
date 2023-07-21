@@ -5,6 +5,7 @@ from multiprocessing import Pool
 from pathlib import Path
 import os
 import sys
+import logging
 
 import click
 import pandas as pd
@@ -40,6 +41,36 @@ logger.add(
 )
 
 
+# Redirect logging loggers to loguru
+class InterceptHandler(logging.Handler):
+    """
+    Add logging handler to augment python stdlib logging.
+
+    Logs which would otherwise go to stdlib logging are redirected through
+    loguru.
+    # https://stackoverflow.com/questions/66769431/how-to-use-loguru-with-standard-loggers
+    """
+
+    @logger.catch(default=True, onerror=lambda _: sys.exit(1))
+    def emit(self, record):
+        # Get corresponding Loguru level if it exists.
+        try:
+            level = logger.level(record.levelname).name
+        except ValueError:
+            level = record.levelno
+
+        # Find caller from where originated the logged message.
+        frame, depth = sys._getframe(6), 6
+        while frame and frame.f_code.co_filename == logging.__file__:
+            frame = frame.f_back
+            depth += 1
+
+        logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
+
+logging.basicConfig(handlers=[InterceptHandler()],level=os.getenv("LOGURU_LEVEL", "INFO"))
+classic_logger = logging.getLogger()
+
+
 @click.command()
 @click.option(
     "--config", "-c", type=click.Path(exists=True), help="Path to configuration file"
@@ -65,7 +96,6 @@ def cli_files(config=None, new_config=None):
 
     logger.info("Run config={}", config)
     main(config=config)
-
 
 def main(config=None, **kwargs):
     """Ocean Data Parser batch conversion method
@@ -119,7 +149,7 @@ def main(config=None, **kwargs):
     # Import parser modules and load each files:
     for input in to_parse:
         parser = input["parser"]
-        logger.info("Load parser {parser}")
+        logger.info("Load parser={}",parser)
         if parser == "auto":
             parser_func = auto.file
         else:
@@ -186,11 +216,10 @@ def _convert_file(args):
         except Exception as error:
             if args[2].get("errors") == "raise":
                 raise error
-            logger.exception("Conversion failed", exc_info=True)
+            logger.exception("Conversion failed")
             return (args[0], None, error)
 
 
-@logger.catch(reraise=True)
 def convert_file(file: str, parser: str, config: dict) -> str:
     """Parse file with given parser and configuration
 

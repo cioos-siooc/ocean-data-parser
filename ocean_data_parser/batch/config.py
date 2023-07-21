@@ -72,7 +72,7 @@ def load_config(config_path: str = None, encoding="UTF-8"):
             ).value,  # Send errors as events
         )
 
-        logger.info("Connect to sentry: {}", sentry_loguru)
+        logger.info("Connect to sentry: %s", sentry_loguru)
         sentry_sdk.init(config["sentry"]["dsn"], integrations=[sentry_loguru])
 
     # Load config components
