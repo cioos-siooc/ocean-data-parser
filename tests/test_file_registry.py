@@ -17,6 +17,9 @@ TEST_TEMP_FOLDER = Path("temp")
 TEST_TEMP_FOLDER.mkdir(parents=True,exist_ok=True)
 
 class FileRegistryTests(unittest.TestCase):
+    def _get_test_registry(self):
+        return FileConversionRegistry(path=TEST_REGISTRY_PATH)
+
     def make_test_file(self, filename: Path, content="this is a test file", mode="w"):
         if not filename.parent.exists():
             filename.parent.mkdir()
@@ -75,16 +78,17 @@ class FileRegistryTests(unittest.TestCase):
         assert not file_registry.data.empty, "registry is an empty dataframe"
     
     def test_registry(self):
+        test_registry = self._get_test_registry()
         for attr  in ['data','hashtype','path','save','load','update']:            
-            assert hasattr(TEST_REGISTRY,attr), f"TEST_REGISTRY is missing attribute={attr}"
-        assert isinstance(TEST_REGISTRY.data,pd.DataFrame)
-        assert not TEST_REGISTRY.data.empty
+            assert hasattr(test_registry,attr), f"TEST_REGISTRY is missing attribute={attr}"
+        assert isinstance(test_registry.data,pd.DataFrame)
+        assert not test_registry.data.empty
 
     def test_registry_copy(self):
-        deep_copied_file_registry = TEST_REGISTRY.deepcopy()
+        deep_copied_file_registry = self._get_test_registry()
         deep_copied_file_registry.data["hash"] = 0
         assert (
-            deep_copied_file_registry != TEST_REGISTRY
+            deep_copied_file_registry != self._get_test_registry()
         ), "Deed copied registry after modification changed the original"
 
         copied_file_registry = deep_copied_file_registry.copy()
@@ -100,7 +104,7 @@ class FileRegistryTests(unittest.TestCase):
         ), "Registry after modification didn't changed the original"
 
     def test_load(self):
-        file_registry = TEST_REGISTRY.deepcopy()
+        file_registry = self._get_test_registry()
         # Replace registry parameters
         file_registry.data["last_update"] = 0
         file_registry.data["hash"] = 0
@@ -118,12 +122,12 @@ class FileRegistryTests(unittest.TestCase):
         ).all(), "hash wasn't updated with load()"
 
     def test_update(self):
-        file_registry = TEST_REGISTRY.deepcopy()
+        file_registry = self._get_test_registry()
 
         # Replace registry parameters
         file_registry.data["last_update"] = 0
         file_registry.data["hash"] = 0
-        assert file_registry != TEST_REGISTRY, "local test registry wasn't modify"
+        assert file_registry != self._get_test_registry(), "local test registry wasn't modify"
 
         file_registry.update()
         assert (
@@ -134,7 +138,7 @@ class FileRegistryTests(unittest.TestCase):
         ).all(), "hash wasn't updated wiht update()"
 
     def test_update_specific_source(self):
-        file_registry = TEST_REGISTRY.deepcopy()
+        file_registry = self._get_test_registry()
         # Replace registry parameters
         file_registry.data["last_update"] = 0
         file_registry.data["hash"] = 0
@@ -153,7 +157,7 @@ class FileRegistryTests(unittest.TestCase):
         ).all(), "hash source!=source shouldn't be updated with update(source)"
 
     def test_update_all_sources_missing_field(self):
-        file_registry = TEST_REGISTRY.deepcopy()
+        file_registry = self._get_test_registry()
         assert (
             "test" not in file_registry.data
         ), "new field 'test' was alreadyin the registry"
@@ -164,7 +168,7 @@ class FileRegistryTests(unittest.TestCase):
         ].all(), "new field wasn't added to the registry"
 
     def test_update_all_sources_field(self):
-        file_registry = TEST_REGISTRY.deepcopy()
+        file_registry = self._get_test_registry()
         file_registry.data["test"] = False
         assert (
             file_registry.data["test"].any() == False
@@ -175,7 +179,7 @@ class FileRegistryTests(unittest.TestCase):
         ].all(), "new field wasn't added to the registry"
 
     def test_update_single_source_missing_field(self):
-        file_registry = TEST_REGISTRY.deepcopy()
+        file_registry = self._get_test_registry()
         assert (
             "test" not in file_registry.data
         ), "new field 'test' was alreadyin the registry"
@@ -189,12 +193,12 @@ class FileRegistryTests(unittest.TestCase):
         ), "other fields weren't replaced by None"
 
     def test_update_single_source_missing_field(self):
-        file_registry = TEST_REGISTRY.deepcopy()
+        file_registry = self._get_test_registry()
         file_registry.data["test"] = False
         assert (
             file_registry.data["test"].any() == False
         ), "Test field wasn't all set to False"
-        file_registry.update_fields(sources=file_registry.data.index[0], test=True)
+        file_registry.update_fields(sources=[file_registry.data.index[0]], test=True)
         assert file_registry.data.iloc[0][
             "test"
         ], "new field wasn't added to the registry"
@@ -203,7 +207,7 @@ class FileRegistryTests(unittest.TestCase):
         ).all(), "other fields weren't replaced by None"
 
     def test_update_multiple_fields(self):
-        file_registry = TEST_REGISTRY.deepcopy()
+        file_registry = self._get_test_registry()
         file_registry.update_fields(test=True, second_test=False)
         assert file_registry.data["test"].all(), "test input is missing"
         assert (
@@ -211,12 +215,12 @@ class FileRegistryTests(unittest.TestCase):
         ).all(), "second_test input is missing"
 
     def test_save(self):
-        file_registry = TEST_REGISTRY.deepcopy()
+        file_registry = self._get_test_registry()
 
         file_registry.path = Path(str(file_registry.path).replace(".csv", "_temp.csv"))
         file_registry.save()
         differences = compare_text_files(
-            str(TEST_REGISTRY.path), str(file_registry.path)
+            str(self._get_test_registry().path), str(file_registry.path)
         )
         assert (
             not differences
@@ -225,29 +229,21 @@ class FileRegistryTests(unittest.TestCase):
         file_registry.data.loc[file_registry.data.index[-1], "last_update"] += 100
         file_registry.save()
         differences = compare_text_files(
-            str(TEST_REGISTRY.path), str(file_registry.path)
+            str(self._get_test_registry().path), str(file_registry.path)
         )
         assert (
             len(differences) == 5
         ), f"Resaving the test registry after changes didn't produce the expected different file: {differences}"
 
     def test_get_sources_with_modified_hash_unchanged(self):
-        file_registry = TEST_REGISTRY.deepcopy()
+        file_registry = self._get_test_registry()
         file_registry.update()
         changed_files = file_registry._is_different_hash()
         assert changed_files.any() == False
         assert file_registry.get_source_files_to_parse() == []
 
-    # def test_get_sources_with_modified_hash_single_source(self):
-    #     file_registry = TEST_REGISTRY.deepcopy()
-    #     file_registry.update()
-    #     changed_files = file_registry.get_sources_with_modified_hash(
-    #         [file_registry.data.index[0]]
-    #     )
-    #     assert changed_files == []
-
     def test_get_sources_with_modified_hash(self):
-        file_registry = TEST_REGISTRY.deepcopy()
+        file_registry = self._get_test_registry()
         file_registry.update()
         TEST_SAVE_PATH = self.make_test_file(
             Path("temp/test_get_sources_with_modified_hash.csv")
@@ -274,14 +270,14 @@ class FileRegistryTests(unittest.TestCase):
         return file_registry
 
     def test_get_sources_with_since_timestamp_no_changes(self):
-        file_registry = TEST_REGISTRY.deepcopy()
+        file_registry = self._get_test_registry()
         file_registry.since = pd.Timestamp.utcnow().timestamp()
         modified_sources = file_registry._is_modified_since()
         assert modified_sources.any() == False
         assert file_registry.get_source_files_to_parse() == []
 
     def test_get_sources_with_since_timestamp(self):
-        file_registry = TEST_REGISTRY.deepcopy()
+        file_registry = self._get_test_registry()
         file_registry.since = pd.Timestamp.utcnow()
         test_file = Path("temp/timestamp_test.csv")
         file_registry = self.update_test_file(file_registry, test_file)
@@ -291,7 +287,7 @@ class FileRegistryTests(unittest.TestCase):
         assert file_registry.get_source_files_to_parse() == [test_file]
 
     def test_get_sources_with_since_timestamp_str(self):
-        file_registry = TEST_REGISTRY.deepcopy()
+        file_registry = self._get_test_registry()
         file_registry.since = pd.Timestamp.utcnow().isoformat()
         test_file = Path("temp/timestamp_test.csv")
         file_registry = self.update_test_file(file_registry, test_file)
@@ -301,7 +297,7 @@ class FileRegistryTests(unittest.TestCase):
         assert file_registry.get_source_files_to_parse() == [test_file]
 
     def test_get_sources_with_since_timedelta(self):
-        file_registry = TEST_REGISTRY.deepcopy()
+        file_registry = self._get_test_registry()
         file_registry.since = "10s"
         test_file = Path(
             "temp/test_get_sources_with_modified_mtime_time_difference.csv"
@@ -313,7 +309,7 @@ class FileRegistryTests(unittest.TestCase):
         assert file_registry.get_source_files_to_parse() == [test_file]
 
     def test_get_missing_files(self):
-        file_registry = TEST_REGISTRY.deepcopy()
+        file_registry = self._get_test_registry()
         TEST_SAVE_PATH = self.make_test_file(Path("test_get_missing_files.csv"))
         file_registry.add([TEST_SAVE_PATH])
         file_registry.update()
