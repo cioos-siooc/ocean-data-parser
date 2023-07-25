@@ -3,11 +3,10 @@ import hashlib
 import logging
 import re
 from pathlib import Path
-from tqdm import tqdm
 from typing import Union
 
-
 import pandas as pd
+from tqdm import tqdm
 
 tqdm.pandas()
 logger = logging.getLogger(__name__)
@@ -71,8 +70,7 @@ class FileConversionRegistry:
     def deepcopy(self):
         return copy.deepcopy(self)
 
-    def _get_hash(self, file):
-
+    def _get_hash(self, file) -> str:
         file = Path(file)
         if not file.exists():
             return None
@@ -147,12 +145,10 @@ class FileConversionRegistry:
             .last()
         )
 
-    def _get_sources(self, sources: list):
-        if not sources:
-            return self.data.index.to_list()
-        elif isinstance(sources, list):
+    def _get_sources(self, sources: list) -> list:
+        if isinstance(sources, list):
             return sources
-        return [sources]
+        return self.data.index.to_list()
 
     def _is_different_hash(self):
         # Speed up hash difference by first filtering out data with unchanged mtime
@@ -163,20 +159,25 @@ class FileConversionRegistry:
         )
         return is_different
 
-    def _is_different_mtime(self):
+    def _is_different_mtime(self) -> pd.Series:
         return self.data["last_update"] != self.data.index.map(self._get_mtime)
 
-    def _is_modified_since(self):
+    def _is_modified_since(self) -> pd.Series:
+        if self.since is None:
+            return pd.Series(False, self.data.index)
         since = self._get_since_timestamp()
         return self.data.index.to_series().apply(self._get_mtime) - since >= 0
 
-    def _source_exist(self):
+    def _is_new_file(self) -> pd.Series:
+        return ~self._output_file_exists() & self._has_no_error()
+
+    def _source_exist(self) -> pd.Series:
         return self.data.index.to_series().apply(self._file_exists)
 
-    def _output_file_exists(self):
+    def _output_file_exists(self) -> pd.Series:
         return self.data["output_path"].apply(self._file_exists)
 
-    def _has_no_error(self):
+    def _has_no_error(self) -> pd.Series:
         return self.data["error_message"].isna()
 
     def update(self, sources: list = None):
@@ -189,9 +190,8 @@ class FileConversionRegistry:
         sources = self._get_sources(sources)
         self.data.loc[sources, "hash"] = list(map(self._get_hash, sources))
         self.data.loc[sources, "last_update"] = list(map(self._get_mtime, sources))
-        return
 
-    def update_fields(self, sources=None, **kwargs):
+    def update_fields(self, sources: list = None, **kwargs):
         """Update given sources specific fields in attributes
 
         Args:
@@ -203,19 +203,27 @@ class FileConversionRegistry:
                 self.data[field] = None
             self.data.loc[sources, field] = value
 
-    def get_source_files_to_parse(self, overwrite=True):
-        is_new = ~self._output_file_exists() & self._has_no_error()
+    def get_source_files_to_parse(self, overwrite: bool = True) -> list:
+        """Return the list of files that needs to be parsed
+
+        Args:
+            overwrite (bool, optional): overwrite files already parsed
+            and for which output already exists. Defaults to True.
+
+        Returns:
+            list: list of source files to parse
+        """
         if not overwrite:
-            return self.data.loc[is_new].index.to_list()
+            return self.data.loc[self._is_new_file()].index.to_list()
 
         if self.since:
             is_modified = self._is_modified_since()
         else:
             is_modified = self._is_different_hash()
 
-        return self.data.loc[is_new | is_modified].index.to_list()
+        return self.data.loc[self._is_new_file() | is_modified].index.to_list()
 
-    def get_missing_sources(self):
+    def get_missing_sources(self) -> list:
         """Get list of missing sources
 
         Returns:

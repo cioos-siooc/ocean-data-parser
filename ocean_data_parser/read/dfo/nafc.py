@@ -29,12 +29,17 @@ p_file_vocabulary = pd.read_csv(
     MODULE_PATH / ".." / "vocabularies" / "dfo_p_files_vocabulary.csv"
 ).replace({"variable_name": {np.nan: None}})
 p_file_shipcode = pd.read_csv(
-    MODULE_PATH / ".." / "vocabularies" / "dfo_platform.csv", skiprows=[1], dtype={"wmo_platform_code": str}
+    MODULE_PATH / ".." / "vocabularies" / "dfo_platform.csv",
+    skiprows=[1],
+    dtype={"wmo_platform_code": str},
 ).set_index("dfo_newfoundland_ship_code")
 # nafc_instruments = pd.read_csv(
 #     MODULE_PATH / ".." / "vocabularies" / "dfo_nafc_instruments.csv"
 # ).set_index("instrument_id")
-global_attributes = {"Conventions": "CF-1.6,CF-1.7,CF-1.8,ACDD-1.3,IOOS 1.2","naming_authority": "ca.gc.nafc"}
+global_attributes = {
+    "Conventions": "CF-1.6,CF-1.7,CF-1.8,ACDD-1.3,IOOS 1.2",
+    "naming_authority": "ca.gc.nafc",
+}
 
 
 def _int(value: str, null_values=None) -> int:
@@ -173,8 +178,8 @@ def _parse_channel_stats(lines: list) -> dict:
     return {item["name"]: {"actual_range": _get_range(item)} for item in spans}
 
 
-def _get_ship_code_metadata(shipcode: Union[int,str]) -> dict:
-    shipcode = f"{shipcode:02g}" if isinstance(shipcode,int) else shipcode
+def _get_ship_code_metadata(shipcode: Union[int, str]) -> dict:
+    shipcode = f"{shipcode:02g}" if isinstance(shipcode, int) else shipcode
     if shipcode in p_file_shipcode.index:
         return p_file_shipcode.loc[shipcode].to_dict()
     logger.warning("Unknown p-file shipcode=%s", shipcode)
