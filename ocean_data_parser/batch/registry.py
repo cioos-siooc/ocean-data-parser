@@ -71,7 +71,6 @@ class FileConversionRegistry:
         return copy.deepcopy(self)
 
     def _get_hash(self, file) -> str:
-
         file = Path(file)
         if not file.exists():
             return None
@@ -166,7 +165,7 @@ class FileConversionRegistry:
     def _is_modified_since(self) -> pd.Series:
         since = self._get_since_timestamp()
         return self.data.index.to_series().apply(self._get_mtime) - since >= 0
-    
+
     def _is_new_file(self) -> pd.Series:
         return ~self._output_file_exists() & self._has_no_error()
 
@@ -190,7 +189,7 @@ class FileConversionRegistry:
         self.data.loc[sources, "hash"] = list(map(self._get_hash, sources))
         self.data.loc[sources, "last_update"] = list(map(self._get_mtime, sources))
 
-    def update_fields(self, sources:list =None, **kwargs):
+    def update_fields(self, sources: list = None, **kwargs):
         """Update given sources specific fields in attributes
 
         Args:
@@ -202,7 +201,7 @@ class FileConversionRegistry:
                 self.data[field] = None
             self.data.loc[sources, field] = value
 
-    def get_source_files_to_parse(self, overwrite:bool=True) -> list:
+    def get_source_files_to_parse(self, overwrite: bool = True) -> list:
         """Return the list of files that needs to be parsed
 
         Args:

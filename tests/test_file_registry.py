@@ -18,8 +18,11 @@ TEST_TEMP_FOLDER.mkdir(parents=True, exist_ok=True)
 
 
 class FileRegistryTests(unittest.TestCase):
-    def _get_test_registry(self):
-        return FileConversionRegistry(path=TEST_REGISTRY_PATH)
+    def _get_test_registry(self, update=True):
+        registry = FileConversionRegistry(path=TEST_REGISTRY_PATH)
+        if update:
+            registry.update()
+        return registry
 
     def make_test_file(self, filename: Path, content="this is a test file", mode="w"):
         if not filename.parent.exists():
@@ -125,7 +128,7 @@ class FileRegistryTests(unittest.TestCase):
         ).all(), "hash wasn't updated with load()"
 
     def test_update(self):
-        file_registry = self._get_test_registry()
+        file_registry = self._get_test_registry(update=False)
 
         # Replace registry parameters
         file_registry.data["last_update"] = 0
@@ -220,7 +223,7 @@ class FileRegistryTests(unittest.TestCase):
         ).all(), "second_test input is missing"
 
     def test_save(self):
-        file_registry = self._get_test_registry()
+        file_registry = self._get_test_registry(update=False)
 
         file_registry.path = Path(str(file_registry.path).replace(".csv", "_temp.csv"))
         file_registry.save()
@@ -242,14 +245,12 @@ class FileRegistryTests(unittest.TestCase):
 
     def test_get_sources_with_modified_hash_unchanged(self):
         file_registry = self._get_test_registry()
-        file_registry.update()
         changed_files = file_registry._is_different_hash()
         assert changed_files.any() == False
         assert file_registry.get_source_files_to_parse() == []
 
     def test_get_sources_with_modified_hash(self):
         file_registry = self._get_test_registry()
-        file_registry.update()
         TEST_SAVE_PATH = self.make_test_file(
             Path("temp/test_get_sources_with_modified_hash.csv")
         )
