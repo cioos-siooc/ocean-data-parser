@@ -263,8 +263,8 @@ class FileRegistryTests(unittest.TestCase):
         assert not (
             file_registry._is_new_file() | file_registry._is_different_hash()
         ).all(), "returned some sources to be parsed"
-        assert file_registry.data.loc[file_registry._is_new_file()].empty
-        assert file_registry.data.loc[file_registry._is_different_hash()].empty
+        assert file_registry.data.loc[file_registry._is_new_file()].empty, f" {file_registry._is_new_file()} didn't return an empty list of files"
+        assert file_registry.data.loc[file_registry._is_different_hash()].empty, f" {file_registry._is_different_hash()} didn't return an empty list of files"
         assert file_registry.data.loc[file_registry._is_new_file() | file_registry._is_different_hash()].empty
         assert file_registry.get_source_files_to_parse() == []
 
