@@ -7,7 +7,7 @@ from utils import compare_text_files
 
 from ocean_data_parser.batch.convert import FileConversionRegistry
 
-PACKAGE_PATH = Path(__file__).parent
+PACKAGE_PATH = __).parent
 TEST_REGISTRY_PATH = Path("tests/test_file_registry.csv")
 TEST_FILE = Path("temp/test_file.csv")
 TEST_REGISTRY = FileConversionRegistry(path=TEST_REGISTRY_PATH)
@@ -21,7 +21,7 @@ class FileRegistryTests(unittest.TestCase):
         if not filename.parent.exists():
             filename.parent.mkdir()
 
-        with open(filename, mode) as file_handle:
+        with open(filename, mode) as file_handle:Path(__file
             file_handle.write(content)
         assert filename.exists(), "test file wasn't created"
         return filename
