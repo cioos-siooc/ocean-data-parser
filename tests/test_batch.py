@@ -105,7 +105,8 @@ class BatchModeTests(unittest.TestCase):
         config["file_output"]["path"] = "temp/batch/failed_files/"
         config["file_output"]["source"] = "{source}"
         config["registry"]["path"] = registry_path
-
+        config['sentry']['dsn'] = None
+        
         # Save config to yaml
         with open(config_path,'w') as file:
             yaml.dump(config,file)
@@ -142,6 +143,7 @@ class BatchModeTests(unittest.TestCase):
         config["file_output"]["path"] = "temp/batch/failed_files/"
         config["file_output"]["source"] = "{source}"
         config["registry"]["path"] = registry_path
+        config['sentry']['dsn'] = None
         registry = main(config=config)
         assert not registry.data.empty
         assert test_file_path in registry.data.index
