@@ -15,7 +15,9 @@ TEST_REGISTRY = FileConversionRegistry(path=TEST_REGISTRY_PATH)
 # Generate temporary test directory
 TEST_TEMP_FOLDER = Path("temp")
 TEST_TEMP_FOLDER.mkdir(parents=True, exist_ok=True)
-
+for output_path in TEST_REGISTRY.data['output_path'].dropna():
+    with open(output_path,'w') as file:
+        file.write('test file from registry')
 
 class FileRegistryTests(unittest.TestCase):
     def _get_test_registry(self, update=True):
@@ -248,21 +250,21 @@ class FileRegistryTests(unittest.TestCase):
         file_registry.since = None
         assert ~file_registry.data.empty
         assert (
-            not file_registry._is_new_file().all()
+            not file_registry._is_new_file().any()
         ), "Failed to return all not new files"
         assert (
-            not file_registry._is_different_hash().all()
+            not file_registry._is_different_hash().any()
         ), "test registry hashes are different"
         assert (
-            not file_registry._is_different_mtime().all()
+            not file_registry._is_different_mtime().any()
         ), "test registry mtimes are different"
 
         assert file_registry.since is None
-        assert not file_registry._is_modified_since().all()
+        assert not file_registry._is_modified_since().any()
 
         assert not (
             file_registry._is_new_file() | file_registry._is_different_hash()
-        ).all(), "returned some sources to be parsed"
+        ).any(), "returned some sources to be parsed"
         assert file_registry.data.loc[file_registry._is_new_file()].empty, f" {file_registry._is_new_file()} didn't return an empty list of files"
         assert file_registry.data.loc[file_registry._is_different_hash()].empty, f" {file_registry._is_different_hash()} didn't return an empty list of files"
         assert file_registry.data.loc[file_registry._is_new_file() | file_registry._is_different_hash()].empty
