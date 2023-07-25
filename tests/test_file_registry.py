@@ -262,7 +262,8 @@ class FileRegistryTests(unittest.TestCase):
 
         assert not (
             file_registry._is_new_file() | file_registry._is_different_hash()
-        ).all() == False, "returned source to be parsed"
+        ).all(), "returned some sources to be parsed"
+        assert file_registry.data.loc[file_registry._is_new_file() | file_registry._is_different_hash()].empty
         assert file_registry.get_source_files_to_parse() == []
 
     def test_get_sources_with_modified_hash_unchanged(self):
