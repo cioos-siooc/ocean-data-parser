@@ -256,6 +256,10 @@ class FileRegistryTests(unittest.TestCase):
         assert (
             file_registry._is_different_mtime().all() == False
         ), "test registry mtimes are different"
+        
+        assert file_registry.since is None
+        assert file_registry._is_modified_since().all() == False
+
         assert file_registry.get_source_files_to_parse() == []
 
     def test_get_sources_with_modified_hash_unchanged(self):
