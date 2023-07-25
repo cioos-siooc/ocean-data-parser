@@ -3,11 +3,10 @@ import hashlib
 import logging
 import re
 from pathlib import Path
-from tqdm import tqdm
 from typing import Union
 
-
 import pandas as pd
+from tqdm import tqdm
 
 tqdm.pandas()
 logger = logging.getLogger(__name__)

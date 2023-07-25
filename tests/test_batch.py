@@ -3,10 +3,10 @@ import logging.config
 import unittest
 from pathlib import Path
 
-import yaml
 import pandas as pd
 import pytest
 import xarray as xr
+import yaml
 from click.testing import CliRunner
 
 from ocean_data_parser.batch.config import glob
@@ -87,29 +87,28 @@ class BatchModeTests(unittest.TestCase):
         assert not registry.data.empty
         assert not registry.data["error_message"].any()
 
-
     def test_failed_cli_batch_conversion(self):
         config = load_config()
-        test_file_path = 'temp/failed_cli_test_file.cnv'
+        test_file_path = "temp/failed_cli_test_file.cnv"
         registry_path = "temp/failed_cli_registry.csv"
-        config_path =  "temp/failed_cli_config.csv"
-        
-        with open(test_file_path,'w') as file_handle:
-            file_handle.write('test file')
+        config_path = "temp/failed_cli_config.csv"
+
+        with open(test_file_path, "w") as file_handle:
+            file_handle.write("test file")
 
         config["input_path"] = test_file_path
         config["parser"] = "seabird.cnv"
-        config['errors'] = "ignore"
+        config["errors"] = "ignore"
         config["overwrite"] = True
         config["multiprocessing"] = True
         config["file_output"]["path"] = "temp/batch/failed_files/"
         config["file_output"]["source"] = "{source}"
         config["registry"]["path"] = registry_path
-        config['sentry']['dsn'] = None
-        
+        config["sentry"]["dsn"] = None
+
         # Save config to yaml
-        with open(config_path,'w') as file:
-            yaml.dump(config,file)
+        with open(config_path, "w") as file:
+            yaml.dump(config, file)
 
         runner = CliRunner()
         result = runner.invoke(
@@ -118,37 +117,43 @@ class BatchModeTests(unittest.TestCase):
         )
         assert result.exit_code == 0, result
         # load registry
-        registry  = FileConversionRegistry(path=registry_path)
+        registry = FileConversionRegistry(path=registry_path)
         assert not registry.data.empty
         assert test_file_path in registry.data.index
-        assert str(registry.data["error_message"][test_file_path]) == 'No columns to parse from file'
-        
+        assert (
+            str(registry.data["error_message"][test_file_path])
+            == "No columns to parse from file"
+        )
+
         # Delete test files
         Path(test_file_path).unlink()
         Path(registry_path).unlink()
-    
+
     def test_failed_batch_conversion(self):
         config = load_config()
-        test_file_path = 'temp/bad_test_file.cnv'
+        test_file_path = "temp/bad_test_file.cnv"
         registry_path = "temp/batch/failed_registry.csv"
-        
-        with open(test_file_path,'w') as file_handle:
-            file_handle.write('test file')
+
+        with open(test_file_path, "w") as file_handle:
+            file_handle.write("test file")
 
         config["input_path"] = test_file_path
         config["parser"] = "seabird.cnv"
-        config['errors'] = "ignore"
+        config["errors"] = "ignore"
         config["overwrite"] = True
         config["multiprocessing"] = True
         config["file_output"]["path"] = "temp/batch/failed_files/"
         config["file_output"]["source"] = "{source}"
         config["registry"]["path"] = registry_path
-        config['sentry']['dsn'] = None
+        config["sentry"]["dsn"] = None
         registry = main(config=config)
         assert not registry.data.empty
         assert test_file_path in registry.data.index
-        assert str(registry.data["error_message"][test_file_path]) == 'No columns to parse from file'
-        
+        assert (
+            str(registry.data["error_message"][test_file_path])
+            == "No columns to parse from file"
+        )
+
         # Delete test files
         Path(test_file_path).unlink()
         Path(registry_path).unlink()
@@ -158,11 +163,13 @@ class BatchModeTests(unittest.TestCase):
         result = runner.invoke(
             cli_files,
             ["--config=tests/batch_test_configs/batch_convert_test_onset_csv.yaml"],
-            env={"LOGURU_LEVEL":"INFO"}
+            env={"LOGURU_LEVEL": "INFO"},
         )
         assert result.exit_code == 0, result
-        assert "Run conversion" in result.output or "Run parallel batch conversion" in result.output
-
+        assert (
+            "Run conversion" in result.output
+            or "Run parallel batch conversion" in result.output
+        )
 
     def test_batch_cli_new_config_creation(self):
         runner = CliRunner()

@@ -14,7 +14,8 @@ TEST_REGISTRY = FileConversionRegistry(path=TEST_REGISTRY_PATH)
 
 # Generate temporary test directory
 TEST_TEMP_FOLDER = Path("temp")
-TEST_TEMP_FOLDER.mkdir(parents=True,exist_ok=True)
+TEST_TEMP_FOLDER.mkdir(parents=True, exist_ok=True)
+
 
 class FileRegistryTests(unittest.TestCase):
     def _get_test_registry(self):
@@ -76,12 +77,14 @@ class FileRegistryTests(unittest.TestCase):
             file_registry, FileConversionRegistry
         ), "Didn't return  FileConversionRegistry object"
         assert not file_registry.data.empty, "registry is an empty dataframe"
-    
+
     def test_registry(self):
         test_registry = self._get_test_registry()
-        for attr  in ['data','hashtype','path','save','load','update']:            
-            assert hasattr(test_registry,attr), f"TEST_REGISTRY is missing attribute={attr}"
-        assert isinstance(test_registry.data,pd.DataFrame)
+        for attr in ["data", "hashtype", "path", "save", "load", "update"]:
+            assert hasattr(
+                test_registry, attr
+            ), f"TEST_REGISTRY is missing attribute={attr}"
+        assert isinstance(test_registry.data, pd.DataFrame)
         assert not test_registry.data.empty
 
     def test_registry_copy(self):
@@ -127,7 +130,9 @@ class FileRegistryTests(unittest.TestCase):
         # Replace registry parameters
         file_registry.data["last_update"] = 0
         file_registry.data["hash"] = 0
-        assert file_registry != self._get_test_registry(), "local test registry wasn't modify"
+        assert (
+            file_registry != self._get_test_registry()
+        ), "local test registry wasn't modify"
 
         file_registry.update()
         assert (
