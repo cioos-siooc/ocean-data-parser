@@ -73,6 +73,12 @@ class FileRegistryTests(unittest.TestCase):
             file_registry, FileConversionRegistry
         ), "Didn't return  FileConversionRegistry object"
         assert not file_registry.data.empty, "registry is an empty dataframe"
+    
+    def test_registry(self):
+        for attr  in ['data','hashtype','path','save','load','update']:            
+            assert hasattr(TEST_REGISTRY,attr), f"TEST_REGISTRY is missing attribute={attr}"
+        assert isinstance(TEST_REGISTRY.data,pd.DataFrame)
+        assert not TEST_REGISTRY.data.empty
 
     def test_registry_copy(self):
         deep_copied_file_registry = TEST_REGISTRY.deepcopy()
