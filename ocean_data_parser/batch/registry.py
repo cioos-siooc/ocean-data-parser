@@ -163,6 +163,8 @@ class FileConversionRegistry:
         return self.data["last_update"] != self.data.index.map(self._get_mtime)
 
     def _is_modified_since(self) -> pd.Series:
+        if self.since is None:
+            return pd.Series(False, self.data.index)
         since = self._get_since_timestamp()
         return self.data.index.to_series().apply(self._get_mtime) - since >= 0
 
