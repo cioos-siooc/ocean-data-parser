@@ -243,6 +243,21 @@ class FileRegistryTests(unittest.TestCase):
             len(differences) == 5
         ), f"Resaving the test registry after changes didn't produce the expected different file: {differences}"
 
+    def test_get_source_base(self):
+        file_registry = self._get_test_registry()
+        file_registry.since = None
+        assert ~file_registry.data.empty
+        assert (
+            file_registry._is_new_file().all() == False
+        ), "Failed to return all not new files"
+        assert (
+            file_registry._is_different_hash().all() == False
+        ), "test registry hashes are different"
+        assert (
+            file_registry._is_different_mtime().all() == False
+        ), "test registry mtimes are different"
+        assert file_registry.get_source_files_to_parse() == []
+
     def test_get_sources_with_modified_hash_unchanged(self):
         file_registry = self._get_test_registry()
         changed_files = file_registry._is_different_hash()
