@@ -179,7 +179,7 @@ class FileRegistryTests(unittest.TestCase):
         file_registry = self._get_test_registry()
         file_registry.data["test"] = False
         assert (
-            file_registry.data["test"].any() == False
+            not file_registry.data["test"].any()
         ), "Test field wasn't all set to False"
         file_registry.update_fields(test=True)
         assert file_registry.data[
@@ -204,22 +204,22 @@ class FileRegistryTests(unittest.TestCase):
         file_registry = self._get_test_registry()
         file_registry.data["test"] = False
         assert (
-            file_registry.data["test"].any() == False
+            not file_registry.data["test"].any()
         ), "Test field wasn't all set to False"
         file_registry.update_fields(sources=[file_registry.data.index[0]], test=True)
         assert file_registry.data.iloc[0][
             "test"
         ], "new field wasn't added to the registry"
-        assert (
-            file_registry.data.iloc[1:]["test"] == False
+        assert not (
+             file_registry.data.iloc[1:]["test"]
         ).all(), "other fields weren't replaced by None"
 
     def test_update_multiple_fields(self):
         file_registry = self._get_test_registry()
         file_registry.update_fields(test=True, second_test=False)
         assert file_registry.data["test"].all(), "test input is missing"
-        assert (
-            file_registry.data["second_test"] == False
+        assert not (
+            file_registry.data["second_test"]
         ).all(), "second_test input is missing"
 
     def test_save(self):
@@ -248,19 +248,19 @@ class FileRegistryTests(unittest.TestCase):
         file_registry.since = None
         assert ~file_registry.data.empty
         assert (
-            file_registry._is_new_file().all() == False
+            not file_registry._is_new_file().all()
         ), "Failed to return all not new files"
         assert (
-            file_registry._is_different_hash().all() == False
+            not file_registry._is_different_hash().all()
         ), "test registry hashes are different"
         assert (
-            file_registry._is_different_mtime().all() == False
+            not file_registry._is_different_mtime().all()
         ), "test registry mtimes are different"
 
         assert file_registry.since is None
-        assert file_registry._is_modified_since().all() == False
+        assert not file_registry._is_modified_since().all()
 
-        assert (
+        assert not (
             file_registry._is_new_file() | file_registry._is_different_hash()
         ).all() == False, "returned source to be parsed"
         assert file_registry.get_source_files_to_parse() == []
@@ -268,7 +268,7 @@ class FileRegistryTests(unittest.TestCase):
     def test_get_sources_with_modified_hash_unchanged(self):
         file_registry = self._get_test_registry()
         changed_files = file_registry._is_different_hash()
-        assert changed_files.any() == False
+        assert not changed_files.any()
         assert file_registry.get_source_files_to_parse() == []
 
     def test_get_sources_with_modified_hash(self):
@@ -301,7 +301,7 @@ class FileRegistryTests(unittest.TestCase):
         file_registry = self._get_test_registry()
         file_registry.since = pd.Timestamp.utcnow().timestamp()
         modified_sources = file_registry._is_modified_since()
-        assert modified_sources.any() == False
+        assert not modified_sources.any()
         assert file_registry.get_source_files_to_parse() == []
 
     def test_get_sources_with_since_timestamp(self):
