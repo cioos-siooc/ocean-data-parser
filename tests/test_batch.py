@@ -36,7 +36,7 @@ class ConfigLoadTests(unittest.TestCase):
         ), "Default loaded configuration is not a dictionary"
 
     def test_default_config_logging(self):
-        config = load_config()
+        load_config()
 
     def test_config_glob(self):
         paths = glob("ocean_data_parser/**/*.py")

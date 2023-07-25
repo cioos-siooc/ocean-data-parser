@@ -193,7 +193,10 @@ def main(config=None, **kwargs) -> FileConversionRegistry:
                     tqdm(
                         pool.imap(_convert_file, inputs),
                         **tqdm_parameters,
-                        desc=f"Run parallel batch conversion with {n_workers or 'All'} workers",
+                        desc=(
+                            "Run parallel batch conversion "
+                            f"with {n_workers or 'All'} workers"
+                        ),
                     )
                 )
 
@@ -279,7 +282,8 @@ def convert_file(file: str, parser: str, config: dict) -> str:
     ds = parser(file)
     if not isinstance(ds, Dataset):
         raise RuntimeError(
-            f"{parser.__module__}{parser.__name__}:{file} didn't return an Xarray Dataset"
+            f"{parser.__module__}{parser.__name__}:{file} "
+            "didn't return an Xarray Dataset"
         )
 
     # Update global and variable attributes from config

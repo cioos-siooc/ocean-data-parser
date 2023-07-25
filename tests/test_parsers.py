@@ -425,7 +425,7 @@ class StarOddiParsertest(unittest.TestCase):
     def test_star_oddi_dat_parser(self):
         paths = glob("tests/parsers_test_files/star_oddi/**/*.DAT", recursive=True)
         for path in paths:
-            ds = star_oddi.DAT(path)
+            star_oddi.DAT(path)
 
 
 @pytest.mark.parametrize(

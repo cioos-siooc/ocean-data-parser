@@ -1,6 +1,5 @@
 import logging
 import re
-from glob import glob
 from pathlib import Path
 
 import pytest

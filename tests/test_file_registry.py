@@ -15,9 +15,10 @@ TEST_REGISTRY = FileConversionRegistry(path=TEST_REGISTRY_PATH)
 # Generate temporary test directory
 TEST_TEMP_FOLDER = Path("temp")
 TEST_TEMP_FOLDER.mkdir(parents=True, exist_ok=True)
-for output_path in TEST_REGISTRY.data['output_path'].dropna():
-    with open(output_path,'w') as file:
-        file.write('test file from registry')
+for output_path in TEST_REGISTRY.data["output_path"].dropna():
+    with open(output_path, "w") as file:
+        file.write("test file from registry")
+
 
 class FileRegistryTests(unittest.TestCase):
     def _get_test_registry(self, update=True):
@@ -180,9 +181,9 @@ class FileRegistryTests(unittest.TestCase):
     def test_update_all_sources_field(self):
         file_registry = self._get_test_registry()
         file_registry.data["test"] = False
-        assert (
-            not file_registry.data["test"].any()
-        ), "Test field wasn't all set to False"
+        assert not file_registry.data[
+            "test"
+        ].any(), "Test field wasn't all set to False"
         file_registry.update_fields(test=True)
         assert file_registry.data[
             "test"
@@ -205,15 +206,15 @@ class FileRegistryTests(unittest.TestCase):
     def test_update_single_source_missing_field(self):
         file_registry = self._get_test_registry()
         file_registry.data["test"] = False
-        assert (
-            not file_registry.data["test"].any()
-        ), "Test field wasn't all set to False"
+        assert not file_registry.data[
+            "test"
+        ].any(), "Test field wasn't all set to False"
         file_registry.update_fields(sources=[file_registry.data.index[0]], test=True)
         assert file_registry.data.iloc[0][
             "test"
         ], "new field wasn't added to the registry"
         assert not (
-             file_registry.data.iloc[1:]["test"]
+            file_registry.data.iloc[1:]["test"]
         ).all(), "other fields weren't replaced by None"
 
     def test_update_multiple_fields(self):
@@ -234,7 +235,7 @@ class FileRegistryTests(unittest.TestCase):
         )
         assert (
             not differences
-        ), f"Resaving the intial test registry didn't produce a similar file: {differences}"
+        ), f"Saving registry didn't produce a similar file: {differences}"
 
         file_registry.data.loc[file_registry.data.index[-1], "last_update"] += 100
         file_registry.save()
@@ -265,9 +266,15 @@ class FileRegistryTests(unittest.TestCase):
         assert not (
             file_registry._is_new_file() | file_registry._is_different_hash()
         ).any(), "returned some sources to be parsed"
-        assert file_registry.data.loc[file_registry._is_new_file()].empty, f" {file_registry._is_new_file()} didn't return an empty list of files"
-        assert file_registry.data.loc[file_registry._is_different_hash()].empty, f" {file_registry._is_different_hash()} didn't return an empty list of files"
-        assert file_registry.data.loc[file_registry._is_new_file() | file_registry._is_different_hash()].empty
+        assert file_registry.data.loc[
+            file_registry._is_new_file()
+        ].empty, f" {file_registry._is_new_file()} didn't return an empty list of files"
+        assert file_registry.data.loc[
+            file_registry._is_different_hash()
+        ].empty, f" {file_registry._is_different_hash()} didn't return an empty list of files"
+        assert file_registry.data.loc[
+            file_registry._is_new_file() | file_registry._is_different_hash()
+        ].empty
         assert file_registry.get_source_files_to_parse() == []
 
     def test_get_sources_with_modified_hash_unchanged(self):
