@@ -3,6 +3,7 @@ import logging.config
 import unittest
 from pathlib import Path
 
+import yaml
 import pandas as pd
 import pytest
 import xarray as xr
@@ -15,6 +16,7 @@ from ocean_data_parser.batch.convert import (
     load_config,
     main,
 )
+from ocean_data_parser.batch.registry import FileConversionRegistry
 from ocean_data_parser.batch.utils import generate_output_path
 
 PACKAGE_PATH = Path(__file__).parent
@@ -85,11 +87,76 @@ class BatchModeTests(unittest.TestCase):
         assert not registry.data.empty
         assert not registry.data["error_message"].any()
 
+
+    def test_failed_cli_batch_conversion(self):
+        config = load_config()
+        test_file_path = 'temp/failed_cli_test_file.cnv'
+        registry_path = "temp/failed_cli_registry.csv"
+        config_path =  "temp/failed_cli_config.csv"
+        
+        with open(test_file_path,'w') as file_handle:
+            file_handle.write('test file')
+
+        config["input_path"] = test_file_path
+        config["parser"] = "seabird.cnv"
+        config['errors'] = "ignore"
+        config["overwrite"] = True
+        config["multiprocessing"] = True
+        config["file_output"]["path"] = "temp/batch/failed_files/"
+        config["file_output"]["source"] = "{source}"
+        config["registry"]["path"] = registry_path
+
+        # Save config to yaml
+        with open(config_path,'w') as file:
+            yaml.dump(config,file)
+
+        runner = CliRunner()
+        result = runner.invoke(
+            cli_files,
+            [f"--config={config_path}"],
+        )
+        assert result.exit_code == 0, result
+        # load registry
+        registry  = FileConversionRegistry(path=registry_path)
+        assert not registry.data.empty
+        assert test_file_path in registry.data.index
+        assert str(registry.data["error_message"][test_file_path]) == 'No columns to parse from file'
+        
+        # Delete test files
+        Path(test_file_path).unlink()
+        Path(registry_path).unlink()
+    
+    def test_failed_batch_conversion(self):
+        config = load_config()
+        test_file_path = 'temp/bad_test_file.cnv'
+        registry_path = "temp/batch/failed_registry.csv"
+        
+        with open(test_file_path,'w') as file_handle:
+            file_handle.write('test file')
+
+        config["input_path"] = test_file_path
+        config["parser"] = "seabird.cnv"
+        config['errors'] = "ignore"
+        config["overwrite"] = True
+        config["multiprocessing"] = True
+        config["file_output"]["path"] = "temp/batch/failed_files/"
+        config["file_output"]["source"] = "{source}"
+        config["registry"]["path"] = registry_path
+        registry = main(config=config)
+        assert not registry.data.empty
+        assert test_file_path in registry.data.index
+        assert str(registry.data["error_message"][test_file_path]) == 'No columns to parse from file'
+        
+        # Delete test files
+        Path(test_file_path).unlink()
+        Path(registry_path).unlink()
+
     def test_batch_cli_conversion_onset_parser(self):
         runner = CliRunner()
         result = runner.invoke(
             cli_files,
             ["--config=tests/batch_test_configs/batch_convert_test_onset_csv.yaml"],
+            env={"LOGURU_LEVEL":"INFO"}
         )
         assert result.exit_code == 0, result
         assert "Run conversion" in result.output or "Run parallel batch conversion" in result.output
