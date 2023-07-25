@@ -12,6 +12,9 @@ TEST_REGISTRY_PATH = Path("tests/test_file_registry.csv")
 TEST_FILE = Path("temp/test_file.csv")
 TEST_REGISTRY = FileConversionRegistry(path=TEST_REGISTRY_PATH)
 
+# Generate temporary test directory
+TEST_TEMP_FOLDER = Path("temp")
+TEST_TEMP_FOLDER.mkdir(parents=True,exist_ok=True)
 
 class FileRegistryTests(unittest.TestCase):
     def make_test_file(self, filename: Path, content="this is a test file", mode="w"):
