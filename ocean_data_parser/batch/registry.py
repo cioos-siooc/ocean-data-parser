@@ -203,16 +203,24 @@ class FileConversionRegistry:
             self.data.loc[sources, field] = value
 
     def get_source_files_to_parse(self, overwrite:bool=True) -> list:
-        is_new = ~self._output_file_exists() & self._has_no_error()
+        """Return the list of files that needs to be parsed
+
+        Args:
+            overwrite (bool, optional): overwrite files already parsed
+            and for which output already exists. Defaults to True.
+
+        Returns:
+            list: list of source files to parse
+        """
         if not overwrite:
-            return self.data.loc[is_new].index.to_list()
+            return self.data.loc[self._is_new_file()].index.to_list()
 
         if self.since:
             is_modified = self._is_modified_since()
         else:
             is_modified = self._is_different_hash()
 
-        return self.data.loc[is_new | is_modified].index.to_list()
+        return self.data.loc[self._is_new_file() | is_modified].index.to_list()
 
     def get_missing_sources(self) -> list:
         """Get list of missing sources
