@@ -1,6 +1,5 @@
 import logging
 import logging.config
-import unittest
 from pathlib import Path
 
 import pandas as pd
@@ -16,7 +15,6 @@ from ocean_data_parser.batch.convert import (
     load_config,
     main,
 )
-from ocean_data_parser.batch.registry import FileConversionRegistry
 from ocean_data_parser.batch.utils import generate_output_path
 
 PACKAGE_PATH = Path(__file__).parent
@@ -28,7 +26,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
 
 
-class ConfigLoadTests(unittest.TestCase):
+class TestConfigLoad:
     def test_default_config_load(self):
         config = load_config()
         assert isinstance(
@@ -47,42 +45,37 @@ class ConfigLoadTests(unittest.TestCase):
         assert len(path_list) > 10
 
 
-class BatchModeTests(unittest.TestCase):
+class TestBatchMode:
     def test_batch_conversion_onset_parser_single_runner(self):
-        config = load_config()
-        config["input_path"] = "tests/parsers_test_files/onset/**/*.csv"
-        config["parser"] = "onset.csv"
-        config["overwrite"] = True
-        config["multiprocessing"] = None
-        config["file_output"]["path"] = "temp/batch/single_files/"
-        config["file_output"]["source"] = "{instrument_sn}"
-        config["registry"]["path"] = "temp/batch/single_registry.csv"
-        registry = main(config=config)
-        assert not registry.data.empty
-        assert not registry.data["error_message"].any()
+        self._run_batch_processing(
+            None, "temp/batch/single_files/", "temp/batch/single_registry.csv"
+        )
 
     def test_batch_conversion_onset_parser_multiprocessing_2_workers(self):
-        config = load_config()
-        config["input_path"] = "tests/parsers_test_files/onset/**/*.csv"
-        config["parser"] = "onset.csv"
-        config["overwrite"] = True
-        config["multiprocessing"] = 2
-        config["file_output"]["path"] = "temp/batch/multiprocessing_files/"
-        config["file_output"]["source"] = "{instrument_sn}"
-        config["registry"]["path"] = "temp/batch/multi_registry.csv"
-        registry = main(config=config)
-        assert not registry.data.empty
-        assert not registry.data["error_message"].any()
+        self._run_batch_processing(
+            2, "temp/batch/multiprocessing_files/", "temp/batch/multi_registry.csv"
+        )
 
     def test_batch_conversion_onset_parser_multiprocessing_all_workers(self):
-        config = load_config()
-        config["input_path"] = "tests/parsers_test_files/onset/**/*.csv"
-        config["parser"] = "onset.csv"
-        config["overwrite"] = True
-        config["multiprocessing"] = True
-        config["file_output"]["path"] = "temp/batch/multiprocessing_files/"
-        config["file_output"]["source"] = "{instrument_sn}"
-        config["registry"]["path"] = "temp/batch/multi_registry.csv"
+        self._run_batch_processing(
+            True,
+            "temp/batch/multiprocessing_files/",
+            "temp/batch/multi_registry.csv",
+        )
+
+    def _run_batch_processing(self, multiprocessing, output_path, registry_path):
+        config = {
+            **load_config(),
+            "input_path": "tests/parsers_test_files/onset/**/*.csv",
+            "parser": "onset.csv",
+            "overwrite": True,
+            "multiprocessing": multiprocessing,
+            "file_output": {
+                "path": output_path,
+                "source": "{instrument_sn}",
+            },
+            "registry": {"path": registry_path},
+        }
         registry = main(config=config)
         assert not registry.data.empty
         assert not registry.data["error_message"].any()
@@ -181,7 +174,7 @@ class BatchModeTests(unittest.TestCase):
         result = runner.invoke(cli_files, ["--new_config", str(new_config_test_file)])
         assert (
             result.exit_code == 0
-        ), f"new config failed with result.exit_code={result.exit_code} and result={result}"
+        ), f"new config failed with exit_code={result.exit_code}, result={result}"
         assert new_config_test_file.exists()
         new_config_test_file.unlink()
         assert not new_config_test_file.exists()
@@ -247,7 +240,7 @@ class TestBatchGenerateName:
     def test_generate_filename_with_missing_source(self):
         fail_ds = test_ds.copy()
         fail_ds.attrs["source"] = None
-        with pytest.raises(Exception) as e_info:
+        with pytest.raises(Exception):
             generate_output_path(fail_ds)
 
     def test_generate_filename_with_prefix(self):

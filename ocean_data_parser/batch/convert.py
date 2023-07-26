@@ -31,7 +31,11 @@ logger.remove()
 logger.add(
     sys.stderr,
     level=os.getenv("LOGURU_LEVEL", "INFO"),
-    format='<level>{level.icon}</level> <blue>"{file.path}"</blue>: <yellow>line {line}</yellow> | <cyan>"{extra[source_file]}"</cyan> - <level>{message}</level>',
+    format=(
+        '<level>{level.icon}</level> <blue>"{file.path}"</blue>: '
+        '<yellow>line {line}</yellow> | <cyan>"{extra[source_file]}"</cyan> - '
+        '<level>{message}</level>'
+    ),
 )
 logger.add(
     "ocean_data_parser.log",

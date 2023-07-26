@@ -146,9 +146,7 @@ class FileConversionRegistry:
         )
 
     def _get_sources(self, sources: list) -> list:
-        if isinstance(sources, list):
-            return sources
-        return self.data.index.to_list()
+        return sources if isinstance(sources, list) else self.data.index.to_list()
 
     def _is_different_hash(self):
         # Speed up hash difference by first filtering out data with unchanged mtime
