@@ -113,19 +113,18 @@ class TestBatchMode:
         registry = FileConversionRegistry(path=registry_path)
         assert not registry.data.empty
         assert test_file_path in registry.data.index
-        assert (
-            str(registry.data["error_message"][test_file_path])
-            == "No columns to parse from file"
+        assert "No columns to parse from file" in str(
+            registry.data["error_message"][test_file_path]
         )
 
         # Delete test files
         Path(test_file_path).unlink()
         Path(registry_path).unlink()
 
-    def test_failed_batch_conversion(self):
+    def test_failed_batch_conversion(self, tmp_path):
         config = load_config()
-        test_file_path = "temp/bad_test_file.cnv"
-        registry_path = "temp/batch/failed_registry.csv"
+        test_file_path = str(tmp_path / "bad_test_file.cnv")
+        registry_path = str(tmp_path / "failed_registry.csv")
 
         with open(test_file_path, "w") as file_handle:
             file_handle.write("test file")
@@ -135,21 +134,16 @@ class TestBatchMode:
         config["errors"] = "ignore"
         config["overwrite"] = True
         config["multiprocessing"] = True
-        config["file_output"]["path"] = "temp/batch/failed_files/"
+        config["file_output"]["path"] = str(tmp_path / "failed_files/")
         config["file_output"]["source"] = "{source}"
         config["registry"]["path"] = registry_path
         config["sentry"]["dsn"] = None
         registry = BatchConversion(config=config).run()
         assert not registry.data.empty
         assert test_file_path in registry.data.index
-        assert (
-            str(registry.data["error_message"][test_file_path])
-            == "No columns to parse from file"
+        assert "No columns to parse from file" in str(
+            registry.data["error_message"][test_file_path]
         )
-
-        # Delete test files
-        Path(test_file_path).unlink()
-        Path(registry_path).unlink()
 
     def test_batch_cli_conversion_onset_parser(self):
         runner = CliRunner()

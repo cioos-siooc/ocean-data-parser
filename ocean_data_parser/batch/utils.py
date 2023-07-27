@@ -119,11 +119,10 @@ class VariableLevelLogger:
 
     def values(self):
         value = self.io.getvalue()
-        if self.level != "ERROR" or value == '' and "Traceback" in value:
+        if self.level != "ERROR" or value == "" and "Traceback" in value:
             return value
-        value = value.split('  File')[0]
-        return re.sub(r'\s+',' ',value.replace('\n',''))
-        
+        value = value.split("  File")[-1]
+        return re.sub(r"\s+", " ", value.replace("\n", ""))
 
     def close(self):
         logger.remove(self.id)
