@@ -100,7 +100,7 @@ class TestBatchMode:
         config["sentry"]["dsn"] = None
 
         # Save config to yaml
-        with open(config_path, "w", encoding='utf-8') as file:
+        with open(config_path, "w", encoding="utf-8") as file:
             yaml.dump(config, file)
 
         runner = CliRunner()

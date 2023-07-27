@@ -269,3 +269,23 @@ class FileConversionRegistry:
         """
         is_missing = ~self.data.index.to_series().map(Path).apply(Path.exists)
         return self.data.loc[is_missing].index.tolist()
+
+    def summarize(self, sources=None, by="error_message", output="error_report.csv"):
+        """Generate a summary of the file registry errors"""
+        if sources:
+            data = self.data[self.data[sources]]
+        else:
+            data = self.data
+        succeed = len(data.query("error_message.isna()"))
+        logger.info("%s/%s sources were processed", succeed, len(data))
+        errors = (
+            data.dropna(subset="error_message")
+            .astype({"error_message": str})
+            .reset_index()
+            .groupby(by)
+            .agg({"source": ["count", list]})
+        )
+        errors.columns = (' '.join(col) for col in errors.columns)
+        logger.info("The following errors were captured: %s", errors)
+        if output:
+            errors.to_csv(output)

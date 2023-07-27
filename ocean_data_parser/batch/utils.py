@@ -1,7 +1,11 @@
+from io import StringIO
 from pathlib import Path
 from typing import Union
 import pandas as pd
 import xarray
+import re
+
+from loguru import logger
 
 
 def generate_output_path(
@@ -93,3 +97,40 @@ def generate_output_path(
     return Path(output_path) / (
         f"{file_preffix or ''}{source}{file_suffix or ''}{output_format}"
     )
+
+
+class VariableLevelLogger:
+    def __init__(
+        self,
+        level,
+        format="{level}|{file.path}:{line} - {message}",
+        backtrace=False,
+        filter=None,
+    ):
+        self.io = StringIO()
+        self.level = level
+        self.id = logger.add(
+            self.io,
+            level=level,
+            format=format,
+            backtrace=backtrace,
+            filter=filter or self._level_filter(level),
+        )
+
+    def values(self):
+        value = self.io.getvalue()
+        if self.level != "ERROR" or value == '' and "Traceback" in value:
+            return value
+        value = value.split('  File')[0]
+        return re.sub(r'\s+',' ',value.replace('\n',''))
+        
+
+    def close(self):
+        logger.remove(self.id)
+        self.io.close()
+
+    def _level_filter(self, level):
+        def is_level(record):
+            return record["level"].name == level
+
+        return is_level

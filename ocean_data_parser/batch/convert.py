@@ -18,7 +18,7 @@ from ocean_data_parser import geo, process
 from ocean_data_parser._version import __version__
 from ocean_data_parser.batch.config import load_config
 from ocean_data_parser.batch.registry import FileConversionRegistry
-from ocean_data_parser.batch.utils import generate_output_path
+from ocean_data_parser.batch.utils import generate_output_path, VariableLevelLogger
 from ocean_data_parser.read import auto, utils
 
 MODULE_PATH = Path(__file__).parent
@@ -42,7 +42,6 @@ logger.add(
     level=os.getenv("LOGURU_LEVEL", "WARNING"),
     format="{time}|{level}|{file.path}:{line}| {extra[source_file]} - {message}",
 )
-
 
 # Redirect logging loggers to loguru
 class InterceptHandler(logging.Handler):
@@ -172,15 +171,13 @@ class BatchConversion:
                 for input in tqdm(inputs, **tqdm_parameters, desc="Run conversion")
             ]
         n_workers = self.config["multiprocessing"]
-        n_workers = None if n_workers in ('True',True,'all') else n_workers
+        n_workers = None if n_workers in ("True", True, "all") else n_workers
         with Pool(n_workers) as pool:
             return list(
                 tqdm(
                     pool.imap(_convert_file, inputs),
                     **tqdm_parameters,
-                    desc=(
-                        f"Run conversion with {n_workers or 'All'} workers"
-                    ),
+                    desc=(f"Run conversion with {n_workers or os.cpu_count()} workers"),
                 )
             )
 
@@ -192,12 +189,17 @@ class BatchConversion:
         if not files:
             return self.registry
         conversion_log = self._convert(files)
-        conversion_log = pd.DataFrame(
-            conversion_log, columns=["sources", "output_path", "error_message"]
-        ).set_index("sources")
+        conversion_log = (
+            pd.DataFrame(
+                conversion_log,
+                columns=["sources", "output_path", "error_message", "warnings"],
+            )
+            .set_index("sources")
+            .replace({"": None})
+        )
         self.registry.update_fields(files, dataframe=conversion_log)
         self.registry.save()
-        
+        self.registry.summarize()
         logger.info("Conversion completed")
         return self.registry
 
@@ -215,14 +217,14 @@ def _convert_file(args):
         tuple: input_path, output_path, error_message
     """
     with logger.contextualize(source_file=args[0]):
-        try:
+        warnings, errors = VariableLevelLogger("WARNING"), VariableLevelLogger("ERROR")
+        output_file = None
+        with logger.catch(reraise=args[2].get("errors") == "raise"):
             output_file = convert_file(args[0], args[1], args[2])
-            return (args[0], output_file, None)
-        except Exception as error:
-            if args[2].get("errors") == "raise":
-                raise error
-            logger.exception("Conversion failed")
-            return (args[0], None, error)
+        output = (args[0], output_file, errors.values(), warnings.values())
+        warnings.close()
+        errors.close()
+        return output
 
 
 def convert_file(file: str, parser: str, config: dict) -> str:
