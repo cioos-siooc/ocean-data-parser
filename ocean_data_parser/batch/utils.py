@@ -1,5 +1,5 @@
 from pathlib import Path
-
+from typing import Union
 import pandas as pd
 import xarray
 
@@ -7,7 +7,7 @@ import xarray
 def generate_output_path(
     ds: xarray.Dataset,
     source: str = None,
-    path: str = None,
+    path: Union[str, Path] = None,
     defaults: dict = None,
     file_preffix: str = "",
     file_suffix: str = "",
@@ -18,7 +18,7 @@ def generate_output_path(
     Args:
         ds (xr.Dataset): Dataset
         source (str, optional): original source file path. Defaults to None.
-        path (str): Output path where to save the directory.
+        path (str, Path): Output path where to save the directory.
             The output path uses the python String format method to reference
             attributes accoding to the convention:
               - source_path: pathlib.Path of original parsed file filename
@@ -46,6 +46,9 @@ def generate_output_path(
 
     if path is None and ds.attrs.get("source"):
         path = str(Path(ds.attrs["source"]).parent)
+
+    if isinstance(path, Path):
+        path = str(path)
 
     # Review file_output path given by config
     path_generation_inputs = {

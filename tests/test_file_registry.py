@@ -115,17 +115,15 @@ class FileRegistryTests(unittest.TestCase):
     def test_load(self):
         file_registry = self._get_test_registry()
         # Replace registry parameters
-        file_registry.data["last_update"] = 0
+        file_registry.data["mtime"] = 0
         file_registry.data["hash"] = 0
         file_registry.load()
-        assert (
-            file_registry.data["last_update"] == 0
-        ).all(), "last_update was updated with load()"
+        assert (file_registry.data["mtime"] == 0).all(), "mtime was updated with load()"
         assert (file_registry.data["hash"] == 0).all(), "hash was updated with load()"
         file_registry.load(overwrite=True)
         assert (
-            file_registry.data["last_update"] != 0
-        ).all(), "last_update wasn't updated with load(overwrite=Trues)"
+            file_registry.data["mtime"] != 0
+        ).all(), "mtime wasn't updated with load(overwrite=Trues)"
         assert (
             file_registry.data["hash"] != 0
         ).all(), "hash wasn't updated with load()"
@@ -134,7 +132,7 @@ class FileRegistryTests(unittest.TestCase):
         file_registry = self._get_test_registry(update=False)
 
         # Replace registry parameters
-        file_registry.data["last_update"] = 0
+        file_registry.data["mtime"] = 0
         file_registry.data["hash"] = 0
         assert (
             file_registry != self._get_test_registry()
@@ -142,8 +140,8 @@ class FileRegistryTests(unittest.TestCase):
 
         file_registry.update()
         assert (
-            file_registry.data["last_update"] != 0
-        ).all(), "last_update wasn't updated wiht update()"
+            file_registry.data["mtime"] != 0
+        ).all(), "mtime wasn't updated wiht update()"
         assert (
             file_registry.data["hash"] != 0
         ).all(), "hash wasn't updated wiht update()"
@@ -151,15 +149,15 @@ class FileRegistryTests(unittest.TestCase):
     def test_update_specific_source(self):
         file_registry = self._get_test_registry()
         # Replace registry parameters
-        file_registry.data["last_update"] = 0
+        file_registry.data["mtime"] = 0
         file_registry.data["hash"] = 0
         file_registry.update([file_registry.data.index[0]])
         assert (
-            file_registry.data.iloc[0]["last_update"] != 0
-        ), "last_update wasn't updated wiht update(source)"
+            file_registry.data.iloc[0]["mtime"] != 0
+        ), "mtime wasn't updated wiht update(source)"
         assert (
-            file_registry.data.iloc[1:]["last_update"] == 0
-        ).all(), "last_update source!=source shouldn't be updated with update(source)"
+            file_registry.data.iloc[1:]["mtime"] == 0
+        ).all(), "mtime source!=source shouldn't be updated with update(source)"
         assert (
             file_registry.data.iloc[0]["hash"] != 0
         ), "hash wasn't updated wiht update(source)"
@@ -167,7 +165,21 @@ class FileRegistryTests(unittest.TestCase):
             file_registry.data.iloc[1:]["hash"] == 0
         ).all(), "hash source!=source shouldn't be updated with update(source)"
 
-    def test_update_all_sources_missing_field(self):
+    # @pytest.mark.parametrize(
+    #     "args", glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
+    # )
+    # def test_update_fields(self, args,kwargs):
+    #     file_registry = self._get_test_registry()
+    #     assert (
+    #         "test" not in file_registry.data
+    #     ), "new field 'test' was alreadyin the registry"
+    #     file_registry.update_fields(*args,**kwargs)
+    #     assert "test" in file_registry.data, "new field wasn't added to the registry"
+    #     assert file_registry.data[
+    #         "test"
+    #     ].all(), "new field wasn't added to the registry"
+
+    def test_update_field_for_all_sources_with_missing_field(self):
         file_registry = self._get_test_registry()
         assert (
             "test" not in file_registry.data
@@ -178,7 +190,7 @@ class FileRegistryTests(unittest.TestCase):
             "test"
         ].all(), "new field wasn't added to the registry"
 
-    def test_update_all_sources_field(self):
+    def test_update_field_for_all_sources_field(self):
         file_registry = self._get_test_registry()
         file_registry.data["test"] = False
         assert not file_registry.data[
@@ -189,21 +201,21 @@ class FileRegistryTests(unittest.TestCase):
             "test"
         ].all(), "new field wasn't added to the registry"
 
-    def test_update_single_source_missing_field(self):
+    def test_update_field_for_a_source_field(self):
         file_registry = self._get_test_registry()
-        assert (
-            "test" not in file_registry.data
-        ), "new field 'test' was alreadyin the registry"
-        file_registry.update_fields(sources=file_registry.data.index[0], test=True)
-        assert "test" in file_registry.data, "new field wasn't added to the registry"
-        assert file_registry.data.iloc[0][
+        file_registry.data["test"] = False
+        assert not file_registry.data[
             "test"
-        ], "new field wasn't added to the registry"
-        assert (
-            file_registry.data.iloc[1:]["test"].isna().all()
-        ), "other fields weren't replaced by None"
+        ].any(), "Test field wasn't all set to False"
+        file_registry.update_fields(file_registry.data.index[:1].tolist(), test=True)
+        assert file_registry.data["test"][
+            :1
+        ].all(), "new field wasn't added to the registry"
+        assert not file_registry.data["test"][
+            2:
+        ].any(), "new field wasn't added to the registry"
 
-    def test_update_single_source_missing_field(self):
+    def test_update_single_source_field(self):
         file_registry = self._get_test_registry()
         file_registry.data["test"] = False
         assert not file_registry.data[
@@ -217,9 +229,17 @@ class FileRegistryTests(unittest.TestCase):
             file_registry.data.iloc[1:]["test"]
         ).all(), "other fields weren't replaced by None"
 
-    def test_update_multiple_fields(self):
+    def test_update_multiple_fields_with_kwargs(self):
         file_registry = self._get_test_registry()
         file_registry.update_fields(test=True, second_test=False)
+        assert file_registry.data["test"].all(), "test input is missing"
+        assert not (
+            file_registry.data["second_test"]
+        ).all(), "second_test input is missing"
+
+    def test_update_multiple_fields_with_args_all_sources(self):
+        file_registry = self._get_test_registry()
+        file_registry.update_fields(dataframe=[{"test": True, "second_test": False}])
         assert file_registry.data["test"].all(), "test input is missing"
         assert not (
             file_registry.data["second_test"]
@@ -237,7 +257,7 @@ class FileRegistryTests(unittest.TestCase):
             not differences
         ), f"Saving registry didn't produce a similar file: {differences}"
 
-        file_registry.data.loc[file_registry.data.index[-1], "last_update"] += 100
+        file_registry.data.loc[file_registry.data.index[-1], "mtime"] += 100
         file_registry.save()
         differences = compare_text_files(
             str(self._get_test_registry().path), str(file_registry.path)

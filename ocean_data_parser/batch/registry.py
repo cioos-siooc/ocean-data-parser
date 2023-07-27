@@ -12,7 +12,7 @@ tqdm.pandas()
 logger = logging.getLogger(__name__)
 
 EMPTY_FILE_REGISTRY = pd.DataFrame(
-    columns=["source", "last_update", "hash", "error_message", "output_path"]
+    columns=["source", "mtime", "hash", "error_message", "output_path"]
 ).set_index("source")
 
 
@@ -70,7 +70,15 @@ class FileConversionRegistry:
     def deepcopy(self):
         return copy.deepcopy(self)
 
-    def _get_hash(self, file) -> str:
+    def _get_hash(self, file: Union[str, Path]) -> str:
+        """Retriveve file hash
+
+        Args:
+            file (str, Path): path to file
+
+        Returns:
+            str: hash
+        """
         file = Path(file)
         if not file.exists():
             return None
@@ -131,7 +139,7 @@ class FileConversionRegistry:
             return
         new_data = pd.DataFrame({"source": sources})
         logger.info("Get new files mtime")
-        new_data["last_update"] = new_data["source"].progress_apply(self._get_mtime)
+        new_data["mtime"] = new_data["source"].progress_apply(self._get_mtime)
         logger.info("Get new files hash")
         new_data["hash"] = new_data["source"].progress_apply(self._get_hash)
         self.data = (
@@ -158,7 +166,7 @@ class FileConversionRegistry:
         return is_different
 
     def _is_different_mtime(self) -> pd.Series:
-        return self.data["last_update"] != self.data.index.map(self._get_mtime)
+        return self.data["mtime"] != self.data.index.map(self._get_mtime)
 
     def _is_modified_since(self) -> pd.Series:
         if self.since is None:
@@ -179,7 +187,7 @@ class FileConversionRegistry:
         return self.data["error_message"].isna()
 
     def update(self, sources: list = None):
-        """Update registry hash and last_update attributes
+        """Update registry hash and mtime attributes
 
         Args:
             sources (list, optional): Subset of file sources to update.
@@ -187,19 +195,51 @@ class FileConversionRegistry:
         """
         sources = self._get_sources(sources)
         self.data.loc[sources, "hash"] = list(map(self._get_hash, sources))
-        self.data.loc[sources, "last_update"] = list(map(self._get_mtime, sources))
+        self.data.loc[sources, "mtime"] = list(map(self._get_mtime, sources))
 
-    def update_fields(self, sources: list = None, **kwargs):
-        """Update given sources specific fields in attributes
+    def update_fields(
+        self,
+        sources: list = None,
+        placeholder=None,
+        dataframe: Union[list, pd.DataFrame] = None,
+        **kwargs
+    ):
+        """Update registry sources with given values
 
         Args:
-            sources (_type_): _description_
+            sources (list): list of source files to update
+            placeholder (optional): Placeholder to use when generating
+                new variables. Defaults to None.
+            dataframe (list, pd.DataFrame, optional): dataframe with source
+                as index to update registry.
+            **kwargs (optional): key argument list of values replace
+                by within the registry with.
+
+        Raises:
+            Exception: _description_
         """
-        sources = self._get_sources(sources)
-        for field, value in kwargs.items():
-            if field not in self.data:
-                self.data[field] = None
-            self.data.loc[sources, field] = value
+        if dataframe is not None and kwargs:
+            raise ValueError(
+                "Can't update fields with a mix of arguments " "and keyword arguments"
+            )
+
+        # If unique source is given convert it to a string
+        if not isinstance(sources, list) and sources in self.data.index:
+            sources = [sources]
+
+        # Generate update dataframe
+        if not isinstance(dataframe, pd.DataFrame):
+            dataframe = pd.DataFrame(
+                dataframe or kwargs,
+                index=self.data.index if sources is None else sources,
+            )
+
+        # Add missing columns
+        for col in dataframe.columns:
+            if col not in self.data:
+                self.data[col] = placeholder
+
+        self.data.update(dataframe, overwrite=True)
 
     def get_source_files_to_parse(self, overwrite: bool = True) -> list:
         """Return the list of files that needs to be parsed

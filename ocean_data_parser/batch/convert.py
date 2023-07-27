@@ -34,7 +34,7 @@ logger.add(
     format=(
         '<level>{level.icon}</level> <blue>"{file.path}"</blue>: '
         '<yellow>line {line}</yellow> | <cyan>"{extra[source_file]}"</cyan> - '
-        '<level>{message}</level>'
+        "<level>{message}</level>"
     ),
 )
 logger.add(
@@ -103,134 +103,120 @@ def cli_files(config=None, new_config=None):
         return
 
     logger.info("Run config={}", config)
-    main(config=config)
+    BatchConversion(config=config).run()
 
 
-def main(config=None, **kwargs) -> FileConversionRegistry:
-    """Ocean Data Parser batch conversion method
+class BatchConversion:
+    def __init__(self, config, registry=None, **kwargs):
+        self.config = {
+            **load_config(DEFAULT_CONFIG_PATH),
+            **(load_config(config) if isinstance(config, str) else config or {}),
+            **kwargs,
+        }
+        self.registry = registry or FileConversionRegistry(**self.config["registry"])
 
-    Args:
-        config (dict, optional): Configuration use to run the batch conversion.
-            Defaults to None.
-        **kwargs (optiona): Overwrite any configuration parameter by
-            matching first level key.
-    """
-    logger.info("Run ocean-data-parser[{}] batch conversion", __version__)
+    def _get_source_files_to_parse(self) -> list:
+        """Retrieve the list of source files that needs to be parsed
+        based on the configuration.
 
-    # load config
-    config = {
-        **load_config(DEFAULT_CONFIG_PATH),
-        **(load_config(config) if isinstance(config, str) else config or {}),
-        **kwargs,
-    }
-
-    # Load file registry
-    logger.debug("Load file registry")
-    file_registry = FileConversionRegistry(**config["registry"])
-
-    # Get Files
-    to_parse = []
-    logger.info("Compile files to parse")
-    for input_path, parser in zip(
-        config["input_path"].split(","), config["parser"].split(",")
-    ):
-        logger.info("Search files: '{}'", input_path)
-        source_files = glob(input_path, recursive=config.get("recursive"))
+        Returns:
+            list: list of source files to be parsed
+        """
+        logger.info("Compile files to parse")
+        source_files = glob(
+            self.config["input_path"], recursive=self.config.get("recursive")
+        )
         total_files = len(source_files)
         logger.info("{} files detected", len(source_files))
         logger.info(
             "Add {} unknown files to registry",
             len(
-                [file for file in source_files if file not in file_registry.data.index]
+                [file for file in source_files if file not in self.registry.data.index]
             ),
         )
-        file_registry.add(source_files)
+        self.registry.add(source_files)
 
         # Ignore files already parsed
         logger.info(
             "Compare files with registry hashes and ignore already parsed files"
         )
-        source_files = file_registry.get_source_files_to_parse(
-            overwrite=config.get("overwrite", "False")
+        source_files = self.registry.get_source_files_to_parse(
+            overwrite=self.config.get("overwrite", "False")
         )
-        if not source_files:
-            continue
-        to_parse += [
-            {"files": source_files, "input_path": input_path, "parser": parser}
-        ]
         logger.info("Detected {}/{} needs to be parse", len(source_files), total_files)
+        return source_files
 
-    if not to_parse:
-        logger.info("No files need to be parsed")
-        return file_registry
+    def _get_parser(self):
+        logger.info("Load parser={}", self.config["parser"])
+        if self.config["parser"] == "auto":
+            return auto.file
+        # Load the appropriate parser and read the file
+        read_module, filetype = self.config["parser"].rsplit(".", 1)
+        try:
+            mod = import_module(f"ocean_data_parser.read.{read_module}")
+            return getattr(mod, filetype)
+        except ImportError:
+            logger.exception("Failed to load module {}", self.config["parser"])
 
-    # Import parser modules and load each files:
-    for input in to_parse:
-        parser = input["parser"]
-        logger.info("Load parser={}", parser)
-        if parser == "auto":
-            parser_func = auto.file
-        else:
-            # Load the appropriate parser and read the file
-            read_module, filetype = input["parser"].rsplit(".", 1)
-            try:
-                mod = import_module(f"ocean_data_parser.read.{read_module}")
-                parser_func = getattr(mod, filetype)
-            except ImportError:
-                logger.exception("Failed to load module {}", parser)
-                return
+    def _convert(self, files: list) -> list:
 
-        inputs = [(file, parser_func, config) for file in input["files"]]
-        tqdm_parameters = dict(unit="file", total=len(input["files"]))
-        if config.get("multiprocessing") not in (None, [], 1):
-            logger.info(
-                "Run conversion in parallel with multiprocessing on {} files",
-                len(inputs),
-            )
-            n_workers = (
-                config["multiprocessing"]
-                if isinstance(config["multiprocessing"], int)
-                else None
-            )
-            with Pool(n_workers) as pool:
-                response = list(
-                    tqdm(
-                        pool.imap(_convert_file, inputs),
-                        **tqdm_parameters,
-                        desc=(
-                            "Run parallel batch conversion "
-                            f"with {n_workers or 'All'} workers"
-                        ),
-                    )
+        # Load parser and generate inputs to conversion scripts
+        parser = self._get_parser()
+        inputs = ((file, parser, self.config) for file in files)
+        tqdm_parameters = dict(unit="file", total=len(files))
+
+        # single pool processing
+        if "multiprocessing" not in self.config or self.config["multiprocessing"] in (
+            False,
+            1,
+        ):
+            return [
+                _convert_file(input)
+                for input in tqdm(inputs, **tqdm_parameters, desc="Run conversion")
+            ]
+        n_workers = self.config["multiprocessing"]
+        n_workers = None if n_workers in ('True',True,'all') else n_workers
+        with Pool(n_workers) as pool:
+            return list(
+                tqdm(
+                    pool.imap(_convert_file, inputs),
+                    **tqdm_parameters,
+                    desc=(
+                        f"Run conversion with {n_workers or 'All'} workers"
+                    ),
                 )
+            )
 
-        else:
-            logger.info("Run conversion on {} files", len(inputs))
-            response = []
-            for item in tqdm(
-                inputs,
-                **tqdm_parameters,
-                desc="Run batch conversion",
-            ):
-                response += [_convert_file(item)]
+    def run(self):
+        """Run Batch conversion"""
+        logger.info("Run ocean-data-parser[{}] batch conversion", __version__)
 
-        # Update registry
-        logger.info("Update file registry")
-        for source, output_path, error_message in response:
-            if output_path:
-                file_registry.update_fields(source, output_path=output_path)
-            else:
-                with logger.contextualize(source_file=source):
-                    logger.error("Failed conversion: {}", error_message)
-                file_registry.update_fields(source, error_message=error_message)
-        logger.info("Save file registry")
-        file_registry.save()
-
-    logger.info("Conversion completed")
-    return file_registry
+        files = self._get_source_files_to_parse()
+        if not files:
+            return self.registry
+        conversion_log = self._convert(files)
+        conversion_log = pd.DataFrame(
+            conversion_log, columns=["sources", "output_path", "error_message"]
+        ).set_index("sources")
+        self.registry.update_fields(files, dataframe=conversion_log)
+        self.registry.save()
+        
+        logger.info("Conversion completed")
+        return self.registry
 
 
 def _convert_file(args):
+    """Run file conversion while adding logging context
+
+    Args:
+        args (tuple): tuple [input file path, parser and configuration]
+
+    Raises:
+        error: If config['errors']['raise'] raise error encountered during processing
+
+    Returns:
+        tuple: input_path, output_path, error_message
+    """
     with logger.contextualize(source_file=args[0]):
         try:
             output_file = convert_file(args[0], args[1], args[2])
@@ -251,7 +237,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
         config (dict): Configuration use to apply the conversion
 
     Returns:
-        str: _description_
+        str: output_path where converted file is saved
     """
 
     def _get_file_attributes():

@@ -10,14 +10,14 @@ from click.testing import CliRunner
 
 from ocean_data_parser.batch.config import glob
 from ocean_data_parser.batch.convert import (
+    BatchConversion,
     FileConversionRegistry,
     cli_files,
     load_config,
-    main,
 )
 from ocean_data_parser.batch.utils import generate_output_path
 
-PACKAGE_PATH = Path(__file__).parent
+MODULE_PATH = Path(__file__).parent
 TEST_REGISTRY_PATH = Path("tests/test_file_registry.csv")
 TEST_FILE = Path("temp/test_file.csv")
 TEST_REGISTRY = FileConversionRegistry(path=TEST_REGISTRY_PATH)
@@ -46,21 +46,21 @@ class TestConfigLoad:
 
 
 class TestBatchMode:
-    def test_batch_conversion_onset_parser_single_runner(self):
+    def test_batch_conversion_onset_parser_single_runner(self, tmp_path):
         self._run_batch_processing(
-            None, "temp/batch/single_files/", "temp/batch/single_registry.csv"
+            1, tmp_path / "single", tmp_path / "single_registry.csv"
         )
 
-    def test_batch_conversion_onset_parser_multiprocessing_2_workers(self):
+    def test_batch_conversion_onset_parser_multiprocessing_2_workers(self, tmp_path):
         self._run_batch_processing(
-            2, "temp/batch/multiprocessing_files/", "temp/batch/multi_registry.csv"
+            2, tmp_path / "2_workers", tmp_path / "2_workers_registry.csv"
         )
 
-    def test_batch_conversion_onset_parser_multiprocessing_all_workers(self):
+    def test_batch_conversion_onset_parser_multiprocessing_all_workers(self, tmp_path):
         self._run_batch_processing(
             True,
-            "temp/batch/multiprocessing_files/",
-            "temp/batch/multi_registry.csv",
+            tmp_path / "multiprocessing_files",
+            tmp_path / "multi_registry.csv",
         )
 
     def _run_batch_processing(self, multiprocessing, output_path, registry_path):
@@ -76,15 +76,15 @@ class TestBatchMode:
             },
             "registry": {"path": registry_path},
         }
-        registry = main(config=config)
+        registry = BatchConversion(config=config).run()
         assert not registry.data.empty
         assert not registry.data["error_message"].any()
 
-    def test_failed_cli_batch_conversion(self):
+    def test_failed_cli_batch_conversion(self, tmp_path):
         config = load_config()
-        test_file_path = "temp/failed_cli_test_file.cnv"
-        registry_path = "temp/failed_cli_registry.csv"
-        config_path = "temp/failed_cli_config.csv"
+        test_file_path = str(tmp_path / "failed_cli_test_file.cnv")
+        registry_path = str(tmp_path / "failed_cli_registry.csv")
+        config_path = tmp_path / "failed_cli_config.yaml"
 
         with open(test_file_path, "w") as file_handle:
             file_handle.write("test file")
@@ -94,13 +94,13 @@ class TestBatchMode:
         config["errors"] = "ignore"
         config["overwrite"] = True
         config["multiprocessing"] = True
-        config["file_output"]["path"] = "temp/batch/failed_files/"
+        config["file_output"]["path"] = str(tmp_path / "failed_files/")
         config["file_output"]["source"] = "{source}"
         config["registry"]["path"] = registry_path
         config["sentry"]["dsn"] = None
 
         # Save config to yaml
-        with open(config_path, "w") as file:
+        with open(config_path, "w", encoding='utf-8') as file:
             yaml.dump(config, file)
 
         runner = CliRunner()
@@ -139,7 +139,7 @@ class TestBatchMode:
         config["file_output"]["source"] = "{source}"
         config["registry"]["path"] = registry_path
         config["sentry"]["dsn"] = None
-        registry = main(config=config)
+        registry = BatchConversion(config=config).run()
         assert not registry.data.empty
         assert test_file_path in registry.data.index
         assert (
