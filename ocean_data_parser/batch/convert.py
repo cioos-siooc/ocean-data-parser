@@ -47,10 +47,7 @@ logger.add(
 # Redirect logging loggers to loguru
 class InterceptHandler(logging.Handler):
     """
-    Add logging handler to augment python stdlib logging.
-
-    Logs which would otherwise go to stdlib logging are redirected through
-    loguru.
+    This class is used to redirect logging loggers to loguru
     # https://stackoverflow.com/questions/66769431/how-to-use-loguru-with-standard-loggers
     """
 
