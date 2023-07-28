@@ -1,1 +1,1 @@
-::: ocean_data_parser.read.van_essen_instruments
+::: ocean_data_parser.parsers.van_essen_instruments

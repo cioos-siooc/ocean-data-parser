@@ -1,1 +1,1 @@
-::: ocean_data_parser.read.rbr
+::: ocean_data_parser.parsers.rbr

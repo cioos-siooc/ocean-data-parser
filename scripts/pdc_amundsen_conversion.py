@@ -10,7 +10,7 @@ from glob import glob
 from tqdm import tqdm
 
 from ocean_data_parser.metadata import pdc
-from ocean_data_parser.read import amundsen
+from ocean_data_parser.parsers import amundsen
 
 FORMAT = "%(asctime)s [%(levelname)s] %(message)s"
 logging.basicConfig(

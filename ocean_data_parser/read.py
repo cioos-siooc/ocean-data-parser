@@ -82,14 +82,20 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
     elif all(re.search("\$.*,.*,", line) for line in header.split("\n") if line):
         parser = "nmea.file"
     else:
-        logger.error("Unable to match file to a specific data parser")
-        return
+        raise ImportError("Unable to match file to a specific data parser")
 
     logger.info("Selected parser: %s", parser)
     return parser
 
 
-def file(path: str, parser: str = None, kwargs=None) -> Dataset:
+def load_parser(parser: str):
+    read_module, filetype = parser.rsplit(".", 1)
+    logger.info("Import module: ocean_data_parser.parses.%s", read_module)
+    mod = import_module(f"ocean_data_parser.parsers.{read_module}")
+    return getattr(mod, filetype)
+
+
+def file(path: str, parser: str = None, **kwargs) -> Dataset:
     """Automatically detect file format and load it as an xarray dataset.
 
     Args:
@@ -106,19 +112,6 @@ def file(path: str, parser: str = None, kwargs=None) -> Dataset:
     if parser is None:
         parser = detect_file_format(path)
 
-    # If no parser is detected return error
-    if parser is None:
-        logger.error("No parser availble for file format '%s'", path)
-        return
-    elif "." not in parser:
-        logger.error("No module defined in parser '%s'", parser)
-
     # Load the appropriate parser and read the file
-    read_module, filetype = parser.rsplit(".", 1)
-    mod = import_module(f"ocean_data_parser.read.{read_module}")
-    parser_func = getattr(mod, filetype)
-
-    if kwargs:
-        return parser_func(path, **kwargs)
-    else:
-        return parser_func(path)
+    parser_func = load_parser(parser) if isinstance(parser, str) else parser
+    return parser_func(path, **kwargs)

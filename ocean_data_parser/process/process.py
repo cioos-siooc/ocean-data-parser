@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
-from ocean_data_parser.read import seabird, utils
+from ocean_data_parser.parsers import seabird, utils
 
 logger = logging.getLogger(__name__)
 

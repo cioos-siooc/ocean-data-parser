@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 
 from ocean_data_parser.process.process import xr
-from ocean_data_parser.read import seabird
+from ocean_data_parser.parsers import seabird
 
 MODULE_PATH = Path(__file__).parent
 TEST_SEABIRD_FILE = (

@@ -5,8 +5,8 @@ from pathlib import Path
 import pytest
 from xarray import Dataset
 
-from ocean_data_parser.read import detect_file_format
-from ocean_data_parser.read import file as auto_read
+from ocean_data_parser import read
+from ocean_data_parser.parsers import onset
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
@@ -28,7 +28,7 @@ auto_detection_ignore_extensions = (".nc", ".DS_Store")
     ],
 )
 def test_automated_parser_detection(file):
-    parser = detect_file_format(file)
+    parser = read.detect_file_format(file)
     assert parser, "No parser was associated"
     parser = parser.replace("_format", "")
     assert parser, f"Test file {file} doesn't match any parser"
@@ -38,7 +38,7 @@ def test_automated_parser_detection(file):
 
 
 @pytest.mark.parametrize(
-    "file",
+    "file_path",
     [
         str(file)
         for file in Path("tests/parsers_test_files").glob("**/*.*")
@@ -46,6 +46,21 @@ def test_automated_parser_detection(file):
         and "geojson" not in file.name
     ],
 )
-def test_detect_and_parse(file):
-    dataset = auto_read(file)
+def test_automated_format_detection_with_all_test_files(file_path):
+    dataset = read.file(file_path)
+    assert isinstance(dataset, Dataset), "Output isn't an xarray dataset"
+
+
+onset_file = (
+    "tests/parsers_test_files/onset/tidbit_v2/QU5_Mooring_60m_20392474_20220222.csv"
+)
+
+
+@pytest.mark.parametrize(
+    "file_path,parser",
+    [(onset_file, None), (onset_file, "onset.csv"), (onset_file, onset.csv)],
+)
+def test_read_file_parser_inputs(file_path, parser):
+    """Test if read.file can accept parsers as None, string and parser it self"""
+    dataset = read.file(file_path, parser=parser)
     assert isinstance(dataset, Dataset), "Output isn't an xarray dataset"

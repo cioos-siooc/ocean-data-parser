@@ -1,1 +1,1 @@
-::: ocean_data_parser.read.pme
+::: ocean_data_parser.parsers.pme

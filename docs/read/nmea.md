@@ -1,1 +1,1 @@
-::: ocean_data_parser.read.nmea
+::: ocean_data_parser.parsers.nmea

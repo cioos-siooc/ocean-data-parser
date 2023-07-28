@@ -12,7 +12,7 @@ from difflib import get_close_matches
 
 import pandas as pd
 
-from ocean_data_parser.read.seabird import (
+from ocean_data_parser.parsers.seabird import (
     get_seabird_instrument_from_header,
     get_seabird_processing_history,
 )

@@ -1,6 +1,5 @@
 # File input
-input_path: tests/parsers_test_files/onset/**/*.csv,tests/parsers_test_files/onset/**/*.MON
-parser: auto,auto
+input_path: tests/parsers_test_files/onset/**/*.csv
 overwrite: False
 multiprocessing: 3 # n processes to run [int]
 errors: "raise"

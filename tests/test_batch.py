@@ -152,7 +152,7 @@ class TestBatchMode:
             ["--config=tests/batch_test_configs/batch_convert_test_onset_csv.yaml"],
             env={"LOGURU_LEVEL": "INFO"},
         )
-        assert result.exit_code == 0, result
+        assert result.exit_code == 0, result.output
         assert (
             "Run conversion" in result.output
             or "Run parallel batch conversion" in result.output

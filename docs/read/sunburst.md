@@ -1,1 +1,1 @@
-:::ocean_data_parser.read.sunburst
+:::ocean_data_parser.parsers.sunburst

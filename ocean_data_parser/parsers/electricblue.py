@@ -10,7 +10,7 @@ import re
 import pandas as pd
 import xarray
 
-from ocean_data_parser.read.utils import (
+from ocean_data_parser.parsers.utils import (
     rename_variables_to_valid_netcdf,
     standardize_dataset,
 )

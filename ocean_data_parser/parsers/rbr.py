@@ -7,7 +7,7 @@ import re
 
 import pandas as pd
 
-from ocean_data_parser.read.utils import test_parsed_dataset
+from ocean_data_parser.parsers.utils import test_parsed_dataset
 
 
 def rtext(file_path, encoding="UTF-8", output=None):

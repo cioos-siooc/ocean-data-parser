@@ -1,1 +1,1 @@
-::: ocean_data_parser.read.electricblue
+::: ocean_data_parser.parsers.electricblue

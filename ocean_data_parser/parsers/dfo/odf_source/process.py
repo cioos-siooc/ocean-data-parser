@@ -17,12 +17,12 @@ from tqdm import tqdm
 #     get_nearest_station,
 #     read_geojson,
 # )
-import ocean_data_parser.read.dfo.odf_source.attributes as attributes
-import ocean_data_parser.read.dfo.odf_source.geospatial as geospatial
-import ocean_data_parser.read.dfo.odf_source.parser as odf_parser
+import ocean_data_parser.parsers.dfo.odf_source.attributes as attributes
+import ocean_data_parser.parsers.dfo.odf_source.geospatial as geospatial
+import ocean_data_parser.parsers.dfo.odf_source.parser as odf_parser
 from ocean_data_parser.geo import get_geo_code, get_nearest_station, read_geojson
-from ocean_data_parser.read import seabird
-from ocean_data_parser.read.utils import standardize_dataset
+from ocean_data_parser.parsers import seabird
+from ocean_data_parser.parsers.utils import standardize_dataset
 
 tqdm.pandas()
 

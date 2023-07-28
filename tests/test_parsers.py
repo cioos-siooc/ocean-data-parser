@@ -8,10 +8,10 @@ from glob import glob
 import pandas as pd
 import pytest
 import xarray as xr
+from ocean_data_parser import read
 
-from ocean_data_parser.read import (
+from ocean_data_parser.parsers import (
     amundsen,
-    auto,
     dfo,
     electricblue,
     nmea,
@@ -438,7 +438,7 @@ def test_compare_test_to_reference_netcdf(reference_file):
 
     # Run Test conversion
     source_file = reference_file.replace("_reference.nc", "")
-    test = auto.file(source_file)
+    test = read.file(source_file)
     test = utils.standardize_dataset(test)
 
     # Load test file and reference file

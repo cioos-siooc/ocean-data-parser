@@ -1,7 +1,7 @@
 import logging
 from glob import glob
 
-from ocean_data_parser.read import amundsen, onset, van_essen_instruments
+from ocean_data_parser.parsers import amundsen, onset, van_essen_instruments
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()

@@ -1,3 +1,3 @@
-:::ocean_data_parser.read.dfo.ios
+:::ocean_data_parser.parsers.dfo.ios
 
 ## IOS Vocabulary

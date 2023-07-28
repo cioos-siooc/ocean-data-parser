@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
-from ocean_data_parser.read.utils import standardize_dataset
+from ocean_data_parser.parsers.utils import standardize_dataset
 
 logger = logging.getLogger(__name__)
 MODULE_PATH = Path(__file__).parent

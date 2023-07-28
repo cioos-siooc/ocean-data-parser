@@ -29,7 +29,7 @@ The ODF parser uses config files to link the different components associated wit
 You can copy this file and input and modify the components as desired. To parse an ODF file, run the following commands:
 
 ```python
-from ocean_data_parser.read.dfo import bio_odf
+from ocean_data_parser.parsers.dfo import bio_odf
 
 ds = bio_odf(ODF_FILE_PATH,CONFIGURATION_FILE_PATH)
 ```

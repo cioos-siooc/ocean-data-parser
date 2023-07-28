@@ -70,7 +70,9 @@ def get_amundsen_vocab_markdown():
         ]
     )
     with open("docs/read/amundsen-hook.md", "w") as file_handle:
-        file_handle.write(""":::ocean_data_parser.read.amundsen\n\n## Vocabulary\n""")
+        file_handle.write(
+            """:::ocean_data_parser.parsers.amundsen\n\n## Vocabulary\n"""
+        )
         df.replace({np.nan: ""}).to_markdown(file_handle, index=False, tablefmt="pipe")
 
 
@@ -86,7 +88,7 @@ def get_seabird_vocab_markdown():
         ]
     )
     with open("docs/read/seabird-hook.md", "w") as file_handle:
-        file_handle.write(""":::ocean_data_parser.read.seabird\n\n## Vocabulary\n""")
+        file_handle.write(""":::ocean_data_parser.parsers.seabird\n\n## Vocabulary\n""")
         df.replace({np.nan: ""}).to_markdown(file_handle, index=False, tablefmt="pipe")
 
 

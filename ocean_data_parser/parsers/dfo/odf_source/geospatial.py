@@ -1,7 +1,7 @@
 import logging
 import re
 
-import ocean_data_parser.read.dfo.odf_source.attributes as attributes
+import ocean_data_parser.parsers.dfo.odf_source.attributes as attributes
 from ocean_data_parser.geo import get_geo_code, get_nearest_station
 
 logger = logging.getLogger(__name__)

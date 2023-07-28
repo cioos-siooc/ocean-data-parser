@@ -1,1 +1,1 @@
-::: ocean_data_parser.read.star_oddi
+::: ocean_data_parser.parsers.star_oddi

@@ -270,7 +270,7 @@ class FileConversionRegistry:
         is_missing = ~self.data.index.to_series().map(Path).apply(Path.exists)
         return self.data.loc[is_missing].index.tolist()
 
-    def summarize(self, sources=None, by="error_message", output="error_report.csv"):
+    def summarize(self, sources=None, by="error_message", output=None):
         """Generate a summary of the file registry errors"""
         if sources:
             data = self.data[self.data[sources]]
@@ -286,6 +286,6 @@ class FileConversionRegistry:
             .agg({"source": ["count", list]})
         )
         errors.columns = (" ".join(col) for col in errors.columns)
-        logger.info("The following errors were captured: %s", errors)
+        logger.info("The following errors were captured:\n%s", errors)
         if output:
             errors.to_csv(output)

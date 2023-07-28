@@ -1,1 +1,1 @@
-::: ocean_data_parser.read.onset
+::: ocean_data_parser.parsers.onset

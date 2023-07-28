@@ -14,12 +14,12 @@ from loguru import logger
 from tqdm import tqdm
 from xarray import Dataset
 
-from ocean_data_parser import geo, process
+from ocean_data_parser import geo, process, read
 from ocean_data_parser._version import __version__
 from ocean_data_parser.batch.config import load_config
 from ocean_data_parser.batch.registry import FileConversionRegistry
 from ocean_data_parser.batch.utils import generate_output_path, VariableLevelLogger
-from ocean_data_parser.read import auto, utils
+from ocean_data_parser.parsers import utils
 
 MODULE_PATH = Path(__file__).parent
 DEFAULT_CONFIG_PATH = MODULE_PATH / "default-batch-config.yaml"
@@ -143,16 +143,10 @@ class BatchConversion:
         return source_files
 
     def _get_parser(self):
-        logger.info("Load parser={}", self.config["parser"])
-        if self.config["parser"] == "auto":
-            return auto.file
-        # Load the appropriate parser and read the file
-        read_module, filetype = self.config["parser"].rsplit(".", 1)
-        try:
-            mod = import_module(f"ocean_data_parser.read.{read_module}")
-            return getattr(mod, filetype)
-        except ImportError:
-            logger.exception("Failed to load module {}", self.config["parser"])
+        logger.info("Load parser={}", self.config.get("parser", "None"))
+        if not self.config.get("parser"):
+            return None
+        return read.load_parser(self.config["parser"])
 
     def _convert(self, files: list) -> list:
 
@@ -232,7 +226,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
 
     Args:
         file (str): file path
-        parser (str): ocean_data_parser.read parser.
+        parser (str): ocean_data_parser.parsers parser.
         config (dict): Configuration use to apply the conversion
 
     Returns:
@@ -268,7 +262,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
 
     # Parse file to xarray
     logger.debug("Parse file: {}", file)
-    ds = parser(file)
+    ds = read.file(file, parser=parser)
     if not isinstance(ds, Dataset):
         raise RuntimeError(
             f"{parser.__module__}{parser.__name__}:{file} "
