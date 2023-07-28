@@ -28,3 +28,5 @@ temp/**
 tests/test_file_registry_temp.csv
 
 temp/**
+*.log
+.env

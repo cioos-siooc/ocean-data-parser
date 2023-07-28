@@ -51,19 +51,20 @@ nav:
       - NERC: metadata/nerc.md
       - Polar Data Catalog: metadata/pdc.md
   - Data Parsers:
-      - Amundsen: read/amundsen-hook.md
+      - Amundsen: parsers/amundsen-hook.md
       - Fisheries And Ocean Canada:
-          - ODF: read/dfo/odf-hook.md
-          - IOS Shell: read/dfo/ios-hook.md
-      - ElectricBlue: read/electricblue.md
-      - NMEA: read/nmea.md
-      - Onset: read/onset.md
-      - PME: read/pme.md
-      - RBR: read/rbr.md
-      - Seabird: read/seabird-hook.md
-      - Star-Oddi: read/star-oddi.md
-      - SunBurst: read/sunburst.md
-      - Van Essen Instruments: read/van-essen-intruments.md
+          - ODF: parsers/dfo/odf-hook.md
+          - IOS Shell: parsers/dfo/ios-hook.md
+          - P Format: parsers/dfo/p-hook.md
+      - ElectricBlue: parsers/electricblue.md
+      - NMEA: parsers/nmea.md
+      - Onset: parsers/onset.md
+      - PME: parsers/pme.md
+      - RBR: parsers/rbr.md
+      - Seabird: parsers/seabird-hook.md
+      - Star-Oddi: parsers/star-oddi.md
+      - SunBurst: parsers/sunburst.md
+      - Van Essen Instruments: parsers/van-essen-intruments.md
   - CLI:
       - Compile NetCDFs: CLI/compile-netcdf.md
 

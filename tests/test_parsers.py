@@ -8,10 +8,10 @@ from glob import glob
 import pandas as pd
 import pytest
 import xarray as xr
+from ocean_data_parser import read
 
-from ocean_data_parser.read import (
+from ocean_data_parser.parsers import (
     amundsen,
-    auto,
     dfo,
     electricblue,
     nmea,
@@ -343,6 +343,65 @@ class TestODFMLIParser:
         ds.to_netcdf(f"{file}_test.nc")
 
 
+class TestDFOpFiles:
+    @pytest.mark.parametrize(
+        "file",
+        [
+            file
+            for file in glob(
+                "tests/parsers_test_files/dfo/nafc/pfile/**/*.p*",
+                recursive=True,
+            )
+            if not file.endswith(".nc")
+        ],
+    )
+    def test_dfo_nafc_pfile(self, file):
+        """Test DFO BIO ODF Parser"""
+        dfo.nafc.pfile(file)
+
+    def test_ship_code_mapping(self):
+        """Test ship code mapping"""
+        response = dfo.nafc._get_ship_code_metadata(55)
+        assert isinstance(response, dict)
+        assert response["platform_name"] == "Discovery"
+
+    def test_unknown_ship_code_mapping(self):
+        """Test unknown ship code mapping"""
+        response = dfo.nafc._get_ship_code_metadata(9999)
+        assert isinstance(response, dict)
+        assert "platform_name" not in response
+
+    @pytest.mark.parametrize(
+        "line",
+        [
+            "56001001  47 32.80 -052 35.20 2022-04-10 14:06 0176 S1460 001 V S27-01         1"
+        ],
+    )
+    def test_p_file_metadata_parser_line1(self, line):
+        response = dfo.nafc._parse_pfile_header_line1(line)
+        assert isinstance(response, dict)
+
+    @pytest.mark.parametrize(
+        "line",
+        [
+            "56001001 002260  8.00 A 13 #PTCSMOFLHXAW-------            D 000 0001 0173 000 4"
+        ],
+    )
+    def test_p_file_metadata_parser_line2(self, line):
+        response = dfo.nafc._parse_pfile_header_line2(line)
+        assert isinstance(response, dict)
+
+    @pytest.mark.parametrize(
+        "line",
+        [
+            "56001001 7 08 02    0999.1 003.8       08 01 18 10 01                          8"
+        ],
+    )
+    def test_p_file_metadata_parser_line3(self, line):
+        response = dfo.nafc._parse_pfile_header_line3(line)
+        assert isinstance(response, dict)
+
+
 class BlueElectricParsertest(unittest.TestCase):
     def test_blue_electric_csv_parser(self):
         paths = glob(
@@ -366,7 +425,7 @@ class StarOddiParsertest(unittest.TestCase):
     def test_star_oddi_dat_parser(self):
         paths = glob("tests/parsers_test_files/star_oddi/**/*.DAT", recursive=True)
         for path in paths:
-            ds = star_oddi.DAT(path)
+            star_oddi.DAT(path)
 
 
 @pytest.mark.parametrize(
@@ -379,7 +438,7 @@ def test_compare_test_to_reference_netcdf(reference_file):
 
     # Run Test conversion
     source_file = reference_file.replace("_reference.nc", "")
-    test = auto.file(source_file)
+    test = read.file(source_file)
     test = utils.standardize_dataset(test)
 
     # Load test file and reference file

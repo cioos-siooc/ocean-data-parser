@@ -54,10 +54,10 @@ pip install git+https://github.com/HakaiInstitute/ocean-data-parser.git
 As an example, to load a compatible file you can use the automated parser detection method:
 
 ```python
-import ocean_data_parser.read
+import ocean_data_parser.parsers
 
 # Load a file to an xarray object
-ds = ocean_data_parser.read.file('Path to file')
+ds = ocean_data_parser.parsers.file('Path to file')
 
 # Save to netcdf
 ds.to_netcdf('save-path.nc')
@@ -66,7 +66,7 @@ ds.to_netcdf('save-path.nc')
 
 Or specify the specific parser to use for this file format:
 ``` python
-from ocean_data_parser.read import seabird
+from ocean_data_parser.parsers import seabird
 
 # Load a seabird cnv file as an xarray dataset
 ds = seabird.cnv('Path to seabird cnv file')

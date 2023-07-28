@@ -1,13 +1,13 @@
 """
 QC Module present a set of tools to manually qc data.
 """
-import plotly.graph_objects as go
-from IPython.display import display
-from ipywidgets import HBox, VBox, interactive, widgets
+import logging
 
-from ocean_data_parser.read import utils
+from ocean_data_parser.parsers import utils
 
 from .process import xr
+
+logger = logging.getLogger(__name__)
 
 flag_conventions = {
     "QARTOD": {
@@ -231,6 +231,22 @@ def manual_qc_interface(
     :param flags: Flag convention used
     :param review_flag:
     """
+
+    try:
+        import plotly.graph_objects as go
+    except ImportError:
+        logger.error("Failed to import plotly")
+
+    try:
+        from IPython.display import display
+    except ImportError:
+        logger.error("Failed to import IPython.")
+
+    try:
+        from ipywidgets import HBox, VBox, interactive, widgets
+    except ImportError:
+        logger.error("Failed to import ipywidgets.")
+
     # Convert dataset to dataframe
     df = ds.to_dataframe()
     index = df.index.name

@@ -2,8 +2,8 @@ import logging
 import unittest
 from glob import glob
 
-import xarray as xr
 import pandas as pd
+import xarray as xr
 
 from ocean_data_parser import geo
 
