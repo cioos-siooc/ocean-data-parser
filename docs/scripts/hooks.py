@@ -12,7 +12,9 @@ def quote_column(col):
 
 def get_dfo_pfile_vocab_markdown():
     """Convert P file vocabulary to markdown table"""
-    df = pd.read_csv("ocean_data_parser/parsers/vocabularies/dfo_p_files_vocabulary.csv")
+    df = pd.read_csv(
+        "ocean_data_parser/parsers/vocabularies/dfo_p_files_vocabulary.csv"
+    )
     for column in ["accepted_instruments"]:
         df[column] = quote_column(df[column])
     with open("docs/parsers/dfo/p-header.md") as file_handle:
@@ -96,10 +98,11 @@ def get_seabird_vocab_markdown():
 
 def copy_notebooks():
     """Copy notebooks made available within the notebook forlder"""
-    notebooks = Path('notebooks').glob('*.ipynb')
+    notebooks = Path("notebooks").glob("*.ipynb")
+    docs_notebooks = Path("docs/notebooks")
+    docs_notebooks.mkdir(parents=True, exist_ok=True)
     for notebook in notebooks:
-        shutil.copy(notebook,Path('docs/notebooks') / notebook.name)
-
+        shutil.copy(notebook, docs_notebooks / notebook.name)
 
 
 def on_pre_build(config, **kwargs) -> None:
