@@ -97,7 +97,7 @@ def get_seabird_vocab_markdown():
 
 
 def copy_notebooks():
-    """Copy notebooks made available within the notebook forlder"""
+    """Copy notebooks to docs"""
     notebooks = Path("notebooks").glob("*.ipynb")
     docs_notebooks = Path("docs/notebooks")
     docs_notebooks.mkdir(parents=True, exist_ok=True)
