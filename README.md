@@ -18,7 +18,7 @@
 
 The `ocean-data-parser` is a set of tools capable of parsing oceanographic proprietary data formats to a xarray CIOOS Compliant object. This xarray object can then be use in a number of application and/or easily saved to a NetCDF format.
 
-A more detailed documentation is available [here](https://hakaiinstitute.github.io/ocean-data-parser).
+A more detailed documentation is available [here](https://cioos-siooc.github.io/ocean-data-parser/main/).
 
 ---
 
