@@ -11,7 +11,7 @@ jobs:
   deploy:
     environment: 
       name: ${{github.ref_name}}
-      url: 'https://cioos-siooc.github.io/ocean-data-parser/${{ github.ref == 'main' && 'dev' }}/'
+      url: ${{ github.ref == 'main' && 'https://cioos-siooc.github.io/ocean-data-parser/main/' || 'https://cioos-siooc.github.io/ocean-data-parser/dev/' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
