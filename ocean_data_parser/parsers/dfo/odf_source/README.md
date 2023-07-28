@@ -19,7 +19,7 @@ conda activate ocean-data-parser
 3. Install the package directly from GitHub:
 
 ```shell
-pip install "git+https://github.com/HakaiInstitute/ocean-data-parser.git@odf-parser#egg=ocean_data_parser[odf]"
+pip install "git+https://github.com/cioos-siooc/ocean-data-parser.git@odf-parser#egg=ocean_data_parser[odf]"
 ```
 
 ## How to

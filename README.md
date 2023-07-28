@@ -12,7 +12,7 @@
 
 <!-- You can get project relevant badges from: [shields.io](https://shields.io/) -->
 
-[![Update gh-pages Docs](https://github.com/HakaiInstitute/ocean-data-parser/actions/workflows/generate-documentation.yaml/badge.svg)](https://github.com/HakaiInstitute/ocean-data-parser/actions/workflows/generate-documentation.yaml)
+[![Update gh-pages Docs](https://github.com/cioos-siooc/ocean-data-parser/actions/workflows/generate-documentation.yaml/badge.svg)](https://github.com/cioos-siooc/ocean-data-parser/actions/workflows/generate-documentation.yaml)
 
 ## What is it?
 
@@ -48,7 +48,7 @@ A more detailed documentation is available [here](https://cioos-siooc.github.io/
 Install the package with the following command, ideally within a virtual environment:
 
 ```env
-pip install git+https://github.com/HakaiInstitute/ocean-data-parser.git
+pip install git+https://github.com/cioos-siooc/ocean-data-parser.git
 ```
 
 As an example, to load a compatible file you can use the automated parser detection method:
@@ -74,7 +74,7 @@ ds = seabird.cnv('Path to seabird cnv file')
 # Save to netcdf
 ds.to_netcdf('save-path.nc')
 ```
-The `ocean-data-parser` can then be used within either a python package, script or jupyter notebook. See [documentation Notebook section](https://hakaiinstitute.github.io/ocean-data-parser) for examples on how to use the package within a jupyter notebook.
+The `ocean-data-parser` can then be used within either a python package, script or jupyter notebook. See [documentation Notebook section](https://cioos-siooc.github.io/ocean-data-parser) for examples on how to use the package within a jupyter notebook.
 
 ## Development
 
@@ -82,7 +82,7 @@ The `ocean-data-parser` can then be used within either a python package, script 
 Clone the project locally
 
 ```shell
-  git clone git+https://github.com/HakaiInstitute/ocean-data-parser.git
+  git clone git+https://github.com/cioos-siooc/ocean-data-parser.git
 ```
 
 Go to the project directory

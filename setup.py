@@ -8,7 +8,7 @@ setup(
     name="ocean_data_parser",
     version=pkg_vars["__version__"],
     description="Package used to parse different Ocean Instruments Propriatary format to an xarray dataset.",
-    url="https://github.com/HakaiInstitute/ocean-data-parser",
+    url="https://github.com/cioos-siooc/ocean-data-parser",
     author="Jessy Barrette",
     author_email="jessy.barrette@hakai.org",
     license="MIT",

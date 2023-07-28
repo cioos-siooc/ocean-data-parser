@@ -1,4 +1,4 @@
-repositoryUrl: https://github.com/HakaiInstitute/ocean-data-parser.git
+repositoryUrl: https://github.com/cioos-siooc/ocean-data-parser.git
 branches:
   - main
   - name: development
