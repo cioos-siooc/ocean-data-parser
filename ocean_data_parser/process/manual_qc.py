@@ -2,7 +2,7 @@
 QC Module present a set of tools to manually qc data.
 """
 import logging
-
+from typing import Union
 from ocean_data_parser.parsers import utils
 
 from .process import xr
@@ -214,7 +214,7 @@ def compare_flags(flags, convention=None, flag_priority=None):
 def manual_qc_interface(
     ds,
     variable_list: list,
-    convention: dict or str,
+    convention: Union[dict, str],
     manual_flag_suffix: str = "_review_flag",
     comment_column: str = "comment",
     default_flag=None,
