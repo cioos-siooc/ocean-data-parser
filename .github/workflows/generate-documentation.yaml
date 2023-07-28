@@ -9,7 +9,9 @@ permissions:
   contents: write
 jobs:
   deploy:
-    environment: ${{github.ref_name}}
+    environment: 
+      name: ${{github.ref_name}}
+      url: ${{ github.ref == 'main' && 'https://cioos-siooc.github.io/ocean-data-parser/main/' || 'https://cioos-siooc.github.io/ocean-data-parser/dev/' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
