@@ -17,7 +17,7 @@ from odf_transform.process import read_config as cioos_odf_config
 from ocean_data_parser.parsers.dfo.odf_source.process import (
     parse_odf,
     read_config,
-    to_netcdf,
+    save_parsed_odf_to_netcdf,
 )
 
 logger = logging.getLogger(__name__)
@@ -72,7 +72,7 @@ def bio_odf(
     config["organisationVocabulary"] = ["BIO", "GF3"]
     ds = parse_odf(path, config=config)
     if output == "netcdf":
-        to_netcdf(ds, path, config)
+        save_parsed_odf_to_netcdf(ds, path, config)
     return ds
 
 
@@ -92,5 +92,5 @@ def mli_odf(path: str, config: Union[str, dict] = None, output=None) -> xarray.D
     config["organisationVocabulary"] = ["MLI", "GF3"]
     ds = parse_odf(path, config=config)
     if output == "netcdf":
-        to_netcdf(ds, path, config)
+        save_parsed_odf_to_netcdf(ds, path, config)
     return ds

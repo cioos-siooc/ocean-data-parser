@@ -50,7 +50,7 @@ def standardize_dataset(
     """Standardize dataset to be easily serializable to netcdf and compatible with ERDDAP"""
 
     def _consider_attribute(value):
-        return isinstance(value, (dict,tuple,list,np.ndarray)) or (
+        return isinstance(value, (dict, tuple, list, np.ndarray)) or (
             (pd.notnull(value) or value in (0, 0.0)) and value != ""
         )
 
@@ -70,7 +70,7 @@ def standardize_dataset(
         else:
             return value
 
-    ds = get_spatial_coverage_attributes(ds)
+    ds = get_spatial_coverage_attributes(ds, utc=utc)
     ds = standardize_variable_attributes(ds)
     ds.attrs = standardize_global_attributes(ds.attrs)
 
@@ -162,6 +162,7 @@ def get_spatial_coverage_attributes(
     lat="latitude",
     lon="longitude",
     depth="depth",
+    utc=False,
 ):
     """
     This method generates the geospatial and time coverage attributes associated to an xarray dataset.
@@ -170,7 +171,7 @@ def get_spatial_coverage_attributes(
     time_spatial_coverage = {}
     # time
     if time in ds.variables:
-        is_utc = ds[time].attrs.get("timezone") == "UTC"
+        is_utc = ds[time].attrs.get("timezone") == "UTC" or utc
         time_spatial_coverage.update(
             {
                 "time_coverage_start": pd.to_datetime(

@@ -702,7 +702,7 @@ def add_seabird_instruments(
                     )
 
             for var in matched_variables:
-                if "instrument" in ds[var].attrs:
+                if ds[var].attrs.get("instrument"):
                     ds[var].attrs["instrument"] += "," + sensor_variable
                 else:
                     ds[var].attrs["instrument"] = sensor_variable
