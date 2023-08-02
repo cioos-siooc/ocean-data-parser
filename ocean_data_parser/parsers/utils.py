@@ -45,12 +45,12 @@ def get_history_handler():
 
 
 def standardize_dataset(
-    ds, time_variables_encoding="seconds since 1970-01-01T00:00:00"
+    ds, time_variables_encoding="seconds since 1970-01-01T00:00:00", utc=True
 ):
     """Standardize dataset to be easily serializable to netcdf and compatible with ERDDAP"""
 
     def _consider_attribute(value):
-        return type(value) in (dict, tuple, list, np.ndarray) or (
+        return isinstance(value, (dict,tuple,list,np.ndarray)) or (
             (pd.notnull(value) or value in (0, 0.0)) and value != ""
         )
 
@@ -94,7 +94,7 @@ def standardize_dataset(
         ds.encoding[var] = {}
         if "datetime" in ds[var].dtype.name:
             ds[var].encoding.update({"units": time_variables_encoding})
-            if "tz" in ds[var].dtype.name:
+            if "tz" in ds[var].dtype.name or utc:
                 ds[var].encoding["units"] += "Z"
             ds[var].attrs.pop("units", None)
         elif isinstance(ds[var].dtype, object) and isinstance(

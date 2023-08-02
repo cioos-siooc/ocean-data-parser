@@ -5,10 +5,10 @@ attribtutes to the different conventions (CF, ACDD).
 
 import json
 import logging
-import os
 import re
 from datetime import datetime, timezone
 from difflib import get_close_matches
+import os
 
 import pandas as pd
 
@@ -16,6 +16,7 @@ from ocean_data_parser.parsers.seabird import (
     get_seabird_instrument_from_header,
     get_seabird_processing_history,
 )
+from ocean_data_parser.geo import get_geo_code, get_nearest_station
 
 no_file_logger = logging.getLogger(__name__)
 logger = logging.LoggerAdapter(no_file_logger, {"file": None})
@@ -46,9 +47,8 @@ def _generate_cf_history_from_odf(odf_header):
 
     def _add_to_history(comment, date=datetime.now(timezone.utc)):
         """Generate a CF standard history line."""
-        if pd.isna(date):
-            return f"NaT {comment}\n"
-        return f"{date.strftime('%Y-%m-%dT%H:%M:%SZ')} {comment}\n"
+        date_str = date.strftime('%Y-%m-%dT%H:%M:%SZ') if pd.notna(date) else "0000-00-00 00:00:00Z"
+        return f"{date_str} {comment}\n"
 
     # Convert ODF history to CF history
     is_manufacturer_header = False
@@ -59,9 +59,16 @@ def _generate_cf_history_from_odf(odf_header):
         "history": "",
     }
     for history_group in odf_header["HISTORY_HEADER"]:
+        if "PROCESS" not in history_group:
+            continue
         # Convert single processes to list
         if isinstance(history_group["PROCESS"], str):
             history_group["PROCESS"] = [history_group["PROCESS"]]
+
+        # Empty history group (just write the date)
+        if history_group["PROCESS"] is None:
+            history["history"] += _add_to_history("", history_group["CREATION_DATE"])
+            continue
 
         for row in history_group["PROCESS"]:
             if row is None:
@@ -248,6 +255,13 @@ def _generate_instrument_attributes(odf_header, instrument_manufacturer_header=N
     - manufacturer header
     """
     # Instrument Specific Information
+    if "INSTRUMENT_HEADER" not in odf_header or (
+        odf_header["INSTRUMENT_HEADER"].get("INST_TYPE") in (None, 0)
+        and odf_header["INSTRUMENT_HEADER"].get("MODEL") in (None, 0)
+        and odf_header["INSTRUMENT_HEADER"].get("SERIAL_NUMBER") in (None, 0)
+    ):
+        logger.info("No instrument information available")
+        return {}
     attributes = {}
     if instrument_manufacturer_header:
         attributes["instrument"] = get_seabird_instrument_from_header(
@@ -259,20 +273,22 @@ def _generate_instrument_attributes(odf_header, instrument_manufacturer_header=N
     elif "INSTRUMENT_HEADER" in odf_header:
         attributes["instrument"] = " ".join(
             [
-                odf_header["INSTRUMENT_HEADER"].get("INST_TYPE") or "",
-                odf_header["INSTRUMENT_HEADER"].get("MODEL") or "",
+                str(item).strip()
+                for item in [
+                    odf_header["INSTRUMENT_HEADER"].get("INST_TYPE"),
+                    odf_header["INSTRUMENT_HEADER"].get("MODEL"),
+                ]
+                if item
             ]
-        ).strip()
-        attributes["instrument_serial_number"] = (
-            odf_header["INSTRUMENT_HEADER"].get("SERIAL_NUMBER") or ""
         )
-    else:
-        logger.warning("No Instrument field available")
-        attributes["instrument"] = ""
-        attributes["instrument_serial_number"] = ""
+        attributes["instrument_serial_number"] = odf_header["INSTRUMENT_HEADER"].get(
+            "SERIAL_NUMBER"
+        )
 
+    # Attempt to generate an instrument_type attribute
+    # TODO handle Aanderaa RCM-4
     if re.search(
-        r"(SBE\s*(9|16|19|25|37))|CTD|Guildline|GUILDLN|STD",
+        r"(SBE\s*(9|16|19|25|37))|Sea-Bird|CTD|Guildline|GUILDLN|GUILDLIN|GULIDLIN|GLDLNE|GULDLNEDIG|GUIDLINE|GUIDELINE|DIGITAL|GLD3NO.2|STD|RCM",
         attributes["instrument"],
         re.IGNORECASE,
     ):
@@ -292,12 +308,16 @@ def _generate_title_from_global_attributes(attributes):
     title = (
         f"{attributes['odf_data_type']} profile data collected "
         + (
-            f"from the {attributes['platform']} {attributes.get('platform_name','')}"
-            if "platform" in attributes
+            f"from the {attributes['platform']} {attributes['platform_name']}"
+            if "platform" in attributes and "platform_name" in attributes
             else ""
         )
         + f"by {attributes['organization']}  {attributes['institution']} "
-        + f"on the {attributes['cruise_name'].title()} "
+        + (
+            f"on the {attributes['cruise_name'].title()} "
+            if attributes.get("cruise_name")
+            else ""
+        )
     )
     if (
         pd.notna(attributes["mission_start_date"])
@@ -336,7 +356,7 @@ def _generate_program_specific_attritutes(global_attributes):
             "cruise_name": None if project else f"{program} {season} {year}",
         }
 
-    elif program == "Maritime Region Ecosystem Survey":
+    elif program == "Maritimes Region Ecosystem Survey":
         season = "Summer" if 5 <= month <= 9 else "Winter"
         return {
             "project": f"{program} {season}",
@@ -372,13 +392,9 @@ def global_attributes_from_header(dataset, odf_header, config=None):
 
     odf_original_header = odf_header.copy()
     odf_original_header.pop("variable_attributes")
-    if "reference_platforms" in config:
-        platform_attributes = _generate_platform_attributes(
-            odf_header["CRUISE_HEADER"]["PLATFORM"], config["reference_platforms"]
-        )
-    else:
-        platform_attributes = {}
-
+    platform_attributes = _generate_platform_attributes(
+        odf_header["CRUISE_HEADER"]["PLATFORM"], config["reference_platforms"]
+    )
     history = _generate_cf_history_from_odf(odf_header)
     instrument_attributes = _generate_instrument_attributes(
         odf_header, history.get("instrument_manufacturer_header")
@@ -435,23 +451,17 @@ def global_attributes_from_header(dataset, odf_header, config=None):
             **cdm_data_type_attributes,
         }
     )
-
     # Apply global attributes corrections
     dataset.attrs.update(config["global_attributes"])
-    if config["file_specific_attributes"] and config["file_specific_attributes"].get(
-        os.path.basename(dataset.attrs["source"])
-    ):
-        logger.info("Apply file specific attributes correction")
-        dataset.attrs.update(
-            config["file_specific_attributes"][
-                os.path.basename(dataset.attrs["source"])
-            ]
+    dataset.attrs.update(
+        (config.get("file_specific_attributes") or {}).get(
+            os.path.basename(dataset.attrs["source"]), {}
         )
+    )
     dataset.attrs.update(_get_attribute_mapping_corrections())
 
     # Generate attributes from other attributes
-    if dataset.attrs.keys() >= {"organization", "institution", "platform"}:
-        dataset.attrs["title"] = _generate_title_from_global_attributes(dataset.attrs)
+    dataset.attrs["title"] = _generate_title_from_global_attributes(dataset.attrs)
     dataset.attrs.update(**_generate_program_specific_attritutes(dataset.attrs))
 
     # Review ATTRIBUTES
@@ -475,9 +485,8 @@ def generate_coordinates_variables(dataset):
     """
     Method use to generate metadata variables from the ODF Header to a xarray Dataset.
     """
-    if "cdm_data_type" not in dataset.attrs:
-        logging.error("No cdm_data_type attribute")
-    elif dataset.attrs["cdm_data_type"] in ("Profile", "Point"):
+
+    if dataset.attrs["cdm_data_type"] == "Profile":
         dataset["time"] = dataset.attrs["event_start_time"]
         dataset["latitude"] = dataset.attrs["initial_latitude"]
         dataset["longitude"] = dataset.attrs["initial_longitude"]
@@ -526,6 +535,48 @@ def generate_coordinates_variables(dataset):
     for var, attrs in coordinate_attributes.items():
         if var in dataset:
             dataset[var].attrs = attrs
+    return dataset
+
+
+def generate_spatial_attributes(dataset, config):
+    if "latitude" not in dataset or "longitude" not in dataset:
+        logger.warning(
+            "Missing latitude and/or longitude, we can't generate spatial attributes"
+        )
+        return dataset
+    
+    if "Trajectory" in dataset.attrs['cdm_data_type']:
+        return dataset
+
+    dataset.attrs["geographic_area"] = get_geo_code(
+        [dataset["longitude"].mean(), dataset["latitude"].mean()],
+        config["geographic_areas"],
+    )
+
+    nearest_station = get_nearest_station(
+        dataset["latitude"],
+        dataset["longitude"],
+        config["reference_stations"][["station", "latitude", "longitude"]].values,
+        config["maximum_distance_from_station_km"],
+    )
+
+    if nearest_station:
+        dataset.attrs["station"] = nearest_station
+
+    # If no nearest station exist and the file suggest one, log it.
+    if (
+        dataset.attrs.get("station")
+        and dataset.attrs.get("station")
+        not in config["reference_stations"]["station"].tolist()
+        and re.match(r"[^0-9]", dataset.attrs["station"])
+    ):
+        logger.warning(
+            "Station %s [%sN, %sE] is missing from the reference_station.",
+            dataset.attrs["station"],
+            dataset["latitude"].mean().values,
+            dataset["longitude"].mean().values,
+        )
+
     return dataset
 
 

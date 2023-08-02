@@ -1,6 +1,4 @@
 """General module use to convert ODF files into a NetCDF CF, ACDD compliant format."""
-__version__ = "1.0.0"
-import copy
 import json
 import logging
 import os
@@ -12,16 +10,11 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-# from cioos_data_transform.utils.utils import (
-#     get_geo_code,
-#     get_nearest_station,
-#     read_geojson,
-# )
-import ocean_data_parser.parsers.dfo.odf_source.attributes as attributes
-import ocean_data_parser.parsers.dfo.odf_source.geospatial as geospatial
-import ocean_data_parser.parsers.dfo.odf_source.parser as odf_parser
-from ocean_data_parser.geo import get_geo_code, get_nearest_station, read_geojson
-from ocean_data_parser.parsers import seabird
+from ocean_data_parser.geo import read_geojson
+from ocean_data_parser.parsers.dfo.odf_source import attributes
+from ocean_data_parser.parsers.dfo.odf_source import parser as odf_parser
+from ocean_data_parser._version import __version__
+import ocean_data_parser.parsers.seabird as seabird
 from ocean_data_parser.parsers.utils import standardize_dataset
 
 tqdm.pandas()
@@ -33,6 +26,23 @@ logger = logging.LoggerAdapter(no_file_logger, {"file": None})
 MODULE_PATH = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_CONFIG_PATH = os.path.join(MODULE_PATH, "config.json")
 ODF_TRANSFORM_MODULE_PATH = MODULE_PATH
+
+COMPATIBLE_ODF_TYPES = [
+    "CTD",
+    "BT",
+    "BOTL",
+    "MCTD",
+    "XBT",
+    "MCM",
+    "MADCP",
+    "MMOB",
+    "MTC",
+    "MTG",
+    "TCTD",
+    "MTR",
+    "TSG",
+    "PLNKG",
+]
 
 
 def read_config(config_file: str = DEFAULT_CONFIG_PATH, institute=None) -> dict:
@@ -56,61 +66,50 @@ def read_config(config_file: str = DEFAULT_CONFIG_PATH, institute=None) -> dict:
     json_text = json_text.replace(
         "{ODF_TRANSFORM_MODULE_PATH}", ODF_TRANSFORM_MODULE_PATH
     )
-    json_text = json_text.replace("\\", "/")
     config = json.loads(json_text)
 
     # Apply fstring to geojson paths
     config["geographic_areas"] = {}
-    if "geographic_area_reference_files" in config:
-        if isinstance(config["geographic_area_reference_files"], str):
-            config["geographic_area_reference_files"] = glob(
-                config["geographic_area_reference_files"], recursive=True
-            )
-        for file in config["geographic_area_reference_files"]:
-            config["geographic_areas"].update(read_geojson(file))
+    for file in config["geographic_area_reference_files"]:
+        config["geographic_areas"].update(read_geojson(file))
 
     # Integrate station lists from geojson files
-    if "reference_stations_reference_files" in config:
-        config["reference_stations"] = pd.concat(
-            [
-                pd.json_normalize(
-                    json.load(open(file, encoding="UTF-8"))["features"], max_level=1
-                )
-                for file in config["reference_stations_reference_files"]
-            ]
-        )
-        config["reference_stations"].columns = [
-            re.sub(r"properties\.|geometry\.", "", col)
-            for col in config["reference_stations"]
+    config["reference_stations"] = pd.concat(
+        [
+            pd.json_normalize(
+                json.load(open(file, encoding="UTF-8"))["features"], max_level=1
+            )
+            for file in config["reference_stations_reference_files"]
         ]
+    )
+    config["reference_stations"].columns = [
+        re.sub(r"properties\.|geometry\.", "", col)
+        for col in config["reference_stations"]
+    ]
 
     # Reference Platforms
     # convert a dictionary with lowered platform names
-    if "reference_platforms_files" in config:
-        df_platforms = pd.concat(
-            pd.read_csv(
-                os.path.join(file),
-                dtype={"wmo_platform_code": "string"},
-            )
-            for file in config["reference_platforms_files"]
+    df_platforms = pd.concat(
+        pd.read_csv(
+            os.path.join(file),
+            dtype={"wmo_platform_code": "string"},
         )
-        config["reference_platforms"] = {
-            index.lower(): row.dropna().to_dict()
-            for index, row in df_platforms.set_index(
-                "platform_name", drop=False
-            ).iterrows()
-        }
+        for file in config["reference_platforms_files"]
+    )
+    config["reference_platforms"] = {
+        index.lower(): row.dropna().to_dict()
+        for index, row in df_platforms.set_index("platform_name", drop=False).iterrows()
+    }
 
     # Read Vocabulary file
-    if "vocabularyFile" in config:
-        vocab = pd.read_csv(config["vocabularyFile"], index_col=["Vocabulary", "name"])
-        config["vocabulary"] = vocab.fillna(np.nan).replace({np.nan: None})
+    vocab = pd.read_csv(config["vocabularyFile"], index_col=["Vocabulary", "name"])
+    config["vocabulary"] = vocab.fillna(np.nan).replace({np.nan: None})
 
     # Read program logs
-    if "program_log_path" in config and config["program_log_path"]:
+    if config["program_log_path"]:
         program_logs = []
         for file in glob(config["program_log_path"] + "*.csv"):
-            df_temp = pd.read_csv(file)
+            df_temp = pd.read_csv(file, dtype={"mission": str})
             df_temp.insert(0, "program", os.path.basename(file)[:-4])
             program_logs += [df_temp]
         config["program_log"] = pd.concat(program_logs)
@@ -119,16 +118,12 @@ def read_config(config_file: str = DEFAULT_CONFIG_PATH, institute=None) -> dict:
 
     # Attribute mapping corrections
     config["attribute_mapping_corrections"] = {}
-    if "attribute_mapping_corrections_files" in config:
-        for file in config["attribute_mapping_corrections_files"]:
-            with open(file, encoding="utf-8") as f:
-                config["attribute_mapping_corrections"].update(json.load(f))
+    for file in config["attribute_mapping_corrections_files"]:
+        with open(file, encoding="utf-8") as f:
+            config["attribute_mapping_corrections"].update(json.load(f))
 
     # File specific corrections
-    if (
-        "file_specific_attributes_path" in config
-        and config["file_specific_attributes_path"]
-    ):
+    if config["file_specific_attributes_path"]:
         with open(config["file_specific_attributes_path"], encoding="UTF-8") as f:
             config["file_specific_attributes"] = json.load(f)
     else:
@@ -137,8 +132,8 @@ def read_config(config_file: str = DEFAULT_CONFIG_PATH, institute=None) -> dict:
     return config
 
 
-def parse_odf(odf_path, config=None):
-    """Convert an ODF file to a netcdf.
+def parse_odf(odf_path, config=None, global_attributes=None):
+    """Convert an ODF file to an xarray object.
     Args:
         odf_path (str): path to ODF file to convert
         config (dictionary, optional): Conversion configuration to apply.
@@ -149,34 +144,20 @@ def parse_odf(odf_path, config=None):
     if config is None:
         config = read_config(DEFAULT_CONFIG_PATH)
 
+    if global_attributes:
+        config["global_attributes"].update(global_attributes)
+
     # Parse the ODF file with the CIOOS python parsing tool
     metadata, raw_data = odf_parser.read(odf_path)
+    dataset = raw_data.to_xarray()
 
     # Review ODF data type compatible with odf_transform
-    if metadata["EVENT_HEADER"]["DATA_TYPE"] not in [
-        "CTD",
-        "BT",
-        "BOTL",
-        "MCTD",
-        "XBT",
-        "MCM",
-        "MADCP",
-        "MMOB",
-        "MTC",
-        "MTG",
-        "TCTD",
-        "MTR",
-        "TSG",
-        "PLNKG",
-    ]:
+    if metadata["EVENT_HEADER"]["DATA_TYPE"] not in COMPATIBLE_ODF_TYPES:
         logger.warning(
             "ODF_transform is not yet compatible with ODF Data Type: %s",
             metadata["EVENT_HEADER"]["DATA_TYPE"],
         )
         return
-
-    # Convert to an xarray dataset
-    dataset = raw_data.to_xarray()
 
     # Write global and variable attributes
     dataset.attrs = config["global_attributes"]
@@ -192,16 +173,16 @@ def parse_odf(odf_path, config=None):
     # Handle ODF flag variables
     dataset = odf_parser.odf_flag_variables(dataset, config.get("flag_convention"))
 
-    # Generate geographical attributes
-    dataset = geospatial.generate_geospatial_attributes(dataset, config)
+    # Define coordinates variables from attributes, assign geographic_area and nearest stations
+    dataset = attributes.generate_coordinates_variables(dataset)
+    dataset = attributes.generate_spatial_attributes(dataset, config)
 
     # Add Vocabulary attributes
-    if "vocabulary" in config:
-        dataset = odf_parser.get_vocabulary_attributes(
-            dataset,
-            organizations=config["organisationVocabulary"],
-            vocabulary=config["vocabulary"],
-        )
+    dataset = odf_parser.get_vocabulary_attributes(
+        dataset,
+        organizations=config["organisationVocabulary"],
+        vocabulary=config["vocabulary"],
+    )
 
     # Fix flag variables with some issues to map
     dataset = odf_parser.fix_flag_variables(dataset)
@@ -220,68 +201,49 @@ def parse_odf(odf_path, config=None):
     # Add geospatial and geometry related global attributes
     # Just add spatial/time range as attributes
     initial_attrs = dataset.attrs.keys()
-    dataset = standardize_dataset(dataset)
+    dataset = standardize_dataset(dataset, utc=True)
     dropped_attrs = [var for var in initial_attrs if var not in dataset.attrs]
-    if "sampling_interval" in dropped_attrs:
+    if dropped_attrs:
         logger.info(f"Drop empty attributes: {dropped_attrs}")
 
     # Handle coordinates and dimensions
-    coordinates = ["measurement_time", "latitude", "longitude", "depth"]
+    coordinates = ["time", "latitude", "longitude", "depth"]
     dataset = dataset.set_coords([var for var in coordinates if var in dataset])
-    dimensions = [
-        {"cdm_data_type": "Profile", "variable": "depth"},
-        {"cdm_data_type": "Timeseries", "variable": "measurement_time"},
-    ]
-    for dimension in dimensions:
-        if (
-            dataset.attrs["cdm_data_type"] == dimension["cdm_data_type"]
-            and "index" in dataset
-            and dimension["variable"] in dataset
-        ):
-            dataset = dataset.swap_dims({"index": dimension["variable"]}).drop_vars(
-                "index"
-            )
+    if (
+        dataset.attrs["cdm_data_type"] == "Profile"
+        and "index" in dataset
+        and "depth" in dataset
+    ):
+        dataset = dataset.swap_dims({"index": "depth"}).drop_vars("index")
 
     # Log variables available per file
-    logger.debug(f"Variable List: {list(dataset)}")
-
+    logger.info(f"Variable List: {list(dataset)}")
     return dataset
 
 
-def save_parsed_odf_to_netcdf(dataset, odf_path, config):
-    """Saved parsed ODF file to netcdf file format based on the given configuration.
+def to_netcdf(odf_path, config=None, global_attributes=None):
+    """Parse ODF dataset to an xarray and save to Netcdf"""
 
-    Args:
-        dataset (xarray): Parsed Xarray Dataset
-        odf_path (str): Path to the original ODF file
-        config (dict): configuration used to save netcdf
-    """
+    # Parse odf to an xarray dataset
+    dataset = parse_odf(odf_path, config, global_attributes)
+    if dataset is None:
+        return
     # Save dataset to a NetCDF file
-    if "addFileNameSuffix" not in config:
-        config["addFileNameSuffix"] = ""
-    if "output_path" not in config or config["output_path"] is None:
+    if config["output_path"] is None:
         output_path = odf_path + config["addFileNameSuffix"] + ".nc"
     else:
         # Retrieve subfolder path
-        subfolders = [
-            dataset.attrs.get(key, default)
-            for key, default in config.get(
-                "subfolder_attribute_output_path", {}
-            ).items()
-            if dataset.attrs.get(key, default)
-        ]
         output_path = os.path.join(
             config["output_path"],
-            *subfolders,
+            eval('f"{}"'.format("".join(config["subfolder_path"]))),
             os.path.basename(odf_path) + config["addFileNameSuffix"] + ".nc",
         )
 
     # Review if output path folders exists if not create them
     dirname = os.path.dirname(output_path)
-    if dirname != "":
-        if not os.path.isdir(dirname):
-            logger.info(f"Generate output directory: {output_path}")
-            os.makedirs(dirname)
+    if not os.path.isdir(dirname):
+        logger.info(f"Generate output directory: {output_path}")
+        os.makedirs(dirname)
 
     dataset.to_netcdf(output_path)
 
@@ -297,7 +259,7 @@ def odf_to_netcdf_with_log(inputs):
     odf_parser.logger.extra.update(log)
     logger.extra.update(log)
     try:
-        parse_odf(*inputs)
+        odf_to_netcdf(*inputs)
     except Exception:
         logger.error("Conversion failed!!!", exc_info=True)
 
@@ -346,6 +308,9 @@ def run_odf_conversion_from_config(config):
             < os.path.getmtime(file)
         ]
 
+    def _get_mission_from_bio_filename(file):
+        return os.path.basename(file).split("_")[1]
+
     def _generate_input_by_program(files, config):
         """Generate mission specific input to apply for the conversion
 
@@ -356,28 +321,63 @@ def run_odf_conversion_from_config(config):
         Returns:
             list: list of inputs used for each files [(file_path, file_specific_configuration),...]
         """
+
         logger.info(
             "Generate Mission Specific Configuration for %s files associated with %s missions",
             len(files),
             len(config["program_log"]),
         )
-        inputs = []
-        tqdm_dict = {
-            "desc": "Generate mission specific configuration",
-            "total": len(config["program_log"]),
-        }
-        for mission, row in tqdm(
-            config["program_log"].set_index("mission", drop=False).iterrows(),
-            **tqdm_dict,
-        ):
-            related_files = [
-                file for file in odf_files_list if re.search(mission, file)
+
+        df_files = pd.DataFrame({"files": files})
+        df_files["mission"] = df_files["files"].apply(_get_mission_from_bio_filename)
+        program_log = config["program_log"].set_index("mission")
+
+        # match mission to program_log by exact terms
+        logger.info("Match file by mission with extact term")
+        files_matched = pd.merge(
+            df_files, config["program_log"], on="mission", how="left"
+        ).set_index("mission", drop=False)
+
+        # tries to match unmatched missions left using regexp
+        logger.info("Match file by mission using regex")
+        for mission in set(files_matched.query("program.isna()").index):
+            matched_mission_expression = [
+                expr
+                for expr in config["program_log"]["mission"]
+                if re.match(expr, mission)
             ]
-            if related_files:
-                mission_config = copy.deepcopy(config)
-                mission_config["global_attributes"].update(dict(row.dropna()))
-                inputs += [(file, mission_config) for file in related_files]
-        return inputs
+            if not matched_mission_expression:
+                logger.warning(
+                    "No program_log entry available for mission: %s", mission
+                )
+                continue
+            elif len(matched_mission_expression) > 1:
+                logger.warning(
+                    "Multiple entry in program_log %s match this mission: %s",
+                    matched_mission_expression,
+                    mission,
+                )
+            files_matched.loc[mission, program_log.columns] = program_log.loc[
+                matched_mission_expression[0]
+            ].tolist()
+
+        # flag what's left
+        files_unmatched = files_matched.query("program.isna()")
+        if not files_unmatched.empty:
+            logger.warning(
+                "%s odf files aren't matched to any provided missions",
+                len(files_unmatched),
+            )
+            with open("unmatched_odfs.txt", "w", encoding="UTF-8") as file_handle:
+                file_handle.write("\n".join(files_matched["files"]))
+
+        # Generate inputs to conversion tool
+        return [
+            (file, config, attrs.dropna().to_dict())
+            for file, attrs in files_matched.query("program.notna()")
+            .set_index("files")
+            .iterrows()
+        ]
 
     # Parse config file if file is given
     if isinstance(config, str):
@@ -390,7 +390,7 @@ def run_odf_conversion_from_config(config):
         recursive=config["recursive"],
     )
     # Consider only files with specific expressions
-    if "pathRegex" in config and config["pathRegex"]:
+    if config["pathRegex"]:
         odf_files_list = [
             file for file in odf_files_list if re.match(config["pathRegex"], file)
         ]
@@ -398,21 +398,6 @@ def run_odf_conversion_from_config(config):
 
     # Review keep files that needs an update only
     output_path = config["output_path"]
-
-    if config["program_log"] is not None:
-        # Consider only files related to missions available in the program_log
-        missions = config["program_log"]["mission"].values
-        # Review first if any files are matching a specific mission
-        files_list = ", ".join(odf_files_list)
-        for _, row in config["program_log"].iterrows():
-            if re.search(row["mission"], files_list) is None:
-                logger.warning(
-                    "No file available is related to program_log input %s",
-                    row.dropna().to_dict(),
-                )
-        odf_files_list = [
-            file for file in odf_files_list if re.search("|".join(missions), file)
-        ]
 
     # Sort files that needs to be converted
     if config["overwrite"]:
@@ -430,11 +415,10 @@ def run_odf_conversion_from_config(config):
         inputs = [(file, config) for file in odf_files_list]
 
     # Review input list
-    if inputs:
-        logger.info(f"{len(inputs)} files will be converted")
-    else:
+    if not inputs:
         logger.info("No file to convert")
         quit()
+    logger.info(f"{len(inputs)} files will be converted")
 
     tqdm_dict = {
         "total": len(inputs),

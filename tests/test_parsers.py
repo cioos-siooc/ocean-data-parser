@@ -286,7 +286,7 @@ class TestODFMLIParser:
         "file",
         [
             file
-            for datatype in ["MCM", "MCTD", "MMOB", "MTC", "MTG", "MTR", "TCTD"]
+            for datatype in ("MCM", "MCTD", "MMOB", "MTC", "MTG", "MTR")
             for file in glob(
                 f"tests/parsers_test_files/dfo/odf/mli/**/{datatype}*.ODF",
                 recursive=True,
@@ -299,10 +299,14 @@ class TestODFMLIParser:
 
     @pytest.mark.parametrize(
         "file",
-        glob(
-            "tests/parsers_test_files/dfo/odf/mli/**/TSG*.ODF",
-            recursive=True,
-        ),
+        [
+            file
+            for datatype in ("TCTD", "TSG")
+            for file in glob(
+                f"tests/parsers_test_files/dfo/odf/mli/**/{datatype}*.ODF",
+                recursive=True,
+            )
+        ],
     )
     def test_mli_odf_parser_trajectory(self, file):
         """Test DFO BIO ODF Parser"""

@@ -60,8 +60,12 @@ def _convert_odf_time(time_string, time_zone=timezone.utc):
     elif re.match(r"\d\d-\w\w\w-\d\d\d\d\s*\d\d\:\d\d\:\d\d", time_string):
         time = datetime.strptime(time_string, r"%d-%b-%Y %H:%M:%S") + delta_time
     else:
-        logger.warning("Unknown time format: %s", time_string)
-        time = pd.to_datetime(time_string).to_pydatetime() + delta_time
+        try:
+            logger.warning("Unknown time format: %s", time_string)
+            time = pd.to_datetime(time_string).to_pydatetime() + delta_time
+        except ValueError:
+            logger.error("Failed to parse time: %s", time_string)
+            return time_string
     return time.replace(tzinfo=time_zone)
 
 
@@ -541,11 +545,9 @@ def get_vocabulary_attributes(ds, organizations=None, vocabulary=None):
         # If nothing matches, move to the next one
         if matching_terms.empty:
             logger.warning(
-                "No matching vocabulary term is available for variable %s: %s and instrument: {'type':%s,'model':%s}",
+                "No matching vocabulary term is available for variable %s: %s",
                 gf3.name,
                 ds[var].attrs,
-                ds.attrs.get("instrument_type"),
-                ds.attrs.get("instrument_model"),
             )
             new_variable_order.append(var)
             continue
@@ -570,12 +572,10 @@ def get_vocabulary_attributes(ds, organizations=None, vocabulary=None):
         # No matching term, give a warning if not a flag and move on to the next iteration
         if len(matching_terms_and_units) == 0:
             logger.warning(
-                "No Matching unit found in vocabulary %s for code: %s: %s and odf instrument: {'type':%s,'model':%s}",
+                "No Matching unit found for code: %s: %s in vocabulary %s",
                 var,
                 ({att: ds[var].attrs[att] for att in ["long_name", "units"]}),
                 selected_organization,
-                ds.attrs.get("instrument_type"),
-                ds.attrs.get("instrument_model"),
             )
             new_variable_order.append(var)
             continue
@@ -615,13 +615,25 @@ def get_vocabulary_attributes(ds, organizations=None, vocabulary=None):
                                 input_args.append(ds[item])
                             else:
                                 input_args.append(item)
-
-                    ds[new_variable] = xr.apply_ufunc(
-                        eval(row["apply_function"]), *tuple(input_args), keep_attrs=True
-                    )
-                    ds.attrs["history"] += history_input(
-                        f"Add Parameter: {new_variable} = {row['apply_function']}"
-                    )
+                    if [
+                        arg
+                        for arg in input_args
+                        if isinstance(arg, str) and arg == "latitude"
+                    ]:
+                        logger.warning(
+                            "latitude is missing from data. %s will be ignored",
+                            row["apply_function"],
+                        )
+                        continue
+                    else:
+                        ds[new_variable] = xr.apply_ufunc(
+                            eval(row["apply_function"]),
+                            *tuple(input_args),
+                            keep_attrs=True,
+                        )
+                        ds.attrs["history"] += history_input(
+                            f"Add Parameter: {new_variable} = {row['apply_function']}"
+                        )
                 else:
                     ds[new_variable] = ds[var].copy()
                     if var != new_variable:
