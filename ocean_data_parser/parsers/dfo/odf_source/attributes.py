@@ -9,6 +9,7 @@ import re
 from datetime import datetime, timezone
 from difflib import get_close_matches
 import os
+from pathlib import Path
 
 import pandas as pd
 
@@ -16,13 +17,12 @@ from ocean_data_parser.parsers.seabird import (
     get_seabird_instrument_from_header,
     get_seabird_processing_history,
 )
-from ocean_data_parser.geo import get_geo_code, get_nearest_station
+from ocean_data_parser.vocabularies.load import dfo_platforms
 
-no_file_logger = logging.getLogger(__name__)
-logger = logging.LoggerAdapter(no_file_logger, {"file": None})
+logger = logging.getLogger(__name__)
 
 stationless_programs = ("Maritime Region Ecosystem Survey",)
-
+reference_platforms = dfo_platforms()
 section_prefix = {
     "EVENT_HEADER": "event_",
     "INSTRUMENT_HEADER": "instrument_",
@@ -37,7 +37,7 @@ global_odf_to_cf = {
 }
 
 
-def _generate_platform_attributes(platform, reference_platforms):
+def _generate_platform_attributes(platform):
     """Review ODF CRUISE_HEADER:PLATFORM and match to closest"""
     if reference_platforms is None:
         return {}
@@ -407,10 +407,7 @@ def global_attributes_from_header(dataset, odf_header, config=None):
             "original_odf_header_json": json.dumps(
                 odf_header, ensure_ascii=False, indent=False, default=str
             ),
-            **_generate_platform_attributes(
-                odf_header["CRUISE_HEADER"]["PLATFORM"],
-                config.get("reference_platforms"),
-            ),
+            **_generate_platform_attributes(odf_header["CRUISE_HEADER"]["PLATFORM"]),
             **_define_cdm_data_type_from_odf(odf_header),
             **config["global_attributes"],
             **_get_file_specific_attributes(),
@@ -455,7 +452,7 @@ def generate_coordinates_variables(dataset):
     """
     if "cdm_data_type" not in dataset.attrs:
         logging.error("No cdm_data_type attribute")
-        
+
     if dataset.attrs["cdm_data_type"] in ("Profile", "Point"):
         dataset["time"] = (
             [],

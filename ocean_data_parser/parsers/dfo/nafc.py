@@ -22,17 +22,15 @@ import pandas as pd
 import xarray as xr
 
 from ocean_data_parser.parsers.utils import standardize_dataset
+from ocean_data_parser.vocabularies.load import (
+    dfo_nafc_p_file_vocabulary,
+    dfo_platforms,
+)
 
 logger = logging.getLogger(__name__)
 MODULE_PATH = Path(__file__).parent
-p_file_vocabulary = pd.read_csv(
-    MODULE_PATH / ".." / "vocabularies" / "dfo_p_files_vocabulary.csv"
-).replace({"variable_name": {np.nan: None}})
-p_file_shipcode = pd.read_csv(
-    MODULE_PATH / ".." / "vocabularies" / "dfo_platform.csv",
-    skiprows=[1],
-    dtype={"wmo_platform_code": str},
-).set_index("dfo_newfoundland_ship_code")
+p_file_vocabulary = dfo_nafc_p_file_vocabulary()
+p_file_shipcode = dfo_platforms(index="dfo_newfoundland_ship_code")
 # nafc_instruments = pd.read_csv(
 #     MODULE_PATH / ".." / "vocabularies" / "dfo_nafc_instruments.csv"
 # ).set_index("instrument_id")
@@ -286,7 +284,7 @@ def pfile(
         # TODO confirm that 5+12 character width is constant
         ds = pd.read_csv(
             file_handle,
-            sep="\s+",
+            sep=r"\s+",
             engine="python",
             names=names,
             dtype={name: _get_dtype(name) for name in names},

@@ -43,6 +43,7 @@ logger.add(
     format="{time}|{level}|{file.path}:{line}| {extra[source_file]} - {message}",
 )
 
+
 # Redirect logging loggers to loguru
 class InterceptHandler(logging.Handler):
     """
@@ -149,7 +150,6 @@ class BatchConversion:
         return read.load_parser(self.config["parser"])
 
     def _convert(self, files: list) -> list:
-
         # Load parser and generate inputs to conversion scripts
         parser = self._get_parser()
         inputs = ((file, parser, self.config) for file in files)
