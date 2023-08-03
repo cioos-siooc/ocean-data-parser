@@ -278,7 +278,7 @@ def read(filename, encoding_format="Windows-1252"):
     return metadata, dataset
 
 
-def get_vocabulary_attributes(
+def add_vocabulary_attributes(
     ds,
     organizations=None,
     add_attributes_existing_variables=True,
@@ -289,7 +289,7 @@ def get_vocabulary_attributes(
     matching vocabulary terms available.
     """
 
-    def _add_reference_scale():
+    def _add_scale_attribute():
         """Retrieve scale information from  either units or long_name"""
         scales = {
             "IPTS-48": r"IPTS\-48",
@@ -400,7 +400,7 @@ def get_vocabulary_attributes(
             continue
 
         # Retrieve standardize units and scale
-        _add_reference_scale()
+        _add_scale_attribute()
         matching_terms = _get_matching_vocabularies()
 
         # If nothing matches, move to the next one
