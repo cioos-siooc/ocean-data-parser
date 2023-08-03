@@ -106,14 +106,8 @@ def parse_odf(
         dataset = seabird.update_attributes_from_seabird_header(
             dataset, dataset.attrs["instrument_manufacturer_header"]
         )
-
-    # Add geospatial and geometry related global attributes
-    # Just add spatial/time range as attributes
-    initial_attrs = dataset.attrs.keys()
+    # Standardize
     dataset = standardize_dataset(dataset, utc=True)
-    dropped_attrs = [var for var in initial_attrs if var not in dataset.attrs]
-    if "sampling_interval" in dropped_attrs:
-        logger.info(f"Drop empty attributes: {dropped_attrs}")
 
     # Handle coordinates and dimensions
     coordinates = ["measurement_time", "latitude", "longitude", "depth"]
