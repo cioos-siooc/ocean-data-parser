@@ -30,14 +30,14 @@ FLAG_CONVENTION = {
         "standard_name": "status_flag",
         "coverage_content_type": "qualityInformation",
         "ioos_category": "Quality",
-        "flag_values": [0, 1],
+        "flag_values": np.array([0, 1]).astype(FLAG_DTYPE),
         "flag_meanings": "undefined undefined",
     },
     "FFFF_01": {
         "standard_name": "status_flag",
         "coverage_content_type": "qualityInformation",
         "ioos_category": "Quality",
-        "flag_values": [0, 1],
+        "flag_values": np.array([0, 1]).astype(FLAG_DTYPE),
         "flag_meanings": "undefined undefined",
     },
 }
