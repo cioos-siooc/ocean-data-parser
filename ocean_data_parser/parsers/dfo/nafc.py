@@ -30,7 +30,7 @@ from ocean_data_parser.vocabularies.load import (
 logger = logging.getLogger(__name__)
 MODULE_PATH = Path(__file__).parent
 p_file_vocabulary = dfo_nafc_p_file_vocabulary()
-p_file_shipcode = dfo_platforms(index="dfo_newfoundland_ship_code")
+p_file_shipcode = dfo_platforms()
 # nafc_instruments = pd.read_csv(
 #     MODULE_PATH / ".." / "vocabularies" / "dfo_nafc_instruments.csv"
 # ).set_index("instrument_id")
@@ -178,8 +178,8 @@ def _parse_channel_stats(lines: list) -> dict:
 
 def _get_ship_code_metadata(shipcode: Union[int, str]) -> dict:
     shipcode = f"{shipcode:02g}" if isinstance(shipcode, int) else shipcode
-    if shipcode in p_file_shipcode.index:
-        return p_file_shipcode.loc[shipcode].to_dict()
+    if p_file_shipcode["dfo_newfoundland_ship_code"].str.match(shipcode).any():
+        return p_file_shipcode.query(f"dfo_newfoundland_ship_code == '{shipcode}'").iloc[0].to_dict()
     logger.warning("Unknown p-file shipcode=%s", shipcode)
     return {}
 

@@ -23,11 +23,11 @@ def seabird_vocabulary() -> dict:
     return vocabulary
 
 
-def dfo_platforms(index="platform_name") -> pd.DataFrame:
+def dfo_platforms() -> pd.DataFrame:
     return pd.read_csv(
         VOCABULARIES_DIRECTORY / "dfo_platforms.csv",
-        dtype={"wmo_platform_code": "string"},
-    ).set_index(index)
+        dtype={"wmo_platform_code": 'string' ,"dfo_newfoundland_ship_code": "string"},
+    )
 
 
 def dfo_odf_vocabulary() -> pd.DataFrame:
