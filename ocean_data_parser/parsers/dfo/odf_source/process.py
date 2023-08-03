@@ -3,11 +3,11 @@ import logging
 import re
 from pathlib import Path
 
-from ocean_data_parser.parsers.dfo.odf_source import attributes, flags, parser as odf_parser
-from ocean_data_parser._version import __version__
 import ocean_data_parser.parsers.seabird as seabird
+from ocean_data_parser._version import __version__
+from ocean_data_parser.parsers.dfo.odf_source import attributes, flags
+from ocean_data_parser.parsers.dfo.odf_source import parser as odf_parser
 from ocean_data_parser.parsers.utils import standardize_dataset
-
 
 no_file_logger = logging.getLogger(__name__)
 logger = logging.LoggerAdapter(no_file_logger, {"file": None})

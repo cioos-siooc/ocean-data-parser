@@ -19,7 +19,6 @@ from pyexpat import ExpatError
 from ocean_data_parser.parsers.utils import convert_datetime_str, standardize_dataset
 from ocean_data_parser.vocabularies.load import seabird_vocabulary
 
-
 SBE_TIME_FORMAT = "%b %d %Y %H:%M:%S"  # Jun 23 2016 13:51:30
 var_dtypes = {
     "date": str,

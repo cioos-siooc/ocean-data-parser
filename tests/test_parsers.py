@@ -8,8 +8,8 @@ from glob import glob
 import pandas as pd
 import pytest
 import xarray as xr
-from ocean_data_parser import read
 
+from ocean_data_parser import read
 from ocean_data_parser.parsers import (
     amundsen,
     dfo,
@@ -308,7 +308,7 @@ class TestODFBIOParser:
 class TestODFMLIParser:
     @pytest.mark.parametrize(
         "file",
-         [
+        [
             file
             for datatype in ("BOTL", "BT", "CTD")
             for file in glob(

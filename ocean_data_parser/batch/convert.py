@@ -18,7 +18,7 @@ from ocean_data_parser import geo, process, read
 from ocean_data_parser._version import __version__
 from ocean_data_parser.batch.config import load_config
 from ocean_data_parser.batch.registry import FileConversionRegistry
-from ocean_data_parser.batch.utils import generate_output_path, VariableLevelLogger
+from ocean_data_parser.batch.utils import VariableLevelLogger, generate_output_path
 from ocean_data_parser.parsers import utils
 
 MODULE_PATH = Path(__file__).parent

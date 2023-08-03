@@ -366,33 +366,31 @@ def global_attributes_from_header(dataset, odf_header):
 
     # Generate Global attributes
     dataset.attrs = {
-            # CRUISE_HEADER
-            **{
-                f"cruise_{name.lower()}"
-                if name in ("START_DATE", "END_DATE", "CHIEF_SCIENTIST")
-                else name.lower(): value
-                for name, value in odf_header["CRUISE_HEADER"].items()
-            },
-            # EVENT_HEADER
-            **{
-                name.lower()
-                if name.startswith("EVENT")
-                else f"event_{name}".lower(): value
-                for name, value in odf_header["EVENT_HEADER"].items()
-            },
-            # INSTRUMENT_HEADER
-            **{
-                f"instrument_{name.replace('inst_','')}".lower(): value
-                for name, value in odf_header.get("INSTRUMENT_HEADER", {}).items()
-            },
-            **_generate_cf_history_from_odf(odf_header),
-            "original_odf_header": "\n".join(odf_header["original_header"]),
-            "original_odf_header_json": json.dumps(
-                odf_header, ensure_ascii=False, indent=False, default=str
-            ),
-            **_generate_platform_attributes(odf_header["CRUISE_HEADER"]["PLATFORM"]),
-            **_define_cdm_data_type_from_odf(odf_header),
-            **dataset.attrs
+        # CRUISE_HEADER
+        **{
+            f"cruise_{name.lower()}"
+            if name in ("START_DATE", "END_DATE", "CHIEF_SCIENTIST")
+            else name.lower(): value
+            for name, value in odf_header["CRUISE_HEADER"].items()
+        },
+        # EVENT_HEADER
+        **{
+            name.lower() if name.startswith("EVENT") else f"event_{name}".lower(): value
+            for name, value in odf_header["EVENT_HEADER"].items()
+        },
+        # INSTRUMENT_HEADER
+        **{
+            f"instrument_{name.replace('inst_','')}".lower(): value
+            for name, value in odf_header.get("INSTRUMENT_HEADER", {}).items()
+        },
+        **_generate_cf_history_from_odf(odf_header),
+        "original_odf_header": "\n".join(odf_header["original_header"]),
+        "original_odf_header_json": json.dumps(
+            odf_header, ensure_ascii=False, indent=False, default=str
+        ),
+        **_generate_platform_attributes(odf_header["CRUISE_HEADER"]["PLATFORM"]),
+        **_define_cdm_data_type_from_odf(odf_header),
+        **dataset.attrs,
     }
     # Apply global attributes corrections
     dataset.attrs.update(

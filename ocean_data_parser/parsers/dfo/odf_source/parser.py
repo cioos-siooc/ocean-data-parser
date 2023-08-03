@@ -462,12 +462,17 @@ def add_vocabulary_attributes(
             continue
 
         # Generate vocabulary variables
-        comment = ''
+        comment = ""
         variable_order += matching_terms["variable_name"].tolist()
         locals = {"gsw": gsw, "x": ds[var], **{item: ds[item] for item in ds.variables}}
-        if "latitude" not in ds and "longitude" not in ds and "LATD_01" in ds and "LOND_01" in ds:
-            locals['latitude'] = ds['LATD_01']
-            locals['longitude'] = ds['LOND_01']
+        if (
+            "latitude" not in ds
+            and "longitude" not in ds
+            and "LATD_01" in ds
+            and "LOND_01" in ds
+        ):
+            locals["latitude"] = ds["LATD_01"]
+            locals["longitude"] = ds["LOND_01"]
             comment += " LATD_01 is used as latitude, LOND_01 is used as longitude"
         new_variables_mapping.update(
             {

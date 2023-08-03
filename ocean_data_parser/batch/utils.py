@@ -1,10 +1,10 @@
+import re
 from io import StringIO
 from pathlib import Path
 from typing import Union
+
 import pandas as pd
 import xarray
-import re
-
 from loguru import logger
 
 

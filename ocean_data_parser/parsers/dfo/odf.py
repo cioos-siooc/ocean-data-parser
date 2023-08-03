@@ -14,9 +14,7 @@ import xarray
 from odf_transform.process import odf_to_xarray
 from odf_transform.process import read_config as cioos_odf_config
 
-from ocean_data_parser.parsers.dfo.odf_source.process import (
-    parse_odf,
-)
+from ocean_data_parser.parsers.dfo.odf_source.process import parse_odf
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +57,7 @@ bio_global_attributes = {
     "creator_country": "Canada",
     "creator_sector": "gov_federal",
     "creator_url": "https://www.bio.gc.ca/",
-    "creator_type": "institution"
+    "creator_type": "institution",
 }
 
 
