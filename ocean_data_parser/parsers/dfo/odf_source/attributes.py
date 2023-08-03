@@ -35,7 +35,7 @@ global_odf_to_cf = {
 }
 
 
-def _generate_platform_attributes(platform):
+def _generate_platform_attributes(platform: str) -> dict:
     """Review ODF CRUISE_HEADER:PLATFORM and match to closest"""
     if reference_platforms is None:
         return {}
@@ -49,7 +49,7 @@ def _generate_platform_attributes(platform):
     return {}
 
 
-def _generate_cf_history_from_odf(odf_header):
+def _generate_cf_history_from_odf(odf_header) -> dict:
     """
     Generate from ODF HISTORY_HEADER, CF recommended format history attribute.
     If a Seabird instrument csv header is provided, it will be converted to a CF standard and
@@ -119,7 +119,7 @@ def _generate_cf_history_from_odf(odf_header):
     return history
 
 
-def _define_cdm_data_type_from_odf(odf_header):
+def _define_cdm_data_type_from_odf(odf_header:dict) -> dict:
     """Generate cdm_data_type attributes based on the odf data_type attribute."""
     # Derive cdm_data_type from DATA_TYPE
     odf_data_type = odf_header["EVENT_HEADER"]["DATA_TYPE"]
@@ -165,7 +165,7 @@ def _define_cdm_data_type_from_odf(odf_header):
     return attributes
 
 
-def _review_event_number(global_attributes, odf_header):
+def _review_event_number(global_attributes, odf_header) -> int:
     """Review event_number which should be number otherwise get rid of it"""
     # If interger already return that same value
     if isinstance(global_attributes["event_number"], int):
@@ -189,7 +189,7 @@ def _review_event_number(global_attributes, odf_header):
     )
 
 
-def _standardize_station_names(station):
+def _standardize_station_names(station: str) -> str:
     """
     Standardize stations with convention:
         - ABC01: capital letters two digits
