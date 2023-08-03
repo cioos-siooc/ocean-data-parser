@@ -69,7 +69,17 @@ def _float(value: str, null_values=None) -> float:
 def _get_dtype(var: str):
     return int if var == "scan" else float
 
+def soft_catch_errors(function):
+    def wrap(*args,**kwargs):
+        try: 
+            value = function(*args,**kwargs)
+            return value
+        except ValueError:
+            logger.error("Failed to parse %s", function.__name__, exc_info=True)
+            return {}
+    return wrap
 
+@soft_catch_errors
 def _parse_pfile_header_line1(line: str) -> dict:
     """Parse first row of the p file format which contains location and instrument information."""
     return dict(
@@ -91,7 +101,7 @@ def _parse_pfile_header_line1(line: str) -> dict:
         card_1_id=line[79],
     )
 
-
+@soft_catch_errors
 def _parse_pfile_header_line2(line: str) -> dict:
     return dict(
         ship_code=line[:2],
@@ -121,7 +131,7 @@ def _parse_pfile_header_line2(line: str) -> dict:
         card_4_id=line[79],  # ,i1,4
     )
 
-
+@soft_catch_errors
 def _parse_pfile_header_line3(line: str) -> dict:
     """Parse P file 3 metadata line which present environment metadata"""
     return dict(

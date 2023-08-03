@@ -432,6 +432,21 @@ class TestDFOpFiles:
         response = dfo.nafc._parse_pfile_header_line3(line)
         assert isinstance(response, dict)
 
+    @pytest.mark.parametrize(
+        "line_parser",
+        [
+            "_parse_pfile_header_line1",
+            "_parse_pfile_header_line2",
+            "_parse_pfile_header_line3"
+        ],
+    )
+    def test_p_file_metadata_parser_line_failed(self,caplog, line_parser):
+        parser = getattr(dfo.nafc,line_parser)
+        response = parser("56001001 7 08 0a    0999.1 003.8       08 01 18 10 01                          8")
+        assert isinstance(response, dict)
+        assert not response
+        assert f"Failed to parse {line_parser}" in caplog.text
+
 
 class BlueElectricParsertest(unittest.TestCase):
     def test_blue_electric_csv_parser(self):
