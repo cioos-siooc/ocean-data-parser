@@ -42,9 +42,12 @@ def _generate_platform_attributes(platform: str) -> dict:
     platform = re.sub(
         r"CCGS_*\s*|CGCB\s*|FRV\s*|NGCC\s*|^_|MV\s*", "", platform
     ).strip()
-    matched_platform = get_close_matches(platform.lower(), reference_platforms.index)
+    matched_platform = get_close_matches(platform.lower(), reference_platforms['platform_name'])
     if matched_platform:
-        return reference_platforms.loc[matched_platform[0]].to_dict()
+        return {
+            reference_platforms.index.name: matched_platform[0],
+            **reference_platforms.loc[matched_platform[0]].to_dict()
+        }
     logger.warning("Unknown platform %s", platform)
     return {}
 
