@@ -1,18 +1,19 @@
 import logging
-
 from datetime import datetime, timezone
+
 import numpy as np
+import xarray as xr
 
 logger = logging.getLogger(__name__)
 
 FLAG_LONG_NAME_PREFIX = "Quality_Flag: "
+FLAG_DTYPE = "int32"
 FLAG_CONVENTION = {
     "default": {
-        "dtype": "int32",
         "standard_name": "status_flag",
         "coverage_content_type": "qualityInformation",
         "ioos_category": "Quality",
-        "flag_values": [0, 1, 2, 3, 4, 5, 9],
+        "flag_values": np.array([0, 1, 2, 3, 4, 5, 9]).astype(FLAG_DTYPE),
         "flag_meanings": " ".join(
             (
                 "not_evaluated",
@@ -26,7 +27,6 @@ FLAG_CONVENTION = {
         ),
     },
     "QCFF_01": {
-        "dtype": "int32",
         "standard_name": "status_flag",
         "coverage_content_type": "qualityInformation",
         "ioos_category": "Quality",
@@ -34,7 +34,6 @@ FLAG_CONVENTION = {
         "flag_meanings": "undefined undefined",
     },
     "FFFF_01": {
-        "dtype": "int32",
         "standard_name": "status_flag",
         "coverage_content_type": "qualityInformation",
         "ioos_category": "Quality",
@@ -48,19 +47,9 @@ def history_input(comment, date=datetime.now(timezone.utc)):
     """Genereate a CF standard history line: Timstamp comment"""
     return f"{date.strftime('%Y-%m-%dT%H:%M:%SZ')} {comment}\n"
 
-def odf_flag_variables(dataset):
-    """
-    odf_flag_variables handle the different conventions used within the ODF files
-    over the years and map them to the CF standards.
-    """
 
-    def _add_ancillary(ancillary, variable):
-        dataset[variable].attrs[
-            "ancillary_variables"
-        ] = f"{dataset[variable].attrs.get('ancillary_variables','')} {ancillary}".strip()
-        return dataset[variable]
-
-    # Loop through each variables and detect flag variables
+def rename_qqqq_flags(dataset: xr.Dataset) -> xr.Dataset:
+    """Convert QQQQ flags to Q{GF3} flag convention"""
     variables = list(dataset.variables)
 
     # Rename QQQQ flag convention
@@ -74,6 +63,20 @@ def odf_flag_variables(dataset):
         dataset.attrs["history"] += history_input(
             f"Rename QQQQ flags to QXXXX convention: {qqqq_flags}",
         )
+    return dataset
+
+
+def add_flag_attributes(dataset):
+    """
+    odf_flag_variables handle the different conventions used within the ODF files
+    over the years and map them to the CF standards.
+    """
+
+    def _add_ancillary(ancillary, variable):
+        dataset[variable].attrs[
+            "ancillary_variables"
+        ] = f"{dataset[variable].attrs.get('ancillary_variables','')} {ancillary}".strip()
+        return dataset[variable]
 
     # Add ancillary_variable attribute
     for variable in dataset.variables:
@@ -93,19 +96,15 @@ def odf_flag_variables(dataset):
             continue
 
         # Add flag convention attributes
+        dataset[variable] = dataset[variable].astype(FLAG_DTYPE)
         dataset[variable].attrs.update(
             FLAG_CONVENTION.get(variable, FLAG_CONVENTION["default"])
         )
-        dtype = dataset[variable].attrs.pop("dtype", dataset[variable].dtype)
-        dataset[variable] = dataset[variable].astype(dtype)
-        dataset[variable].attrs["flag_values"] = np.array(
-            dataset[variable].attrs["flag_values"]
-        ).astype(dtype)
         dataset[variable].attrs.pop("units", None)
     return dataset
 
 
-def fix_flag_variables(dataset):
+def fix_flag_variables(dataset: xr.Dataset) -> xr.Dataset:
     """Fix different issues related to flag variables within the ODFs."""
 
     def _replace_flag(dataset, flag_var, rename=None):
@@ -136,7 +135,7 @@ def fix_flag_variables(dataset):
                     "Multiple variables are affected by %s, I'm not sure how to rename it.",
                     flag_var,
                 )
-            rename = "Q" + related_variables_[0]
+            rename = f"Q{related_variables_[0]}"
 
         # Rename or drop flag variable
         if rename not in dataset:

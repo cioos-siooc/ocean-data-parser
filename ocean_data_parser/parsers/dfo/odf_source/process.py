@@ -79,13 +79,14 @@ def parse_odf(
     ] += f"# Convert ODF to NetCDF with cioos_data_trasform.odf_transform V {__version__}\n"
 
     # Handle ODF flag variables
-    dataset = flags.odf_flag_variables(dataset)
+    dataset = flags.rename_qqqq_flags(dataset)
+    dataset = flags.add_flag_attributes(dataset)
 
     # Generate geographical attributes
     dataset = attributes.generate_coordinates_variables(dataset)
 
     # Add Vocabulary attributes
-    dataset = odf_parser.get_vocabulary_attributes(
+    dataset = odf_parser.add_vocabulary_attributes(
         dataset,
         organizations=[institution, "GF3"],
         add_attributes_existing_variables=add_attributes_existing_variables,
