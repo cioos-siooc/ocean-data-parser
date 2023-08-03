@@ -24,9 +24,16 @@ def seabird_vocabulary() -> dict:
 
 
 def dfo_platforms() -> pd.DataFrame:
-    return pd.read_csv(
-        VOCABULARIES_DIRECTORY / "dfo_platforms.csv",
-        dtype={"wmo_platform_code": 'string' ,"dfo_newfoundland_ship_code": "string"},
+    return (
+        pd.read_csv(
+            VOCABULARIES_DIRECTORY / "dfo_platforms.csv",
+            dtype={
+                "wmo_platform_code": "string",
+                "dfo_newfoundland_ship_code": "string",
+            },
+        )
+        .astype(object)
+        .replace({pd.NA: None})
     )
 
 

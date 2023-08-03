@@ -42,12 +42,16 @@ def _generate_platform_attributes(platform: str) -> dict:
     platform = re.sub(
         r"CCGS_*\s*|CGCB\s*|FRV\s*|NGCC\s*|^_|MV\s*", "", platform
     ).strip()
-    matched_platform = get_close_matches(platform.lower(), reference_platforms['platform_name'])
+    matched_platform = get_close_matches(
+        platform.lower(), reference_platforms["platform_name"]
+    )
     if matched_platform:
-        return {
-            reference_platforms.index.name: matched_platform[0],
-            **reference_platforms.loc[matched_platform[0]].to_dict()
-        }
+        return (
+            reference_platforms.query(f"platform_name == '{matched_platform[0]}'")
+            .iloc[0]
+            .to_dict()
+        )
+
     logger.warning("Unknown platform %s", platform)
     return {}
 
@@ -122,7 +126,7 @@ def _generate_cf_history_from_odf(odf_header) -> dict:
     return history
 
 
-def _define_cdm_data_type_from_odf(odf_header:dict) -> dict:
+def _define_cdm_data_type_from_odf(odf_header: dict) -> dict:
     """Generate cdm_data_type attributes based on the odf data_type attribute."""
     # Derive cdm_data_type from DATA_TYPE
     odf_data_type = odf_header["EVENT_HEADER"]["DATA_TYPE"]

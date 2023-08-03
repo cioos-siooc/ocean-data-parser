@@ -179,7 +179,11 @@ def _parse_channel_stats(lines: list) -> dict:
 def _get_ship_code_metadata(shipcode: Union[int, str]) -> dict:
     shipcode = f"{shipcode:02g}" if isinstance(shipcode, int) else shipcode
     if p_file_shipcode["dfo_newfoundland_ship_code"].str.match(shipcode).any():
-        return p_file_shipcode.query(f"dfo_newfoundland_ship_code == '{shipcode}'").iloc[0].to_dict()
+        return (
+            p_file_shipcode.query(f"dfo_newfoundland_ship_code == '{shipcode}'")
+            .iloc[0]
+            .to_dict()
+        )
     logger.warning("Unknown p-file shipcode=%s", shipcode)
     return {}
 
