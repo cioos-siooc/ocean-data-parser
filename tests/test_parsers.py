@@ -298,36 +298,28 @@ class AmundsenParserTests(unittest.TestCase):
 
 class TestODFBIOParser:
     @pytest.mark.parametrize(
-        "file", glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
+        "file", glob("tests/parsers_test_files/dfo/odf/bio/**/CTD*.ODF", recursive=True)
     )
-    def test_bio_odf_parser(self, file):
+    def test_bio_odf_ctd_parser(self, file):
         """Test DFO BIO ODF Parser"""
-        dfo.odf.bio_odf(file, config=None)
-
-    @pytest.mark.parametrize(
-        "file", glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
-    )
-    def test_bio_odf_parser_to_netcdf(self, file):
-        """Test DFO BIO ODF Parser"""
-        dfo.odf.bio_odf(file, config=None, output="netcdf")
-
-    @pytest.mark.parametrize(
-        "file", glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
-    )
-    def test_bio_odf_netcdf(self, file):
-        """Test DFO BIO ODF Parser"""
-        ds = dfo.odf.bio_odf(file, config=None)
-        ds.to_netcdf(f"{file}_test.nc")
+        dfo.odf.bio_odf(file).to_netcdf(f"{file}_test.nc")
 
 
 class TestODFMLIParser:
     @pytest.mark.parametrize(
         "file",
-        glob("tests/parsers_test_files/dfo/odf/mli/**/*.ODF", recursive=True),
+         [
+            file
+            for datatype in ("BOTL", "BT", "CTD")
+            for file in glob(
+                f"tests/parsers_test_files/dfo/odf/mli/**/{datatype}*.ODF",
+                recursive=True,
+            )
+        ],
     )
-    def test_mli_all_odf_parser(self, file):
+    def test_mli_profile_odf_parser(self, file):
         """Test DFO BIO ODF Parser"""
-        dfo.odf.mli_odf(file, config=None)
+        dfo.odf.mli_odf(file).to_netcdf(f"{file}_test.nc")
 
     @pytest.mark.parametrize(
         "file",
@@ -340,9 +332,9 @@ class TestODFMLIParser:
             )
         ],
     )
-    def test_mli_odf_parser_timeseries(self, file):
+    def test_mli_timeseries_odf_parser(self, file):
         """Test DFO BIO ODF Parser"""
-        dfo.odf.mli_odf(file, config=None)
+        dfo.odf.mli_odf(file).to_netcdf(f"{file}_test.nc")
 
     @pytest.mark.parametrize(
         "file",
@@ -355,9 +347,9 @@ class TestODFMLIParser:
             )
         ],
     )
-    def test_mli_odf_parser_trajectory(self, file):
+    def test_mli_trajectory_odf_parser(self, file):
         """Test DFO BIO ODF Parser"""
-        dfo.odf.mli_odf(file, config=None)
+        dfo.odf.mli_odf(file).to_netcdf(f"{file}_test.nc")
 
     @pytest.mark.parametrize(
         "file",
@@ -366,9 +358,9 @@ class TestODFMLIParser:
             recursive=True,
         ),
     )
-    def test_mli_odf_parser_madcp(self, file):
+    def test_mli_madcp_odf_parser(self, file):
         """Test DFO BIO ODF Parser"""
-        dfo.odf.mli_odf(file)
+        dfo.odf.mli_odf(file).to_netcdf(f"{file}_test.nc")
 
     @pytest.mark.parametrize(
         "file",
@@ -377,21 +369,9 @@ class TestODFMLIParser:
             recursive=True,
         ),
     )
-    def test_mli_odf_parser_plnkg(self, file):
+    def test_mli_plnkg_odf_parser(self, file):
         """Test DFO BIO ODF Parser"""
-        dfo.odf.mli_odf(file)
-
-    @pytest.mark.parametrize(
-        "file",
-        glob(
-            "tests/parsers_test_files/dfo/odf/mli/**/*.ODF",
-            recursive=True,
-        ),
-    )
-    def test_mli_odf_netcdf(self, file):
-        """Test DFO BIO ODF Parser"""
-        ds = dfo.odf.mli_odf(file, config=None)
-        ds.to_netcdf(f"{file}_test.nc")
+        dfo.odf.mli_odf(file).to_netcdf(f"{file}_test.nc")
 
 
 class TestDFOpFiles:

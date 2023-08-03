@@ -8,8 +8,6 @@ import logging
 import re
 from datetime import datetime, timezone
 from difflib import get_close_matches
-import os
-from pathlib import Path
 
 import pandas as pd
 
@@ -300,7 +298,7 @@ def _generate_title_from_global_attributes(attributes):
             if "platform" in attributes
             else ""
         )
-        + f"by {attributes['organization']}  {attributes['institution']} "
+        + f"by {attributes['organization']} {attributes['institution']} "
         + f"on the {attributes['cruise_name'].title()} "
     )
     if (
@@ -360,29 +358,14 @@ def _map_odf_to_cf_globals(attrs):
     return {global_odf_to_cf.get(name, name): value for name, value in attrs.items()}
 
 
-def global_attributes_from_header(dataset, odf_header, config=None):
+def global_attributes_from_header(dataset, odf_header):
     """
     Method use to define the standard global attributes from an ODF Header
     parsed by the read function.
     """
 
-    def _get_attribute_mapping_corrections():
-        return {
-            attr: attr_mapping[dataset.attrs[attr]]
-            for attr, attr_mapping in config["attribute_mapping_corrections"].items()
-            if attr in dataset.attrs and dataset.attrs[attr] in attr_mapping
-        }
-
-    def _get_file_specific_attributes():
-        if not config.get("file_specific_attributes"):
-            return {}
-        return config["file_specific_attributes"].get(
-            os.path.basename(dataset.attrs["source"]), {}
-        )
-
     # Generate Global attributes
-    dataset.attrs.update(
-        {
+    dataset.attrs = {
             # CRUISE_HEADER
             **{
                 f"cruise_{name.lower()}"
@@ -409,10 +392,8 @@ def global_attributes_from_header(dataset, odf_header, config=None):
             ),
             **_generate_platform_attributes(odf_header["CRUISE_HEADER"]["PLATFORM"]),
             **_define_cdm_data_type_from_odf(odf_header),
-            **config["global_attributes"],
-            **_get_file_specific_attributes(),
-        }
-    )
+            **dataset.attrs
+    }
     # Apply global attributes corrections
     dataset.attrs.update(
         {
@@ -429,7 +410,6 @@ def global_attributes_from_header(dataset, odf_header, config=None):
         }
     )
     dataset.attrs = _map_odf_to_cf_globals(dataset.attrs)
-    dataset.attrs.update(_get_attribute_mapping_corrections())
 
     # Review ATTRIBUTES
     if isinstance(dataset.attrs.get("comments"), list):

@@ -9,9 +9,9 @@ import re
 from datetime import datetime, timezone
 
 import gsw_xarray as gsw
-import numpy as np
 import pandas as pd
-import xarray as xr
+
+from ocean_data_parser.vocabularies.load import dfo_odf_vocabulary
 
 no_file_logger = logging.getLogger(__name__)
 logger = logging.LoggerAdapter(no_file_logger, {"file": None})
@@ -27,6 +27,7 @@ odf_dtypes = {
     "QQQQ": "int32",
 }
 
+vocabulary = dfo_odf_vocabulary()
 vocabulary_attribute_list = [
     "long_name",
     "units",
@@ -43,7 +44,6 @@ vocabulary_attribute_list = [
 ]
 
 # Commonly date place holder used within the ODF file
-FLAG_LONG_NAME_PREFIX = "Quality_Flag: "
 ORIGINAL_PREFIX_VAR_ATTRIBUTE = "original_"
 
 
@@ -278,145 +278,9 @@ def read(filename, encoding_format="Windows-1252"):
     return metadata, dataset
 
 
-def odf_flag_variables(dataset, flag_convention=None):
-    """
-    odf_flag_variables handle the different conventions used within the ODF files
-    over the years and map them to the CF standards.
-    """
-
-    def _add_ancillary(ancillary, variable):
-        dataset[variable].attrs[
-            "ancillary_variables"
-        ] = f"{dataset[variable].attrs.get('ancillary_variables','')} {ancillary}".strip()
-        return dataset[variable]
-
-    # Loop through each variables and detect flag variables
-    variables = list(dataset.variables)
-
-    # Rename QQQQ flag convention
-    qqqq_flags = {
-        var: f"Q{variables[id-1]}"
-        for id, var in enumerate(variables)
-        if var.startswith("QQQQ")
-    }
-    if qqqq_flags:
-        dataset = dataset.rename(qqqq_flags)
-        dataset.attrs["history"] += history_input(
-            f"Rename QQQQ flags to QXXXX convention: {qqqq_flags}",
-        )
-
-    # Add ancillary_variable attribute
-    for variable in dataset.variables:
-        if variable.startswith(("QCFF", "FFFF")):
-            # add QCFF and FFFF as ancillary variables
-            # to all non flag variables
-            for var in dataset.variables:
-                if not var.startswith("Q"):
-                    _add_ancillary(variable, var)
-        elif variable.startswith("Q") and variable[1:] in dataset:
-            dataset[variable[1:]] = _add_ancillary(variable, variable[1:])
-            dataset[variable].attrs[
-                "long_name"
-            ] = f"Quality Flag for Parameter: {dataset[variable[1:]].attrs['long_name']}"
-        else:
-            # ignore normal variables
-            continue
-
-        # Add flag convention attributes
-        dataset[variable].attrs.update(
-            flag_convention.get(variable, flag_convention["default"])
-        )
-        dtype = dataset[variable].attrs.pop("dtype", dataset[variable].dtype)
-        dataset[variable] = dataset[variable].astype(dtype)
-        dataset[variable].attrs["flag_values"] = np.array(
-            dataset[variable].attrs["flag_values"]
-        ).astype(dtype)
-        dataset[variable].attrs.pop("units", None)
-    return dataset
-
-
-def fix_flag_variables(dataset):
-    """Fix different issues related to flag variables within the ODFs."""
-
-    def _replace_flag(dataset, flag_var, rename=None):
-        if flag_var not in dataset:
-            return dataset
-
-        # Find related variables to this flag
-        related_variables = [
-            var
-            for var in dataset.variables
-            if flag_var in dataset[var].attrs.get("ancillary_variables", "")
-        ]
-
-        # Update long_name if flag is related to only one variable
-        if len(related_variables) == 1:
-            dataset[flag_var].attrs["long_name"] = (
-                FLAG_LONG_NAME_PREFIX + dataset[related_variables[0]].attrs["long_name"]
-            )
-
-        # If no rename and affects only one variable. Name it Q{related_variable}
-        if rename is None:
-            # Ignore the original flag name
-            related_variables_ = [
-                var for var in related_variables if f"Q{var}" != flag_var
-            ]
-            if len(related_variables_) > 1:
-                logger.error(
-                    "Multiple variables are affected by %s, I'm not sure how to rename it.",
-                    flag_var,
-                )
-            rename = "Q" + related_variables_[0]
-
-        # Rename or drop flag variable
-        if rename not in dataset:
-            dataset = dataset.rename({flag_var: rename})
-        elif (
-            rename in dataset
-            and (dataset[flag_var].values != dataset[rename].values).any()
-        ):
-            logger.error(
-                "%s is different than %s flag. I'm not sure which one is the right one.",
-                flag_var,
-                rename,
-            )
-        elif (
-            rename in dataset
-            and (dataset[flag_var].values == dataset[rename].values).all()
-        ):
-            dataset = dataset.drop(flag_var)
-
-        # Update ancillary_variables attribute
-        for var in related_variables:
-            dataset[var].attrs["ancillary_variables"] = (
-                dataset[var].attrs["ancillary_variables"].replace(flag_var, rename)
-            )
-        return dataset
-
-    #  List of problematic flags that need to be renamed
-    temp_flag = {
-        "QTE90_01": "QTEMP_01",
-        "QTE90_02": "QTEMP_02",
-        "QFLOR_01": None,
-        "QFLOR_02": None,
-        "QFLOR_03": None,
-        "QCRAT_01": "QCNDC_01",
-        "QCRAT_02": "QCNDC_02",
-        "QTURB_01": None,
-        "QWETECOBB_01": None,
-        "QUNKN_01": None,
-        "QUNKN_02": None,
-    }
-    for flag, rename in temp_flag.items():
-        dataset = _replace_flag(dataset, flag, rename)
-
-    return dataset
-
-
 def get_vocabulary_attributes(
     ds,
     organizations=None,
-    vocabulary=None,
     add_attributes_existing_variables=True,
     generate_new_vocabulary_variables=True,
 ):
@@ -598,8 +462,13 @@ def get_vocabulary_attributes(
             continue
 
         # Generate vocabulary variables
+        comment = ''
         variable_order += matching_terms["variable_name"].tolist()
         locals = {"gsw": gsw, "x": ds[var], **{item: ds[item] for item in ds.variables}}
+        if "latitude" not in ds and "longitude" not in ds and "LATD_01" in ds and "LOND_01" in ds:
+            locals['latitude'] = ds['LATD_01']
+            locals['longitude'] = ds['LOND_01']
+            comment += " LATD_01 is used as latitude, LOND_01 is used as longitude"
         new_variables_mapping.update(
             {
                 var: f"with x={var} -> {item['apply_function']} = {item['variable_name']}"
@@ -630,6 +499,6 @@ def get_vocabulary_attributes(
             ds[variable].attrs = attrs
 
         ds.attrs["history"] += history_input(
-            f"Generate new vocabulary variables: {'; '.join(new_variables_mapping.values())}"
+            f"Generate new vocabulary variables: {'; '.join(new_variables_mapping.values())}; {comment}"
         )
     return ds[variable_order]

@@ -30,7 +30,11 @@ def dfo_platforms(index="platform_name") -> pd.DataFrame:
 
 
 def dfo_odf_vocabulary() -> pd.DataFrame:
-    return pd.read_csv(VOCABULARIES_DIRECTORY / "dfo_odf_vocabulary.csv")
+    return (
+        pd.read_csv(VOCABULARIES_DIRECTORY / "dfo_odf_vocabulary.csv")
+        .fillna(np.nan)
+        .replace({np.nan: None})
+    )
 
 
 def dfo_nafc_p_file_vocabulary() -> pd.DataFrame:
