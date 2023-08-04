@@ -183,7 +183,7 @@ class BatchConversion:
         """
         logger.info("Compile files to parse")
         source_files = glob(
-            self.config["input_path"], recursive=self.config.get("recursive")
+            self.config["input_path"], recursive=True
         )
         total_files = len(source_files)
         logger.info("{} files detected", len(source_files))
