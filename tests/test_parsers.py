@@ -107,8 +107,8 @@ def compare_test_to_reference_netcdf(
     # Convert unicode types to object (<U\d)
     for var in test.variables:
         if var in reference and (
-            re.fullmatch("<U\d+", str(test[var].dtype))
-            or re.fullmatch("<U\d+", str(reference[var].dtype))
+            re.fullmatch(r"<U\d+", str(test[var].dtype))
+            or re.fullmatch(r"<U\d+", str(reference[var].dtype))
         ):
             reference[var] = reference[var].astype(object)
             test[var] = test[var].astype(object)
