@@ -24,7 +24,7 @@ def _get_active_branch():
 
 def _compare_versions(from_branch, to_branch):
     version_difference_output = subprocess.run(
-        ["git", "diff", from_branch, to_branch, "ocean_data_parser/_version.py"],
+        ["git", "diff", f"origin/{from_branch}", f"origin/{to_branch}", "ocean_data_parser/_version.py"],
         capture_output=True,
     )
 
