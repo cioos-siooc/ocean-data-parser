@@ -61,7 +61,7 @@ def standardize_dataset(
             if all(
                 isinstance(item, type(value[0])) for item in value
             ) and not isinstance(value[0], str):
-                return np.array(value).astype(value[0])
+                return np.array(value).astype(type(value[0]))
             return value
         elif type(value) in (datetime, pd.Timestamp):
             return value.isoformat().replace("+00:00", "Z")
