@@ -149,9 +149,13 @@ def _parse_pfile_header_line3(line: str) -> dict:
         else None,  # in 10 degree steps (eg 270 is=27)
         wind_speed_knots=_int(line[14:16]),  # i2,knots s= cale
         ww_code=_int(line[17:19]),  # i2,
-        pressure_bars=_float(line[20:26], [-999.0]),  # pressure mil-= bars
-        air_dry_temp_celsius=_float(line[27:32], [-99.0]),  # f5.1,tem= p °C
-        air_wet_temp_celsius=_float(line[33:38], [-99.0, 99.9]),  # f5.1,tem= p °C
+        pressure_bars=_float(line[20:26], [-999.0, -999.9]),  # pressure mil-= bars
+        air_dry_temp_celsius=_float(
+            line[27:32], [-99.0, -99.9, 999.9]
+        ),  # f5.1,tem= p °C
+        air_wet_temp_celsius=_float(
+            line[33:38], [-99.0, 99.9, -99.9, 999.9]
+        ),  # f5.1,tem= p °C
         waves_period=_int(line[39:41]),  # i2,
         waves_height=_int(line[42:44]),  # i2,
         swell_dir=_int(line[45:47]) * 10 if line[45:47].strip() else None,  # i2,
