@@ -286,6 +286,7 @@ class FileConversionRegistry:
             .agg({"source": ["count", list]})
         )
         errors.columns = (" ".join(col) for col in errors.columns)
-        logger.info("The following errors were captured:\n%s", errors)
-        if output:
-            errors.to_csv(output)
+        if not errors.empty:
+            logger.info("The following errors were captured:\n%s", errors)
+            if output:
+                errors.to_csv(output)
