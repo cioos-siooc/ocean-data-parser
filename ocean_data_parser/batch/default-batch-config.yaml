@@ -5,7 +5,7 @@ overwrite: False
 multiprocessing: 1 # n processes to run [int]
 errors: "ignore"
 registry:
-  path: file_registry.csv
+  path: null
   since: null # pandas.Timedelta expression (ex: '24h') or datetime ('2022-01-01T00:00:00Z')
 
 sentry:
