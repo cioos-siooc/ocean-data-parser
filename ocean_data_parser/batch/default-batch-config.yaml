@@ -1,9 +1,9 @@
 # File input
-input_path: tests/parsers_test_files/onset/**/*.csv
+input_path: ""
 parser: null
 overwrite: False
 multiprocessing: 1 # n processes to run [int]
-errors: "raise"
+errors: "ignore"
 registry:
   path: file_registry.csv
   since: null # pandas.Timedelta expression (ex: '24h') or datetime ('2022-01-01T00:00:00Z')

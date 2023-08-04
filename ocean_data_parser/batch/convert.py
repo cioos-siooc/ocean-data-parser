@@ -77,6 +77,42 @@ classic_logger = logging.getLogger()
 
 
 @click.command()
+@click.argument("input_path", required=False)
+@click.option(
+    "-i",
+    "--input",
+    type=str,
+    help="Input path to file list. It can be a glob expression (ex: *.cnv)",
+)
+@click.option(
+    "--overwrite",
+    type=bool,
+    help="Overwrite already converted files when source file is changed.",
+)
+@click.option(
+    "--multiprocessing", type=int, help="Run conversion in parallel on N processors"
+)
+@click.option(
+    "-e",
+    "--errors",
+    type=click.Choice(["ignore", "raise"]),
+    help="Error hanlding method",
+)
+@click.option(
+    "--registry_path",
+    type=click.Path(),
+    help="File conversion registry path (*.csv or *.parquet)",
+)
+@click.option(
+    "--output_path",
+    type=click.Path(),
+    help="Output directory where to save converted files.",
+)
+@click.option(
+    "--output_file_name",
+    type=click.Path(),
+    help="Output file path where to save converted files.",
+)
 @click.option(
     "--config", "-c", type=click.Path(exists=True), help="Path to configuration file"
 )
@@ -85,7 +121,10 @@ classic_logger = logging.getLogger()
     type=click.Path(),
     help="Generate a new configuration file at the given path",
 )
-def cli_files(config=None, new_config=None):
+def cli_files(
+    input_path: str = None, config: str = None, new_config: bool = None, **kwargs
+):
+    """Run ocean-data-parser conversion on given files."""
     if new_config:
         new_config = Path(new_config)
         logger.info(
@@ -98,19 +137,42 @@ def cli_files(config=None, new_config=None):
             new_config.parent.mkdir(parents=True)
         shutil.copy(DEFAULT_CONFIG_PATH, new_config)
         return
+    
+    # Handle input
+    if input_path and kwargs.get('input'):
+        sys.exit(
+            f"ERROR! Two inputs were passed as arg = {input_path} and --input = {kwargs['input']}. "
+            "Use one input method only"
+        )
+    if not input_path and not kwargs.get('input') and not config:
+        sys.exit("ERROR! No file input provided.")
+    else:
+        kwargs["input_path"] = kwargs.pop("input", input_path)
 
-    logger.info("Run config={}", config)
-    BatchConversion(config=config).run()
+    kwargs = {key:value for key,value in kwargs.items() if value}
+    BatchConversion(config=config, **kwargs).run()
 
 
 class BatchConversion:
-    def __init__(self, config, registry=None, **kwargs):
+    def __init__(self, config=None, **kwargs):
+        output_kwarg = {
+            key[7:]: kwargs.pop(key)
+            for key in list(kwargs.keys())
+            if key.startswith("output_")
+        }
+        registry_kwarg = {
+            key[9:]: kwargs.pop(key)
+            for key in list(kwargs.keys())
+            if key.startswith("registry_")
+        }
         self.config = {
             **load_config(DEFAULT_CONFIG_PATH),
             **(load_config(config) if isinstance(config, str) else config or {}),
             **kwargs,
         }
-        self.registry = registry or FileConversionRegistry(**self.config["registry"])
+        self.config["output"].update(output_kwarg)
+        self.config["registry"].update(registry_kwarg)
+        self.registry = FileConversionRegistry(**self.config["registry"])
 
     def _get_source_files_to_parse(self) -> list:
         """Retrieve the list of source files that needs to be parsed
@@ -133,14 +195,18 @@ class BatchConversion:
         )
         self.registry.add(source_files)
 
-        # Ignore files already parsed
-        logger.info(
-            "Compare files with registry hashes and ignore already parsed files"
-        )
-        source_files = self.registry.get_source_files_to_parse(
-            overwrite=self.config.get("overwrite", "False")
-        )
-        logger.info("Detected {}/{} needs to be parse", len(source_files), total_files)
+        # If registry exist get list
+        if self.registry.path:
+            logger.info(
+                "Compare files with registry hashes and ignore already parsed files"
+            )
+            source_files = self.registry.get_source_files_to_parse(
+                overwrite=self.config["overwrite"]
+            )
+            logger.info(
+                "Detected {}/{} needs to be parse", len(source_files), total_files
+            )
+
         return source_files
 
     def _get_parser(self):
