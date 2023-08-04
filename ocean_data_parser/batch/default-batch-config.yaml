@@ -39,11 +39,11 @@ ioos_qc: {}
 manual_qc: {}
 
 # Outputs
-file_output:
+output:
   path: null
-  source: null
+  file_name: null
   file_preffix: ""
-  file_suffix: _test
+  file_suffix: ""
   output_format: .nc
 
 upload_to_database:

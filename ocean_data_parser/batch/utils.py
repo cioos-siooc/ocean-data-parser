@@ -10,12 +10,12 @@ from loguru import logger
 
 def generate_output_path(
     ds: xarray.Dataset,
-    source: str = None,
     path: Union[str, Path] = None,
-    defaults: dict = None,
+    file_name: str = None,
     file_preffix: str = "",
     file_suffix: str = "",
     output_format: str = ".nc",
+    defaults: dict = None,
 ) -> Path:
     """Generate output path where to save Dataset.
 
@@ -42,10 +42,9 @@ def generate_output_path(
 
     # handle defaults
     original_source = Path(ds.attrs.get("source")) if ds.attrs.get("source") else None
-    if source is None and original_source:
-        source = str(original_source.stem)
-
-    if source is None:
+    if file_name is None and original_source:
+        file_name = str(original_source.stem)
+    elif file_name is None:
         raise RuntimeError("No output source available. Please define source output.")
 
     if path is None and ds.attrs.get("source"):
@@ -83,19 +82,19 @@ def generate_output_path(
 
     # Generate path and file name
     output_path = Path(path.format(**path_generation_inputs))
-    source = source.format(**path_generation_inputs)
+    file_name = file_name.format(**path_generation_inputs)
 
     # Retrieve output_format if given in source
 
-    if "." in source and not output_format:
-        source, output_format = source.rsplit(".", 1)
+    if "." in file_name and not output_format:
+        file_name, output_format = file_name.rsplit(".", 1)
     assert (
         output_format
     ), "Unknown output file format extension: define the format through the path or output_format inputs"
 
     # Generate path
     return Path(output_path) / (
-        f"{file_preffix or ''}{source}{file_suffix or ''}{output_format}"
+        f"{file_preffix or ''}{file_name}{file_suffix or ''}{output_format}"
     )
 
 

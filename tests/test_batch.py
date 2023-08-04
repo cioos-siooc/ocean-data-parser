@@ -214,10 +214,28 @@ class TestBatchGenerateName:
         assert isinstance(name, Path)
         assert str(name) == "source_file.nc"
 
-    def test_generate_filename_with_path(self):
+    @pytest.mark.parametrize(
+        "input,expected_path",
+        (
+            ({"path": "output"}, "output/source_file.nc"),
+            ({"file_name": "test"}, "test.nc"),
+            ({"file_preffix": "test_"}, "test_source_file.nc"),
+            ({"file_suffix": "_test"}, "source_file_test.nc"),
+        ),
+    )
+    def test_generate_filename_with_unique_input(self, input, expected_path):
         name = generate_output_path(
             self._get_test_dataset(),
-            source="{organization}_{instrument}_test",
+            **input,
+            output_format=".nc",
+        )
+        assert isinstance(name, Path)
+        assert name == Path(expected_path)
+
+    def test_generate_filename_with_file_name(self):
+        name = generate_output_path(
+            self._get_test_dataset(),
+            file_name="{organization}_{instrument}_test",
             output_format=".nc",
         )
         assert isinstance(name, Path)
@@ -226,7 +244,7 @@ class TestBatchGenerateName:
     def test_generate_filename_with_time(self):
         name = generate_output_path(
             self._get_test_dataset(),
-            source="{organization}_{instrument}_{time_min:%Y%m%d}-{time_max:%Y%m%d}",
+            file_name="{organization}_{instrument}_{time_min:%Y%m%d}-{time_max:%Y%m%d}",
             output_format=".nc",
         )
         assert isinstance(name, Path)
@@ -235,7 +253,7 @@ class TestBatchGenerateName:
     def test_generate_filename_with_variable_attribute(self):
         name = generate_output_path(
             self._get_test_dataset(),
-            source="{organization}_{instrument}_{variable_time_timezone}",
+            file_name="{organization}_{instrument}_{variable_time_timezone}",
             output_format=".nc",
         )
         assert isinstance(name, Path)
@@ -264,7 +282,7 @@ class TestBatchGenerateName:
     def test_generate_filename_with_defaults(self):
         name = generate_output_path(
             self._get_test_dataset(),
-            source="test_{missing_global}",
+            file_name="test_{missing_global}",
             defaults={"missing_global": "this-is-the-default"},
         )
         assert str(name) == "test_this-is-the-default.nc"
