@@ -69,6 +69,8 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
         )
         logger.warning("Default to MLI ODF")
         parser = "dfo.odf.mli_odf"
+    elif ext.lower() in ('ctd','bot','che','drf','cur','loop','tob') and "*IOS HEADER VERSION" in header:
+        parser = "dfo.ios.shell"
     elif ext == "MON":
         parser = "van_essen_instruments.mon"
     elif ext == "txt" and re.match(r"\d+\-\d+\s*\nOS REV\:", header):

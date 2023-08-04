@@ -1,0 +1,201 @@
+*2021/12/06 12:04:15.37
+*IOS HEADER VERSION 2.0      2016/04/28 2016/06/13 MATLAB
+
+*FILE
+    START TIME          : UTC 2019/08/24 23:41:58.000
+    END TIME            : UTC 2019/08/25 15:58:35.000
+    TIME INCREMENT      : 0 0 10 0 0  ! (day hr min sec ms)
+    TIME UNITS          : Minutes
+    NUMBER OF RECORDS   : 72
+    DATA DESCRIPTION    : Drifting Buoy
+    NUMBER OF CHANNELS  : 6
+
+    $TABLE: CHANNELS
+    ! No Name            Units        Minimum      Maximum   
+    !--- --------------- ------------ ------------ ----------
+       1 Record_Number   n/a          1            72        
+       2 Date            YYYY/MM/DD   n/a          n/a       
+       3 Time            HH:MM:SS     n/a          n/a       
+       4 Latitude        degrees      49.98044     50.03347  
+       5 Longitude       degrees      -144.99997   -144.91284
+       6 Flag:At_Sea     n/a          1            1         
+    $END
+
+    $TABLE: CHANNEL DETAIL
+    ! No  Pad        Start  Width  Format      Type  Decimal_Places
+    !---  ---------  -----  -----  ----------  ----  --------------
+       1  ' '        ' '        8  F           R4      1           
+       2  ' '        ' '    ' '    YYYY/MM/DD  D     ' '           
+       3  ' '        ' '    ' '    HH:MM:SS    T     ' '           
+       4  999.00000  ' '       10  F           R4      5           
+       5  999.00000  ' '       11  F           R4      5           
+       6  9          ' '        2  D           I       0           
+    $END
+    $REMARKS
+        At_Sea flags have the following significance:
+        -------------------------------------------------------------------------
+        0 = Not classified.
+        1 = Good - at sea, freely floating (valid).
+        2 = Bad - at sea but trapped in rocky intertidal (floating but not free).
+        3 = Bad - on land (grounded, test data, etc.).
+        4 = Bad - at sea (large GPS error, on ship, etc.).
+        5 = Bad - land travel.
+        -------------------------------------------------------------------------
+    $END
+
+*ADMINISTRATION
+    MISSION             : 2019-008
+    AGENCY              : IOS, Ocean Sciences Division, Sidney, B.C.
+    COUNTRY             : Canada
+    PROJECT             : Line P
+    SCIENTIST           : Robert M.
+    PLATFORM            : John P. Tully
+    $REMARKS
+        For information about the IOS drifter program see https://www.waterproperties.ca/drifters
+    $END
+
+*LOCATION
+    GEOGRAPHIC AREA     : Northeast Pacific
+    LATITUDE            :  49  58.82640 N  ! (deg min)
+    LONGITUDE           : 144  59.99820 W  ! (deg min)
+    LATITUDE 2          :  50   2.00820 N  ! (deg min)
+    LONGITUDE 2         : 144  54.77040 W  ! (deg min)
+
+*RECOVERY
+    TIME FOUND          : UTC 0000/01/00
+    LATITUDE FOUND      :   0   0.00000 N  ! (deg min)
+    LONGITUDE FOUND     :   0   0.00000 E  ! (deg min)
+
+*INSTRUMENT
+    TYPE                : Institute of Ocean Sciences
+    MODEL               : MER Concrete
+    ID                  : 3157678
+    DEVICE ID           : 3157678
+    $REMARKS
+        CFC (Cellular Foam Concrete) MER Prototypes:
+          Standard SPOT Trace1 spring mounted down the central well of the hull.
+          Tested both with and without a drogue.
+          SPOT Trace1 mounted on, and in another version in, a custom pressure
+            case housing a quadruple battery pack, The combined unit was then
+            inserted and secured into central well of the hull.
+          Tested both with and without a drogue.
+          Various hull materials were tested but basically consisted of cement
+            with additives, i.e., fillers, sealants and strength enhancers to reduce
+            density, water absorption and increase strength.
+          Hull diameter = 21-22 cm.
+          Dry (cured) weight in air = 3.2 kg to 3.35 kg depending on battery pack
+            size and hull material density.
+          Draft without drogue = 15-17 cm.
+          Drag ratio of hull without drogue variously ~ 1:8 through ~ 1:10.
+        SPOT Trace transmitter:
+          https://www.findmespot.com.
+          Waterproofing IPX7, 1 m for up to 30 minutes, if USB port is
+            sealed with manufacturer supplied cover.
+          Temperature range -30 C to +60 C.
+          Dimensions L= 8.7 cm x W= 5.1 cm x H= 2.1 cm.
+          Weight 0.1 kg (negatively buoyant).
+          Batteries 4 x standard L92 batteries.
+          Tracking interval 5, 10, 30, 60 minutes (option for 2.5 minutes).
+          Operating lifetime 10-11 days typical with 5 minute rate,
+            under ideal conditions.
+          Position accuracy 7.8 m with 95% confidence level.
+        See also:
+          Hourston, R.A.S., Martens, P.S., Juhasz, T., Page, S.J. and Blanken, H. 2021.
+            Surface ocean circulation tracking drifter data from the Northeastern Pacific and
+            Western Arctic Oceans, 2014-2020. Can. Data Rep. Hydrogr. Ocean Sci. 215: vi + 36 p.
+            https://waves-vagues.dfo-mpo.gc.ca/Library/40986500.pdf
+    $END
+
+*HISTORY
+
+    $TABLE: PROGRAMS
+    !   Name       Vers  Date       Time     Recs In   Recs Out
+    !   ---------- ----  ---------- -------- --------- ---------
+        DRIFTS2IOS 1.0   2021/12/06 12:04:15        72        72
+    $END
+    $REMARKS
+        -DRIFTS2IOS processing: 2021/12/06 12:04:15
+         All atSea=4,5 locations were removed.
+    $END
+
+*COMMENTS
+    Data processed using drifteval software provided by R.Pawlowicz, see:
+      Pawlowicz, R., Hannah, C. and Rosenberger, A., 2019. Lagrangian
+      observations of estuarine residence times, dispersion, and
+      trapping in the Salish Sea. Estuarine, Coastal and Shelf Science,
+      225, p.106246.
+      http://www.sciencedirect.com/science/article/pii/S0272771419302719
+
+*END OF HEADER
+     1.0 2019/08/24 23:41:58  50.00088 -144.99910 1
+     2.0 2019/08/24 23:49:47  50.00250 -144.99921 1
+     3.0 2019/08/24 23:59:50  50.00451 -144.99997 1
+     4.0 2019/08/25 00:09:48  50.00659 -144.99981 1
+     5.0 2019/08/25 00:19:48  50.00891 -144.99930 1
+     6.0 2019/08/25 00:29:46  50.01111 -144.99863 1
+     7.0 2019/08/25 00:39:42  50.01326 -144.99792 1
+     8.0 2019/08/25 00:49:42  50.01536 -144.99680 1
+     9.0 2019/08/25 00:59:42  50.01721 -144.99577 1
+    10.0 2019/08/25 01:09:42  50.01904 -144.99451 1
+    11.0 2019/08/25 01:20:06  50.02076 -144.99290 1
+    12.0 2019/08/25 01:29:39  50.02221 -144.99103 1
+    13.0 2019/08/25 01:40:32  50.02365 -144.98895 1
+    14.0 2019/08/25 01:49:58  50.02474 -144.98732 1
+    15.0 2019/08/25 01:59:33  50.02579 -144.98558 1
+    16.0 2019/08/25 02:09:34  50.02674 -144.98387 1
+    17.0 2019/08/25 02:23:16  50.02787 -144.98117 1
+    18.0 2019/08/25 02:33:17  50.02882 -144.97890 1
+    19.0 2019/08/25 02:40:01  50.02961 -144.97659 1
+    20.0 2019/08/25 02:50:01  50.03004 -144.97479 1
+    21.0 2019/08/25 02:59:33  50.03054 -144.97253 1
+    22.0 2019/08/25 03:09:31  50.03102 -144.97009 1
+    23.0 2019/08/25 03:19:29  50.03149 -144.96762 1
+    24.0 2019/08/25 03:33:17  50.03225 -144.96429 1
+    25.0 2019/08/25 03:42:37  50.03262 -144.96198 1
+    26.0 2019/08/25 03:49:56  50.03278 -144.96010 1
+    27.0 2019/08/25 03:59:31  50.03312 -144.95753 1
+    28.0 2019/08/25 04:09:33  50.03334 -144.95488 1
+    29.0 2019/08/25 04:19:33  50.03347 -144.95256 1
+    30.0 2019/08/25 04:29:33  50.03347 -144.95033 1
+    31.0 2019/08/25 04:39:32  50.03340 -144.94807 1
+    32.0 2019/08/25 04:49:30  50.03311 -144.94585 1
+    33.0 2019/08/25 04:59:30  50.03264 -144.94431 1
+    34.0 2019/08/25 05:09:30  50.03219 -144.94229 1
+    35.0 2019/08/25 05:19:27  50.03173 -144.94031 1
+    36.0 2019/08/25 05:39:22  50.03047 -144.93596 1
+    37.0 2019/08/25 05:50:37  50.02944 -144.93369 1
+    38.0 2019/08/25 05:59:22  50.02862 -144.93201 1
+    39.0 2019/08/25 06:09:20  50.02755 -144.93022 1
+    40.0 2019/08/25 06:19:25  50.02619 -144.92842 1
+    41.0 2019/08/25 06:39:08  50.02334 -144.92511 1
+    42.0 2019/08/25 07:09:00  50.01875 -144.92051 1
+    43.0 2019/08/25 07:19:00  50.01725 -144.91914 1
+    44.0 2019/08/25 07:29:00  50.01579 -144.91760 1
+    45.0 2019/08/25 07:38:59  50.01349 -144.91594 1
+    46.0 2019/08/25 07:48:59  50.01199 -144.91517 1
+    47.0 2019/08/25 07:58:59  50.01045 -144.91457 1
+    48.0 2019/08/25 08:08:59  50.00862 -144.91368 1
+    49.0 2019/08/25 08:18:57  50.00657 -144.91312 1
+    50.0 2019/08/25 08:28:54  50.00457 -144.91284 1
+    51.0 2019/08/25 08:38:59  50.00251 -144.91301 1
+    52.0 2019/08/25 08:48:59  50.00045 -144.91327 1
+    53.0 2019/08/25 09:00:19  49.99796 -144.91391 1
+    54.0 2019/08/25 09:18:53  49.99445 -144.91608 1
+    55.0 2019/08/25 09:28:55  49.99275 -144.91760 1
+    56.0 2019/08/25 10:28:46  49.98447 -144.93050 1
+    57.0 2019/08/25 10:48:41  49.98216 -144.93614 1
+    58.0 2019/08/25 10:58:41  49.98143 -144.93932 1
+    59.0 2019/08/25 11:08:41  49.98100 -144.94275 1
+    60.0 2019/08/25 11:31:02  49.98044 -144.94998 1
+    61.0 2019/08/25 12:08:49  49.98286 -144.96181 1
+    62.0 2019/08/25 13:18:43  49.99024 -144.97945 1
+    63.0 2019/08/25 13:28:46  49.99163 -144.98151 1
+    64.0 2019/08/25 14:08:42  49.99863 -144.98920 1
+    65.0 2019/08/25 14:18:42  50.00043 -144.99023 1
+    66.0 2019/08/25 14:28:42  50.00228 -144.99126 1
+    67.0 2019/08/25 15:11:46  50.00976 -144.99250 1
+    68.0 2019/08/25 15:21:46  50.01148 -144.99233 1
+    69.0 2019/08/25 15:31:46  50.01320 -144.99216 1
+    70.0 2019/08/25 15:38:38  50.01460 -144.99185 1
+    71.0 2019/08/25 15:48:35  50.01648 -144.99173 1
+    72.0 2019/08/25 15:58:35  50.01820 -144.99164 1
