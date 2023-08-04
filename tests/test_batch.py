@@ -56,7 +56,7 @@ class TestBatchMode:
         }
         if cwd:
             config["registry"]["path"] = str(cwd / "registry.csv")
-            config["file_output"]["path"] = str(cwd / "output")
+            config["output"]["path"] = str(cwd / "output")
             config["sentry"]["dsn"] = None
         return config
 
@@ -95,9 +95,9 @@ class TestBatchMode:
             "parser": "onset.csv",
             "overwrite": True,
             "multiprocessing": multiprocessing,
-            "file_output": {
+            "output": {
                 "path": output_path,
-                "source": "{instrument_sn}",
+                "file_name": "{instrument_sn}",
             },
             "registry": {"path": registry_path},
         }

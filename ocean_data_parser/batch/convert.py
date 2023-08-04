@@ -322,8 +322,8 @@ def convert_file(file: str, parser: str, config: dict) -> str:
 
     # Save to
     output_path = None
-    if config.get("file_output").get("path"):
-        output_path = generate_output_path(ds, **config["file_output"])
+    if config.get("output").get("path"):
+        output_path = generate_output_path(ds, **config["output"])
         if not output_path.parent.exists():
             logger.info("Create new directory: {}", output_path.parent)
             output_path.parent.mkdir(parents=True)
