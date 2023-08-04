@@ -404,11 +404,6 @@ def convert_file(file: str, parser: str, config: dict) -> str:
     logger.trace("Save to: {}", output_path)
     ds.to_netcdf(output_path)
 
-    if config.get("upload_to_database"):
-        # TODO update to database
-        # ds.to_dataframe()
-        pass
-
     return output_path
 
 

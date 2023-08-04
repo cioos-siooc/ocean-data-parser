@@ -46,11 +46,3 @@ output:
   file_preffix: ""
   file_suffix: ""
   output_format: .nc
-
-upload_to_database:
-  name: null
-  username: null
-  password: null
-  table: null
-  append: True
-  on_conflict: "UPDATE"
