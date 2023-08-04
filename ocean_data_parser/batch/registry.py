@@ -140,10 +140,13 @@ class FileConversionRegistry:
         if not sources:
             return
         new_data = pd.DataFrame({"source": sources})
-        logger.info("Get new files mtime")
-        new_data["mtime"] = new_data["source"].progress_apply(self._get_mtime)
-        logger.info("Get new files hash")
-        new_data["hash"] = new_data["source"].progress_apply(self._get_hash)
+
+        # Retrieve mtime and hash only if a registry is actually saved
+        if self.path:
+            logger.info("Get new files mtime")
+            new_data["mtime"] = new_data["source"].progress_apply(self._get_mtime)
+            logger.info("Get new files hash")
+            new_data["hash"] = new_data["source"].progress_apply(self._get_hash)
         self.data = (
             pd.concat(
                 [
@@ -253,7 +256,7 @@ class FileConversionRegistry:
         Returns:
             list: list of source files to parse
         """
-        if not overwrite:
+        if not overwrite or not self.path:
             return self.data.loc[self._is_new_file()].index.to_list()
 
         if self.since:
