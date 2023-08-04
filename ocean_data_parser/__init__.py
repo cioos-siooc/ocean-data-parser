@@ -1,1 +1,2 @@
 from ocean_data_parser._version import __version__
+from ocean_data_parser import vocabularies
