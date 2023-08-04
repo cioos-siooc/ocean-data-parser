@@ -21,7 +21,7 @@ def _compare_versions(from_branch, to_branch):
         ["git", "diff", f"origin/{from_branch}", f"origin/{to_branch}", "ocean_data_parser/_version.py"],
         capture_output=True,
     )
-    assert version_difference_output.stdout.decode()
+    assert version_difference_output.stdout.decode(), version_difference_output.stderr.decode()
     return version_difference_output.stdout.decode().split("\n")[-3:-1]
 
 
