@@ -1,16 +1,10 @@
 import argparse
+from pathlib import Path
 import re
 import subprocess
 
-with open("ocean_data_parser/_version.py") as file:
-    version_str = file.read()
-
+version_str = Path("ocean_data_parser/_version.py").read_text()
 version_regex = r'__version__ = "\d+.\d+.\d+"'
-
-
-def _get_active_version():
-    with open("ocean_data_parser/_version.py") as file:
-        return file.read()
 
 
 def _get_active_branch():
@@ -27,12 +21,11 @@ def _compare_versions(from_branch, to_branch):
         ["git", "diff", f"origin/{from_branch}", f"origin/{to_branch}", "ocean_data_parser/_version.py"],
         capture_output=True,
     )
-
+    assert version_difference_output.stdout.decode()
     return version_difference_output.stdout.decode().split("\n")[-3:-1]
 
 
 def main(reference_branch="main"):
-    version_str = _get_active_version()
     assert re.fullmatch(
         version_regex + r"\n", version_str
     ), f"_version.py has a different format than {version_regex}"
