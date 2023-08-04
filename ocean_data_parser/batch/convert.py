@@ -157,7 +157,7 @@ def cli_files(
     if not input_path and not kwargs.get('input') and not config:
         sys.exit("ERROR! No file input provided.")
     else:
-        kwargs["input_path"] = kwargs.pop("input", input_path)
+        kwargs["input_path"] = kwargs.pop("input", None) or input_path
 
     kwargs = {key:value for key,value in kwargs.items() if value}
     BatchConversion(config=config, **kwargs).run()
