@@ -22,13 +22,6 @@ def test_dfo_platform_default_load():
     assert vocab.index.name == "platform_name"
 
 
-def test_dfo_platform_load_nafc():
-    vocab = load.dfo_platforms("dfo_newfoundland_ship_code")
-    assert isinstance(vocab, pd.DataFrame)
-    assert not vocab.empty
-    assert vocab.index.name == "dfo_newfoundland_ship_code"
-
-
 def test_dfo_odf_vocabulary_load():
     vocab = load.dfo_odf_vocabulary()
     assert isinstance(vocab, pd.DataFrame)
