@@ -15,11 +15,11 @@ def test_seabird_vocabulary_load():
     assert isinstance(vocab, dict)
 
 
-def test_dfo_platform_default_load():
+def test_dfo_platform_load():
     vocab = load.dfo_platforms()
     assert isinstance(vocab, pd.DataFrame)
     assert not vocab.empty
-    assert vocab.index.name == "platform_name"
+    assert "platform_name" in vocab.columns
 
 
 def test_dfo_odf_vocabulary_load():
