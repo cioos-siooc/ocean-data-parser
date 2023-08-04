@@ -1,7 +1,8 @@
 # File input
 input_path: tests/parsers_test_files/onset/**/*.csv
+parser: null
 overwrite: False
-multiprocessing: 3 # n processes to run [int]
+multiprocessing: 1 # n processes to run [int]
 errors: "raise"
 registry:
   path: file_registry.csv
