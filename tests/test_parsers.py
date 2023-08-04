@@ -437,75 +437,70 @@ class TestDFOpFiles:
         [
             "_parse_pfile_header_line1",
             "_parse_pfile_header_line2",
-            "_parse_pfile_header_line3"
+            "_parse_pfile_header_line3",
         ],
     )
-    def test_p_file_metadata_parser_line_failed(self,caplog, line_parser):
-        parser = getattr(dfo.nafc,line_parser)
-        response = parser("56001001 7 08 0a    0999.1 003.8       08 01 18 10 01                          8")
+    def test_p_file_metadata_parser_line_failed(self, caplog, line_parser):
+        parser = getattr(dfo.nafc, line_parser)
+        response = parser(
+            "56001001 7 08 0a    0999.1 003.8       08 01 18 10 01                          8"
+        )
         assert isinstance(response, dict)
         assert not response
         assert f"Failed to parse {line_parser}" in caplog.text
 
+
 class TestDfoIosShell:
-
     @pytest.mark.parametrize(
-            "file",
-            glob("tests/parsers_test_files/dfo/ios/shell/cruise/CTD/*.ctd")
+        "file", glob("tests/parsers_test_files/dfo/ios/shell/cruise/CTD/*.ctd")
     )
-    def test_ios_shell_cruise_ctd_parser(self,file):
+    def test_ios_shell_cruise_ctd_parser(self, file):
         ds = dfo.ios.shell(file)
         assert isinstance(ds, xr.Dataset)
 
     @pytest.mark.parametrize(
-            "file",
-            glob("tests/parsers_test_files/dfo/ios/shell/cruise/BOT/*.bot")
+        "file", glob("tests/parsers_test_files/dfo/ios/shell/cruise/BOT/*.bot")
     )
-    def test_ios_shell_cruise_bot_parser(self,file):
-        ds = dfo.ios.shell(file)
-        assert isinstance(ds, xr.Dataset)
-    
-    @pytest.mark.parametrize(
-            "file",
-            glob("tests/parsers_test_files/dfo/ios/shell/cruise/CHE/*.che")
-    )
-    def test_ios_shell_cruise_che_parser(self,file):
-        ds = dfo.ios.shell(file)
-        assert isinstance(ds, xr.Dataset)
-    
-    @pytest.mark.parametrize(
-            "file",
-            glob("tests/parsers_test_files/dfo/ios/shell/cruise/TOB/*.tob")
-    )
-    def test_ios_shell_cruise_tob_parser(self,file):
-        ds = dfo.ios.shell(file)
-        assert isinstance(ds, xr.Dataset)
-    
-    @pytest.mark.parametrize(
-            "file",
-            glob("tests/parsers_test_files/dfo/ios/shell/mooring/CTD/*.ctd")
-    )
-    def test_ios_shell_mooring_ctd_parser(self,file):
+    def test_ios_shell_cruise_bot_parser(self, file):
         ds = dfo.ios.shell(file)
         assert isinstance(ds, xr.Dataset)
 
     @pytest.mark.parametrize(
-            "file",
-            glob("tests/parsers_test_files/dfo/ios/shell/mooring/CUR/*.CUR")
+        "file", glob("tests/parsers_test_files/dfo/ios/shell/cruise/CHE/*.che")
     )
-    def test_ios_shell_mooring_cur_parser(self,file):
+    def test_ios_shell_cruise_che_parser(self, file):
         ds = dfo.ios.shell(file)
         assert isinstance(ds, xr.Dataset)
 
     @pytest.mark.parametrize(
-            "file",
-            glob("tests/parsers_test_files/dfo/ios/shell/DRF/*.drf")
+        "file", glob("tests/parsers_test_files/dfo/ios/shell/cruise/TOB/*.tob")
     )
-    def test_ios_shell_drifter_parser(self,file):
+    def test_ios_shell_cruise_tob_parser(self, file):
         ds = dfo.ios.shell(file)
         assert isinstance(ds, xr.Dataset)
 
-    
+    @pytest.mark.parametrize(
+        "file", glob("tests/parsers_test_files/dfo/ios/shell/mooring/CTD/*.ctd")
+    )
+    def test_ios_shell_mooring_ctd_parser(self, file):
+        ds = dfo.ios.shell(file)
+        assert isinstance(ds, xr.Dataset)
+
+    @pytest.mark.parametrize(
+        "file", glob("tests/parsers_test_files/dfo/ios/shell/mooring/CUR/*.CUR")
+    )
+    def test_ios_shell_mooring_cur_parser(self, file):
+        ds = dfo.ios.shell(file)
+        assert isinstance(ds, xr.Dataset)
+
+    @pytest.mark.parametrize(
+        "file", glob("tests/parsers_test_files/dfo/ios/shell/DRF/*.drf")
+    )
+    def test_ios_shell_drifter_parser(self, file):
+        ds = dfo.ios.shell(file)
+        assert isinstance(ds, xr.Dataset)
+
+
 class BlueElectricParsertest(unittest.TestCase):
     def test_blue_electric_csv_parser(self):
         paths = glob(

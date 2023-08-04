@@ -69,15 +69,18 @@ def _float(value: str, null_values=None) -> float:
 def _get_dtype(var: str):
     return int if var == "scan" else float
 
+
 def soft_catch_errors(function):
-    def wrap(*args,**kwargs):
-        try: 
-            value = function(*args,**kwargs)
+    def wrap(*args, **kwargs):
+        try:
+            value = function(*args, **kwargs)
             return value
         except ValueError:
             logger.error("Failed to parse %s", function.__name__, exc_info=True)
             return {}
+
     return wrap
+
 
 @soft_catch_errors
 def _parse_pfile_header_line1(line: str) -> dict:
@@ -100,6 +103,7 @@ def _parse_pfile_header_line1(line: str) -> dict:
         comment=line[62:78],
         card_1_id=line[79],
     )
+
 
 @soft_catch_errors
 def _parse_pfile_header_line2(line: str) -> dict:
@@ -130,6 +134,7 @@ def _parse_pfile_header_line2(line: str) -> dict:
         fishing_strata=_int(line[75:78]),  # ground fish specified strata number
         card_4_id=line[79],  # ,i1,4
     )
+
 
 @soft_catch_errors
 def _parse_pfile_header_line3(line: str) -> dict:
