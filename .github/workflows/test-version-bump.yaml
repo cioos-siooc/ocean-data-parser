@@ -7,7 +7,7 @@ on:
       - development
 
 jobs:
-  linux:
+  check_version_bump:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
