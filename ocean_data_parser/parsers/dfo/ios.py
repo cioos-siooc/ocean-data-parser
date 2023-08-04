@@ -4,7 +4,18 @@ import xarray
 from cioos_data_transform.IosObsFile import CurFile, GenFile
 
 logger = logging.getLogger(__name__)
-HANDLED_DATA_TYPES = ("tob", "drf", "ane", "ubc", "loop", "ctd", "mctd", "bot", "che","cur")
+HANDLED_DATA_TYPES = (
+    "tob",
+    "drf",
+    "ane",
+    "ubc",
+    "loop",
+    "ctd",
+    "mctd",
+    "bot",
+    "che",
+    "cur",
+)
 
 
 def shell(filename: str) -> xarray.Dataset:
