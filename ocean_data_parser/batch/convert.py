@@ -85,6 +85,11 @@ classic_logger = logging.getLogger()
     help="Input path to file list. It can be a glob expression (ex: *.cnv)",
 )
 @click.option(
+    "--parser",
+    type=str,
+    help="Parser used to parse the data. Default to auto detect",
+)
+@click.option(
     "--overwrite",
     type=bool,
     help="Overwrite already converted files when source file is changed.",
@@ -112,6 +117,11 @@ classic_logger = logging.getLogger()
     "--output_file_name",
     type=click.Path(),
     help="Output file path where to save converted files.",
+)
+@click.option(
+    "--output_file_suffix",
+    type=click.Path(),
+    help="Output file name suffix to add"
 )
 @click.option(
     "--config", "-c", type=click.Path(exists=True), help="Path to configuration file"
