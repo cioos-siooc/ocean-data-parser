@@ -397,14 +397,12 @@ def convert_file(file: str, parser: str, config: dict) -> str:
     ds = utils.standardize_dataset(ds)
 
     # Save to
-    output_path = None
-    if config.get("output").get("path"):
-        output_path = generate_output_path(ds, **config["output"])
-        if not output_path.parent.exists():
-            logger.info("Create new directory: {}", output_path.parent)
-            output_path.parent.mkdir(parents=True)
-        logger.trace("Save to: {}", output_path)
-        ds.to_netcdf(output_path)
+    output_path = generate_output_path(ds, **config["output"])
+    if not output_path.parent.exists():
+        logger.info("Create new directory: {}", output_path.parent)
+        output_path.parent.mkdir(parents=True)
+    logger.trace("Save to: {}", output_path)
+    ds.to_netcdf(output_path)
 
     if config.get("upload_to_database"):
         # TODO update to database
