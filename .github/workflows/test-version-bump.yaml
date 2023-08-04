@@ -15,6 +15,13 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: '3.10'
+      - name: Install git 
+        run: |
+          apt-get install -y git
+          git --version
+          echo "Path is ... $PATH"
+          PATH=$PATH:$(which git)
+          echo "Path is ... $PATH"
       - name: Get version difference
         shell: bash
         run: python .github/workflows/review_version_bump.py -b ${{ github.base_ref}}
