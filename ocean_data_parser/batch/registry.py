@@ -19,19 +19,19 @@ EMPTY_FILE_REGISTRY = pd.DataFrame(
 class FileConversionRegistry:
     def __init__(
         self,
-        path: str = "ocean_parser_file_registry.csv",
+        path: str = None,
         data: pd.DataFrame = EMPTY_FILE_REGISTRY,
         hashtype: str = "sha256",
         block_size: int = 65536,
         since: Union[pd.Timestamp, pd.Timedelta, str] = None,
     ):
-        self.path = Path(path)
+        self.path = Path(path) if path else None
         self.data = data
         self.hashtype = hashtype
         self.hash_block_size = block_size
         self.since = since
 
-        if self.path.exists() and data.empty:
+        if self.path  and self.path.exists() and data.empty:
             self.load()
 
     def load(self, overwrite=False):
@@ -57,7 +57,9 @@ class FileConversionRegistry:
     def save(self):
         """_summary_"""
         df = self.data.drop(columns=[col for col in self.data if col.endswith("_new")])
-        if self.path.suffix == ".csv":
+        if not self.path:
+            return
+        elif self.path.suffix == ".csv":
             df.to_csv(self.path)
         elif self.path.suffix == ".parquet":
             df.to_parquet(self.path)
