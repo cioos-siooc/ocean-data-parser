@@ -24,9 +24,7 @@ TEST_REGISTRY_PATH = Path("tests/test_file_registry.csv")
 TEST_FILE = Path("temp/test_file.csv")
 TEST_REGISTRY = FileConversionRegistry(path=TEST_REGISTRY_PATH)
 
-logging.basicConfig(
-    handlers=[InterceptHandler()], level="DEBUG"
-)
+logging.basicConfig(handlers=[InterceptHandler()], level="DEBUG")
 classic_logger = logging.getLogger()
 
 
@@ -49,7 +47,9 @@ class TestConfigLoad:
         assert len(path_list) > 10
 
 
-def _get_config(input_path="tests/parsers_test_files/onset/**/*.csv", cwd=None, **kwargs):
+def _get_config(
+    input_path="tests/parsers_test_files/onset/**/*.csv", cwd=None, **kwargs
+):
     """Generate a batch configuration file"""
     config = {
         **load_config(),
@@ -62,6 +62,7 @@ def _get_config(input_path="tests/parsers_test_files/onset/**/*.csv", cwd=None, 
         config["sentry"]["dsn"] = None
     return config
 
+
 def _save_config(cwd, config):
     config_path = cwd / "config.yaml"
     with open(config_path, "w", encoding="UTF-8") as file:
@@ -69,41 +70,44 @@ def _save_config(cwd, config):
 
     return config_path
 
+
 def _run_batch_process(config):
     registry = BatchConversion(config=config).run()
     assert not registry.data.empty
     assert not registry.data["error_message"].any()
 
 
-
 class TestBatchMode:
-    @pytest.mark.parametrize(
-            "multiprocessing",
-            (1,2,None)
-    )
+    @pytest.mark.parametrize("multiprocessing", (1, 2, None))
     def test_batch_conversion_multiprocessing(self, tmp_path, multiprocessing):
         config = _get_config(cwd=tmp_path, multiprocessing=multiprocessing)
         _run_batch_process(config)
 
     @pytest.mark.parametrize(
-            'key',
-            ("output_path","output_file_name","output_file_preffix",'output_file_suffix','output_format')
+        "key",
+        (
+            "output_path",
+            "output_file_name",
+            "output_file_preffix",
+            "output_file_suffix",
+            "output_format",
+        ),
     )
-    def test_batch_conversion_output_kwargs(self,key):
-        batch = BatchConversion(**{key:'test'})
-        key = key.replace('output_','')
-        assert batch.config['output'][key] == 'test'
-    
-    @pytest.mark.parametrize(
-        'key',
-        ("registry_path","registry_hashtype","registry_since","registry_block_size")
-    )
-    def test_batch_conversion_registry_kwargs(self,key):
-        batch = BatchConversion(**{key:'test'})
-        key = key.replace('registry_','')
-        assert batch.config['registry'][key] == 'test'
+    def test_batch_conversion_output_kwargs(self, key):
+        batch = BatchConversion(**{key: "test"})
+        key = key.replace("output_", "")
+        assert batch.config["output"][key] == "test"
 
-    def test_batch_conversion_dictionary_input(self,tmp_path):
+    @pytest.mark.parametrize(
+        "key",
+        ("registry_path", "registry_hashtype", "registry_since", "registry_block_size"),
+    )
+    def test_batch_conversion_registry_kwargs(self, key):
+        batch = BatchConversion(**{key: "test"})
+        key = key.replace("registry_", "")
+        assert batch.config["registry"][key] == "test"
+
+    def test_batch_conversion_dictionary_input(self, tmp_path):
         config = _get_config()
         batch = BatchConversion(config)
         assert batch
@@ -137,20 +141,14 @@ class TestBatchCLI:
     def _run_cli_batch_process(*args, exit_code=0):
         """Run Click cli code"""
         runner = CliRunner()
-        result = runner.invoke(
-            cli_files,
-            args
-        )
-        assert result.exit_code == exit_code, result
+        result = runner.invoke(cli_files, args)
         return result
 
     def test_batch_cli_conversion_onset_parser(self, tmp_path):
         config = _get_config(cwd=tmp_path)
         config_path = _save_config(tmp_path, config)
-        runner = CliRunner()
-        result = runner.invoke(
-            cli_files,
-            [f"--config={config_path}"],
+        result = self._run_cli_batch_process(
+            f"--config={config_path}",
         )
         assert result.exit_code == 0, result.output
         assert (
@@ -161,10 +159,8 @@ class TestBatchCLI:
     def test_batch_cli_conversion_onset_parser_with_extra_inputs(self, tmp_path):
         config = _get_config(cwd=tmp_path)
         config_path = _save_config(tmp_path, config)
-        runner = CliRunner()
-        result = runner.invoke(
-            cli_files,
-            ["./**/*.csv", f"--config={config_path}", "--multiprocessing", 3],
+        result = self._run_cli_batch_process(
+            "./**/*.csv", f"--config={config_path}", "--multiprocessing", 3,
         )
         assert result.exit_code == 0, result.output
         assert (
@@ -173,29 +169,21 @@ class TestBatchCLI:
         )
 
     def test_batch_cli_new_config_creation(self, tmp_path):
-        runner = CliRunner()
         new_config_test_file = tmp_path / "test_config_copy.yaml"
-        result = runner.invoke(cli_files, ["--new_config", str(new_config_test_file)])
+        result = self._run_cli_batch_process("--new_config", str(new_config_test_file))
         assert (
             result.exit_code == 0
         ), f"new config failed with exit_code={result.exit_code}, result={result}"
         assert new_config_test_file.exists()
         new_config_test_file.unlink()
         assert not new_config_test_file.exists()
-    
 
-    def test_batch_failed_cli_conversion_with_multiple_inputs(self, capsys):
-
-        args = ('*.csv','--input','test.csv')
-        runner = CliRunner()
-        result = runner.invoke(
-            cli_files,
-            args
-        )
+    def test_batch_failed_cli_conversion_with_multiple_inputs(self):
+        result = self._run_cli_batch_process("*.csv", "--input", "test.csv")
         assert result.exit_code == 1
-        assert result.output.startswith('ERROR'), f"unexpected {result.output=}"
+        assert result.output.startswith("ERROR"), f"unexpected {result.output=}"
 
-    def test_failed_cli_batch_conversion_with_bad_parser(self, tmp_path):
+    def test_failed_cli_batch_conversion_with_ignore_errors(self, tmp_path):
         test_file_path = str(tmp_path / "failed_cli_test_file.cnv")
         config = _get_config(
             cwd=tmp_path,
@@ -205,15 +193,17 @@ class TestBatchCLI:
             multiprocessing=1,
             errors="ignore",
         )
+        config["registry"]["path"] = str(tmp_path / "registry.csv")
 
         config_path = _save_config(tmp_path, config)
-        assert Path(config_path).exists()
+        assert config_path.exists()
 
         # Save temp bad data file
         with open(test_file_path, "w", encoding="utf-8") as file_handle:
             file_handle.write("test file")
-        
-        _run_cli_batch_process("config",config_path)
+
+        result = self._run_cli_batch_process("--config", str(config_path))
+        assert result.exit_code == 0, result.output
         # load registry
         registry = FileConversionRegistry(path=config["registry"]["path"])
         assert not registry.data.empty
@@ -221,6 +211,29 @@ class TestBatchCLI:
         assert "No columns to parse from file" in str(
             registry.data["error_message"][test_file_path]
         )
+
+    def test_failed_cli_batch_conversion_with_raise_errors(self, tmp_path):
+        test_file_path = str(tmp_path / "failed_cli_test_file.cnv")
+        config = _get_config(
+            cwd=tmp_path,
+            input_path=test_file_path,
+            parser="seabird.cnv",
+            overwrite=True,
+            multiprocessing=1,
+            errors="raise",
+        )
+        config["registry"]["path"] = "registry.csv"
+
+        config_path = _save_config(tmp_path, config)
+        assert config_path.exists()
+
+        # Save temp bad data file
+        with open(test_file_path, "w", encoding="utf-8") as file_handle:
+            file_handle.write("test file")
+
+        result = self._run_cli_batch_process("--config", str(config_path))
+        # load registry
+        assert result.exit_code == 1
 
 
 test_ds = xr.Dataset()
