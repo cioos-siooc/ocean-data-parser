@@ -119,9 +119,7 @@ classic_logger = logging.getLogger()
     help="Output file path where to save converted files.",
 )
 @click.option(
-    "--output_file_suffix",
-    type=click.Path(),
-    help="Output file name suffix to add"
+    "--output_file_suffix", type=click.Path(), help="Output file name suffix to add"
 )
 @click.option(
     "--config", "-c", type=click.Path(exists=True), help="Path to configuration file"
@@ -147,19 +145,19 @@ def cli_files(
             new_config.parent.mkdir(parents=True)
         shutil.copy(DEFAULT_CONFIG_PATH, new_config)
         return
-    
+
     # Handle input
-    if input_path and kwargs.get('input'):
+    if input_path and kwargs.get("input"):
         sys.exit(
             f"ERROR! Two inputs were passed as arg = {input_path} and --input = {kwargs['input']}. "
             "Use one input method only"
         )
-    if not input_path and not kwargs.get('input') and not config:
+    if not input_path and not kwargs.get("input") and not config:
         sys.exit("ERROR! No file input provided.")
     else:
         kwargs["input_path"] = kwargs.pop("input", None) or input_path
 
-    kwargs = {key:value for key,value in kwargs.items() if value}
+    kwargs = {key: value for key, value in kwargs.items() if value}
     BatchConversion(config=config, **kwargs).run()
 
 
@@ -192,9 +190,7 @@ class BatchConversion:
             list: list of source files to be parsed
         """
         logger.info("Compile files to parse")
-        source_files = glob(
-            self.config["input_path"], recursive=True
-        )
+        source_files = glob(self.config["input_path"], recursive=True)
         total_files = len(source_files)
         logger.info("{} files detected", len(source_files))
         logger.info(

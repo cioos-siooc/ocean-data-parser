@@ -31,7 +31,7 @@ class FileConversionRegistry:
         self.hash_block_size = block_size
         self.since = since
 
-        if self.path  and self.path.exists() and data.empty:
+        if self.path and self.path.exists() and data.empty:
             self.load()
 
     def load(self, overwrite=False):
