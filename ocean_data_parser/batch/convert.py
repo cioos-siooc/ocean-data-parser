@@ -77,12 +77,17 @@ classic_logger = logging.getLogger()
 
 
 @click.command()
-@click.argument("input_path", required=False)
+@click.argument("input_path", required=False, nargs=-1)
 @click.option(
     "-i",
     "--input",
     type=str,
     help="Input path to file list. It can be a glob expression (ex: *.cnv)",
+)
+@click.option(
+    "--exclude",
+    type=str,
+    help="Glob expression of files to exclude.",
 )
 @click.option(
     "--parser",
@@ -152,13 +157,20 @@ def cli_files(
             f"ERROR! Two inputs were passed as arg = {input_path} and --input = {kwargs['input']}. "
             "Use one input method only"
         )
+    kwargs = {key: value for key, value in kwargs.items() if value}
     if not input_path and not kwargs.get("input") and not config:
         sys.exit("ERROR! No file input provided.")
-    else:
+    elif len(input_path) < 2:
         kwargs["input_path"] = kwargs.pop("input", None) or input_path
+        batch = BatchConversion(config=config, **kwargs)
+    else:
+        batch = BatchConversion(config=config, **kwargs)
+        if "exclude" in kwargs:
+            input_path = [file for file in input_path if file not in glob(kwargs['exclude'],recursive=True)]
+        logger.info("Load {} files", len(input_path))
+        batch.registry.add(input_path)
 
-    kwargs = {key: value for key, value in kwargs.items() if value}
-    BatchConversion(config=config, **kwargs).run()
+    batch.run()
 
 
 class BatchConversion:
@@ -195,6 +207,18 @@ class BatchConversion:
         config["registry"].update(registry_kwarg)
         return config
 
+    def get_source_files(self) -> list:
+        excluded_files = (
+            glob(self.config["exclude"], recursive=True)
+            if self.config.get("exclude")
+            else []
+        )
+        return [
+            file
+            for file in glob(self.config["input_path"], recursive=True)
+            if file not in excluded_files
+        ]
+
     def get_source_files_to_parse(self) -> list:
         """Retrieve the list of source files that needs to be parsed
         based on the configuration.
@@ -204,7 +228,6 @@ class BatchConversion:
         """
         logger.info("Compile files to parse")
         source_files = glob(self.config["input_path"], recursive=True)
-        total_files = len(source_files)
         self.registry.add(source_files)
 
         # If registry exist get list
@@ -216,7 +239,9 @@ class BatchConversion:
                 overwrite=self.config["overwrite"]
             )
             logger.info(
-                "Detected {}/{} files needs to be parse", len(source_files), total_files
+                "Detected {}/{} files needs to be parse",
+                len(source_files),
+                len(self.registry.data),
             )
         else:
             logger.info("Detected {} files needs to be parse", len(source_files))
