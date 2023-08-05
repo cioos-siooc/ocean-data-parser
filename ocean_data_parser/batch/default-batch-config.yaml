@@ -2,10 +2,10 @@
 input_path: ""
 parser: null
 overwrite: False
-multiprocessing: 1 # n processes to run [int]
-errors: "ignore"
+multiprocessing: 1 # n processes to run [int] or null for all
+errors: "ignore" # raise|ignore
 registry:
-  path: null
+  path: null # file_registry(.csv | .parquet)
   since: null # pandas.Timedelta expression (ex: '24h') or datetime ('2022-01-01T00:00:00Z')
 
 sentry:
