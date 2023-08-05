@@ -195,7 +195,7 @@ class BatchConversion:
         config["registry"].update(registry_kwarg)
         return config
 
-    def _get_source_files_to_parse(self) -> list:
+    def get_source_files_to_parse(self) -> list:
         """Retrieve the list of source files that needs to be parsed
         based on the configuration.
 
@@ -205,13 +205,6 @@ class BatchConversion:
         logger.info("Compile files to parse")
         source_files = glob(self.config["input_path"], recursive=True)
         total_files = len(source_files)
-        logger.info("{} files detected", len(source_files))
-        logger.info(
-            "Add {} unknown files to registry",
-            len(
-                [file for file in source_files if file not in self.registry.data.index]
-            ),
-        )
         self.registry.add(source_files)
 
         # If registry exist get list
@@ -223,8 +216,10 @@ class BatchConversion:
                 overwrite=self.config["overwrite"]
             )
             logger.info(
-                "Detected {}/{} needs to be parse", len(source_files), total_files
+                "Detected {}/{} files needs to be parse", len(source_files), total_files
             )
+        else:
+            logger.info("Detected {} files needs to be parse", len(source_files))
 
         return source_files
 
@@ -264,7 +259,7 @@ class BatchConversion:
         """Run Batch conversion"""
         logger.info("Run ocean-data-parser[{}] batch conversion", __version__)
 
-        files = self._get_source_files_to_parse()
+        files = self.get_source_files_to_parse()
         if not files:
             return self.registry
         conversion_log = self._convert(files)
