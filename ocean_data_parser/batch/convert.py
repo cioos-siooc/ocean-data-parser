@@ -163,6 +163,19 @@ def cli_files(
 
 class BatchConversion:
     def __init__(self, config=None, **kwargs):
+        self.config = self._get_config(config, **kwargs)
+        self.registry = FileConversionRegistry(**self.config["registry"])
+
+    @staticmethod
+    def _get_config(config: dict = None, **kwargs) -> dict:
+        """Combine configuration dictionary and key arguments passed
+
+        Args:
+            config (dict, optional): Batch configuration. Defaults to None.
+
+        Returns:
+            dict: combined configuration
+        """
         output_kwarg = {
             key[7:]: kwargs.pop(key)
             for key in list(kwargs.keys())
@@ -173,14 +186,14 @@ class BatchConversion:
             for key in list(kwargs.keys())
             if key.startswith("registry_")
         }
-        self.config = {
+        config = {
             **load_config(DEFAULT_CONFIG_PATH),
             **(load_config(config) if isinstance(config, str) else config or {}),
             **kwargs,
         }
-        self.config["output"].update(output_kwarg)
-        self.config["registry"].update(registry_kwarg)
-        self.registry = FileConversionRegistry(**self.config["registry"])
+        config["output"].update(output_kwarg)
+        config["registry"].update(registry_kwarg)
+        return config
 
     def _get_source_files_to_parse(self) -> list:
         """Retrieve the list of source files that needs to be parsed
