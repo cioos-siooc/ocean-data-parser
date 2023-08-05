@@ -160,7 +160,10 @@ class TestBatchCLI:
         config = _get_config(cwd=tmp_path)
         config_path = _save_config(tmp_path, config)
         result = self._run_cli_batch_process(
-            "./**/*.csv", f"--config={config_path}", "--multiprocessing", 3,
+            "./**/*.csv",
+            f"--config={config_path}",
+            "--multiprocessing",
+            3,
         )
         assert result.exit_code == 0, result.output
         assert (
