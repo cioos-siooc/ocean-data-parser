@@ -152,7 +152,7 @@ def cli_files(
         return
 
     # Drop empty kwargs
-    kwargs = {key:value for key,value in kwargs.items() if value}
+    kwargs = {key: value for key, value in kwargs.items() if value}
 
     # Handle input
     if input_path and kwargs.get("input"):
@@ -218,7 +218,6 @@ class BatchConversion:
             if file not in excluded_files
         ]
 
-
     def _get_parser(self):
         logger.info("Load parser={}", self.config.get("parser", "None"))
         if not self.config.get("parser"):
@@ -254,13 +253,15 @@ class BatchConversion:
     def run(self, files=None):
         """Run Batch conversion"""
         logger.info("Run ocean-data-parser[{}] batch conversion", __version__)
-        self.registry.add(files or glob(self.config['input_path']))
+        self.registry.add(files or glob(self.config["input_path"]))
 
         files = self.registry.get_source_files_to_parse()
         if not files:
             logger.info("No file to parse. Conversion completed")
             return self.registry
-        logger.info("{}/{} files needs to be converted", len(files), len(self.registry.data))
+        logger.info(
+            "{}/{} files needs to be converted", len(files), len(self.registry.data)
+        )
         conversion_log = self._convert(files)
         conversion_log = (
             pd.DataFrame(

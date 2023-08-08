@@ -198,9 +198,9 @@ class TestBatchCLI:
         config_path = _save_config(tmp_path, config)
         result = self._run_cli_batch_process(*args, "--config", str(config_path))
         assert result.exit_code == 0, result
-        registry = FileConversionRegistry(config['registry']['path'])
+        registry = FileConversionRegistry(config["registry"]["path"])
         assert len(registry.data) == 5
-        assert registry.data['error_message'].isna().all()
+        assert registry.data["error_message"].isna().all()
 
     def test_batch_failed_cli_conversion_with_multiple_inputs(self):
         result = self._run_cli_batch_process("*.csv", "--input", "test.csv")
