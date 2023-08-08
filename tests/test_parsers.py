@@ -24,6 +24,7 @@ from ocean_data_parser.parsers import (
     utils,
     van_essen_instruments,
 )
+from ocean_data_parser.parsers.dfo.odf_source.attributes import _review_station
 from ocean_data_parser.parsers.dfo.odf_source.parser import _convert_odf_time
 
 logging.basicConfig(level=logging.DEBUG)
@@ -347,6 +348,37 @@ class TestODFParser:
         assert response is expected_response or response == expected_response
         assert "Unknown time format" in caplog.text
         assert "Failed to parse the timestamp" in caplog.text
+
+    @pytest.mark.parametrize(
+        "original_header,station",
+        [
+            (" station: QU05", "QU05"),
+            ("somethinng station: QU05 some more", "QU05"),
+            ("station: QU5 some more", "QU05"),
+            ("station: 2 ", "002"),
+            ("|some text before 223 ;nom de la station ", "223"),
+            ("|some text before 1 ;nom de la station ", "001"),
+            ("|some text before QU31 ;nom de la station ", None),
+        ],
+    )
+    def test_odf_station_search(self, original_header, station):
+        response = _review_station({}, {"original_header": original_header})
+        assert response == station, f"Failed to retrieve station={station}"
+
+    @pytest.mark.parametrize(
+        "global_attributes,original_header,station",
+        [
+            ({"station": "ABC04"}, "station: DEF05", "ABC04"),
+            ({"station": None}, "station: DEF05", "DEF05"),
+            ({"station": None}, "no station", None),
+            ({"station": "station"}, "some text", "station"),
+        ],
+    )
+    def test_odf_station_in_globals(self, global_attributes, original_header, station):
+        response = _review_station(
+            global_attributes, {"original_header": original_header}
+        )
+        assert response == station, f"Failed to retrieve station={station}"
 
 
 class TestODFBIOParser:

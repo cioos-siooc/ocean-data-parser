@@ -220,14 +220,14 @@ def _review_station(global_attributes, odf_header):
     - Make sure station != event_number
     """
     # If station is already available return it back
-    if "station" in global_attributes:
+    if global_attributes.get("station"):
         return global_attributes["station"]
     elif global_attributes.get("project", "") in stationless_programs:
         return None
 
     # Search station anywhere within ODF Header
     station = re.search(
-        r"station[\w\s]*:\s*(\w*)",
+        r"station[\w\s]*:\s*(\w*)|\s+(\d+)\s;nom de la station",
         "".join(odf_header["original_header"]),
         re.IGNORECASE,
     )
@@ -235,19 +235,17 @@ def _review_station(global_attributes, odf_header):
         return
 
     # If station is found standardize it
-    station = _standardize_station_names(station[1])
+    station = _standardize_station_names([item for item in station.groups() if item][0])
 
     # Ignore station that are actually the event_number
-    if re.match(r"^[0-9]+$", station) and int(station) != global_attributes.get(
+    if re.match(r"^[0-9]+$", station) and int(station) == global_attributes.get(
         "event_number"
     ):
         logger.warning(
-            "Station name is suspicious since its just a number: %s",
+            "Station name is suspicious since its just a number similar to the event_number: %s",
             station,
         )
-        return
-
-    return _standardize_station_names(station)
+    return station
 
 
 def _generate_instrument_attributes(odf_header, instrument_manufacturer_header=None):
