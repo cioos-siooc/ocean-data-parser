@@ -443,16 +443,16 @@ def add_vocabulary_attributes(
                     matching_terms.loc[id, "long_name"] += f", {index}"
 
         else:
-            matching_terms["variable_name"] = (
+            matching_terms.loc[:, "variable_name"] = (
                 matching_terms["variable_name"]
                 .fillna(var)
                 .apply(lambda x: _update_variable_index(x, gf3.index))
             )
-            matching_terms["sdn_parameter_urn"] = matching_terms[
+            matching_terms.loc[:, "sdn_parameter_urn"] = matching_terms[
                 "sdn_parameter_urn"
             ].apply(lambda x: _update_variable_index(x, gf3.index))
             if gf3.index > 1:
-                matching_terms["long_name"] += f", {gf3.index}"
+                matching_terms.loc[:, "long_name"] += f", {gf3.index}"
 
         # Add attributes to original variable
         if add_attributes_existing_variables:
