@@ -227,7 +227,7 @@ def _review_station(global_attributes, odf_header):
 
     # Search station anywhere within ODF Header
     station = re.search(
-        r"station[\w\s]*:\s*(\w+)|\s+(\d+)\s*;nom de la station",
+        r"station[\w\s]*:\s*([A-Za-z]+\d+)|\s+(\d+)\s*;nom de la station",
         "".join(odf_header["original_header"]),
         re.IGNORECASE,
     )
