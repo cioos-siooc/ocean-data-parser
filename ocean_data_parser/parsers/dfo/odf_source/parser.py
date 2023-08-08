@@ -60,9 +60,9 @@ class GF3Code:
         self.name = f"{self.code}_{self.index:02}" if index else self.code
 
 
-def _convert_odf_time(time_string):
+def _convert_odf_time(time_string: str) -> pd.Timestamp:
     """Convert ODF timestamps to a datetime object"""
-    if time_string == "17-NOV-1858 00:00:00.00":
+    if time_string == "17-NOV-1858 00:00:00.00" or time_string is None:
         return pd.NaT
 
     delta_time = (

@@ -24,6 +24,7 @@ from ocean_data_parser.parsers import (
     utils,
     van_essen_instruments,
 )
+from ocean_data_parser.parsers.dfo.odf_source.parser import _convert_odf_time
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
@@ -294,6 +295,58 @@ class AmundsenParserTests(unittest.TestCase):
                 continue
             ds = amundsen.int_format(path)
             ds.to_netcdf(f"{path}_test.nc", format="NETCDF4_CLASSIC")
+
+
+class TestODFParser:
+    @pytest.mark.parametrize(
+        "timestamp,expected_response",
+        [
+            (None, pd.NaT),
+            ("17-NOV-1858 00:00:00.00", pd.NaT),
+            (
+                "01-Dec-2022 00:00:00",
+                pd.Timestamp(
+                    year=2022, month=12, day=1, hour=0, minute=0, second=0, tz="UTC"
+                ),
+            ),
+            (
+                "1-Dec-2022 01:02:03.123",
+                pd.Timestamp(
+                    year=2022,
+                    month=12,
+                    day=1,
+                    hour=1,
+                    minute=2,
+                    second=3,
+                    microsecond=123000,
+                    tz="UTC",
+                ),
+            ),
+            (
+                "01-Dec-2022 00:00:60",
+                pd.Timestamp(
+                    year=2022, month=12, day=1, hour=0, minute=1, second=0, tz="UTC"
+                ),
+            ),
+        ],
+    )
+    def test_odf_timestamp_parser(self, timestamp, expected_response):
+        response = _convert_odf_time(timestamp)
+        assert response is expected_response or response == expected_response
+
+    @pytest.mark.parametrize(
+        "timestamp,expected_response",
+        [
+            ("2022-12-11 00:00:00.00", pd.NaT),
+            ("2022-20-20 00:00:00.00", pd.NaT),
+            ("2022-20-20", pd.NaT),
+        ],
+    )
+    def test_failed_odf_timestamp_parser(self, timestamp, expected_response, caplog):
+        response = _convert_odf_time(timestamp)
+        assert response is expected_response or response == expected_response
+        assert "Unknown time format" in caplog.text
+        assert "Failed to parse the timestamp" in caplog.text
 
 
 class TestODFBIOParser:
