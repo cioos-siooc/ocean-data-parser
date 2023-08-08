@@ -266,9 +266,7 @@ def read(filename, encoding_format="Windows-1252"):
 
     # Review N variables
     if len(df.columns) != len(metadata["PARAMETER_HEADER"]):
-        raise RuntimeError(
-            f"{df.columns} doesn't match ODF parameters"
-        )
+        raise RuntimeError(f"{df.columns} doesn't match ODF parameters")
 
     # Convert to an xarray
     dataset = df.to_xarray()

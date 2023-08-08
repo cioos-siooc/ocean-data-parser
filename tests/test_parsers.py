@@ -30,7 +30,6 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
 
 
-
 class PMEParserTests(unittest.TestCase):
     def test_txt_parser(self):
         paths = glob("tests/parsers_test_files/pme")

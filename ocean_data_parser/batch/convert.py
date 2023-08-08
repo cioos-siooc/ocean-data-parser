@@ -77,7 +77,6 @@ classic_logger = logging.getLogger()
 
 
 @click.command()
-@click.argument("input_path", required=False, nargs=-1)
 @click.option(
     "-i",
     "--input",
@@ -153,23 +152,7 @@ def cli_files(
 
     # Drop empty kwargs
     kwargs = {key: value for key, value in kwargs.items() if value}
-
-    # Handle input
-    if input_path and kwargs.get("input"):
-        sys.exit(
-            f"ERROR! Two inputs were passed as arg = {input_path} and --input = {kwargs['input']}. "
-            "Use one input method only"
-        )
-    elif not input_path and not kwargs.get("input") and not config:
-        sys.exit("ERROR! No file input provided.")
-    elif len(input_path) == 1:
-        kwargs["input_path"] = input_path[0]
-    elif "input" in kwargs:
-        kwargs["input_path"] = kwargs.pop("input")
-
-    files = input_path if len(input_path) > 1 else None
-
-    BatchConversion(config=config, **kwargs).run(files=files)
+    BatchConversion(config=config, **kwargs).run()
 
 
 class BatchConversion:
@@ -206,12 +189,15 @@ class BatchConversion:
         config["registry"].update(registry_kwarg)
         return config
 
-    def get_source_files(self) -> list:
-        excluded_files = (
+    def get_excluded_files(self) -> list:
+        return (
             glob(self.config["exclude"], recursive=True)
             if self.config.get("exclude")
             else []
         )
+    
+    def get_source_files(self) -> list:
+        excluded_files = self.get_excluded_files()
         return [
             file
             for file in glob(self.config["input_path"], recursive=True)
@@ -253,8 +239,13 @@ class BatchConversion:
     def run(self, files=None):
         """Run Batch conversion"""
         logger.info("Run ocean-data-parser[{}] batch conversion", __version__)
-        self.registry.add(files or glob(self.config["input_path"]))
+        files = self.get_source_files()
+        if not files:
+            error_message = f"ERROR No files detected with {self.config['input_path']}"
+            logger.error(error_message)
+            sys.exit(error_message)
 
+        self.registry.add(files)
         files = self.registry.get_source_files_to_parse()
         if not files:
             logger.info("No file to parse. Conversion completed")
