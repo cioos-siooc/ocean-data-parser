@@ -7,7 +7,6 @@ multiprocessing: 1 # n processes to run [int] or null for all
 errors: "ignore" # raise|ignore
 registry:
   path: null # file_registry(.csv | .parquet)
-  since: null # pandas.Timedelta expression (ex: '24h') or datetime ('2022-01-01T00:00:00Z')
 
 sentry:
   dsn: https://cd67597c647c4767adf0b3acf5d3f6a6@o56764.ingest.sentry.io/4505529390137344

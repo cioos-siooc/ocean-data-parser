@@ -100,14 +100,14 @@ class TestBatchMode:
 
     @pytest.mark.parametrize(
         "key",
-        ("registry_path", "registry_hashtype", "registry_since", "registry_block_size"),
+        ("registry_path", "registry_hashtype", "registry_block_size"),
     )
     def test_batch_conversion_registry_kwargs(self, key):
         batch = BatchConversion(**{key: "test"})
         key = key.replace("registry_", "")
         assert batch.config["registry"][key] == "test"
 
-    def test_batch_conversion_dictionary_input(self, tmp_path):
+    def test_batch_conversion_dictionary_input(self):
         config = _get_config()
         batch = BatchConversion(config)
         assert batch

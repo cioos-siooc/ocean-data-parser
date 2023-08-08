@@ -23,13 +23,11 @@ class FileConversionRegistry:
         data: pd.DataFrame = EMPTY_FILE_REGISTRY,
         hashtype: str = "sha256",
         block_size: int = 65536,
-        since: Union[pd.Timestamp, pd.Timedelta, str] = None,
     ):
         self.path = Path(path) if path else None
         self.data = data
         self.hashtype = hashtype
         self.hash_block_size = block_size
-        self.since = since
 
         if self.path and self.path.exists() and data.empty:
             self.load()
@@ -104,26 +102,6 @@ class FileConversionRegistry:
         source = Path(source)
         return source.stat().st_mtime if source.exists() else None
 
-    def _get_since_timestamp(self, since=None) -> pd.Timestamp:
-        """Convert since attribute to a pd.Timestamp"""
-        if not since:
-            since = self.since
-        if isinstance(since, str):
-            # Detect string input type
-            # - format "1231 ad" is likely a timedelta
-            # - otherwise assume it's a date
-            if re.fullmatch(r"[\d\.]+\s*\w+", since):
-                since = pd.Timedelta(since)
-            else:
-                since = pd.Timestamp(since)
-
-        # Convert timedelta to present time
-        if isinstance(since, pd.Timedelta):
-            return (pd.Timestamp.utcnow() - since).timestamp()
-        elif isinstance(since, pd.Timestamp):
-            return since.timestamp()
-        return since
-
     def _file_exists(self, file):
         return Path(file).exists() if isinstance(file, (str, Path)) else False
 
@@ -172,12 +150,6 @@ class FileConversionRegistry:
 
     def _is_different_mtime(self) -> pd.Series:
         return self.data["mtime"] != self.data.index.map(self._get_mtime)
-
-    def _is_modified_since(self) -> pd.Series:
-        if self.since is None:
-            return pd.Series(False, self.data.index)
-        since = self._get_since_timestamp()
-        return self.data.index.to_series().apply(self._get_mtime) - since >= 0
 
     def _is_new_file(self) -> pd.Series:
         return ~self._output_file_exists() & self._has_no_error()
@@ -258,12 +230,12 @@ class FileConversionRegistry:
         """
         if not overwrite or not self.path:
             return self.data.loc[self._is_new_file()].index.to_list()
-
-        if self.since:
-            is_modified = self._is_modified_since()
-        else:
+        
+        if self.hashtype:
             is_modified = self._is_different_hash()
-
+        else:
+            is_modified = self._is_different_mtime()
+        
         return self.data.loc[self._is_new_file() | is_modified].index.to_list()
 
     def get_missing_sources(self) -> list:
