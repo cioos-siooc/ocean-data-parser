@@ -13,10 +13,10 @@ from ocean_data_parser.batch.config import glob
 from ocean_data_parser.batch.convert import (
     BatchConversion,
     FileConversionRegistry,
+    InterceptHandler,
     cli_files,
     load_config,
 )
-from ocean_data_parser.batch.convert import InterceptHandler
 from ocean_data_parser.batch.utils import generate_output_path
 
 MODULE_PATH = Path(__file__).parent
@@ -138,7 +138,7 @@ class TestBatchMode:
 
 class TestBatchCLI:
     @staticmethod
-    def _run_cli_batch_process(*args, exit_code=0):
+    def _run_cli_batch_process(*args):
         """Run Click cli code"""
         runner = CliRunner()
         result = runner.invoke(cli_files, args)
