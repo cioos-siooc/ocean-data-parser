@@ -45,12 +45,12 @@ def get_history_handler():
 
 
 def standardize_dataset(
-    ds, time_variables_encoding="seconds since 1970-01-01T00:00:00"
+    ds, time_variables_encoding="seconds since 1970-01-01T00:00:00", utc=True
 ):
     """Standardize dataset to be easily serializable to netcdf and compatible with ERDDAP"""
 
     def _consider_attribute(value):
-        return type(value) in (dict, tuple, list, np.ndarray) or (
+        return isinstance(value, (dict, tuple, list, np.ndarray)) or (
             (pd.notnull(value) or value in (0, 0.0)) and value != ""
         )
 
@@ -61,7 +61,7 @@ def standardize_dataset(
             if all(
                 isinstance(item, type(value[0])) for item in value
             ) and not isinstance(value[0], str):
-                return np.array(value).astype(value[0])
+                return np.array(value).astype(type(value[0]))
             return value
         elif type(value) in (datetime, pd.Timestamp):
             return value.isoformat().replace("+00:00", "Z")
@@ -70,7 +70,7 @@ def standardize_dataset(
         else:
             return value
 
-    ds = get_spatial_coverage_attributes(ds)
+    ds = get_spatial_coverage_attributes(ds, utc=utc)
     ds = standardize_variable_attributes(ds)
     ds.attrs = standardize_global_attributes(ds.attrs)
 
@@ -94,7 +94,7 @@ def standardize_dataset(
         ds.encoding[var] = {}
         if "datetime" in ds[var].dtype.name:
             ds[var].encoding.update({"units": time_variables_encoding})
-            if "tz" in ds[var].dtype.name:
+            if "tz" in ds[var].dtype.name or utc:
                 ds[var].encoding["units"] += "Z"
             ds[var].attrs.pop("units", None)
         elif isinstance(ds[var].dtype, object) and isinstance(
@@ -162,6 +162,7 @@ def get_spatial_coverage_attributes(
     lat="latitude",
     lon="longitude",
     depth="depth",
+    utc=False,
 ):
     """
     This method generates the geospatial and time coverage attributes associated to an xarray dataset.
@@ -170,7 +171,7 @@ def get_spatial_coverage_attributes(
     time_spatial_coverage = {}
     # time
     if time in ds.variables:
-        is_utc = ds[time].attrs.get("timezone") == "UTC"
+        is_utc = ds[time].attrs.get("timezone") == "UTC" or utc
         time_spatial_coverage.update(
             {
                 "time_coverage_start": pd.to_datetime(

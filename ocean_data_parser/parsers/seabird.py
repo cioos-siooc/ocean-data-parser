@@ -16,7 +16,8 @@ import xarray
 import xmltodict
 from pyexpat import ExpatError
 
-from .utils import convert_datetime_str, standardize_dataset
+from ocean_data_parser.parsers.utils import convert_datetime_str, standardize_dataset
+from ocean_data_parser.vocabularies.load import seabird_vocabulary
 
 SBE_TIME_FORMAT = "%b %d %Y %H:%M:%S"  # Jun 23 2016 13:51:30
 var_dtypes = {
@@ -35,15 +36,7 @@ logger = logging.getLogger(__name__)
 reference_vocabulary_path = os.path.join(
     os.path.dirname(__file__), "vocabularies", "seabird_variable_attributes.json"
 )
-
-# Read vocabulary file
-with open(reference_vocabulary_path, encoding="UTF-8") as vocabulary_file:
-    seabird_variable_attributes = json.load(vocabulary_file)
-
-    # Make it non case sensitive by lowering all keys
-    seabird_variable_attributes = {
-        key.lower(): attrs for key, attrs in seabird_variable_attributes.items()
-    }
+seabird_variable_attributes = seabird_vocabulary()
 
 
 def _convert_to_netcdf_var_name(var_name):
@@ -702,7 +695,7 @@ def add_seabird_instruments(
                     )
 
             for var in matched_variables:
-                if "instrument" in ds[var].attrs:
+                if ds[var].attrs.get("instrument"):
                     ds[var].attrs["instrument"] += "," + sensor_variable
                 else:
                     ds[var].attrs["instrument"] = sensor_variable

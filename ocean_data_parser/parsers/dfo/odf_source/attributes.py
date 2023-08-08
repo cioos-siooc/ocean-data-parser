@@ -5,7 +5,6 @@ attribtutes to the different conventions (CF, ACDD).
 
 import json
 import logging
-import os
 import re
 from datetime import datetime, timezone
 from difflib import get_close_matches
@@ -16,26 +15,48 @@ from ocean_data_parser.parsers.seabird import (
     get_seabird_instrument_from_header,
     get_seabird_processing_history,
 )
+from ocean_data_parser.vocabularies.load import dfo_platforms
 
-no_file_logger = logging.getLogger(__name__)
-logger = logging.LoggerAdapter(no_file_logger, {"file": None})
+logger = logging.getLogger(__name__)
 
 stationless_programs = ("Maritime Region Ecosystem Survey",)
+reference_platforms = dfo_platforms()
+section_prefix = {
+    "EVENT_HEADER": "event_",
+    "INSTRUMENT_HEADER": "instrument_",
+}
+
+global_odf_to_cf = {
+    "event_comments": "comments",
+    "event_creation_date": "date_modified",
+    "event_orig_creation_date": "date_issued",
+    "start_date": "cruise_start_date",
+    "end_date": "cruise_end_date",
+}
 
 
-def _generate_platform_attributes(platform, reference_platforms):
+def _generate_platform_attributes(platform: str) -> dict:
     """Review ODF CRUISE_HEADER:PLATFORM and match to closest"""
+    if reference_platforms is None:
+        return {}
     platform = re.sub(
         r"CCGS_*\s*|CGCB\s*|FRV\s*|NGCC\s*|^_|MV\s*", "", platform
     ).strip()
-    matched_platform = get_close_matches(platform.lower(), reference_platforms.keys())
+    matched_platform = get_close_matches(
+        platform.lower(), reference_platforms["platform_name"]
+    )
     if matched_platform:
-        return reference_platforms[matched_platform[0]]
+        return (
+            reference_platforms.query(f"platform_name == '{matched_platform[0]}'")
+            .iloc[0]
+            .to_dict()
+        )
+
     logger.warning("Unknown platform %s", platform)
     return {}
 
 
-def _generate_cf_history_from_odf(odf_header):
+def _generate_cf_history_from_odf(odf_header) -> dict:
     """
     Generate from ODF HISTORY_HEADER, CF recommended format history attribute.
     If a Seabird instrument csv header is provided, it will be converted to a CF standard and
@@ -46,9 +67,12 @@ def _generate_cf_history_from_odf(odf_header):
 
     def _add_to_history(comment, date=datetime.now(timezone.utc)):
         """Generate a CF standard history line."""
-        if pd.isna(date):
-            return f"NaT {comment}\n"
-        return f"{date.strftime('%Y-%m-%dT%H:%M:%SZ')} {comment}\n"
+        date_str = (
+            date.strftime("%Y-%m-%dT%H:%M:%SZ")
+            if pd.notna(date)
+            else "0000-00-00 00:00:00Z"
+        )
+        return f"{date_str} {comment}\n"
 
     # Convert ODF history to CF history
     is_manufacturer_header = False
@@ -59,9 +83,16 @@ def _generate_cf_history_from_odf(odf_header):
         "history": "",
     }
     for history_group in odf_header["HISTORY_HEADER"]:
+        if "PROCESS" not in history_group:
+            continue
         # Convert single processes to list
         if isinstance(history_group["PROCESS"], str):
             history_group["PROCESS"] = [history_group["PROCESS"]]
+
+        # Empty history group (just write the date)
+        if history_group["PROCESS"] is None:
+            history["history"] += _add_to_history("", history_group["CREATION_DATE"])
+            continue
 
         for row in history_group["PROCESS"]:
             if row is None:
@@ -95,7 +126,7 @@ def _generate_cf_history_from_odf(odf_header):
     return history
 
 
-def _define_cdm_data_type_from_odf(odf_header):
+def _define_cdm_data_type_from_odf(odf_header: dict) -> dict:
     """Generate cdm_data_type attributes based on the odf data_type attribute."""
     # Derive cdm_data_type from DATA_TYPE
     odf_data_type = odf_header["EVENT_HEADER"]["DATA_TYPE"]
@@ -141,7 +172,7 @@ def _define_cdm_data_type_from_odf(odf_header):
     return attributes
 
 
-def _review_event_number(global_attributes, odf_header):
+def _review_event_number(global_attributes, odf_header) -> int:
     """Review event_number which should be number otherwise get rid of it"""
     # If interger already return that same value
     if isinstance(global_attributes["event_number"], int):
@@ -165,7 +196,7 @@ def _review_event_number(global_attributes, odf_header):
     )
 
 
-def _standardize_station_names(station):
+def _standardize_station_names(station: str) -> str:
     """
     Standardize stations with convention:
         - ABC01: capital letters two digits
@@ -189,56 +220,32 @@ def _review_station(global_attributes, odf_header):
     - Make sure station != event_number
     """
     # If station is already available return it back
-    if "station" in global_attributes:
+    if global_attributes.get("station"):
         return global_attributes["station"]
-    elif global_attributes.get("project", "") not in stationless_programs:
+    elif global_attributes.get("project", "") in stationless_programs:
         return None
 
     # Search station anywhere within ODF Header
     station = re.search(
-        r"station[\w\s]*:\s*(\w*)",
+        r"station[\w\s]*:\s*([A-Za-z]+_*\d+)|\s+(\d+)\s*;nom de la station",
         "".join(odf_header["original_header"]),
         re.IGNORECASE,
     )
-    if station is None:
+    if not station:
         return
 
     # If station is found standardize it
-    station = station[1].strip()
+    station = _standardize_station_names([item for item in station.groups() if item][0])
 
     # Ignore station that are actually the event_number
-    if re.match(r"^[0-9]+$", station) and int(station) != global_attributes.get(
+    if re.match(r"^[0-9]+$", station) and int(station) == global_attributes.get(
         "event_number"
     ):
         logger.warning(
-            "Station name is suspicious since its just a number: %s",
+            "Station name is suspicious since its just a number similar to the event_number: %s",
             station,
         )
-        return
-
-    return _standardize_station_names(station)
-
-
-def _review_time_attributes(value, attr):
-    """Review time attributesw which should be:
-    - Parsed and converted to datetime
-    - > 1900-01-01
-    """
-    # Review attributes format
-    if value in (None, pd.NaT, ""):
-        return pd.NaT
-    if not isinstance(value, datetime):
-        logger.warning(
-            "Failed to convert timestamp %s: %s",
-            attr,
-            value,
-        )
-        return pd.NaT
-    elif value < pd.Timestamp(1900, 1, 1).tz_localize("UTC"):
-        logger.warning(
-            "%s = %s is before 1900-01-01 which is very suspicious", attr, value
-        )
-    return value
+    return station
 
 
 def _generate_instrument_attributes(odf_header, instrument_manufacturer_header=None):
@@ -272,7 +279,7 @@ def _generate_instrument_attributes(odf_header, instrument_manufacturer_header=N
         attributes["instrument_serial_number"] = ""
 
     if re.search(
-        r"(SBE\s*(9|16|19|25|37))|CTD|Guildline|GUILDLN|STD",
+        r"(SBE\s*(9|16|19|25|37))|Sea-Bird|CTD|Guildline|GUILDLN|GUILDLIN|GULIDLIN|GLDLNE|GULDLNEDIG|GUIDLINE|GUIDELINE|DIGITAL|GLD3NO.2|STD|RCM",
         attributes["instrument"],
         re.IGNORECASE,
     ):
@@ -296,18 +303,18 @@ def _generate_title_from_global_attributes(attributes):
             if "platform" in attributes
             else ""
         )
-        + f"by {attributes['organization']}  {attributes['institution']} "
+        + f"by {attributes['organization']} {attributes['institution']} "
         + f"on the {attributes['cruise_name'].title()} "
     )
     if (
-        pd.notna(attributes["mission_start_date"])
-        and pd.notna(attributes["mission_end_date"])
-        and isinstance(attributes["mission_start_date"], datetime)
-        and isinstance(attributes["mission_end_date"], datetime)
+        pd.notna(attributes["cruise_start_date"])
+        and pd.notna(attributes["cruise_end_date"])
+        and isinstance(attributes["cruise_start_date"], datetime)
+        and isinstance(attributes["cruise_end_date"], datetime)
     ):
         title += (
-            f"from {attributes['mission_start_date'].strftime('%d-%b-%Y')} "
-            + f"to {attributes['mission_end_date'].strftime('%d-%b-%Y')}."
+            f"from {attributes['cruise_start_date'].strftime('%d-%b-%Y')} "
+            + f"to {attributes['cruise_end_date'].strftime('%d-%b-%Y')}."
         )
     return title
 
@@ -336,7 +343,7 @@ def _generate_program_specific_attritutes(global_attributes):
             "cruise_name": None if project else f"{program} {season} {year}",
         }
 
-    elif program == "Maritime Region Ecosystem Survey":
+    elif program == "Maritimes Region Ecosystem Survey":
         season = "Summer" if 5 <= month <= 9 else "Winter"
         return {
             "project": f"{program} {season}",
@@ -351,118 +358,69 @@ def _generate_program_specific_attritutes(global_attributes):
         return {}
 
 
-def global_attributes_from_header(dataset, odf_header, config=None):
+def _map_odf_to_cf_globals(attrs):
+    """Map ODF attributes to cf,acdd names"""
+    return {global_odf_to_cf.get(name, name): value for name, value in attrs.items()}
+
+
+def global_attributes_from_header(dataset, odf_header):
     """
     Method use to define the standard global attributes from an ODF Header
     parsed by the read function.
     """
 
-    def _review_latitude(value):
-        return value if value != -99.9 else None
-
-    def _review_longitude(value):
-        return value if value != -999.9 else None
-
-    def _get_attribute_mapping_corrections():
-        return {
-            attr: attr_mapping[dataset.attrs[attr]]
-            for attr, attr_mapping in config["attribute_mapping_corrections"].items()
-            if attr in dataset.attrs and dataset.attrs[attr] in attr_mapping
-        }
-
-    odf_original_header = odf_header.copy()
-    odf_original_header.pop("variable_attributes")
-    if "reference_platforms" in config:
-        platform_attributes = _generate_platform_attributes(
-            odf_header["CRUISE_HEADER"]["PLATFORM"], config["reference_platforms"]
-        )
-    else:
-        platform_attributes = {}
-
-    history = _generate_cf_history_from_odf(odf_header)
-    instrument_attributes = _generate_instrument_attributes(
-        odf_header, history.get("instrument_manufacturer_header")
-    )
-    cdm_data_type_attributes = _define_cdm_data_type_from_odf(odf_header)
+    # Generate Global attributes
+    dataset.attrs = {
+        # CRUISE_HEADER
+        **{
+            f"cruise_{name.lower()}"
+            if name in ("START_DATE", "END_DATE", "CHIEF_SCIENTIST")
+            else name.lower(): value
+            for name, value in odf_header["CRUISE_HEADER"].items()
+        },
+        # EVENT_HEADER
+        **{
+            name.lower() if name.startswith("EVENT") else f"event_{name}".lower(): value
+            for name, value in odf_header["EVENT_HEADER"].items()
+        },
+        # INSTRUMENT_HEADER
+        **{
+            f"instrument_{name.replace('inst_','')}".lower(): value
+            for name, value in odf_header.get("INSTRUMENT_HEADER", {}).items()
+        },
+        **_generate_cf_history_from_odf(odf_header),
+        "original_odf_header": "\n".join(odf_header["original_header"]),
+        "original_odf_header_json": json.dumps(
+            odf_header, ensure_ascii=False, indent=False, default=str
+        ),
+        **_generate_platform_attributes(odf_header["CRUISE_HEADER"]["PLATFORM"]),
+        **_define_cdm_data_type_from_odf(odf_header),
+        **dataset.attrs,
+    }
+    # Apply global attributes corrections
     dataset.attrs.update(
         {
-            "cruise_name": odf_header["CRUISE_HEADER"]["CRUISE_NAME"],
-            "cruise_number": str(odf_header["CRUISE_HEADER"]["CRUISE_NUMBER"]),
-            "cruise_description": odf_header["CRUISE_HEADER"]["CRUISE_DESCRIPTION"],
-            "chief_scientist": _standardize_chief_scientist(
-                odf_header["CRUISE_HEADER"]["CHIEF_SCIENTIST"]
+            **_generate_instrument_attributes(
+                odf_header, dataset.attrs.get("instrument_manufacturer_header")
             ),
-            "mission_start_date": _review_time_attributes(
-                odf_header["CRUISE_HEADER"].get("START_DATE"), "START_DATE"
+            "title": _generate_title_from_global_attributes(dataset.attrs),
+            "cruise_chief_scientist": _standardize_chief_scientist(
+                dataset.attrs["cruise_chief_scientist"]
             ),
-            "mission_end_date": _review_time_attributes(
-                odf_header["CRUISE_HEADER"].get("END_DATE"), "END_DATE"
-            ),
-            "event_number": odf_header["EVENT_HEADER"]["EVENT_NUMBER"],
-            "event_start_time": _review_time_attributes(
-                odf_header["EVENT_HEADER"]["START_DATE_TIME"], "START_DATE_TIME"
-            ),
-            "event_end_time": _review_time_attributes(
-                odf_header["EVENT_HEADER"]["END_DATE_TIME"], "END_DATE_TIME"
-            ),
-            "initial_latitude": _review_latitude(
-                odf_header["EVENT_HEADER"]["INITIAL_LATITUDE"]
-            ),
-            "initial_longitude": _review_longitude(
-                odf_header["EVENT_HEADER"]["INITIAL_LONGITUDE"]
-            ),
-            "end_latitude": _review_latitude(
-                odf_header["EVENT_HEADER"]["END_LATITUDE"]
-            ),
-            "end_longitude": _review_longitude(
-                odf_header["EVENT_HEADER"]["END_LONGITUDE"]
-            ),
-            "sampling_interval": odf_header["EVENT_HEADER"]["SAMPLING_INTERVAL"],
-            "sounding": odf_header["EVENT_HEADER"]["SOUNDING"],
-            "depth_off_bottom": odf_header["EVENT_HEADER"]["DEPTH_OFF_BOTTOM"],
-            "date_created": pd.Timestamp.utcnow(),
-            "date_modified": odf_header["EVENT_HEADER"]["CREATION_DATE"],
-            "date_issued": odf_header["EVENT_HEADER"]["ORIG_CREATION_DATE"],
-            "history": "",
-            "comments": odf_header["EVENT_HEADER"].get("EVENT_COMMENTS"),
-            "original_odf_header": "\n".join(odf_header["original_header"]),
-            "original_odf_header_json": json.dumps(
-                odf_original_header, ensure_ascii=False, indent=False, default=str
-            ),
-            **platform_attributes,
-            **instrument_attributes,
-            **history,
-            **cdm_data_type_attributes,
+            "event_number": _review_event_number(dataset.attrs, odf_header),
+            "station": _review_station(dataset.attrs, odf_header),
+            **_generate_program_specific_attritutes(dataset.attrs),
         }
     )
-
-    # Apply global attributes corrections
-    dataset.attrs.update(config["global_attributes"])
-    if config["file_specific_attributes"] and config["file_specific_attributes"].get(
-        os.path.basename(dataset.attrs["source"])
-    ):
-        logger.info("Apply file specific attributes correction")
-        dataset.attrs.update(
-            config["file_specific_attributes"][
-                os.path.basename(dataset.attrs["source"])
-            ]
-        )
-    dataset.attrs.update(_get_attribute_mapping_corrections())
-
-    # Generate attributes from other attributes
-    if dataset.attrs.keys() >= {"organization", "institution", "platform"}:
-        dataset.attrs["title"] = _generate_title_from_global_attributes(dataset.attrs)
-    dataset.attrs.update(**_generate_program_specific_attritutes(dataset.attrs))
+    dataset.attrs = _map_odf_to_cf_globals(dataset.attrs)
 
     # Review ATTRIBUTES
-    dataset.attrs["event_number"] = _review_event_number(dataset.attrs, odf_header)
-    dataset.attrs["station"] = _review_station(dataset.attrs, odf_header)
-    if isinstance(dataset.attrs["comments"], list):
+    if isinstance(dataset.attrs.get("comments"), list):
         dataset.attrs["comments"] = "\n".join(
             [line for line in dataset.attrs["comments"] if line]
         )
 
-    # Drop empty global attributes
+    # Ignore empty attributes
     dataset.attrs = {
         key: value
         for key, value in dataset.attrs.items()
@@ -477,55 +435,49 @@ def generate_coordinates_variables(dataset):
     """
     if "cdm_data_type" not in dataset.attrs:
         logging.error("No cdm_data_type attribute")
-    elif dataset.attrs["cdm_data_type"] in ("Profile", "Point"):
-        dataset["time"] = dataset.attrs["event_start_time"]
-        dataset["latitude"] = dataset.attrs["initial_latitude"]
-        dataset["longitude"] = dataset.attrs["initial_longitude"]
-        # depth is generated by vocabulary
-    elif dataset.attrs["cdm_data_type"] in ["Timeseries", "TimeseriesProfile"]:
-        dataset["latitude"] = dataset.attrs["initial_latitude"]
-        dataset["longitude"] = dataset.attrs["initial_longitude"]
-        # depth and time are generated by vocabulary
-    elif dataset.attrs["cdm_data_type"] == "Trajectory":
-        dataset = dataset.rename(
+
+    if dataset.attrs["cdm_data_type"] in ("Profile", "Point"):
+        dataset["time"] = (
+            [],
+            dataset.attrs["event_start_date_time"],
             {
-                "SYTM_01": "measurement_time",
-                "LATD_01": "latitude",
-                "LOND_01": "longitude",
-            }
+                "name": "time",
+                "standard_name": "time",
+                "ioos_category": "Time",
+                "coverage_content_type": "coordinate",
+                "timezone": "UTC",
+            },
         )
 
-    else:
-        logger.error(
-            "odf_converter is not yet compatible with %s",
-            dataset.attrs["cdm_data_type"],
+    if dataset.attrs["cdm_data_type"] in (
+        "Profile",
+        "Point",
+        "Timeseries",
+        "TimeseriesProfile",
+    ):
+        dataset["latitude"] = (
+            [],
+            dataset.attrs["event_initial_latitude"],
+            {
+                "long_name": "Latitude",
+                "units": "degrees_north",
+                "standard_name": "latitude",
+                "ioos_category": "Location",
+                "coverage_content_type": "coordinate",
+            },
         )
-    # Apply attributes to each coordinate variables
-    coordinate_attributes = {
-        "time": {
-            "name": "time",
-            "standard_name": "time",
-            "ioos_category": "Time",
-            "coverage_content_type": "coordinate",
-        },
-        "latitude": {
-            "long_name": "Latitude",
-            "units": "degrees_north",
-            "standard_name": "latitude",
-            "ioos_category": "Location",
-            "coverage_content_type": "coordinate",
-        },
-        "longitude": {
-            "long_name": "Longitude",
-            "units": "degrees_east",
-            "standard_name": "longitude",
-            "ioos_category": "Location",
-            "coverage_content_type": "coordinate",
-        },
-    }
-    for var, attrs in coordinate_attributes.items():
-        if var in dataset:
-            dataset[var].attrs = attrs
+        dataset["longitude"] = (
+            [],
+            dataset.attrs["event_initial_longitude"],
+            {
+                "long_name": "Longitude",
+                "units": "degrees_east",
+                "standard_name": "longitude",
+                "ioos_category": "Location",
+                "coverage_content_type": "coordinate",
+            },
+        )
+
     return dataset
 
 

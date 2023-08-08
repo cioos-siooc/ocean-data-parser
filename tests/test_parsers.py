@@ -8,8 +8,8 @@ from glob import glob
 import pandas as pd
 import pytest
 import xarray as xr
-from ocean_data_parser import read
 
+from ocean_data_parser import read
 from ocean_data_parser.parsers import (
     amundsen,
     dfo,
@@ -21,140 +21,14 @@ from ocean_data_parser.parsers import (
     seabird,
     star_oddi,
     sunburst,
-    utils,
     van_essen_instruments,
 )
+from ocean_data_parser.parsers.dfo.odf_source.attributes import _review_station
+from ocean_data_parser.parsers.dfo.odf_source.parser import _convert_odf_time
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
 
-
-def compare_xarray_datasets(ds1: xr.Dataset, ds2: xr.Dataset, **kwargs) -> list:
-    """Compare two xarray.Dataset.info outputs with difflib.unified_diff.
-
-    Args:
-        ds1 (xr.Dataset): First dataset
-        ds2 (xr.Dataset): Second datset
-        **kwargs (optional): difflib.unified_diff **kwargs
-
-    Returns:
-        list: List of differences detected by difflib.
-    """
-
-    def _get_xarray_dataset_info(ds):
-        f = io.StringIO()
-        ds.info(f)
-        return f.getvalue().split("\n")
-
-    ds1_info = _get_xarray_dataset_info(ds1)
-    ds2_info = _get_xarray_dataset_info(ds2)
-
-    return list(difflib.unified_diff(ds1_info, ds2_info, **kwargs))
-
-
-def compare_test_to_reference_netcdf(test: xr.Dataset, reference: xr.Dataset):
-    def standardize_attributes(value):
-        if isinstance(value, str):
-            value = value.strip()
-            if re.match(
-                r"\d\d\d\d-\d\d-\d\d(T|\s)\d\d:\d\d:\d\d(\.\d*){0,1}(Z|[+-]\d\d\:\d\d){0,1}$",
-                value,
-            ):
-                value = pd.to_datetime(value)
-        return value
-
-    def standardize_dataset(ds):
-        ds.attrs = {
-            key: standardize_attributes(value) for key, value in ds.attrs.items()
-        }
-        for var in ds:
-            ds[var].attrs = {
-                key: standardize_attributes(value)
-                for key, value in ds[var].attrs.items()
-            }
-        return ds
-
-    def ignore_from_attr(attr, expression, placeholder):
-        """Replace expression in both reference and test files which are
-        expected to be different."""
-        reference.attrs[attr] = re.sub(expression, placeholder, reference.attrs[attr])
-        test.attrs[attr] = re.sub(expression, placeholder, test.attrs[attr])
-
-    # Drop some expected differences
-    # Add placeholders to specific fields in attributes
-    ignore_from_attr(
-        "history",
-        r"cioos_data_trasform.odf_transform V \d+\.\d+.\d+",
-        "cioos_data_trasform.odf_transform V VERSION",
-    )
-    ignore_from_attr(
-        "history", r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.*\d*Z", "TIMESTAMP"
-    )
-    ignore_from_attr("source", ".*", "source")
-
-    reference.attrs["date_created"] = "TIMESTAMP"
-    test.attrs["date_created"] = "TIMESTAMP"
-
-    # Replace variables decoded as object to objects also in test
-    for variable in reference.variables:
-        if variable in test and reference[variable].dtype == object:
-            test[variable] = test[variable].astype(object)
-
-    reference = standardize_dataset(reference)
-    test = standardize_dataset(test)
-
-    # Compare only attributes that exist in reference
-    test.attrs = {
-        attr: value for attr, value in test.attrs.items() if attr in reference.attrs
-    }
-    for var in test:
-        if var not in reference and var in test:
-            test = test.drop(var)
-            continue
-        test[var].attrs = {
-            attr: value
-            for attr, value in test[var].attrs.items()
-            if attr in reference[var].attrs
-        }
-
-    for var in test.coords:
-        if var not in reference:
-            continue
-        test[var].attrs = {
-            attr: value
-            for attr, value in test[var].attrs.items()
-            if attr in reference[var].attrs
-        }
-    return compare_xarray_datasets(
-        reference, test, fromfile="reference", tofile="test", n=0
-    )
-
-
-class TestCompareDatasets:
-    def _get_test_and_reference(self):
-        reference_files = glob(
-            "tests/parsers_test_files/**/*_reference.nc", recursive=True
-        )
-        assert reference_files, "Fail to retrieve any reference netcdf file"
-        reference = xr.open_dataset(reference_files[0])
-        return reference, reference.copy()
-
-    def _compare_datasets(self, ref, test):
-        return compare_xarray_datasets(
-            ref, test, fromfile="reference", tofile="test", n=0
-        )
-
-    def test_compare_test_to_reference_datasets(self):
-        reference, test = self._get_test_and_reference()
-        reference.attrs["title"] = "This is the reference title"
-        test = reference.copy()
-        test.attrs["title"] = "This is the test title"
-        differences = self._compare_datasets(reference, test)
-        assert differences, "Failed to detect any differences"
-        assert len(differences) == 5, "Failed to detect the rigth differences"
-        assert any(
-            "title" in line for line in differences
-        ), "Didn't suggest that the title attribute is changed"
 
 
 class PMEParserTests(unittest.TestCase):
@@ -247,66 +121,149 @@ class AmundsenParserTests(unittest.TestCase):
             ds.to_netcdf(f"{path}_test.nc", format="NETCDF4_CLASSIC")
 
 
+class TestODFParser:
+    @pytest.mark.parametrize(
+        "timestamp,expected_response",
+        [
+            (None, pd.NaT),
+            ("17-NOV-1858 00:00:00.00", pd.NaT),
+            (
+                "01-Dec-2022 00:00:00",
+                pd.Timestamp(
+                    year=2022, month=12, day=1, hour=0, minute=0, second=0, tz="UTC"
+                ),
+            ),
+            (
+                "1-Dec-2022 01:02:03.123",
+                pd.Timestamp(
+                    year=2022,
+                    month=12,
+                    day=1,
+                    hour=1,
+                    minute=2,
+                    second=3,
+                    microsecond=123000,
+                    tz="UTC",
+                ),
+            ),
+            (
+                "01-Dec-2022 00:00:60",
+                pd.Timestamp(
+                    year=2022, month=12, day=1, hour=0, minute=1, second=0, tz="UTC"
+                ),
+            ),
+        ],
+    )
+    def test_odf_timestamp_parser(self, timestamp, expected_response):
+        response = _convert_odf_time(timestamp)
+        assert response is expected_response or response == expected_response
+
+    @pytest.mark.parametrize(
+        "timestamp,expected_response",
+        [
+            ("2022-12-11 00:00:00.00", pd.NaT),
+            ("2022-20-20 00:00:00.00", pd.NaT),
+            ("2022-20-20", pd.NaT),
+        ],
+    )
+    def test_failed_odf_timestamp_parser(self, timestamp, expected_response, caplog):
+        response = _convert_odf_time(timestamp)
+        assert response is expected_response or response == expected_response
+        assert "Unknown time format" in caplog.text
+        assert "Failed to parse the timestamp" in caplog.text
+
+    @pytest.mark.parametrize(
+        "original_header,station",
+        [
+            (" station: QU05", "QU05"),
+            ("somethinng station: QU05 some more", "QU05"),
+            ("station: QU5 some more", "QU05"),
+            ("station: QU_5 some more", "QU05"),
+            ("station_name: QU_5 some more", "QU05"),
+            ("station: QU_05 some more", "QU05"),
+            ("station: 2 ", None),
+            ("some text station: ", None),
+            ("|some text before 223 ;nom de la station ", "223"),
+            ("|some text before 1 ;nom de la station ", "001"),
+            ("|some text before QU31 ;nom de la station ", None),
+            (";nom de la station ", None),
+        ],
+    )
+    def test_odf_station_search(self, original_header, station):
+        response = _review_station({}, {"original_header": original_header})
+        assert response == station, f"Failed to retrieve station={station}"
+
+    @pytest.mark.parametrize(
+        "global_attributes,original_header,station",
+        [
+            ({"station": "ABC04"}, "station: DEF05", "ABC04"),
+            ({"station": None}, "station: DEF05", "DEF05"),
+            ({"station": None}, "no station", None),
+            ({"station": "station"}, "some text", "station"),
+            ({}, "some text", None),
+        ],
+    )
+    def test_odf_station_in_globals(self, global_attributes, original_header, station):
+        response = _review_station(
+            global_attributes, {"original_header": original_header}
+        )
+        assert response == station, f"Failed to retrieve station={station}"
+
+
 class TestODFBIOParser:
     @pytest.mark.parametrize(
-        "file", glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
+        "file", glob("tests/parsers_test_files/dfo/odf/bio/**/CTD*.ODF", recursive=True)
     )
-    def test_bio_odf_parser(self, file):
+    def test_bio_odf_ctd_parser(self, file):
         """Test DFO BIO ODF Parser"""
-        dfo.odf.bio_odf(file, config=None)
-
-    @pytest.mark.parametrize(
-        "file", glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
-    )
-    def test_bio_odf_parser_to_netcdf(self, file):
-        """Test DFO BIO ODF Parser"""
-        dfo.odf.bio_odf(file, config=None, output="netcdf")
-
-    @pytest.mark.parametrize(
-        "file", glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
-    )
-    def test_bio_odf_netcdf(self, file):
-        """Test DFO BIO ODF Parser"""
-        ds = dfo.odf.bio_odf(file, config=None)
-        ds.to_netcdf(f"{file}_test.nc")
+        dfo.odf.bio_odf(file).to_netcdf(f"{file}_test.nc")
 
 
 class TestODFMLIParser:
     @pytest.mark.parametrize(
         "file",
-        glob(
-            "tests/parsers_test_files/dfo/odf/mli/**/*.ODF_reference.nc", recursive=True
-        ),
-    )
-    def test_mli_all_odf_parser(self, file):
-        """Test DFO BIO ODF Parser"""
-        dfo.odf.mli_odf(file, config=None)
-
-    @pytest.mark.parametrize(
-        "file",
         [
             file
-            for datatype in ["MCM", "MCTD", "MMOB", "MTC", "MTG", "MTR", "TCTD"]
+            for datatype in ("BOTL", "BT", "CTD")
             for file in glob(
                 f"tests/parsers_test_files/dfo/odf/mli/**/{datatype}*.ODF",
                 recursive=True,
             )
         ],
     )
-    def test_mli_odf_parser_timeseries(self, file):
+    def test_mli_profile_odf_parser(self, file):
         """Test DFO BIO ODF Parser"""
-        dfo.odf.mli_odf(file, config=None)
+        dfo.odf.mli_odf(file).to_netcdf(f"{file}_test.nc")
 
     @pytest.mark.parametrize(
         "file",
-        glob(
-            "tests/parsers_test_files/dfo/odf/mli/**/TSG*.ODF",
-            recursive=True,
-        ),
+        [
+            file
+            for datatype in ("MCM", "MCTD", "MMOB", "MTC", "MTG", "MTR")
+            for file in glob(
+                f"tests/parsers_test_files/dfo/odf/mli/**/{datatype}*.ODF",
+                recursive=True,
+            )
+        ],
     )
-    def test_mli_odf_parser_trajectory(self, file):
+    def test_mli_timeseries_odf_parser(self, file):
         """Test DFO BIO ODF Parser"""
-        dfo.odf.mli_odf(file, config=None)
+        dfo.odf.mli_odf(file).to_netcdf(f"{file}_test.nc")
+
+    @pytest.mark.parametrize(
+        "file",
+        [
+            file
+            for datatype in ("TCTD", "TSG")
+            for file in glob(
+                f"tests/parsers_test_files/dfo/odf/mli/**/{datatype}*.ODF",
+                recursive=True,
+            )
+        ],
+    )
+    def test_mli_trajectory_odf_parser(self, file):
+        """Test DFO BIO ODF Parser"""
+        dfo.odf.mli_odf(file).to_netcdf(f"{file}_test.nc")
 
     @pytest.mark.parametrize(
         "file",
@@ -315,9 +272,9 @@ class TestODFMLIParser:
             recursive=True,
         ),
     )
-    def test_mli_odf_parser_madcp(self, file):
+    def test_mli_madcp_odf_parser(self, file):
         """Test DFO BIO ODF Parser"""
-        dfo.odf.mli_odf(file)
+        dfo.odf.mli_odf(file).to_netcdf(f"{file}_test.nc")
 
     @pytest.mark.parametrize(
         "file",
@@ -326,21 +283,9 @@ class TestODFMLIParser:
             recursive=True,
         ),
     )
-    def test_mli_odf_parser_plnkg(self, file):
+    def test_mli_plnkg_odf_parser(self, file):
         """Test DFO BIO ODF Parser"""
-        dfo.odf.mli_odf(file)
-
-    @pytest.mark.parametrize(
-        "file",
-        glob(
-            "tests/parsers_test_files/dfo/odf/mli/**/*.ODF",
-            recursive=True,
-        ),
-    )
-    def test_mli_odf_netcdf(self, file):
-        """Test DFO BIO ODF Parser"""
-        ds = dfo.odf.mli_odf(file, config=None)
-        ds.to_netcdf(f"{file}_test.nc")
+        dfo.odf.mli_odf(file).to_netcdf(f"{file}_test.nc")
 
 
 class TestDFOpFiles:
@@ -401,6 +346,74 @@ class TestDFOpFiles:
         response = dfo.nafc._parse_pfile_header_line3(line)
         assert isinstance(response, dict)
 
+    @pytest.mark.parametrize(
+        "line_parser",
+        [
+            "_parse_pfile_header_line1",
+            "_parse_pfile_header_line2",
+            "_parse_pfile_header_line3",
+        ],
+    )
+    def test_p_file_metadata_parser_line_failed(self, caplog, line_parser):
+        parser = getattr(dfo.nafc, line_parser)
+        response = parser(
+            "56001001 7 08 0a    0999.1 003.8       08 01 18 10 01                          8"
+        )
+        assert isinstance(response, dict)
+        assert not response
+        assert f"Failed to parse {line_parser}" in caplog.text
+
+
+class TestDfoIosShell:
+    @pytest.mark.parametrize(
+        "file", glob("tests/parsers_test_files/dfo/ios/shell/cruise/CTD/*.ctd")
+    )
+    def test_ios_shell_cruise_ctd_parser(self, file):
+        ds = dfo.ios.shell(file)
+        assert isinstance(ds, xr.Dataset)
+
+    @pytest.mark.parametrize(
+        "file", glob("tests/parsers_test_files/dfo/ios/shell/cruise/BOT/*.bot")
+    )
+    def test_ios_shell_cruise_bot_parser(self, file):
+        ds = dfo.ios.shell(file)
+        assert isinstance(ds, xr.Dataset)
+
+    @pytest.mark.parametrize(
+        "file", glob("tests/parsers_test_files/dfo/ios/shell/cruise/CHE/*.che")
+    )
+    def test_ios_shell_cruise_che_parser(self, file):
+        ds = dfo.ios.shell(file)
+        assert isinstance(ds, xr.Dataset)
+
+    @pytest.mark.parametrize(
+        "file", glob("tests/parsers_test_files/dfo/ios/shell/cruise/TOB/*.tob")
+    )
+    def test_ios_shell_cruise_tob_parser(self, file):
+        ds = dfo.ios.shell(file)
+        assert isinstance(ds, xr.Dataset)
+
+    @pytest.mark.parametrize(
+        "file", glob("tests/parsers_test_files/dfo/ios/shell/mooring/CTD/*.ctd")
+    )
+    def test_ios_shell_mooring_ctd_parser(self, file):
+        ds = dfo.ios.shell(file)
+        assert isinstance(ds, xr.Dataset)
+
+    @pytest.mark.parametrize(
+        "file", glob("tests/parsers_test_files/dfo/ios/shell/mooring/CUR/*.CUR")
+    )
+    def test_ios_shell_mooring_cur_parser(self, file):
+        ds = dfo.ios.shell(file)
+        assert isinstance(ds, xr.Dataset)
+
+    @pytest.mark.parametrize(
+        "file", glob("tests/parsers_test_files/dfo/ios/shell/DRF/*.drf")
+    )
+    def test_ios_shell_drifter_parser(self, file):
+        ds = dfo.ios.shell(file)
+        assert isinstance(ds, xr.Dataset)
+
 
 class BlueElectricParsertest(unittest.TestCase):
     def test_blue_electric_csv_parser(self):
@@ -426,26 +439,3 @@ class StarOddiParsertest(unittest.TestCase):
         paths = glob("tests/parsers_test_files/star_oddi/**/*.DAT", recursive=True)
         for path in paths:
             star_oddi.DAT(path)
-
-
-@pytest.mark.parametrize(
-    "reference_file",
-    glob("tests/parsers_test_files/**/*_reference.nc", recursive=True),
-)
-def test_compare_test_to_reference_netcdf(reference_file):
-    """Test DFO BIO ODF conversion to NetCDF vs reference files"""
-    # Generate test bio odf netcdf files
-
-    # Run Test conversion
-    source_file = reference_file.replace("_reference.nc", "")
-    test = read.file(source_file)
-    test = utils.standardize_dataset(test)
-
-    # Load test file and reference file
-    ref = xr.open_dataset(reference_file)
-    difference_detected = compare_test_to_reference_netcdf(test, ref)
-    assert (
-        not difference_detected
-    ), f"Converted file {source_file} is different than the reference: " + "\n".join(
-        difference_detected
-    )

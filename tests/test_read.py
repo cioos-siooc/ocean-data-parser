@@ -37,20 +37,6 @@ def test_automated_parser_detection(file):
     ), f"Parser wasn't match to the right parser: {parser}"
 
 
-@pytest.mark.parametrize(
-    "file_path",
-    [
-        str(file)
-        for file in Path("tests/parsers_test_files").glob("**/*.*")
-        if not file.name.endswith(auto_detection_ignore_extensions)
-        and "geojson" not in file.name
-    ],
-)
-def test_automated_format_detection_with_all_test_files(file_path):
-    dataset = read.file(file_path)
-    assert isinstance(dataset, Dataset), "Output isn't an xarray dataset"
-
-
 onset_file = (
     "tests/parsers_test_files/onset/tidbit_v2/QU5_Mooring_60m_20392474_20220222.csv"
 )

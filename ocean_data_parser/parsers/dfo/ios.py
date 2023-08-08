@@ -4,7 +4,18 @@ import xarray
 from cioos_data_transform.IosObsFile import CurFile, GenFile
 
 logger = logging.getLogger(__name__)
-HANDLED_DATA_TYPES = ("tob", "drf", "ane", "ubc", "loop", "ctd", "mctd", "bot", "che")
+HANDLED_DATA_TYPES = (
+    "tob",
+    "drf",
+    "ane",
+    "ubc",
+    "loop",
+    "ctd",
+    "mctd",
+    "bot",
+    "che",
+    "cur",
+)
 
 
 def shell(filename: str) -> xarray.Dataset:
@@ -12,10 +23,11 @@ def shell(filename: str) -> xarray.Dataset:
     extension = filename.rsplit(".", 1)[1]
     if extension == "cur":
         fdata = CurFile(filename=filename, debug=False)
-    elif extension in HANDLED_DATA_TYPES:
+    elif extension.lower() in HANDLED_DATA_TYPES:
         fdata = GenFile(filename=filename, debug=False)
     else:
-        logger.error("Filetype not understood!")
+        raise RuntimeError("File type not compatible")
 
+    fdata.import_data()
     fdata.add_ios_vocabulary()
     return fdata.to_xarray()

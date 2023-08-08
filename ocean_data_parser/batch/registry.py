@@ -19,19 +19,19 @@ EMPTY_FILE_REGISTRY = pd.DataFrame(
 class FileConversionRegistry:
     def __init__(
         self,
-        path: str = "ocean_parser_file_registry.csv",
+        path: str = None,
         data: pd.DataFrame = EMPTY_FILE_REGISTRY,
         hashtype: str = "sha256",
         block_size: int = 65536,
         since: Union[pd.Timestamp, pd.Timedelta, str] = None,
     ):
-        self.path = Path(path)
+        self.path = Path(path) if path else None
         self.data = data
         self.hashtype = hashtype
         self.hash_block_size = block_size
         self.since = since
 
-        if self.path.exists() and data.empty:
+        if self.path and self.path.exists() and data.empty:
             self.load()
 
     def load(self, overwrite=False):
@@ -57,7 +57,9 @@ class FileConversionRegistry:
     def save(self):
         """_summary_"""
         df = self.data.drop(columns=[col for col in self.data if col.endswith("_new")])
-        if self.path.suffix == ".csv":
+        if not self.path:
+            return
+        elif self.path.suffix == ".csv":
             df.to_csv(self.path)
         elif self.path.suffix == ".parquet":
             df.to_parquet(self.path)
@@ -138,10 +140,13 @@ class FileConversionRegistry:
         if not sources:
             return
         new_data = pd.DataFrame({"source": sources})
-        logger.info("Get new files mtime")
-        new_data["mtime"] = new_data["source"].progress_apply(self._get_mtime)
-        logger.info("Get new files hash")
-        new_data["hash"] = new_data["source"].progress_apply(self._get_hash)
+
+        # Retrieve mtime and hash only if a registry is actually saved
+        if self.path:
+            logger.info("Get new files mtime")
+            new_data["mtime"] = new_data["source"].progress_apply(self._get_mtime)
+            logger.info("Get new files hash")
+            new_data["hash"] = new_data["source"].progress_apply(self._get_hash)
         self.data = (
             pd.concat(
                 [
@@ -251,7 +256,7 @@ class FileConversionRegistry:
         Returns:
             list: list of source files to parse
         """
-        if not overwrite:
+        if not overwrite or not self.path:
             return self.data.loc[self._is_new_file()].index.to_list()
 
         if self.since:
@@ -286,6 +291,7 @@ class FileConversionRegistry:
             .agg({"source": ["count", list]})
         )
         errors.columns = (" ".join(col) for col in errors.columns)
-        logger.info("The following errors were captured:\n%s", errors)
-        if output:
-            errors.to_csv(output)
+        if not errors.empty:
+            logger.info("The following errors were captured:\n%s", errors)
+            if output:
+                errors.to_csv(output)

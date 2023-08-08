@@ -22,17 +22,15 @@ import pandas as pd
 import xarray as xr
 
 from ocean_data_parser.parsers.utils import standardize_dataset
+from ocean_data_parser.vocabularies.load import (
+    dfo_nafc_p_file_vocabulary,
+    dfo_platforms,
+)
 
 logger = logging.getLogger(__name__)
 MODULE_PATH = Path(__file__).parent
-p_file_vocabulary = pd.read_csv(
-    MODULE_PATH / ".." / "vocabularies" / "dfo_p_files_vocabulary.csv"
-).replace({"variable_name": {np.nan: None}})
-p_file_shipcode = pd.read_csv(
-    MODULE_PATH / ".." / "vocabularies" / "dfo_platform.csv",
-    skiprows=[1],
-    dtype={"wmo_platform_code": str},
-).set_index("dfo_newfoundland_ship_code")
+p_file_vocabulary = dfo_nafc_p_file_vocabulary()
+p_file_shipcode = dfo_platforms()
 # nafc_instruments = pd.read_csv(
 #     MODULE_PATH / ".." / "vocabularies" / "dfo_nafc_instruments.csv"
 # ).set_index("instrument_id")
@@ -72,6 +70,19 @@ def _get_dtype(var: str):
     return int if var == "scan" else float
 
 
+def soft_catch_errors(function):
+    def wrap(*args, **kwargs):
+        try:
+            value = function(*args, **kwargs)
+            return value
+        except ValueError:
+            logger.error("Failed to parse %s", function.__name__, exc_info=True)
+            return {}
+
+    return wrap
+
+
+@soft_catch_errors
 def _parse_pfile_header_line1(line: str) -> dict:
     """Parse first row of the p file format which contains location and instrument information."""
     return dict(
@@ -94,6 +105,7 @@ def _parse_pfile_header_line1(line: str) -> dict:
     )
 
 
+@soft_catch_errors
 def _parse_pfile_header_line2(line: str) -> dict:
     return dict(
         ship_code=line[:2],
@@ -124,6 +136,7 @@ def _parse_pfile_header_line2(line: str) -> dict:
     )
 
 
+@soft_catch_errors
 def _parse_pfile_header_line3(line: str) -> dict:
     """Parse P file 3 metadata line which present environment metadata"""
     return dict(
@@ -136,9 +149,13 @@ def _parse_pfile_header_line3(line: str) -> dict:
         else None,  # in 10 degree steps (eg 270 is=27)
         wind_speed_knots=_int(line[14:16]),  # i2,knots s= cale
         ww_code=_int(line[17:19]),  # i2,
-        pressure_bars=_float(line[20:26], [-999.0]),  # pressure mil-= bars
-        air_dry_temp_celsius=_float(line[27:32], [-99.0]),  # f5.1,tem= p °C
-        air_wet_temp_celsius=_float(line[33:38], [-99.0, 99.9]),  # f5.1,tem= p °C
+        pressure_bars=_float(line[20:26], [-999.0, -999.9]),  # pressure mil-= bars
+        air_dry_temp_celsius=_float(
+            line[27:32], [-99.0, -99.9, 999.9]
+        ),  # f5.1,tem= p °C
+        air_wet_temp_celsius=_float(
+            line[33:38], [-99.0, 99.9, -99.9, 999.9]
+        ),  # f5.1,tem= p °C
         waves_period=_int(line[39:41]),  # i2,
         waves_height=_int(line[42:44]),  # i2,
         swell_dir=_int(line[45:47]) * 10 if line[45:47].strip() else None,  # i2,
@@ -180,8 +197,12 @@ def _parse_channel_stats(lines: list) -> dict:
 
 def _get_ship_code_metadata(shipcode: Union[int, str]) -> dict:
     shipcode = f"{shipcode:02g}" if isinstance(shipcode, int) else shipcode
-    if shipcode in p_file_shipcode.index:
-        return p_file_shipcode.loc[shipcode].to_dict()
+    if p_file_shipcode["dfo_newfoundland_ship_code"].str.match(shipcode).any():
+        return (
+            p_file_shipcode.query(f"dfo_newfoundland_ship_code == '{shipcode}'")
+            .iloc[0]
+            .to_dict()
+        )
     logger.warning("Unknown p-file shipcode=%s", shipcode)
     return {}
 
@@ -286,7 +307,7 @@ def pfile(
         # TODO confirm that 5+12 character width is constant
         ds = pd.read_csv(
             file_handle,
-            sep="\s+",
+            sep=r"\s+",
             engine="python",
             names=names,
             dtype={name: _get_dtype(name) for name in names},
