@@ -231,7 +231,7 @@ def _review_station(global_attributes, odf_header):
         "".join(odf_header["original_header"]),
         re.IGNORECASE,
     )
-    if station is None:
+    if not station:
         return
 
     # If station is found standardize it
