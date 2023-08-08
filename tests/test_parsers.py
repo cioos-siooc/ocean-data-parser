@@ -356,9 +356,11 @@ class TestODFParser:
             ("somethinng station: QU05 some more", "QU05"),
             ("station: QU5 some more", "QU05"),
             ("station: 2 ", "002"),
+            ("some text station: ", None),
             ("|some text before 223 ;nom de la station ", "223"),
             ("|some text before 1 ;nom de la station ", "001"),
             ("|some text before QU31 ;nom de la station ", None),
+            (";nom de la station ", None),
         ],
     )
     def test_odf_station_search(self, original_header, station):
@@ -372,6 +374,7 @@ class TestODFParser:
             ({"station": None}, "station: DEF05", "DEF05"),
             ({"station": None}, "no station", None),
             ({"station": "station"}, "some text", "station"),
+            ({}, "some text", None),
         ],
     )
     def test_odf_station_in_globals(self, global_attributes, original_header, station):
