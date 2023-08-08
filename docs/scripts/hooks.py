@@ -7,15 +7,14 @@ import pandas as pd
 
 from ocean_data_parser import PARSERS
 
+
 def quote_column(col):
     return "`" + col + "`"
 
 
 def get_dfo_pfile_vocab_markdown(output="docs/parsers/dfo/p-header.md"):
     """Convert P file vocabulary to markdown table"""
-    df = pd.read_csv(
-        "ocean_data_parser/vocabularies/dfo_nafc_p_files_vocabulary.csv"
-    )
+    df = pd.read_csv("ocean_data_parser/vocabularies/dfo_nafc_p_files_vocabulary.csv")
     for column in ["accepted_instruments"]:
         df[column] = quote_column(df[column])
     with open("docs/parsers/dfo/p-header.md") as file_handle:
@@ -26,9 +25,7 @@ def get_dfo_pfile_vocab_markdown(output="docs/parsers/dfo/p-header.md"):
 
 
 def get_odf_vocab_markdown(output="docs/parsers/dfo/odf-hook.md"):
-    df = pd.read_csv(
-        "ocean_data_parser/vocabularies/dfo_odf_vocabulary.csv"
-    )
+    df = pd.read_csv("ocean_data_parser/vocabularies/dfo_odf_vocabulary.csv")
     for column in [
         "accepted_units",
         "accepted_scale",
@@ -43,7 +40,9 @@ def get_odf_vocab_markdown(output="docs/parsers/dfo/odf-hook.md"):
         df.replace({np.nan: ""}).to_markdown(file_handle, index=False, tablefmt="pipe")
 
 
-def get_ios_vocab_markdown(output="docs/parsers/dfo/ios-hook.md",):
+def get_ios_vocab_markdown(
+    output="docs/parsers/dfo/ios-hook.md",
+):
     df = pd.read_csv(
         "https://raw.githubusercontent.com/cioos-siooc/cioos-siooc_data_transform/ios-parser-extra-vocabulary/cioos_data_transform/cioos_data_transform/utils/ios_vocabulary.csv"
     )
@@ -62,9 +61,7 @@ def get_ios_vocab_markdown(output="docs/parsers/dfo/ios-hook.md",):
 
 
 def get_amundsen_vocab_markdown(output="docs/parsers/amundsen-hook.md"):
-    with open(
-        "ocean_data_parser/vocabularies/amundsen_vocabulary.json"
-    ) as file_handle:
+    with open("ocean_data_parser/vocabularies/amundsen_vocabulary.json") as file_handle:
         vocab = json.load(file_handle)
     df = pd.DataFrame(
         [
@@ -82,9 +79,7 @@ def get_amundsen_vocab_markdown(output="docs/parsers/amundsen-hook.md"):
 
 
 def get_seabird_vocab_markdown(output="docs/parsers/seabird-hook.md"):
-    with open(
-        "ocean_data_parser/vocabularies/seabird_vocabulary.json"
-    ) as file_handle:
+    with open("ocean_data_parser/vocabularies/seabird_vocabulary.json") as file_handle:
         vocab = json.load(file_handle)
     df = pd.DataFrame(
         [
@@ -105,10 +100,12 @@ def copy_notebooks(output="docs/notebooks"):
     for notebook in notebooks:
         shutil.copy(notebook, docs_notebooks / notebook.name)
 
+
 def get_parser_list(output="docs/parsers/index.md"):
-    with open(output,'w') as file:
-        file.write('# Parsers available\n')
-        file.write("\n".join([f'- {parser}' for parser in PARSERS]))
+    with open(output, "w") as file:
+        file.write("# Parsers available\n")
+        file.write("\n".join([f"- {parser}" for parser in PARSERS]))
+
 
 def on_pre_build(config, **kwargs) -> None:
     get_odf_vocab_markdown()
