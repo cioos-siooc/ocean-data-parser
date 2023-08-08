@@ -267,7 +267,7 @@ def read(filename, encoding_format="Windows-1252"):
     # Review N variables
     if len(df.columns) != len(metadata["PARAMETER_HEADER"]):
         raise RuntimeError(
-            f"{len(df.columns)}/{len(metadata['PARAMETER_HEADER'])} variables were detected"
+            f"{df.columns} doesn't match ODF parameters"
         )
 
     # Convert to an xarray
@@ -406,7 +406,10 @@ def add_vocabulary_attributes(
         # If nothing matches, move to the next one
         if matching_terms.empty:
             logger.warning(
-                "No matching vocabulary term is available for variable %s: %s and instrument: {'type':%s,'model':%s}",
+                (
+                    "No matching vocabulary available for gf3=%s: %s"
+                    " and instrument: {'type':%s,'model':%s}"
+                ),
                 ds[var].attrs["legacy_gf3_code"],
                 ds[var].attrs,
                 ds.attrs.get("instrument_type"),
@@ -464,15 +467,19 @@ def add_vocabulary_attributes(
         # Generate vocabulary variables
         comment = ""
         variable_order += matching_terms["variable_name"].tolist()
-        locals = {"gsw": gsw, "x": ds[var], **{item: ds[item] for item in ds.variables}}
+        locals_variables = {
+            "gsw": gsw,
+            "x": ds[var],
+            **{item: ds[item] for item in ds.variables},
+        }
         if (
             "latitude" not in ds
             and "longitude" not in ds
             and "LATD_01" in ds
             and "LOND_01" in ds
         ):
-            locals["latitude"] = ds["LATD_01"]
-            locals["longitude"] = ds["LOND_01"]
+            locals_variables["latitude"] = ds["LATD_01"]
+            locals_variables["longitude"] = ds["LOND_01"]
             comment += " LATD_01 is used as latitude, LOND_01 is used as longitude"
         new_variables_mapping.update(
             {
@@ -484,7 +491,9 @@ def add_vocabulary_attributes(
         )
         new_variables.update(
             {
-                item["variable_name"]: eval(item["apply_function"], {}, locals)
+                item["variable_name"]: eval(
+                    item["apply_function"], {}, locals_variables
+                )
                 for _, item in matching_terms.iterrows()
             }
         )
@@ -504,6 +513,7 @@ def add_vocabulary_attributes(
             ds[variable].attrs = attrs
 
         ds.attrs["history"] += history_input(
-            f"Generate new vocabulary variables: {'; '.join(new_variables_mapping.values())}; {comment}"
+            "Generate new vocabulary variables: "
+            f"{'; '.join(new_variables_mapping.values())}; {comment}"
         )
     return ds[variable_order]
