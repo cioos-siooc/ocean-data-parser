@@ -246,7 +246,7 @@ class BatchConversion:
             sys.exit(error_message)
 
         self.registry.add(files)
-        files = self.registry.get_source_files_to_parse()
+        files = self.registry.get_modified_source_files()
         if not files:
             logger.info("No file to parse. Conversion completed")
             return self.registry

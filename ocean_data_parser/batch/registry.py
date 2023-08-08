@@ -246,7 +246,7 @@ class FileConversionRegistry:
 
         self.data.update(dataframe, overwrite=True)
 
-    def get_source_files_to_parse(self, overwrite: bool = True) -> list:
+    def get_modified_source_files(self, overwrite: bool = True) -> list:
         """Return the list of files that needs to be parsed
 
         Args:
