@@ -181,6 +181,27 @@ class TestBatchCLI:
         new_config_test_file.unlink()
         assert not new_config_test_file.exists()
 
+    @pytest.mark.parametrize(
+        "args",
+        [
+            ["tests/parsers_test_files/dfo/odf/bio/CTD/CTD_HUD2018*_DN.ODF"],
+            list(
+                str(file)
+                for file in glob(
+                    "tests/parsers_test_files/dfo/odf/bio/CTD/CTD_HUD2018*_DN.ODF"
+                )
+            ),
+        ],
+    )
+    def test_batch_cli_conversion_with_args_input(self, tmp_path, args):
+        config = _get_config(input_path=None, cwd=tmp_path)
+        config_path = _save_config(tmp_path, config)
+        result = self._run_cli_batch_process(*args, "--config", str(config_path))
+        assert result.exit_code == 0, result
+        registry = FileConversionRegistry(config['registry']['path'])
+        assert len(registry.data) == 5
+        assert registry.data['error_message'].isna().all()
+
     def test_batch_failed_cli_conversion_with_multiple_inputs(self):
         result = self._run_cli_batch_process("*.csv", "--input", "test.csv")
         assert result.exit_code == 1

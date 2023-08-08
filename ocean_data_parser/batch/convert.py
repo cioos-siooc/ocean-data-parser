@@ -151,26 +151,25 @@ def cli_files(
         shutil.copy(DEFAULT_CONFIG_PATH, new_config)
         return
 
+    # Drop empty kwargs
+    kwargs = {key:value for key,value in kwargs.items() if value}
+
     # Handle input
     if input_path and kwargs.get("input"):
         sys.exit(
             f"ERROR! Two inputs were passed as arg = {input_path} and --input = {kwargs['input']}. "
             "Use one input method only"
         )
-    kwargs = {key: value for key, value in kwargs.items() if value}
-    if not input_path and not kwargs.get("input") and not config:
+    elif not input_path and not kwargs.get("input") and not config:
         sys.exit("ERROR! No file input provided.")
-    elif len(input_path) < 2:
-        kwargs["input_path"] = kwargs.pop("input", None) or input_path
-        batch = BatchConversion(config=config, **kwargs)
-    else:
-        batch = BatchConversion(config=config, **kwargs)
-        if "exclude" in kwargs:
-            input_path = [file for file in input_path if file not in glob(kwargs['exclude'],recursive=True)]
-        logger.info("Load {} files", len(input_path))
-        batch.registry.add(input_path)
+    elif len(input_path) == 1:
+        kwargs["input_path"] = input_path[0]
+    elif "input" in kwargs:
+        kwargs["input_path"] = kwargs.pop("input")
 
-    batch.run()
+    files = input_path if len(input_path) > 1 else None
+
+    BatchConversion(config=config, **kwargs).run(files=files)
 
 
 class BatchConversion:
@@ -219,34 +218,6 @@ class BatchConversion:
             if file not in excluded_files
         ]
 
-    def get_source_files_to_parse(self) -> list:
-        """Retrieve the list of source files that needs to be parsed
-        based on the configuration.
-
-        Returns:
-            list: list of source files to be parsed
-        """
-        logger.info("Compile files to parse")
-        source_files = glob(self.config["input_path"], recursive=True)
-        self.registry.add(source_files)
-
-        # If registry exist get list
-        if self.registry.path:
-            logger.info(
-                "Compare files with registry hashes and ignore already parsed files"
-            )
-            source_files = self.registry.get_source_files_to_parse(
-                overwrite=self.config["overwrite"]
-            )
-            logger.info(
-                "Detected {}/{} files needs to be parse",
-                len(source_files),
-                len(self.registry.data),
-            )
-        else:
-            logger.info("Detected {} files needs to be parse", len(source_files))
-
-        return source_files
 
     def _get_parser(self):
         logger.info("Load parser={}", self.config.get("parser", "None"))
@@ -280,13 +251,16 @@ class BatchConversion:
                 )
             )
 
-    def run(self):
+    def run(self, files=None):
         """Run Batch conversion"""
         logger.info("Run ocean-data-parser[{}] batch conversion", __version__)
+        self.registry.add(files or glob(self.config['input_path']))
 
-        files = self.get_source_files_to_parse()
+        files = self.registry.get_source_files_to_parse()
         if not files:
+            logger.info("No file to parse. Conversion completed")
             return self.registry
+        logger.info("{}/{} files needs to be converted", len(files), len(self.registry.data))
         conversion_log = self._convert(files)
         conversion_log = (
             pd.DataFrame(
