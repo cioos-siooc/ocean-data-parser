@@ -104,7 +104,7 @@ def get_parser_list_string():
 
 def validate_parser(ctx, _, value):
     """Test if given parser is available within parser list"""
-    if value in PARSERS:
+    if value in PARSERS or value is None:
         return value
     raise click.BadParameter(
         click.style(f"parser should match one of the following options: {get_parser_list_string()}", fg='bright_red')
