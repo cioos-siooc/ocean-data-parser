@@ -35,3 +35,4 @@ jobs:
           else
               mike deploy dev
           fi
+          mike set-default dev
