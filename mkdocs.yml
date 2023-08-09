@@ -51,6 +51,7 @@ nav:
       - NERC: metadata/nerc.md
       - Polar Data Catalog: metadata/pdc.md
   - Data Parsers:
+      - Parsers: parsers/index.md
       - Amundsen: parsers/amundsen-hook.md
       - Fisheries And Ocean Canada:
           - ODF: parsers/dfo/odf-hook.md
