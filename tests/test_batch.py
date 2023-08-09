@@ -131,10 +131,14 @@ class TestBatchMode:
 
 class TestBatchCLI:
     @staticmethod
-    def _run_cli_batch_process(*args, isolated_directory=None):
+    def _run_cli_batch_process(*args,isolated_directory=None):
         """Run Click cli code"""
         runner = CliRunner()
-        with runner.isolated_filesystem(isolated_directory):
+ 
+        if not isolated_directory:
+            return runner.invoke(cli_files,args)
+
+        with runner.isolated_filesystem(isolated_directory) :
             return runner.invoke(cli_files, args)
 
     def test_batch_cli_conversion_onset_parser(self, tmp_path):
@@ -165,22 +169,23 @@ class TestBatchCLI:
             or "Run parallel batch conversion" in result.output
         )
 
-    def test_batch_cli_new_config_creation_output(self, tmp_path: Path):
+    def test_batch_cli_new_config_creation_output(self, tmp_path:Path):
         new_config_test_file = tmp_path / "test_config_copy.yaml"
         result = self._run_cli_batch_process("--new_config", str(new_config_test_file))
         assert (
             result.exit_code == 0
         ), f"new config failed with exit_code={result.exit_code}, result={result}"
         assert new_config_test_file.exists()
-
-    def test_batch_cli_new_config_failed_creation_already_existing_file(
-        self, tmp_path: Path
-    ):
+    
+    def test_batch_cli_new_config_failed_creation_already_existing_file(self, tmp_path:Path):
         new_config_test_file = tmp_path / "test_config_copy.yaml"
-        new_config_test_file.write_text("test")
+        new_config_test_file.write_text('test')
         assert new_config_test_file.exists()
-        result = self._run_cli_batch_process("--new_config", new_config_test_file)
-        assert result.exit_code == 1, result.output
+        result = self._run_cli_batch_process("--new_config",new_config_test_file)
+        assert (
+            result.exit_code == 1
+        ), result.output
+
 
     def test_batch_failed_cli_conversion_with_no_matching_inputs(self):
         result = self._run_cli_batch_process("-i", "*.csv")
