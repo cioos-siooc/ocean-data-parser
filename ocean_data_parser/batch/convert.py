@@ -99,7 +99,12 @@ classic_logger = logging.getLogger()
     help="Overwrite already converted files when source file is changed.",
 )
 @click.option(
-    "--multiprocessing", type=int, help="Run conversion in parallel on N processors"
+    "--multiprocessing",
+    type=int,
+    help=(
+        "Run conversion in parallel on N processors."
+        " None == all processors available"
+    ),
 )
 @click.option(
     "-e",
@@ -110,7 +115,10 @@ classic_logger = logging.getLogger()
 @click.option(
     "--registry_path",
     type=click.Path(),
-    help="File conversion registry path (*.csv or *.parquet)",
+    help=(
+        "File conversion registry path (*.csv or *.parquet)."
+        " If --registry_path=None, no registry is used."
+    ),
 )
 @click.option(
     "--output_path",
@@ -149,8 +157,12 @@ def cli_files(new_config: bool = None, **kwargs):
         return
 
     # Drop empty kwargs
-    kwargs = {key: value for key, value in kwargs.items() if value}
-    BatchConversion(config=config, **kwargs).run()
+    kwargs = {
+        key: None if value == "None" else value
+        for key, value in kwargs.items()
+        if value
+    }
+    BatchConversion(**kwargs).run()
 
 
 class BatchConversion:
