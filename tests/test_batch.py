@@ -160,7 +160,8 @@ class TestBatchCLI:
         config = _get_config(cwd=tmp_path)
         config_path = _save_config(tmp_path, config)
         result = self._run_cli_batch_process(
-            "-i","./**/*.csv",
+            "-i",
+            "./**/*.csv",
             f"--config={config_path}",
             "--multiprocessing",
             3,
@@ -182,7 +183,7 @@ class TestBatchCLI:
         assert not new_config_test_file.exists()
 
     def test_batch_failed_cli_conversion_with_no_matching_inputs(self):
-        result = self._run_cli_batch_process("-i","*.csv")
+        result = self._run_cli_batch_process("-i", "*.csv")
         assert result.exit_code == 1
         assert result.output.startswith("ERROR"), f"unexpected output{result.output=}"
 

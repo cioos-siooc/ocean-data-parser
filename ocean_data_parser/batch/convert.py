@@ -195,7 +195,7 @@ class BatchConversion:
             if self.config.get("exclude")
             else []
         )
-    
+
     def get_source_files(self) -> list:
         excluded_files = self.get_excluded_files()
         return [
