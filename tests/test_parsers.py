@@ -1,7 +1,4 @@
-import difflib
-import io
 import logging
-import re
 import unittest
 from glob import glob
 
@@ -9,7 +6,6 @@ import pandas as pd
 import pytest
 import xarray as xr
 
-from ocean_data_parser import read
 from ocean_data_parser.parsers import (
     amundsen,
     dfo,

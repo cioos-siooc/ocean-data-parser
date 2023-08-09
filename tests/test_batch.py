@@ -1,5 +1,3 @@
-import logging
-import logging.config
 from pathlib import Path
 
 import pandas as pd
@@ -7,13 +5,11 @@ import pytest
 import xarray as xr
 import yaml
 from click.testing import CliRunner
-from loguru import logger
 
 from ocean_data_parser.batch.config import glob
 from ocean_data_parser.batch.convert import (
     BatchConversion,
     FileConversionRegistry,
-    InterceptHandler,
     cli_files,
     load_config,
 )
@@ -23,9 +19,6 @@ MODULE_PATH = Path(__file__).parent
 TEST_REGISTRY_PATH = Path("tests/test_file_registry.csv")
 TEST_FILE = Path("temp/test_file.csv")
 TEST_REGISTRY = FileConversionRegistry(path=TEST_REGISTRY_PATH)
-
-logging.basicConfig(handlers=[InterceptHandler()], level="DEBUG")
-classic_logger = logging.getLogger()
 
 
 class TestConfigLoad:
