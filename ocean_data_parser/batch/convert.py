@@ -20,6 +20,7 @@ from ocean_data_parser.batch.config import load_config
 from ocean_data_parser.batch.registry import FileConversionRegistry
 from ocean_data_parser.batch.utils import VariableLevelLogger, generate_output_path
 from ocean_data_parser.parsers import utils
+from ocean_data_parser import PARSERS
 
 MODULE_PATH = Path(__file__).parent
 DEFAULT_CONFIG_PATH = MODULE_PATH / "default-batch-config.yaml"
@@ -95,6 +96,30 @@ def save_new_config(ctx, _, path):
     shutil.copy(DEFAULT_CONFIG_PATH, path)
     ctx.exit()
 
+def get_parser_list_string():
+    bullets = "\n\t- "
+    new_line = "\n"
+    return (f"ocean-data-parser.parsers [{__version__}]{new_line}"
+        f"{bullets}{bullets.join(PARSERS)} {new_line}")
+
+def validate_parser(ctx, _, value):
+    """Test if given parser is available within parser list"""
+    if value in PARSERS:
+        return value
+    raise click.BadParameter(
+        click.style(f"parser should match one of the following options: {get_parser_list_string()}", fg='bright_red')
+    )
+
+
+def get_parser_list(ctx, _, value):
+    if not value or ctx.resilient_parsing:
+        return
+    
+    click.echo(
+        get_parser_list_string()
+    )
+    ctx.exit()
+
 
 @click.command()
 @click.option(
@@ -111,7 +136,11 @@ def save_new_config(ctx, _, path):
 @click.option(
     "--parser",
     type=str,
-    help="Parser used to parse the data. Default to auto detect",
+    help=(
+        "Parser used to parse the data. Default to auto detectection."
+        " Use --parser_list to retrieve list of parsers available"
+    ),
+    callback=validate_parser,
 )
 @click.option(
     "--overwrite",
@@ -163,6 +192,14 @@ def save_new_config(ctx, _, path):
     type=click.Path(exists=False),
     help="Generate a new configuration file at the given path",
 )
+@click.option(
+    "--parser_list",
+    is_eager=True,
+    is_flag=True,
+    callback=get_parser_list,
+    help="Get the list of parsers available",
+)
+@click.version_option(version=__version__, package_name="ocean_data_parser")
 def cli_files(**kwargs):
     """Run ocean-data-parser conversion on given files."""
     # Drop empty kwargs
