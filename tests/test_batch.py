@@ -355,3 +355,42 @@ class TestBatchGenerateName:
             defaults={"missing_global": "this-is-the-default"},
         )
         assert str(name) == "test_this-is-the-default.nc"
+
+
+class TestBatchConversion:
+    @pytest.mark.parametrize(
+        "input_path",
+        (
+            "tests/parsers_test_files/dfo/odf/bio/**/*.ODF",
+            "tests/parsers_test_files/dfo/odf/bio/CTD/*.ODF",
+        ),
+    )
+    def test_batch_input_path(self, input_path):
+        batch = BatchConversion(input_path=input_path)
+        source_files = batch.get_source_files()
+        assert source_files
+        assert len(source_files) == len(list(glob(input_path)))
+        assert set(source_files) == set(str(file) for file in glob(input_path))
+
+    @pytest.mark.parametrize(
+        "exclude",
+        (
+            "tests/parsers_test_files/dfo/odf/bio/**/*.nc",
+            "tests/parsers_test_files/dfo/odf/bio/CTD/*.nc",
+            "**/*.nc",
+        ),
+    )
+    def test_batch_exclude_path(self, exclude):
+        batch = BatchConversion(
+            input_path="tests/parsers_test_files/dfo/odf/bio/CTD/*.*", exclude=exclude
+        )
+        excluded_files = batch.get_excluded_files()
+        assert excluded_files
+        assert set(excluded_files) == {str(file) for file in glob(exclude)}
+
+        source_files = batch.get_source_files()
+        assert source_files
+        assert all(file.endswith("ODF") for file in source_files)
+        assert set(source_files) == {
+            str(file) for file in glob("tests/parsers_test_files/dfo/odf/bio/CTD/*.ODF")
+        }
