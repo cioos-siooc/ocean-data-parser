@@ -79,7 +79,7 @@ classic_logger = logging.getLogger()
 @click.command()
 @click.option(
     "-i",
-    "--input",
+    "--input_path",
     type=str,
     help="Input path to file list. It can be a glob expression (ex: *.cnv)",
 )
@@ -133,9 +133,7 @@ classic_logger = logging.getLogger()
     type=click.Path(),
     help="Generate a new configuration file at the given path",
 )
-def cli_files(
-    input_path: str = None, config: str = None, new_config: bool = None, **kwargs
-):
+def cli_files(new_config: bool = None, **kwargs):
     """Run ocean-data-parser conversion on given files."""
     if new_config:
         new_config = Path(new_config)
@@ -236,7 +234,7 @@ class BatchConversion:
                 )
             )
 
-    def run(self, files=None):
+    def run(self):
         """Run Batch conversion"""
         logger.info("Run ocean-data-parser[{}] batch conversion", __version__)
         files = self.get_source_files()

@@ -187,6 +187,13 @@ class TestBatchCLI:
         assert result.exit_code == 1
         assert result.output.startswith("ERROR"), f"unexpected output{result.output=}"
 
+    def test_batch_failed_cli_conversion_with_argument_inputs(self):
+        result = self._run_cli_batch_process("*.csv")
+        assert result.exit_code == 2
+        assert (
+            "Error: Got unexpected extra argument" in result.output
+        ), f"Unexpected output {result.output=}"
+
     def test_failed_cli_batch_conversion_with_ignore_errors(self, tmp_path):
         test_file_path = str(tmp_path / "failed_cli_test_file.cnv")
         config = _get_config(

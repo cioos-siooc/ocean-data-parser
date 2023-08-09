@@ -90,7 +90,8 @@ class FileConversionRegistry:
                 file_block = file_handle.read(self.hash_block_size)
             return file_hash.hexdigest()
 
-    def _get_mtime(self, source: str) -> float:
+    @staticmethod
+    def _get_mtime(source: str) -> float:
         """Get file modified time
 
         Args:
@@ -102,7 +103,8 @@ class FileConversionRegistry:
         source = Path(source)
         return source.stat().st_mtime if source.exists() else None
 
-    def _file_exists(self, file):
+    @staticmethod
+    def _file_exists(file):
         return Path(file).exists() if isinstance(file, (str, Path)) else False
 
     def add(self, sources: list):
@@ -230,12 +232,12 @@ class FileConversionRegistry:
         """
         if not overwrite or not self.path:
             return self.data.loc[self._is_new_file()].index.to_list()
-        
+
         if self.hashtype:
             is_modified = self._is_different_hash()
         else:
             is_modified = self._is_different_mtime()
-        
+
         return self.data.loc[self._is_new_file() | is_modified].index.to_list()
 
     def get_missing_sources(self) -> list:
