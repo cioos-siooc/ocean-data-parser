@@ -76,6 +76,26 @@ logging.basicConfig(
 classic_logger = logging.getLogger()
 
 
+def save_new_config(ctx, _, path):
+    if not path or ctx.resilient_parsing:
+        return
+    path = Path(path)
+    if path.exists():
+        # Do not overwrite an already existing file
+        ctx.exit("Configuration file already exists!")
+
+    logger.info(
+        "Copy a default config to given path {} to {}",
+        DEFAULT_CONFIG_PATH,
+        path,
+    )
+    if not path.parent.exists():
+        logger.info("Generate new directory")
+        path.parent.mkdir(parents=True)
+    shutil.copy(DEFAULT_CONFIG_PATH, path)
+    ctx.exit()
+
+
 @click.command()
 @click.option(
     "-i",
@@ -138,24 +158,13 @@ classic_logger = logging.getLogger()
 )
 @click.option(
     "--new_config",
-    type=click.Path(),
+    is_eager=True,
+    callback=save_new_config,
+    type=click.Path(exists=False),
     help="Generate a new configuration file at the given path",
 )
-def cli_files(new_config: bool = None, **kwargs):
+def cli_files(**kwargs):
     """Run ocean-data-parser conversion on given files."""
-    if new_config:
-        new_config = Path(new_config)
-        logger.info(
-            "Copy a default config to given path {} to {}",
-            DEFAULT_CONFIG_PATH,
-            new_config,
-        )
-        if not new_config.parent.exists():
-            logger.info("Generate new directory")
-            new_config.parent.mkdir(parents=True)
-        shutil.copy(DEFAULT_CONFIG_PATH, new_config)
-        return
-
     # Drop empty kwargs
     kwargs = {
         key: None if value == "None" else value
@@ -180,6 +189,7 @@ class BatchConversion:
         Returns:
             dict: combined configuration
         """
+        logger.info("Load configuration={}, kwargs={}", config, kwargs)
         output_kwarg = {
             key[7:]: kwargs.pop(key)
             for key in list(kwargs.keys())
