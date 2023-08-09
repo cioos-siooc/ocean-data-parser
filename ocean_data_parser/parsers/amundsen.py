@@ -5,28 +5,21 @@
 
 Historically ArcticNet and the Amundsen Siences.
 """
-__version__ = "0.1.0"
-
 import json
 import logging
-import os
 import re
 
 import pandas as pd
 import xarray as xr
 from gsw import z_from_p
 
-from .utils import get_history_handler, standardize_dataset
+from ocean_data_parser._version import __version__
+from ocean_data_parser.parsers.utils import get_history_handler, standardize_dataset
+from ocean_data_parser.vocabularies.load import amundsen_vocabulary
 
 logger = logging.getLogger(__name__)
 string_attributes = ["Cruise_Number", "Cruise_Name", "Station"]
-reference_vocabulary_path = os.path.join(
-    os.path.dirname(__file__), "vocabularies", "amundsen_variable_attributes.json"
-)
-
-# Read vocabulary file
-with open(reference_vocabulary_path, encoding="UTF-8") as vocabulary_file:
-    amundsen_variable_attributes = json.load(vocabulary_file)
+amundsen_variable_attributes = amundsen_vocabulary()
 
 default_global_attributes = {"unknown_variables_information": "", "history": ""}
 

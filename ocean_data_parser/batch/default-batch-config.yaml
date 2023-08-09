@@ -1,11 +1,12 @@
 # File input
-input_path: tests/parsers_test_files/onset/**/*.csv
+input_path: "" # file or glob expression
+exclude: null # glob expression of files to exclude
+parser: null
 overwrite: False
-multiprocessing: 3 # n processes to run [int]
-errors: "raise"
+multiprocessing: 1 # n processes to run [int] or null for all
+errors: "ignore" # raise|ignore
 registry:
-  path: file_registry.csv
-  since: null # pandas.Timedelta expression (ex: '24h') or datetime ('2022-01-01T00:00:00Z')
+  path: null # file_registry(.csv | .parquet)
 
 sentry:
   dsn: https://cd67597c647c4767adf0b3acf5d3f6a6@o56764.ingest.sentry.io/4505529390137344
@@ -39,17 +40,9 @@ ioos_qc: {}
 manual_qc: {}
 
 # Outputs
-file_output:
+output:
   path: null
-  source: null
+  file_name: null
   file_preffix: ""
-  file_suffix: _test
+  file_suffix: ""
   output_format: .nc
-
-upload_to_database:
-  name: null
-  username: null
-  password: null
-  table: null
-  append: True
-  on_conflict: "UPDATE"

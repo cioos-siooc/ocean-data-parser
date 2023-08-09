@@ -1,0 +1,98 @@
+*2003/07/08 11:47:00.85
+*IOS HEADER VERSION 1.4  2002/12/04 2002/12/04
+
+*FILE
+    START TIME          : GMT 1987/02/17 06:36:00.000
+    NUMBER OF RECORDS   : 8
+    DATA DESCRIPTION    : Bottle:Wire
+    FILE TYPE           : ASCII
+    DATA TYPE           : REAL*4
+    NUMBER OF CHANNELS  : 2
+
+    $TABLE: CHANNELS
+    ! No Name               Units    Minimum        Maximum
+    ! -- ------------------ -------- -------------- --------------
+       1 Depth              metres   0              150
+       2 Oxygen:Dissolved   mL/L     6.26           6.443
+    $END
+
+    $TABLE: CHANNEL DETAIL
+    ! No  Pad   Start  Width  Format  Type  Decimal_Places
+    ! --  ----  -----  -----  ------  ----  --------------
+       1  ' '   ' '        7  F       ' '     1
+       2  ' '   ' '        8  F       ' '     3
+    $END
+    $REMARKS
+        This file converted from 12 line header format.
+    $END
+
+*ADMINISTRATION
+    MISSION             : 1987-10
+    AGENCY              : IOS, Ocean Physics Division, Sidney, B.C.
+    COUNTRY             : Canada
+    PROJECT             : Laperouse
+    PLATFORM            : Endeavour
+
+*LOCATION
+    GEOGRAPHIC AREA     : WCVI
+    STATION             : LC04
+    EVENT NUMBER        : 2
+    LATITUDE            :  48  43.50000 N  ! (deg min)
+    LONGITUDE           : 125  40.60000 W  ! (deg min)
+
+*INSTRUMENT
+    TYPE                : Bottle
+    MODEL               : Niskin (1.7 litre)
+
+*HISTORY
+
+    $TABLE: PROGRAMS
+    !   Name     Vers   Date       Time     Recs In   Recs Out
+    !   -------- ------ ---------- -------- --------- ---------
+        C12L_IOS 3.0    2000/11/02 13:08:21         8         8
+        HDREDIT2 1.6    2003/07/08 11:47:00 ?         ?
+    $END
+
+*COMMENTS
+
+   Collection methods:
+   -------------------
+     Sea Water Temperature:
+     - Reversing thermometers mounted on bottles.
+     Salinity:
+     - Collected in bottles.
+     Dissolved Oxygen:
+     - Collected in bottles.
+
+   Analyzes methods:
+   -------------------------
+     Temperatures at depth were measured by deep-sea reversing thermometers of
+     German (Richter and Wiese) and/or Japanese (Yoshimo Keiki Co.) manufacture.
+     Two protected thermometers were used on all bottles, and one unprotected
+     thermometer was used on each bottle at depths of 250 m or greater. The
+     accuracy of protected reversing thermometers is believed to be +-0.02C.
+
+     Salinity determinations were made at sea with a Guildline model 8400 lab
+     salinometer.
+
+     Depth determinations were made using the "depth difference" method
+     described in the U.S.N. Hydrographic Office Publication No. 607 (1955).
+     Depth estimates have an approximate accuracy of +-5 m for depths less than
+     1000 m, and +-0.5% of depth for depths greater than 1000 m.
+
+     The dissolved oxygen analyses were done in the shipboard laboratory by a
+     modified Winkler method (Carpenter, 1965).
+!--1--- ---2---
+!Depth  Oxygen:
+!       Dissolv
+!       ed     
+!------ -------
+*END OF HEADER
+    0.0   6.443
+   10.0   6.319
+   20.0   6.336
+   30.0   6.260
+   50.0   6.283
+   75.0   6.285
+  100.0   6.304
+  150.0   6.380

@@ -18,7 +18,7 @@ from ocean_data_parser import geo, process, read
 from ocean_data_parser._version import __version__
 from ocean_data_parser.batch.config import load_config
 from ocean_data_parser.batch.registry import FileConversionRegistry
-from ocean_data_parser.batch.utils import generate_output_path, VariableLevelLogger
+from ocean_data_parser.batch.utils import VariableLevelLogger, generate_output_path
 from ocean_data_parser.parsers import utils
 
 MODULE_PATH = Path(__file__).parent
@@ -42,6 +42,7 @@ logger.add(
     level=os.getenv("LOGURU_LEVEL", "WARNING"),
     format="{time}|{level}|{file.path}:{line}| {extra[source_file]} - {message}",
 )
+
 
 # Redirect logging loggers to loguru
 class InterceptHandler(logging.Handler):
@@ -77,6 +78,62 @@ classic_logger = logging.getLogger()
 
 @click.command()
 @click.option(
+    "-i",
+    "--input_path",
+    type=str,
+    help="Input path to file list. It can be a glob expression (ex: *.cnv)",
+)
+@click.option(
+    "--exclude",
+    type=str,
+    help="Glob expression of files to exclude.",
+)
+@click.option(
+    "--parser",
+    type=str,
+    help="Parser used to parse the data. Default to auto detect",
+)
+@click.option(
+    "--overwrite",
+    type=bool,
+    help="Overwrite already converted files when source file is changed.",
+)
+@click.option(
+    "--multiprocessing",
+    type=int,
+    help=(
+        "Run conversion in parallel on N processors."
+        " None == all processors available"
+    ),
+)
+@click.option(
+    "-e",
+    "--errors",
+    type=click.Choice(["ignore", "raise"]),
+    help="Error hanlding method",
+)
+@click.option(
+    "--registry_path",
+    type=click.Path(),
+    help=(
+        "File conversion registry path (*.csv or *.parquet)."
+        " If --registry_path=None, no registry is used."
+    ),
+)
+@click.option(
+    "--output_path",
+    type=click.Path(),
+    help="Output directory where to save converted files.",
+)
+@click.option(
+    "--output_file_name",
+    type=click.Path(),
+    help="Output file path where to save converted files.",
+)
+@click.option(
+    "--output_file_suffix", type=click.Path(), help="Output file name suffix to add"
+)
+@click.option(
     "--config", "-c", type=click.Path(exists=True), help="Path to configuration file"
 )
 @click.option(
@@ -84,7 +141,8 @@ classic_logger = logging.getLogger()
     type=click.Path(),
     help="Generate a new configuration file at the given path",
 )
-def cli_files(config=None, new_config=None):
+def cli_files(new_config: bool = None, **kwargs):
+    """Run ocean-data-parser conversion on given files."""
     if new_config:
         new_config = Path(new_config)
         logger.info(
@@ -98,49 +156,63 @@ def cli_files(config=None, new_config=None):
         shutil.copy(DEFAULT_CONFIG_PATH, new_config)
         return
 
-    logger.info("Run config={}", config)
-    BatchConversion(config=config).run()
+    # Drop empty kwargs
+    kwargs = {
+        key: None if value == "None" else value
+        for key, value in kwargs.items()
+        if value
+    }
+    BatchConversion(**kwargs).run()
 
 
 class BatchConversion:
-    def __init__(self, config, registry=None, **kwargs):
-        self.config = {
+    def __init__(self, config=None, **kwargs):
+        self.config = self._get_config(config, **kwargs)
+        self.registry = FileConversionRegistry(**self.config["registry"])
+
+    @staticmethod
+    def _get_config(config: dict = None, **kwargs) -> dict:
+        """Combine configuration dictionary and key arguments passed
+
+        Args:
+            config (dict, optional): Batch configuration. Defaults to None.
+
+        Returns:
+            dict: combined configuration
+        """
+        output_kwarg = {
+            key[7:]: kwargs.pop(key)
+            for key in list(kwargs.keys())
+            if key.startswith("output_")
+        }
+        registry_kwarg = {
+            key[9:]: kwargs.pop(key)
+            for key in list(kwargs.keys())
+            if key.startswith("registry_")
+        }
+        config = {
             **load_config(DEFAULT_CONFIG_PATH),
             **(load_config(config) if isinstance(config, str) else config or {}),
             **kwargs,
         }
-        self.registry = registry or FileConversionRegistry(**self.config["registry"])
+        config["output"].update(output_kwarg)
+        config["registry"].update(registry_kwarg)
+        return config
 
-    def _get_source_files_to_parse(self) -> list:
-        """Retrieve the list of source files that needs to be parsed
-        based on the configuration.
+    def get_excluded_files(self) -> list:
+        return (
+            glob(self.config["exclude"], recursive=True)
+            if self.config.get("exclude")
+            else []
+        )
 
-        Returns:
-            list: list of source files to be parsed
-        """
-        logger.info("Compile files to parse")
-        source_files = glob(
-            self.config["input_path"], recursive=self.config.get("recursive")
-        )
-        total_files = len(source_files)
-        logger.info("{} files detected", len(source_files))
-        logger.info(
-            "Add {} unknown files to registry",
-            len(
-                [file for file in source_files if file not in self.registry.data.index]
-            ),
-        )
-        self.registry.add(source_files)
-
-        # Ignore files already parsed
-        logger.info(
-            "Compare files with registry hashes and ignore already parsed files"
-        )
-        source_files = self.registry.get_source_files_to_parse(
-            overwrite=self.config.get("overwrite", "False")
-        )
-        logger.info("Detected {}/{} needs to be parse", len(source_files), total_files)
-        return source_files
+    def get_source_files(self) -> list:
+        excluded_files = self.get_excluded_files()
+        return [
+            file
+            for file in glob(self.config["input_path"], recursive=True)
+            if file not in excluded_files
+        ]
 
     def _get_parser(self):
         logger.info("Load parser={}", self.config.get("parser", "None"))
@@ -149,7 +221,6 @@ class BatchConversion:
         return read.load_parser(self.config["parser"])
 
     def _convert(self, files: list) -> list:
-
         # Load parser and generate inputs to conversion scripts
         parser = self._get_parser()
         inputs = ((file, parser, self.config) for file in files)
@@ -178,10 +249,20 @@ class BatchConversion:
     def run(self):
         """Run Batch conversion"""
         logger.info("Run ocean-data-parser[{}] batch conversion", __version__)
-
-        files = self._get_source_files_to_parse()
+        files = self.get_source_files()
         if not files:
+            error_message = f"ERROR No files detected with {self.config['input_path']}"
+            logger.error(error_message)
+            sys.exit(error_message)
+
+        self.registry.add(files)
+        files = self.registry.get_modified_source_files()
+        if not files:
+            logger.info("No file to parse. Conversion completed")
             return self.registry
+        logger.info(
+            "{}/{} files needs to be converted", len(files), len(self.registry.data)
+        )
         conversion_log = self._convert(files)
         conversion_log = (
             pd.DataFrame(
@@ -321,19 +402,12 @@ def convert_file(file: str, parser: str, config: dict) -> str:
     ds = utils.standardize_dataset(ds)
 
     # Save to
-    output_path = None
-    if config.get("file_output").get("path"):
-        output_path = generate_output_path(ds, **config["file_output"])
-        if not output_path.parent.exists():
-            logger.info("Create new directory: {}", output_path.parent)
-            output_path.parent.mkdir(parents=True)
-        logger.trace("Save to: {}", output_path)
-        ds.to_netcdf(output_path)
-
-    if config.get("upload_to_database"):
-        # TODO update to database
-        # ds.to_dataframe()
-        pass
+    output_path = generate_output_path(ds, **config["output"])
+    if not output_path.parent.exists():
+        logger.info("Create new directory: {}", output_path.parent)
+        output_path.parent.mkdir(parents=True)
+    logger.trace("Save to: {}", output_path)
+    ds.to_netcdf(output_path)
 
     return output_path
 

@@ -165,20 +165,6 @@ class FileRegistryTests(unittest.TestCase):
             file_registry.data.iloc[1:]["hash"] == 0
         ).all(), "hash source!=source shouldn't be updated with update(source)"
 
-    # @pytest.mark.parametrize(
-    #     "args", glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
-    # )
-    # def test_update_fields(self, args,kwargs):
-    #     file_registry = self._get_test_registry()
-    #     assert (
-    #         "test" not in file_registry.data
-    #     ), "new field 'test' was alreadyin the registry"
-    #     file_registry.update_fields(*args,**kwargs)
-    #     assert "test" in file_registry.data, "new field wasn't added to the registry"
-    #     assert file_registry.data[
-    #         "test"
-    #     ].all(), "new field wasn't added to the registry"
-
     def test_update_field_for_all_sources_with_missing_field(self):
         file_registry = self._get_test_registry()
         assert (
@@ -268,7 +254,6 @@ class FileRegistryTests(unittest.TestCase):
 
     def test_get_source_base(self):
         file_registry = self._get_test_registry()
-        file_registry.since = None
         assert ~file_registry.data.empty
         assert (
             not file_registry._is_new_file().any()
@@ -279,9 +264,6 @@ class FileRegistryTests(unittest.TestCase):
         assert (
             not file_registry._is_different_mtime().any()
         ), "test registry mtimes are different"
-
-        assert file_registry.since is None
-        assert not file_registry._is_modified_since().any()
 
         assert not (
             file_registry._is_new_file() | file_registry._is_different_hash()
@@ -295,13 +277,13 @@ class FileRegistryTests(unittest.TestCase):
         assert file_registry.data.loc[
             file_registry._is_new_file() | file_registry._is_different_hash()
         ].empty
-        assert file_registry.get_source_files_to_parse() == []
+        assert file_registry.get_modified_source_files() == []
 
     def test_get_sources_with_modified_hash_unchanged(self):
         file_registry = self._get_test_registry()
         changed_files = file_registry._is_different_hash()
         assert not changed_files.any()
-        assert file_registry.get_source_files_to_parse() == []
+        assert file_registry.get_modified_source_files() == []
 
     def test_get_sources_with_modified_hash(self):
         file_registry = self._get_test_registry()
@@ -313,7 +295,7 @@ class FileRegistryTests(unittest.TestCase):
         modified_sources = file_registry._is_different_hash()
         assert modified_sources.any()
         assert modified_sources[TEST_SAVE_PATH]
-        assert file_registry.get_source_files_to_parse() == [TEST_SAVE_PATH]
+        assert file_registry.get_modified_source_files() == [TEST_SAVE_PATH]
 
     def update_test_file(
         self,
@@ -328,45 +310,6 @@ class FileRegistryTests(unittest.TestCase):
         sleep(dt)
         file_registry.update()
         return file_registry
-
-    def test_get_sources_with_since_timestamp_no_changes(self):
-        file_registry = self._get_test_registry()
-        file_registry.since = pd.Timestamp.utcnow().timestamp()
-        modified_sources = file_registry._is_modified_since()
-        assert not modified_sources.any()
-        assert file_registry.get_source_files_to_parse() == []
-
-    def test_get_sources_with_since_timestamp(self):
-        file_registry = self._get_test_registry()
-        file_registry.since = pd.Timestamp.utcnow()
-        test_file = Path("temp/timestamp_test.csv")
-        file_registry = self.update_test_file(file_registry, test_file)
-        modified_sources = file_registry._is_modified_since()
-        assert modified_sources.any(), "mtime check failed to return something"
-        assert modified_sources.loc[test_file]
-        assert file_registry.get_source_files_to_parse() == [test_file]
-
-    def test_get_sources_with_since_timestamp_str(self):
-        file_registry = self._get_test_registry()
-        file_registry.since = pd.Timestamp.utcnow().isoformat()
-        test_file = Path("temp/timestamp_test.csv")
-        file_registry = self.update_test_file(file_registry, test_file)
-        modified_sources = file_registry._is_modified_since()
-        assert modified_sources.any(), "mtime check failed to return something"
-        assert modified_sources.loc[test_file]
-        assert file_registry.get_source_files_to_parse() == [test_file]
-
-    def test_get_sources_with_since_timedelta(self):
-        file_registry = self._get_test_registry()
-        file_registry.since = "10s"
-        test_file = Path(
-            "temp/test_get_sources_with_modified_mtime_time_difference.csv"
-        )
-        file_registry = self.update_test_file(file_registry, test_file)
-        modified_sources = file_registry._is_modified_since()
-        assert modified_sources.any(), "mtime check failed to return something"
-        assert modified_sources.loc[test_file]
-        assert file_registry.get_source_files_to_parse() == [test_file]
 
     def test_get_missing_files(self):
         file_registry = self._get_test_registry()
