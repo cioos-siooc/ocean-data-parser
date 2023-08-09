@@ -165,20 +165,6 @@ class FileRegistryTests(unittest.TestCase):
             file_registry.data.iloc[1:]["hash"] == 0
         ).all(), "hash source!=source shouldn't be updated with update(source)"
 
-    # @pytest.mark.parametrize(
-    #     "args", glob("tests/parsers_test_files/dfo/odf/bio/**/*.ODF", recursive=True)
-    # )
-    # def test_update_fields(self, args,kwargs):
-    #     file_registry = self._get_test_registry()
-    #     assert (
-    #         "test" not in file_registry.data
-    #     ), "new field 'test' was alreadyin the registry"
-    #     file_registry.update_fields(*args,**kwargs)
-    #     assert "test" in file_registry.data, "new field wasn't added to the registry"
-    #     assert file_registry.data[
-    #         "test"
-    #     ].all(), "new field wasn't added to the registry"
-
     def test_update_field_for_all_sources_with_missing_field(self):
         file_registry = self._get_test_registry()
         assert (
