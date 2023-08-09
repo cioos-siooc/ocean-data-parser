@@ -77,10 +77,9 @@ classic_logger = logging.getLogger()
 
 
 @click.command()
-@click.argument("input_path", required=False, nargs=-1)
 @click.option(
     "-i",
-    "--input",
+    "--input_path",
     type=str,
     help="Input path to file list. It can be a glob expression (ex: *.cnv)",
 )
@@ -100,7 +99,12 @@ classic_logger = logging.getLogger()
     help="Overwrite already converted files when source file is changed.",
 )
 @click.option(
-    "--multiprocessing", type=int, help="Run conversion in parallel on N processors"
+    "--multiprocessing",
+    type=int,
+    help=(
+        "Run conversion in parallel on N processors."
+        " None == all processors available"
+    ),
 )
 @click.option(
     "-e",
@@ -111,7 +115,10 @@ classic_logger = logging.getLogger()
 @click.option(
     "--registry_path",
     type=click.Path(),
-    help="File conversion registry path (*.csv or *.parquet)",
+    help=(
+        "File conversion registry path (*.csv or *.parquet)."
+        " If --registry_path=None, no registry is used."
+    ),
 )
 @click.option(
     "--output_path",
@@ -134,9 +141,7 @@ classic_logger = logging.getLogger()
     type=click.Path(),
     help="Generate a new configuration file at the given path",
 )
-def cli_files(
-    input_path: str = None, config: str = None, new_config: bool = None, **kwargs
-):
+def cli_files(new_config: bool = None, **kwargs):
     """Run ocean-data-parser conversion on given files."""
     if new_config:
         new_config = Path(new_config)
@@ -152,24 +157,12 @@ def cli_files(
         return
 
     # Drop empty kwargs
-    kwargs = {key: value for key, value in kwargs.items() if value}
-
-    # Handle input
-    if input_path and kwargs.get("input"):
-        sys.exit(
-            f"ERROR! Two inputs were passed as arg = {input_path} and --input = {kwargs['input']}. "
-            "Use one input method only"
-        )
-    elif not input_path and not kwargs.get("input") and not config:
-        sys.exit("ERROR! No file input provided.")
-    elif len(input_path) == 1:
-        kwargs["input_path"] = input_path[0]
-    elif "input" in kwargs:
-        kwargs["input_path"] = kwargs.pop("input")
-
-    files = input_path if len(input_path) > 1 else None
-
-    BatchConversion(config=config, **kwargs).run(files=files)
+    kwargs = {
+        key: None if value == "None" else value
+        for key, value in kwargs.items()
+        if value
+    }
+    BatchConversion(**kwargs).run()
 
 
 class BatchConversion:
@@ -206,12 +199,15 @@ class BatchConversion:
         config["registry"].update(registry_kwarg)
         return config
 
-    def get_source_files(self) -> list:
-        excluded_files = (
+    def get_excluded_files(self) -> list:
+        return (
             glob(self.config["exclude"], recursive=True)
             if self.config.get("exclude")
             else []
         )
+
+    def get_source_files(self) -> list:
+        excluded_files = self.get_excluded_files()
         return [
             file
             for file in glob(self.config["input_path"], recursive=True)
@@ -250,12 +246,17 @@ class BatchConversion:
                 )
             )
 
-    def run(self, files=None):
+    def run(self):
         """Run Batch conversion"""
         logger.info("Run ocean-data-parser[{}] batch conversion", __version__)
-        self.registry.add(files or glob(self.config["input_path"]))
+        files = self.get_source_files()
+        if not files:
+            error_message = f"ERROR No files detected with {self.config['input_path']}"
+            logger.error(error_message)
+            sys.exit(error_message)
 
-        files = self.registry.get_source_files_to_parse()
+        self.registry.add(files)
+        files = self.registry.get_modified_source_files()
         if not files:
             logger.info("No file to parse. Conversion completed")
             return self.registry

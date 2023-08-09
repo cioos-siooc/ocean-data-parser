@@ -1,5 +1,3 @@
-import logging
-import logging.config
 from pathlib import Path
 
 import pandas as pd
@@ -7,13 +5,11 @@ import pytest
 import xarray as xr
 import yaml
 from click.testing import CliRunner
-from loguru import logger
 
 from ocean_data_parser.batch.config import glob
 from ocean_data_parser.batch.convert import (
     BatchConversion,
     FileConversionRegistry,
-    InterceptHandler,
     cli_files,
     load_config,
 )
@@ -23,9 +19,6 @@ MODULE_PATH = Path(__file__).parent
 TEST_REGISTRY_PATH = Path("tests/test_file_registry.csv")
 TEST_FILE = Path("temp/test_file.csv")
 TEST_REGISTRY = FileConversionRegistry(path=TEST_REGISTRY_PATH)
-
-logging.basicConfig(handlers=[InterceptHandler()], level="DEBUG")
-classic_logger = logging.getLogger()
 
 
 class TestConfigLoad:
@@ -100,14 +93,14 @@ class TestBatchMode:
 
     @pytest.mark.parametrize(
         "key",
-        ("registry_path", "registry_hashtype", "registry_since", "registry_block_size"),
+        ("registry_path", "registry_hashtype", "registry_block_size"),
     )
     def test_batch_conversion_registry_kwargs(self, key):
         batch = BatchConversion(**{key: "test"})
         key = key.replace("registry_", "")
         assert batch.config["registry"][key] == "test"
 
-    def test_batch_conversion_dictionary_input(self, tmp_path):
+    def test_batch_conversion_dictionary_input(self):
         config = _get_config()
         batch = BatchConversion(config)
         assert batch
@@ -160,6 +153,7 @@ class TestBatchCLI:
         config = _get_config(cwd=tmp_path)
         config_path = _save_config(tmp_path, config)
         result = self._run_cli_batch_process(
+            "-i",
             "./**/*.csv",
             f"--config={config_path}",
             "--multiprocessing",
@@ -181,31 +175,17 @@ class TestBatchCLI:
         new_config_test_file.unlink()
         assert not new_config_test_file.exists()
 
-    @pytest.mark.parametrize(
-        "args",
-        [
-            ["tests/parsers_test_files/dfo/odf/bio/CTD/CTD_HUD2018*_DN.ODF"],
-            list(
-                str(file)
-                for file in glob(
-                    "tests/parsers_test_files/dfo/odf/bio/CTD/CTD_HUD2018*_DN.ODF"
-                )
-            ),
-        ],
-    )
-    def test_batch_cli_conversion_with_args_input(self, tmp_path, args):
-        config = _get_config(input_path=None, cwd=tmp_path)
-        config_path = _save_config(tmp_path, config)
-        result = self._run_cli_batch_process(*args, "--config", str(config_path))
-        assert result.exit_code == 0, result
-        registry = FileConversionRegistry(config["registry"]["path"])
-        assert len(registry.data) == 5
-        assert registry.data["error_message"].isna().all()
-
-    def test_batch_failed_cli_conversion_with_multiple_inputs(self):
-        result = self._run_cli_batch_process("*.csv", "--input", "test.csv")
+    def test_batch_failed_cli_conversion_with_no_matching_inputs(self):
+        result = self._run_cli_batch_process("-i", "*.csv")
         assert result.exit_code == 1
-        assert result.output.startswith("ERROR"), f"unexpected {result.output=}"
+        assert result.output.startswith("ERROR"), f"unexpected output{result.output=}"
+
+    def test_batch_failed_cli_conversion_with_argument_inputs(self):
+        result = self._run_cli_batch_process("*.csv")
+        assert result.exit_code == 2
+        assert (
+            "Error: Got unexpected extra argument" in result.output
+        ), f"Unexpected output {result.output=}"
 
     def test_failed_cli_batch_conversion_with_ignore_errors(self, tmp_path):
         test_file_path = str(tmp_path / "failed_cli_test_file.cnv")
@@ -368,3 +348,42 @@ class TestBatchGenerateName:
             defaults={"missing_global": "this-is-the-default"},
         )
         assert str(name) == "test_this-is-the-default.nc"
+
+
+class TestBatchConversion:
+    @pytest.mark.parametrize(
+        "input_path",
+        (
+            "tests/parsers_test_files/dfo/odf/bio/**/*.ODF",
+            "tests/parsers_test_files/dfo/odf/bio/CTD/*.ODF",
+        ),
+    )
+    def test_batch_input_path(self, input_path):
+        batch = BatchConversion(input_path=input_path)
+        source_files = batch.get_source_files()
+        assert source_files
+        assert len(source_files) == len(list(glob(input_path)))
+        assert set(source_files) == set(str(file) for file in glob(input_path))
+
+    @pytest.mark.parametrize(
+        "exclude",
+        (
+            "tests/parsers_test_files/dfo/odf/bio/**/*.nc",
+            "tests/parsers_test_files/dfo/odf/bio/CTD/*.nc",
+            "**/*.nc",
+        ),
+    )
+    def test_batch_exclude_path(self, exclude):
+        batch = BatchConversion(
+            input_path="tests/parsers_test_files/dfo/odf/bio/CTD/*.*", exclude=exclude
+        )
+        excluded_files = batch.get_excluded_files()
+        assert excluded_files
+        assert set(excluded_files) == {str(file) for file in glob(exclude)}
+
+        source_files = batch.get_source_files()
+        assert source_files
+        assert all(file.endswith("ODF") for file in source_files)
+        assert set(source_files) == {
+            str(file) for file in glob("tests/parsers_test_files/dfo/odf/bio/CTD/*.ODF")
+        }
