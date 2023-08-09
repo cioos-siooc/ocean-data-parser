@@ -34,6 +34,7 @@ setup(
         "sentry-sdk[loguru]",
         "cioos_data_transform @ git+https://github.com/cioos-siooc/cioos-siooc_data_transform.git@ios-parser-extra-vocabulary#egg=cioos_data_transform&subdirectory=cioos_data_transform",
         "cioos_data_transform_projects @ git+https://github.com/cioos-siooc/cioos-siooc_data_transform.git@ios-parser-extra-vocabulary#egg=cioos_data_transform_projects&subdirectory=projects",
+        "o2conversion @ git+https://github.com/HakaiInstitute/python-o2-conversion.git"
     ],
     extras_require={
         "odf": ["geographicLib", "shapely"],
