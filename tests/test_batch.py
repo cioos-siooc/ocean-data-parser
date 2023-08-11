@@ -131,14 +131,13 @@ class TestBatchMode:
 
 class TestBatchCLI:
     @staticmethod
-    def _run_cli_batch_process(*args,isolated_directory=None):
+    def _run_cli_batch_process(*args, isolated_directory=None):
         """Run Click cli code"""
         runner = CliRunner()
- 
         if not isolated_directory:
-            return runner.invoke(convert,args)
+            return runner.invoke(convert, args)
 
-        with runner.isolated_filesystem(isolated_directory) :
+        with runner.isolated_filesystem(isolated_directory):
             return runner.invoke(convert, args)
 
     def test_batch_cli_conversion_onset_parser(self, tmp_path):
