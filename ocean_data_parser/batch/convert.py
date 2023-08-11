@@ -95,28 +95,32 @@ def save_new_config(ctx, _, path):
     shutil.copy(DEFAULT_CONFIG_PATH, path)
     ctx.exit()
 
+
 def get_parser_list_string():
     bullets = "\n\t- "
     new_line = "\n"
-    return (f"ocean-data-parser.parsers [{__version__}]{new_line}"
-        f"{bullets}{bullets.join(PARSERS)} {new_line}")
+    return (
+        f"ocean-data-parser.parsers [{__version__}]{new_line}"
+        f"{bullets}{bullets.join(PARSERS)} {new_line}"
+    )
+
 
 def validate_parser(ctx, _, value):
     """Test if given parser is available within parser list"""
     if value in PARSERS or value is None:
         return value
     raise click.BadParameter(
-        click.style(f"parser should match one of the following options: {get_parser_list_string()}", fg='bright_red')
+        click.style(
+            f"parser should match one of the following options: {get_parser_list_string()}",
+            fg="bright_red",
+        )
     )
 
 
 def get_parser_list(ctx, _, value):
     if not value or ctx.resilient_parsing:
         return
-    
-    click.echo(
-        get_parser_list_string()
-    )
+    click.echo(get_parser_list_string())
     ctx.exit()
 
 
