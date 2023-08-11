@@ -1,4 +1,5 @@
 from pathlib import Path
+from glob import glob
 
 import click
 import pandas as pd
@@ -66,11 +67,11 @@ def variables(
 
     # Get file list
     logger.debug("Retrieve files to compile")
-    files = Path().glob(input)
+    files = glob(input, recursive=True)
 
     if exclude:
         logger.debug("Retrieve files to ignore")
-        excluded_files = Path().glob(exclude)
+        excluded_files = glob(exclude, recursive=True)
         files = [file for file in files if file not in excluded_files]
     
     if not files:
