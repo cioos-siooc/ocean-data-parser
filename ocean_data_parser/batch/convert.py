@@ -1,6 +1,7 @@
 import os
 import shutil
 import sys
+from glob import glob
 from multiprocessing import Pool
 from pathlib import Path
 
@@ -196,7 +197,7 @@ class BatchConversion:
 
     def get_excluded_files(self) -> list:
         return (
-            Path().glob(self.config["exclude"])
+            glob(self.config["exclude"], recursive=True)
             if self.config.get("exclude")
             else []
         )
@@ -205,7 +206,7 @@ class BatchConversion:
         excluded_files = self.get_excluded_files()
         return [
             file
-            for file in Path().glob(self.config["input_path"])
+            for file in glob(self.config["input_path"], recursive=True)
             if file not in excluded_files
         ]
 
