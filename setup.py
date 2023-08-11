@@ -57,6 +57,7 @@ setup(
             "mkdocs-jupyter",
             "mkdocs-gen-files",
             "mkdocs-simple-hooks",
+            "mkdocs-click",
             "mike",
             "tabulate",
         ],
