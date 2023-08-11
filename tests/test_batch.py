@@ -10,7 +10,7 @@ from ocean_data_parser.batch.config import glob
 from ocean_data_parser.batch.convert import (
     BatchConversion,
     FileConversionRegistry,
-    cli_files,
+    convert,
     load_config,
 )
 from ocean_data_parser.batch.utils import generate_output_path
@@ -136,10 +136,10 @@ class TestBatchCLI:
         runner = CliRunner()
  
         if not isolated_directory:
-            return runner.invoke(cli_files,args)
+            return runner.invoke(convert,args)
 
         with runner.isolated_filesystem(isolated_directory) :
-            return runner.invoke(cli_files, args)
+            return runner.invoke(convert, args)
 
     def test_batch_cli_conversion_onset_parser(self, tmp_path):
         config = _get_config(cwd=tmp_path)

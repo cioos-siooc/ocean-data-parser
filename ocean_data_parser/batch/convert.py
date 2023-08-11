@@ -199,7 +199,7 @@ def get_parser_list(ctx, _, value):
     help="Get the list of parsers available",
 )
 @click.version_option(version=__version__, package_name="ocean_data_parser")
-def cli_files(**kwargs):
+def convert(**kwargs):
     """Run ocean-data-parser conversion on given files."""
     # Drop empty kwargs
     kwargs = {
@@ -459,4 +459,4 @@ def convert_file(file: str, parser: str, config: dict) -> str:
 
 
 if __name__ == "__main__":
-    cli_files()
+    convert()

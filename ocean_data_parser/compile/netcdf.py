@@ -160,11 +160,11 @@ def variables(
     default=None,
     help="Output an ERDDAP XML blurb or all the variables. ",
 )
-def cli_variables(**kwargs):
+def compile(**kwargs):
     """Compile NetCDF files variables and variables attributes."""
     kwargs["groupby"] = kwargs["groupby"].split(",") if kwargs["groupby"] else None
     variables(**kwargs)
 
 
 if __name__ == "__main__":
-    cli_variables()
+    compile()

@@ -38,6 +38,9 @@ plugins:
   - mkdocs-simple-hooks:
       hooks:
         on_pre_build: "docs.scripts.hooks:on_pre_build"
+        
+markdown_extensions:
+    - mkdocs-click
 
 nav:
   - Welcome: index.md
@@ -66,8 +69,7 @@ nav:
       - Star-Oddi: parsers/star-oddi.md
       - SunBurst: parsers/sunburst.md
       - Van Essen Instruments: parsers/van-essen-intruments.md
-  - CLI:
-      - Compile NetCDFs: CLI/compile-netcdf.md
+  - CLI: cli.md
 
 extra:
   version:

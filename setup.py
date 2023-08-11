@@ -68,8 +68,9 @@ setup(
     zip_safe=True,
     entry_points={
         "console_scripts": [
-            "odpy.convert = ocean_data_parser.batch.convert:cli_files",
-            "odpy.compile.nc.variables = ocean_data_parser.compile.netcdf:cli_variables",
+            "odpy = ocean_data_parser.cli:main()"
+            "odpy.convert = ocean_data_parser.batch.convert:convert",
+            "odpy.compile.nc.variables = ocean_data_parser.compile.netcdf:compile",
         ]
     },
 )
