@@ -1,12 +1,11 @@
-import logging
 from pathlib import Path
 
 import click
 import pandas as pd
 import xarray as xr
 from tqdm import tqdm
+from loguru import logger
 
-logger = logging.getLogger(__name__)
 
 
 def _get_erddap_dtype(dtype):
@@ -37,9 +36,9 @@ def _get_erddap_xml_variable(variable, destination, type, attrs):
 
 
 def variables(
-    input_dir: str = ".",
-    file_regex: str = "**/*.nc",
-    groupby: list = None,
+    input: str = "**/*.nc",
+    exclude: str = None,
+    groupby: str = "variable,units,standard_name,sdn_parameter_urn,sdn_parameter_name",
     output_table: str = None,
     output_erddap_xml: str = None,
 ):
@@ -65,23 +64,15 @@ def variables(
             file=file, variable=var, dtype=ds[var].dtype, **ds[var].attrs, **kwargs
         )
 
-    if isinstance(groupby, str):
-        groupby = groupby.split(",")
-    groupby = (
-        [
-            "variable",
-            "units",
-            "standard_name",
-            "sdn_parameter_urn",
-            "sdn_parameter_name",
-        ]
-        if not groupby
-        else groupby
-    )
-
     # Get file list
-    input_dir = Path(input_dir or ".")
-    files = list(input_dir.glob(file_regex))
+    logger.debug("Retrieve files to compile")
+    files = Path().glob(input)
+
+    if exclude:
+        logger.debug("Retrieve files to ignore")
+        excluded_files = Path().glob(exclude)
+        files = [file for file in files if file not in excluded_files]
+    
     if not files:
         logger.info("No netcdf files available")
         return
@@ -89,16 +80,20 @@ def variables(
     # Compile variable list
     variables = []
     for file in tqdm(files, unit="file", desc="Compile NetCDF variables"):
-        ds = xr.open_dataset(file)
-        variables += [_get_var_attrs(var, coords=True) for var in ds.coords]
-        variables += [_get_var_attrs(var) for var in ds]
+        logger.contextualize(source_file=file)
+        try:
+            ds = xr.open_dataset(file)
+            variables += [_get_var_attrs(var, coords=True) for var in ds.coords]
+            variables += [_get_var_attrs(var) for var in ds]
+        except Exception as e:
+            logger.error("Failed load netcdf file: {}",e)
 
     # Generate DataFrame
     df_vars = pd.DataFrame(variables)
     logger.debug("columns available: %s", df_vars.columns)
     df_vars_grouped = (
         df_vars.groupby(
-            groupby,
+            groupby.split(','),
             dropna=False,
         ).agg({"file": "count"})
     ).reset_index()
@@ -132,37 +127,41 @@ def variables(
 
 @click.command()
 @click.option(
-    "--input_dir",
+    "--input",
     "-i",
-    default=".",
-    type=click.Path(exists=True),
-    help="Top directory from where to look for netCDFs",
+    default="**/*.nc",
+    show_default=True,
+    type=str,
+    help="Glob expression of input files",
 )
 @click.option(
-    "--file_regex", "-f", default="**/*.nc", type=str, help="File search expression."
+    "--exclude", type=str, help="Glob expression of files to exclude"
 )
 @click.option(
     "--groupby",
-    "-g",
-    default=None,
+    default="variable,units,standard_name,sdn_parameter_urn,sdn_parameter_name",
     type=str,
     help="Comma separated list of attributes to regroup variables by.",
+    show_default=True
 )
 @click.option(
     "--output_table",
     "-t",
     default=None,
-    help="Output table result to console(default), csv (**/*.csv) or markdown(**/*.md).",
+    is_flag=False,
+    flag_value='odpy-compile-variables.md',
+    help="Result table output: \n - None = console(default)\n - path to csv or markdown(*.md) file.",
 )
 @click.option(
     "--output_erddap_xml",
-    "-xml",
+    "--xml",
     default=None,
+    is_flag=False,
+    flag_value='odpy-compile-variables.xml',
     help="Output an ERDDAP XML blurb or all the variables. ",
 )
 def compile(**kwargs):
     """Compile NetCDF files variables and variables attributes."""
-    kwargs["groupby"] = kwargs["groupby"].split(",") if kwargs["groupby"] else None
     variables(**kwargs)
 
 
