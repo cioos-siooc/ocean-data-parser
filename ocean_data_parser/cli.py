@@ -1,3 +1,5 @@
+"""This is the ODPY.cli main docstring"""
+
 import logging
 import os
 import sys
@@ -88,3 +90,6 @@ def main(verbose, log_level, log_file, log_file_level):
 
 main.add_command(convert)
 main.add_command(compile)
+
+if __name__ == '__main__':
+    main(auto_envvar_prefix='ODPY')
