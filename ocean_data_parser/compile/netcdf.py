@@ -36,6 +36,19 @@ def _get_erddap_xml_variable(variable, destination, type, attrs):
     </dataVariable>"""
 
 
+@logger.catch(default={})
+def _get_netcdf_variables(file) -> list:
+    def _get_var_attrs(var, **kwargs):
+        return dict(
+            file=file, variable=var, dtype=ds[var].dtype, **ds[var].attrs, **kwargs
+        )
+    logger.contextualize(source_file=file)
+    ds = xr.open_dataset(file)
+    variables = [_get_var_attrs(var, coords=True) for var in ds.coords]
+    variables += [_get_var_attrs(var) for var in ds]
+    return variables
+
+
 def variables(
     input: str = "**/*.nc",
     exclude: str = None,
@@ -59,12 +72,7 @@ def variables(
         output_erddap_xml (str, optional): Path to where to ouput
             erddap dataset xml. Defaults to console.
     """
-
-    def _get_var_attrs(var, **kwargs):
-        return dict(
-            file=file, variable=var, dtype=ds[var].dtype, **ds[var].attrs, **kwargs
-        )
-
+    
     # Get file list
     logger.debug("Retrieve files to compile")
     files = glob(input, recursive=True)
@@ -81,13 +89,7 @@ def variables(
     # Compile variable list
     variables = []
     for file in tqdm(files, unit="file", desc="Compile NetCDF variables"):
-        logger.contextualize(source_file=file)
-        try:
-            ds = xr.open_dataset(file)
-            variables += [_get_var_attrs(var, coords=True) for var in ds.coords]
-            variables += [_get_var_attrs(var) for var in ds]
-        except Exception as e:
-            logger.error("Failed load netcdf file: {}",e)
+        variables += _get_netcdf_variables(file)
 
     # Generate DataFrame
     df_vars = pd.DataFrame(variables)
