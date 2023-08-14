@@ -1,0 +1,10 @@
+mkdocs
+mkdocs-material
+mkdocstrings[python]
+mkdocs-jupyter
+mkdocs-gen-files
+mkdocs-simple-hooks
+mkdocs-click
+mkdocs-embed-external-markdown
+mike
+tabulate

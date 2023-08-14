@@ -1,4 +1,7 @@
-site_name: Ocean Data Parser - Documentation
+site_name: Ocean Data Parser
+site_url: https://cioos-siooc.github.io/ocean-data-parser/
+repo_name: ocean-data-parser
+repo_url: https://github.com/cioos-siooc/ocean-data-parser
 theme:
   name: material
   logo: images/logo.svg
@@ -38,21 +41,17 @@ plugins:
   - mkdocs-simple-hooks:
       hooks:
         on_pre_build: "docs.scripts.hooks:on_pre_build"
+  - external-markdown
         
 markdown_extensions:
     - mkdocs-click
+    - admonition
 
 nav:
   - Welcome: index.md
-  - Notebooks:
-      - Amundsen INT: notebooks/amundsen_int_parser_example.ipynb
-      - DFO-BIO parsing: notebooks/bio_odf_parsing_example.ipynb
-      - NMEA Parsing: notebooks/nmea_example.ipynb
-      - Seabird CNV: notebooks/seabird_cnv_and_btl_example.ipynb
-  - Metadata:
-      - CF: metadata/cf.md
-      - NERC: metadata/nerc.md
-      - Polar Data Catalog: metadata/pdc.md
+  - Installation: installation.md
+  - How to: how-to.md
+  - Commands (CLI): cli.md
   - Data Parsers:
       - Parsers: parsers/index.md
       - Amundsen: parsers/amundsen-hook.md
@@ -69,7 +68,16 @@ nav:
       - Star-Oddi: parsers/star-oddi.md
       - SunBurst: parsers/sunburst.md
       - Van Essen Instruments: parsers/van-essen-intruments.md
-  - CLI: cli.md
+  # - Metadata: # TODO 
+  #   - CF: metadata/cf.md
+  #   - NERC: metadata/nerc.md
+  #   - Polar Data Catalog: metadata/pdc.md
+  - Example Notebooks:
+    - Amundsen INT: notebooks/amundsen_int_parser_example.ipynb
+    - DFO BIO ODF parsing: notebooks/bio_odf_parsing_example.ipynb
+    - DFO BIO NAFC Pfiles parsing: notebooks/read_dfo_nafc_p_file.ipynb
+    - NMEA Parsing: notebooks/nmea_example.ipynb
+    - Seabird CNV: notebooks/seabird_cnv_and_btl_example.ipynb
 
 extra:
   version:

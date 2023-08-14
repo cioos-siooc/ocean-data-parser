@@ -29,7 +29,7 @@ def generate_output_path(
               - source_stem: original parsed file filename without the extension
               - global attributes: `{global_asttribute}`
               - variable attributes: `{variable_[variable]_[attribute]}`
-            ex: ".\{program}\{project}\{source_stem}.nc"
+            ex: ".\\{program}\\{project}\\{source_stem}.nc"
         defaults (dict, optional): Placeholder for any global
             attributes or variable attributes used in output path. Defaults to None.
         file_preffix (str, optional): Preffix to add to file name. Defaults to "".
