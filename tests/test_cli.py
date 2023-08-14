@@ -36,7 +36,7 @@ def test_odpy_main_arguments(args, expected_output):
     ),
 )
 def test_odpy_main_args_from_env_variables(env, expected_output):
-    results = run_command(cli.main, "--show-arguments=stop", env)
+    results = run_command(cli.main, "--show-arguments", env)
     assert expected_output in results.output
 
 
