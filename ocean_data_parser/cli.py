@@ -56,7 +56,7 @@ logging.basicConfig(
 classic_logger = logging.getLogger()
 
 
-@click.group(name="odpy")
+@click.command(name="odpy")
 @click.version_option(__version__)
 @click.option(
     "--verbose",
@@ -70,11 +70,11 @@ classic_logger = logging.getLogger()
     help="Logger level used",
     default="INFO",
 )
-@click.option("--log-file", type=click.Path(), help="Log output to a file.")
+@click.option("--log-file", type=click.Path(), help="Log to a file.")
 @click.option(
     "--log-file-level",
     type=click.Choice(LOG_LEVELS),
-    help="File ogger level used",
+    help="Log file level used",
     default="INFO",
 )
 def main(verbose, log_level, log_file, log_file_level):
