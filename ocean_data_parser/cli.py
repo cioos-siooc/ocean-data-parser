@@ -56,7 +56,7 @@ logging.basicConfig(
 classic_logger = logging.getLogger()
 
 
-@click.command(name="odpy")
+@click.group(name="odpy",auto_envvar_prefix="ODPY")
 @click.version_option(__version__)
 @click.option(
     "--verbose",
