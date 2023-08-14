@@ -195,7 +195,7 @@ def compile(**kwargs):
         click.echo("\n".join([f"{key}={value}" for key, value in kwargs.items()]))
         if kwargs["show_arguments"] == "stop":
             return
-    kwargs.pop('show_arguments',None)
+    kwargs.pop("show_arguments", None)
     variables(**kwargs)
 
 

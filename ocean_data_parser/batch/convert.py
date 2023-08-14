@@ -165,14 +165,14 @@ def convert(**kwargs):
         click.echo("\n".join([f"{key}={value}" for key, value in kwargs.items()]))
         if kwargs["show_arguments"] == "stop":
             return
-    kwargs.pop('show_arguments',None)
+    kwargs.pop("show_arguments", None)
 
     kwargs = {
         key: None if value == "None" else value
         for key, value in kwargs.items()
         if value
     }
-    
+
     BatchConversion(**kwargs).run()
 
 

@@ -1,7 +1,9 @@
-import pytest
 import os
+
+import pytest
 from click.testing import CliRunner
-from ocean_data_parser import cli, __version__
+
+from ocean_data_parser import __version__, cli
 from ocean_data_parser.batch import convert
 from ocean_data_parser.compile.netcdf import compile
 
@@ -73,14 +75,27 @@ def test_odpy_convert_args_from_env_variables(env, expected_output):
 @pytest.mark.parametrize(
     "args,env,expected_output",
     (
-        (["--show-arguments=stop",'-i','good.csv'],{"ODPY_CONVERT_INPUT_PATH": "notgood.csv"}, "input_path=good.csv"),
-        (["--show-arguments=stop",'--input-path','good.csv'],{"ODPY_CONVERT_INPUT_PATH": "notgood.csv"}, "input_path=good.csv"),
-        (["--show-arguments=stop",'--input-path=good.csv'],{"ODPY_CONVERT_INPUT_PATH": "notgood.csv"}, "input_path=good.csv"),
+        (
+            ["--show-arguments=stop", "-i", "good.csv"],
+            {"ODPY_CONVERT_INPUT_PATH": "notgood.csv"},
+            "input_path=good.csv",
+        ),
+        (
+            ["--show-arguments=stop", "--input-path", "good.csv"],
+            {"ODPY_CONVERT_INPUT_PATH": "notgood.csv"},
+            "input_path=good.csv",
+        ),
+        (
+            ["--show-arguments=stop", "--input-path=good.csv"],
+            {"ODPY_CONVERT_INPUT_PATH": "notgood.csv"},
+            "input_path=good.csv",
+        ),
     ),
 )
-def test_odpy_convert_args_and_env_variables(args,env, expected_output):
+def test_odpy_convert_args_and_env_variables(args, env, expected_output):
     results = run_command(convert.convert, args, env)
     assert expected_output in results.output
+
 
 @pytest.mark.parametrize(
     "args,expected_output",
