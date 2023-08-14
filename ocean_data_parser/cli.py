@@ -56,7 +56,11 @@ logging.basicConfig(
 classic_logger = logging.getLogger()
 
 
-@click.group(name="odpy", invoke_without_command=True)
+@click.group(
+    name="odpy",
+    invoke_without_command=True,
+    context_settings={"auto_envvar_prefix": "ODPY"},
+)
 @click.version_option(__version__, package_name="ocean-data-parser")
 @click.option(
     "--verbose",
