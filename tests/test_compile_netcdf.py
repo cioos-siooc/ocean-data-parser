@@ -9,7 +9,7 @@ from ocean_data_parser.compile.netcdf import compile, variables
 PACKAGE_PATH = Path(__file__).parent
 logger = logging.getLogger(__name__)
 logger.setLevel("DEBUG")
-TEST_FILE_PATH = PACKAGE_PATH / "parser_test_files" / "dfo" / "bio"
+TEST_FILE_PATH = str(PACKAGE_PATH / "parser_test_files" / "dfo" / "bio")
 
 
 class CompileNetcdfVariablesTests(unittest.TestCase):
