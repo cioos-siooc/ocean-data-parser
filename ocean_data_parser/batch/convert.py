@@ -70,10 +70,10 @@ def get_parser_list(ctx, _, value):
     ctx.exit()
 
 
-@click.command()
+@click.command(context_settings={"auto_envvar_prefix": "ODPY_CONVERT"},)
 @click.option(
     "-i",
-    "--input_path",
+    "--input-path",
     type=str,
     help="Input path to file list. It can be a glob expression (ex: *.cnv)",
 )
@@ -148,7 +148,15 @@ def get_parser_list(ctx, _, value):
     callback=get_parser_list,
     help="Get the list of parsers available",
 )
-@click.version_option(version=__version__, package_name="ocean-data-parser")
+@click.option(
+    "--show-arguments",
+    is_flag=False,
+    flag_value="True",
+    type=click.Choice(["stop", "True"]),
+    default=None,
+    help="Print present argument values. If  stop argument is given, do not run the conversion.",
+)
+@click.version_option(version=__version__, package_name="ocean-data-parser.convert")
 def convert(**kwargs):
     """Run ocean-data-parser conversion on given files."""
     # Drop empty kwargs
@@ -157,6 +165,11 @@ def convert(**kwargs):
         for key, value in kwargs.items()
         if value
     }
+    if kwargs.get("show_arguments"):
+        click.echo("odpy convert parameter inputs:")
+        click.echo("\n".join([f"{key}={value}" for key, value in kwargs.items()]))
+        if kwargs["show_arguments"] == "stop":
+            return
     BatchConversion(**kwargs).run()
 
 
@@ -409,4 +422,4 @@ def convert_file(file: str, parser: str, config: dict) -> str:
 
 
 if __name__ == "__main__":
-    convert()
+    convert(auto_envvar_prefix="ODPY_CONVERT")
