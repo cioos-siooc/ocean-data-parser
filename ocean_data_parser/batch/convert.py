@@ -70,11 +70,10 @@ def get_parser_list(ctx, _, value):
     ctx.exit()
 
 
-@click.command(context_settings={"auto_envvar_prefix": "ODPY_CONVERT"},)
+@click.command(context_settings={"auto_envvar_prefix": "ODPY_CONVERT"})
 @click.option(
     "-i",
     "--input-path",
-    "--input_path",
     type=str,
     help="Input path to file list. It can be a glob expression (ex: *.cnv)",
 )
@@ -112,7 +111,7 @@ def get_parser_list(ctx, _, value):
     help="Error hanlding method",
 )
 @click.option(
-    "--registry_path",
+    "--registry-path",
     type=click.Path(),
     help=(
         "File conversion registry path (*.csv or *.parquet)."
@@ -120,30 +119,30 @@ def get_parser_list(ctx, _, value):
     ),
 )
 @click.option(
-    "--output_path",
+    "--output-path",
     type=click.Path(),
     help="Output directory where to save converted files.",
 )
 @click.option(
-    "--output_file_name",
+    "--output-file-name",
     type=click.Path(),
     help="Output file path where to save converted files.",
 )
 @click.option(
-    "--output_file_suffix", type=click.Path(), help="Output file name suffix to add"
+    "--output-file-suffix", type=click.Path(), help="Output file name suffix to add"
 )
 @click.option(
     "--config", "-c", type=click.Path(exists=True), help="Path to configuration file"
 )
 @click.option(
-    "--new_config",
+    "--new-config",
     is_eager=True,
     callback=save_new_config,
     type=click.Path(exists=False),
     help="Generate a new configuration file at the given path",
 )
 @click.option(
-    "--parser_list",
+    "--parser-list",
     is_eager=True,
     is_flag=True,
     callback=get_parser_list,
