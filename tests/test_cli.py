@@ -72,15 +72,13 @@ def test_odpy_convert_args_from_env_variables(env, expected_output):
 @pytest.mark.parametrize(
     "args,env,expected_output",
     (
-        ({"ODPY_CONVERT_INPUT_PATH": "test.csv"}, "input_path=test.csv"),
-        ({"ODPY_CONVERT_PARSER": "onset.csv"}, "parser=onset.csv"),
-        ({"ODPY_CONVERT_OVERWRITE": "true"}, "overwrite=True"),
-        ({"ODPY_CONVERT_MULTIPROCESSING": "3"}, "multiprocessing=3"),
-        ({"ODPY_CONVERT_ERRORS": "raise"}, "errors=raise"),
+        (["--show-arguments=stop",'-i','good.csv'],{"ODPY_CONVERT_INPUT_PATH": "notgood.csv"}, "input_path=good.csv"),
+        (["--show-arguments=stop",'--input-path','good.csv'],{"ODPY_CONVERT_INPUT_PATH": "notgood.csv"}, "input_path=good.csv"),
+        (["--show-arguments=stop",'--input-path=good.csv'],{"ODPY_CONVERT_INPUT_PATH": "notgood.csv"}, "input_path=good.csv"),
     ),
 )
-def test_odpy_convert_args_from_env_variables(env, expected_output):
-    results = run_command(convert.convert, "--show-arguments=stop", env)
+def test_odpy_convert_args_and_env_variables(args,env, expected_output):
+    results = run_command(convert.convert, args, env)
     assert expected_output in results.output
 
 @pytest.mark.parametrize("input", ("--version", "--help"))
