@@ -56,7 +56,7 @@ logging.basicConfig(
 classic_logger = logging.getLogger()
 
 
-@click.group(name="odpy",auto_envvar_prefix="ODPY")
+@click.group(name="odpy")
 @click.version_option(__version__)
 @click.option(
     "--verbose",
@@ -86,10 +86,9 @@ def main(verbose, log_level, log_file, log_file_level):
     )
     if log_file:
         logger.add(log_file, level=log_file_level, format=log_format)
+    logger.info("ocean-data-parser[%s]", __version__)
+    logger.info("Log-level=%s",log_level)
 
 
 main.add_command(convert)
 main.add_command(compile)
-
-if __name__ == '__main__':
-    main(auto_envvar_prefix='ODPY')
