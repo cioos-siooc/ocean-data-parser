@@ -137,7 +137,7 @@ def variables(
                 file_handle.write(erddap_xml)
 
 
-@click.command()
+@click.command(context_settings={"auto_envvar_prefix": "ODPY_COMPILE"})
 @click.option(
     "--input",
     "-i",
