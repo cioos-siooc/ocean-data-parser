@@ -56,8 +56,8 @@ logging.basicConfig(
 classic_logger = logging.getLogger()
 
 
-@click.group(name="odpy")
-@click.version_option(__version__)
+@click.group(name="odpy", invoke_without_command=True)
+@click.version_option(__version__, package_name="ocean-data-parser")
 @click.option(
     "--verbose",
     is_flag=True,
@@ -69,15 +69,26 @@ classic_logger = logging.getLogger()
     type=click.Choice(LOG_LEVELS),
     help="Logger level used",
     default="INFO",
+    envvar="ODPY_LOG_LEVEL",
 )
-@click.option("--log-file", type=click.Path(), help="Log to a file.")
+@click.option(
+    "--log-file", type=click.Path(), help="Log to a file.", envvar="ODPY_LOG_FILE"
+)
 @click.option(
     "--log-file-level",
     type=click.Choice(LOG_LEVELS),
     help="Log file level used",
     default="INFO",
+    envvar="ODPY_LOG_FILE_LEVEL",
 )
-def main(verbose, log_level, log_file, log_file_level):
+@click.option(
+    "--show-arguments",
+    is_flag=True,
+    default=False,
+    help="Print present argument values",
+)
+def main(verbose, log_level, log_file, log_file_level, show_arguments):
+
     log_format = VERBOSE_LOG_FORMAT if verbose else LOG_FORMAT
     logger.add(
         sys.stderr,
@@ -86,8 +97,14 @@ def main(verbose, log_level, log_file, log_file_level):
     )
     if log_file:
         logger.add(log_file, level=log_file_level, format=log_format)
-    logger.info("ocean-data-parser[%s]", __version__)
-    logger.info("Log-level=%s",log_level)
+
+    logger.info("ocean-data-parser[{}]: log-level={}", __version__, log_level)
+    if show_arguments:
+        click.echo("odpy parameters inputs:")
+        click.echo(f"verbose={verbose}")
+        click.echo(f"log_level={log_level}")
+        click.echo(f"log_file={log_file}")
+        click.echo(f"log_file_level={log_file_level}")
 
 
 main.add_command(convert)

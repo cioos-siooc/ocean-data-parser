@@ -148,7 +148,7 @@ def get_parser_list(ctx, _, value):
     callback=get_parser_list,
     help="Get the list of parsers available",
 )
-@click.version_option(version=__version__, package_name="ocean_data_parser")
+@click.version_option(version=__version__, package_name="ocean-data-parser")
 def convert(**kwargs):
     """Run ocean-data-parser conversion on given files."""
     # Drop empty kwargs
