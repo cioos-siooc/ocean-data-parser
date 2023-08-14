@@ -165,7 +165,7 @@ def variables(
     show_default=True,
 )
 @click.option(
-    "--output_table",
+    "--output-table",
     "-t",
     default=None,
     is_flag=False,
@@ -173,15 +173,29 @@ def variables(
     help="Result table output: \n - None = console(default)\n - path to csv or markdown(*.md) file.",
 )
 @click.option(
-    "--output_erddap_xml",
+    "--output-erddap-xml",
     "--xml",
     default=None,
     is_flag=False,
     flag_value=True,
     help="Output an ERDDAP XML blurb or all the variables. ",
 )
+@click.option(
+    "--show-arguments",
+    is_flag=False,
+    flag_value="True",
+    type=click.Choice(["stop", "True"]),
+    default=None,
+    help="Print present argument values. If  stop argument is given, do not run the conversion.",
+)
 def compile(**kwargs):
     """Compile NetCDF files variables and variables attributes."""
+    if kwargs.get("show_arguments"):
+        click.echo("odpy convert parameter inputs:")
+        click.echo("\n".join([f"{key}={value}" for key, value in kwargs.items()]))
+        if kwargs["show_arguments"] == "stop":
+            return
+    kwargs.pop('show_arguments',None)
     variables(**kwargs)
 
 

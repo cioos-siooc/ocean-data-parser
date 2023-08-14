@@ -43,6 +43,7 @@ def test_odpy_main_args_from_env_variables(env, expected_output):
 @pytest.mark.parametrize(
     "args,expected_output",
     (
+        ("--version", "version"),
         ("--help", "Usage:"),
         ("--show-arguments=stop", "odpy convert parameter inputs:"),
         (["--show-arguments=stop", "--input-path=test.csv"], "input_path=test.csv"),
@@ -81,6 +82,15 @@ def test_odpy_convert_args_and_env_variables(args,env, expected_output):
     results = run_command(convert.convert, args, env)
     assert expected_output in results.output
 
-@pytest.mark.parametrize("input", ("--version", "--help"))
-def test_opdy_compile_args(input):
-    run_command(compile, input)
+@pytest.mark.parametrize(
+    "args,expected_output",
+    (
+        ("--version", "version"),
+        ("--help", "Usage:"),
+        ("--show-arguments=stop", "odpy convert parameter inputs:"),
+        (["--show-arguments=stop", "--input=test.nc"], "input=test.nc"),
+    ),
+)
+def test_odpy_convert_arguments(args, expected_output):
+    results = run_command(compile, args)
+    assert expected_output in results.output

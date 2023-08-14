@@ -160,16 +160,19 @@ def get_parser_list(ctx, _, value):
 def convert(**kwargs):
     """Run ocean-data-parser conversion on given files."""
     # Drop empty kwargs
-    kwargs = {
-        key: None if value == "None" else value
-        for key, value in kwargs.items()
-        if value
-    }
     if kwargs.get("show_arguments"):
         click.echo("odpy convert parameter inputs:")
         click.echo("\n".join([f"{key}={value}" for key, value in kwargs.items()]))
         if kwargs["show_arguments"] == "stop":
             return
+    kwargs.pop('show_arguments',None)
+
+    kwargs = {
+        key: None if value == "None" else value
+        for key, value in kwargs.items()
+        if value
+    }
+    
     BatchConversion(**kwargs).run()
 
 
