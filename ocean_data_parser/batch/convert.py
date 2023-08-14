@@ -74,6 +74,7 @@ def get_parser_list(ctx, _, value):
 @click.option(
     "-i",
     "--input-path",
+    "--input_path",
     type=str,
     help="Input path to file list. It can be a glob expression (ex: *.cnv)",
 )
