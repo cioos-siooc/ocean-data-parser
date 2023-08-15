@@ -1,0 +1,30 @@
+name: Test docs generation 
+
+on:
+  pull_request:
+    branches:
+      - main
+      - development
+      
+
+  test_docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV 
+      - uses: actions/cache@v3
+        with:
+          key: mkdocs-material-${{ env.cache_id }}
+          path: .cache
+          restore-keys: |
+            mkdocs-material-
+      - run: pip install . |
+              pip install -r docs-requirements.txt
+      - run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+      - run: |
+          mike deploy test
