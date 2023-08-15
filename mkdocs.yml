@@ -13,8 +13,8 @@ theme:
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-      primary: light blue
-      accent: blue
+      primary: custom
+      accent: custom
 
     # Palette toggle for dark mode
     - media: "(prefers-color-scheme: dark)"
@@ -22,8 +22,8 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to system preference
-      primary: light blue
-      accent: blue
+      primary: custom
+      accent: custom
   features:
     - header.autohide
     - navigation.top
@@ -90,6 +90,9 @@ extra:
   version:
     provider: mike
 
+extra_css:
+  - stylesheets/extra.css
+  
 extra_javascript:
   - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
   - javascripts/tablesort.js
