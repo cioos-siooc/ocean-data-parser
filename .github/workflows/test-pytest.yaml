@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - development
-    path:
+    paths:
       - setup.py
       - MANIFEST.in
       - ocean_data_parser/**
@@ -14,7 +14,7 @@ on:
     branches:
       - main
       - development
-    path:
+    paths:
       - setup.py
       - MANIFEST.in
       - ocean_data_parser/**
