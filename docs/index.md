@@ -15,12 +15,12 @@ Data conversion is an integral part of data analysis and manipulation workflows.
 
 ## Key Features 
 
-- Handle a number of format
-- Output minimum compliance to CF 1.6
-- Seamless Integration with Xarray
-- Easy to integrate in pipelines
-- Performance Optimization
-- Comprehensive Documentation and Examples
+- [x] Handle a number of format
+- [x] Output minimum compliance to CF 1.6
+- [x] Seamless Integration with Xarray
+- [x] Easy to integrate in pipelines
+- [x] Performance Optimization
+- [x] Comprehensive Documentation and Examples
 
 Converting proprietary formatted data to an Xarray dataset has never been easier. With `ocean-data-parser`, you can streamline your data preprocessing tasks, allowing you to efficiently analyze and derive insights from your valuable data.
  

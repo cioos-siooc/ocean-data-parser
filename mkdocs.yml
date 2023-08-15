@@ -50,6 +50,9 @@ markdown_extensions:
     - mkdocs-click
     - admonition
     - attr_list
+    - def_list
+    - pymdownx.tasklist:
+        custom_checkbox: true
 
 nav:
   - Welcome: index.md
@@ -92,7 +95,7 @@ extra:
 
 extra_css:
   - stylesheets/extra.css
-  
+
 extra_javascript:
   - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
   - javascripts/tablesort.js
