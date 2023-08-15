@@ -6,7 +6,7 @@ on:
       - main
       - development
       
-
+jobs:
   test_docs:
     runs-on: ubuntu-latest
     steps:
