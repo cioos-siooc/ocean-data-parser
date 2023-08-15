@@ -1,4 +1,4 @@
-## PIP 
+## pip   
 
 Install the package with the following command, ideally within a virtual environment:
 

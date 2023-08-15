@@ -30,6 +30,8 @@ theme:
     - navigation.tracking
     - toc.integrate
     - toc.follow
+    - navigation.tabs
+    - navigation.tabs.sticky
 
 plugins:
   - mkdocstrings
@@ -42,10 +44,12 @@ plugins:
       hooks:
         on_pre_build: "docs.scripts.hooks:on_pre_build"
   - external-markdown
+  - search
         
 markdown_extensions:
     - mkdocs-click
     - admonition
+    - attr_list
 
 nav:
   - Welcome: index.md
@@ -54,20 +58,22 @@ nav:
   - Commands (CLI): cli.md
   - Data Parsers:
       - Parsers: parsers/index.md
-      - Amundsen: parsers/amundsen-hook.md
-      - Fisheries And Ocean Canada:
-          - ODF: parsers/dfo/odf-hook.md
-          - IOS Shell: parsers/dfo/ios-hook.md
-          - P Format: parsers/dfo/p-hook.md
-      - ElectricBlue: parsers/electricblue.md
-      - NMEA: parsers/nmea.md
-      - Onset: parsers/onset.md
-      - PME: parsers/pme.md
-      - RBR: parsers/rbr.md
-      - Seabird: parsers/seabird-hook.md
-      - Star-Oddi: parsers/star-oddi.md
-      - SunBurst: parsers/sunburst.md
-      - Van Essen Instruments: parsers/van-essen-intruments.md
+      - amundsen: parsers/amundsen-hook.md
+      - dfo:
+          - odf: parsers/dfo/odf-hook.md
+          - ios:
+            - ios_shell: parsers/dfo/ios-hook.md
+          - nafc:
+            - P Format: parsers/dfo/p-hook.md
+      - electricblue: parsers/electricblue.md
+      - nmea: parsers/nmea.md
+      - onset: parsers/onset.md
+      - pme: parsers/pme.md
+      - rbr: parsers/rbr.md
+      - seabird: parsers/seabird-hook.md
+      - star_oddi: parsers/star-oddi.md
+      - sunburst: parsers/sunburst.md
+      - van_essen_instruments: parsers/van-essen-intruments.md
   # - Metadata: # TODO 
   #   - CF: metadata/cf.md
   #   - NERC: metadata/nerc.md
@@ -77,7 +83,7 @@ nav:
     - DFO BIO ODF parsing: notebooks/bio_odf_parsing_example.ipynb
     - DFO BIO NAFC Pfiles parsing: notebooks/read_dfo_nafc_p_file.ipynb
     - NMEA Parsing: notebooks/nmea_example.ipynb
-    - Seabird CNV: notebooks/seabird_cnv_and_btl_example.ipynb
+    # - Seabird CNV: notebooks/seabird_cnv_and_btl_example.ipynb
 
 extra:
   version:
