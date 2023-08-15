@@ -25,7 +25,7 @@ jobs:
           restore-keys: |
             mkdocs-material-
       - run: |
-          pip install . |
+          pip install .
           pip install -r docs-requirements.txt
       - run: |
           git config --global user.name "${GITHUB_ACTOR}"
