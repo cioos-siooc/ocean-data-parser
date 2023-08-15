@@ -92,31 +92,50 @@ def mli_odf_cioos(path: str, config: Union[dict, str]) -> xarray.Dataset:
     return odf_to_xarray(path, config)
 
 
-def bio_odf(path: str) -> xarray.Dataset:
+def bio_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
     """Bedford Institute of Ocean ODF format parser
 
     Args:
         path (str): Path to the odf file to parse
+        global_attributes (dict): file specific global attributes
     Returns:
         dataset (xarray dataset): Parsed xarray dataset
     """
-    return parse_odf(
+    return odf(
         path,
         institution="BIO",
-        global_attributes={**odf_global_attributes, **bio_global_attributes},
+        global_attributes={**bio_global_attributes, **(global_attributes or {})},
     )
 
 
-def mli_odf(path: str) -> xarray.Dataset:
+def mli_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
     """Maurice Lamontagne Institute ODF format parser
 
     Args:
         path (str): Path to the odf file to parse
+        global_attributes (dict): file specific global attributes
+    Returns:
+        dataset (xarray dataset): Parsed xarray dataset
+    """
+    return odf(
+        path,
+        institution="MLI",
+        global_attributes={**mli_global_attributes, **(global_attributes or {})},
+    )
+
+
+def odf(path: str, institution: str = None, global_attributes: dict = None):
+    """ODF format parser
+
+    Args:
+        path (str): Path to the odf file to parse
+        institution (str): Institution to use for the vocabulary mapping
+        global_attributes (dict): file specific global attributes
     Returns:
         dataset (xarray dataset): Parsed xarray dataset
     """
     return parse_odf(
         path,
-        institution="MLI",
-        global_attributes={**odf_global_attributes, **mli_global_attributes},
+        institution=institution,
+        global_attributes={**odf_global_attributes, **(global_attributes or {})},
     )
