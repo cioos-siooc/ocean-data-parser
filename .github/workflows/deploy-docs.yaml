@@ -32,8 +32,8 @@ jobs:
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
       - run: |
           if [[ "${{github.ref_name}}" == "main" ]]; then
-              mike deploy main
+              mike deploy main --push
           else
-              mike deploy dev
+              mike deploy dev --push
           fi
           mike set-default dev

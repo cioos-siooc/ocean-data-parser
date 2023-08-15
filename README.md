@@ -12,46 +12,33 @@
 
 <!-- You can get project relevant badges from: [shields.io](https://shields.io/) -->
 
-[![Update gh-pages Docs](https://github.com/cioos-siooc/ocean-data-parser/actions/workflows/generate-documentation.yaml/badge.svg)](https://github.com/cioos-siooc/ocean-data-parser/actions/workflows/generate-documentation.yaml)
+[![Build documentation](https://github.com/cioos-siooc/ocean-data-parser/actions/workflows/deploy-docs.yaml/badge.svg)](https://github.com/cioos-siooc/ocean-data-parser/actions/workflows/deploy-docs.yaml)
 
-## What is it?
 
-The `ocean-data-parser` is a set of tools capable of parsing oceanographic proprietary data formats to a xarray CIOOS Compliant object. This xarray object can then be use in a number of application and/or easily saved to a NetCDF format.
+`ocean-data-parser` - a python Package for parsing oceanographic proprietary data formats to [xarray Dataset](https://docs.xarray.dev/en/stable/).
 
-A more detailed documentation is available [here](https://cioos-siooc.github.io/ocean-data-parser/main/).
+[A more detailed documentation is available here](https://cioos-siooc.github.io/ocean-data-parser/).
 
----
-
-## Table of Contents
-
-<details>
-
-<summary>Table of Contents</summary>
-
-- [ocean-data-parser](#ocean-data-parser)
-  - [What is it?](#what-is-it)
-  - [Table of Contents](#table-of-contents)
-  - [How to](#how-to)
-  - [Development](#development)
-    - [Installation](#installation)
-    - [Documentation](#documentation)
-    - [Testing](#testing)
-      - [Parsers Tests](#parsers-tests)
-  - [Contributing](#contributing)
-
-</details>
-
----
-
-## How to
-
+## Installation
 Install the package with the following command, ideally within a virtual environment:
 
-```env
+```console
 pip install git+https://github.com/cioos-siooc/ocean-data-parser.git
 ```
 
-As an example, to load a compatible file you can use the automated parser detection method:
+### Examples
+#### odpy cli
+Once installed, the package is usable via the command line interface:
+```console
+odpy --help
+```
+
+To batch convert a series of files to netcdf:
+```
+odpy convert -i '**/*.cnv' -p 'seabird.cnv'
+```
+#### format auto-detection
+Load a compatible file with the automated parser detection method:
 
 ```python
 import ocean_data_parser.parsers
@@ -75,46 +62,6 @@ ds = seabird.cnv('Path to seabird cnv file')
 ds.to_netcdf('save-path.nc')
 ```
 The `ocean-data-parser` can then be used within either a python package, script or jupyter notebook. See [documentation Notebook section](https://cioos-siooc.github.io/ocean-data-parser) for examples on how to use the package within a jupyter notebook.
-
-## Development
-
-### Installation
-Clone the project locally
-
-```shell
-  git clone git+https://github.com/cioos-siooc/ocean-data-parser.git
-```
-
-Go to the project directory
-
-```shell
-  cd ocean-data-parser
-```
-
-Install dependencies
-
-```shell
-  pip install -e ".[dev]"
-```
-
-### Documentation
-To run a local instance of the documentation webpage, run the command:
-
-```shell
-mike serve
-```
-
-Any documentation changes to the main and development branches will automatically update respectively the main and dev document pages.
-
-### Testing
-The package use pytest to run a series of tests in order to help the development of the different aspect of the package. Within a developping environment, to run the different tests, run the pytest commmand through your terminal within the base directory of the repository. Pytest can also be integrated with different IDE and is run on any pushes and PR to the `main` and `development` branches.
-
-#### Parsers Tests
-The package contains a number of different parsers compatible with different standard file formats. Each parser is tested on a series of test files made available within the [test file directory](tests/parsers_test_files) The different tests executed on each individual parsers can be subdivided in 3 main categories:
-1. Parse test file to an xarray dataset
-2. Parse test file to an xarray dataset and save to a NetCDF4 file.
-3. Parse test file to an xarray dataset and compare to a reference file ('*_reference.nc) if made available. Any differences are flagged
-4. *(in development)* Assess parsed xarray object compliance with the different convention by using the ioos-compliance checker, resulting objects should be to a minimum compliante to ACDD 1.3 and CF 1.6. Other conventions can be added by adding them to the xarray object global attribute `Convention`.
 
 ## Contributing
 
