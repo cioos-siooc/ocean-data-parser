@@ -9,7 +9,7 @@ from loguru import logger
 
 from ocean_data_parser import __version__
 from ocean_data_parser.batch.convert import convert as convert
-from ocean_data_parser.compile.netcdf import compile as compile
+from ocean_data_parser.inspect import inspect_variables as inspect_variables
 
 LOG_LEVELS = ["TRACE", "DEBUG", "INFO", "WARNING", "ERROR"]
 VERBOSE_LOG_FORMAT = (
@@ -112,4 +112,4 @@ def main(verbose, log_level, log_file, log_file_level, show_arguments):
 
 
 main.add_command(convert)
-main.add_command(compile)
+main.add_command(inspect_variables)

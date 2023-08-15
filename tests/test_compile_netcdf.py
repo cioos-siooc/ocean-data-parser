@@ -4,7 +4,7 @@ from pathlib import Path
 
 from click.testing import CliRunner
 
-from ocean_data_parser.compile.netcdf import compile, variables
+from ocean_data_parser.inspect import inspect_variables, variables
 
 PACKAGE_PATH = Path(__file__).parent
 logger = logging.getLogger(__name__)

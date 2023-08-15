@@ -188,8 +188,8 @@ def variables(
     default=None,
     help="Print present argument values. If  stop argument is given, do not run the conversion.",
 )
-def compile(**kwargs):
-    """Compile NetCDF files variables and variables attributes."""
+def inspect_variables(**kwargs):
+    """Inspect NetCDF files variables and variables attributes."""
     if kwargs.get("show_arguments"):
         click.echo("odpy convert parameter inputs:")
         click.echo("\n".join([f"{key}={value}" for key, value in kwargs.items()]))
@@ -200,4 +200,4 @@ def compile(**kwargs):
 
 
 if __name__ == "__main__":
-    compile()
+    inspect_variables()

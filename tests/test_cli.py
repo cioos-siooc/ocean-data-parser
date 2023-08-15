@@ -5,7 +5,7 @@ from click.testing import CliRunner
 
 from ocean_data_parser import __version__, cli
 from ocean_data_parser.batch import convert
-from ocean_data_parser.compile.netcdf import compile
+from ocean_data_parser.inspect import inspect_variables
 
 
 def run_command(func, args, env=None, isolated_directory=None):
@@ -107,5 +107,5 @@ def test_odpy_convert_args_and_env_variables(args, env, expected_output):
     ),
 )
 def test_odpy_convert_arguments(args, expected_output):
-    results = run_command(compile, args)
+    results = run_command(inspect_variables, args)
     assert expected_output in results.output
