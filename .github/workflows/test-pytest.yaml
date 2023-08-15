@@ -6,19 +6,19 @@ on:
       - main
       - development
     paths:
-      - setup.py
-      - MANIFEST.in
-      - ocean_data_parser/**
-      - tests/**
+      - 'setup.py'
+      - 'MANIFEST.in'
+      - 'ocean_data_parser/**'
+      - 'tests/**'
   push:
     branches:
       - main
       - development
     paths:
-      - setup.py
-      - MANIFEST.in
-      - ocean_data_parser/**
-      - tests/**
+      - 'setup.py'
+      - 'MANIFEST.in'
+      - 'ocean_data_parser/**'
+      - 'tests/**'
 
 jobs:
   testing:
