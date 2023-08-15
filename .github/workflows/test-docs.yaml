@@ -21,7 +21,7 @@ jobs:
           path: .cache
           restore-keys: |
             mkdocs-material-
-      - run: pip install . |
+      - run: pip install -e . |
               pip install -r docs-requirements.txt
       - run: |
           git config --global user.name "${GITHUB_ACTOR}"
