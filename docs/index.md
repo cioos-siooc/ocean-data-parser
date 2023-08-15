@@ -1,5 +1,8 @@
-
-#
+---
+hide:
+  - navigation
+---
+# 
 
 ![cioos.ca](images/logo_EN_FR-1024x208.png#){: style="width:800px; display: block; margin: 0 auto"}
  
