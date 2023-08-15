@@ -8,3 +8,4 @@ mkdocs-click
 mkdocs-embed-external-markdown
 mike
 tabulate
+pandas

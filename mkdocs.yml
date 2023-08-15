@@ -46,7 +46,7 @@ plugins:
       canonical_version: main
   - mkdocs-simple-hooks:
       hooks:
-        on_pre_build: "docs.scripts.hooks:on_pre_build"
+        on_pre_build: "scripts.hooks:on_pre_build"
   - external-markdown
   - search
         
