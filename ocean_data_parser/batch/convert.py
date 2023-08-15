@@ -1,4 +1,3 @@
-import logging
 import os
 import shutil
 import sys
@@ -8,72 +7,19 @@ from pathlib import Path
 
 import click
 import pandas as pd
-from dotenv import load_dotenv
 from loguru import logger
 from tqdm import tqdm
 from xarray import Dataset
 
-from ocean_data_parser import geo, process, read
+from ocean_data_parser import PARSERS, geo, process, read
 from ocean_data_parser._version import __version__
 from ocean_data_parser.batch.config import load_config
 from ocean_data_parser.batch.registry import FileConversionRegistry
 from ocean_data_parser.batch.utils import VariableLevelLogger, generate_output_path
 from ocean_data_parser.parsers import utils
-from ocean_data_parser import PARSERS
 
 MODULE_PATH = Path(__file__).parent
 DEFAULT_CONFIG_PATH = MODULE_PATH / "default-batch-config.yaml"
-
-# Set logging configuration
-load_dotenv(".env")
-logger.configure(extra={"source_file": ""})
-logger.remove()
-logger.add(
-    sys.stderr,
-    level=os.getenv("LOGURU_LEVEL", "INFO"),
-    format=(
-        '<level>{level.icon}</level> <blue>"{file.path}"</blue>: '
-        '<yellow>line {line}</yellow> | <cyan>"{extra[source_file]}"</cyan> - '
-        "<level>{message}</level>"
-    ),
-)
-logger.add(
-    "ocean_data_parser.log",
-    level=os.getenv("LOGURU_LEVEL", "WARNING"),
-    format="{time}|{level}|{file.path}:{line}| {extra[source_file]} - {message}",
-)
-
-
-# Redirect logging loggers to loguru
-class InterceptHandler(logging.Handler):
-    """
-    This class is used to redirect logging loggers to loguru
-    # https://stackoverflow.com/questions/66769431/how-to-use-loguru-with-standard-loggers
-    """
-
-    @logger.catch(default=True, onerror=lambda _: sys.exit(1))
-    def emit(self, record):
-        # Get corresponding Loguru level if it exists.
-        try:
-            level = logger.level(record.levelname).name
-        except ValueError:
-            level = record.levelno
-
-        # Find caller from where originated the logged message.
-        frame, depth = sys._getframe(6), 6
-        while frame and frame.f_code.co_filename == logging.__file__:
-            frame = frame.f_back
-            depth += 1
-
-        logger.opt(depth=depth, exception=record.exc_info).log(
-            level, record.getMessage()
-        )
-
-
-logging.basicConfig(
-    handlers=[InterceptHandler()], level=os.getenv("LOGURU_LEVEL", "INFO")
-)
-classic_logger = logging.getLogger()
 
 
 def save_new_config(ctx, _, path):
@@ -95,35 +41,39 @@ def save_new_config(ctx, _, path):
     shutil.copy(DEFAULT_CONFIG_PATH, path)
     ctx.exit()
 
+
 def get_parser_list_string():
     bullets = "\n\t- "
     new_line = "\n"
-    return (f"ocean-data-parser.parsers [{__version__}]{new_line}"
-        f"{bullets}{bullets.join(PARSERS)} {new_line}")
+    return (
+        f"ocean-data-parser.parsers [{__version__}]{new_line}"
+        f"{bullets}{bullets.join(PARSERS)} {new_line}"
+    )
+
 
 def validate_parser(ctx, _, value):
     """Test if given parser is available within parser list"""
     if value in PARSERS or value is None:
         return value
     raise click.BadParameter(
-        click.style(f"parser should match one of the following options: {get_parser_list_string()}", fg='bright_red')
+        click.style(
+            f"parser should match one of the following options: {get_parser_list_string()}",
+            fg="bright_red",
+        )
     )
 
 
 def get_parser_list(ctx, _, value):
     if not value or ctx.resilient_parsing:
         return
-    
-    click.echo(
-        get_parser_list_string()
-    )
+    click.echo(get_parser_list_string())
     ctx.exit()
 
 
-@click.command()
+@click.command(context_settings={"auto_envvar_prefix": "ODPY_CONVERT"})
 @click.option(
     "-i",
-    "--input_path",
+    "--input-path",
     type=str,
     help="Input path to file list. It can be a glob expression (ex: *.cnv)",
 )
@@ -161,7 +111,7 @@ def get_parser_list(ctx, _, value):
     help="Error hanlding method",
 )
 @click.option(
-    "--registry_path",
+    "--registry-path",
     type=click.Path(),
     help=(
         "File conversion registry path (*.csv or *.parquet)."
@@ -169,44 +119,60 @@ def get_parser_list(ctx, _, value):
     ),
 )
 @click.option(
-    "--output_path",
+    "--output-path",
     type=click.Path(),
     help="Output directory where to save converted files.",
 )
 @click.option(
-    "--output_file_name",
+    "--output-file-name",
     type=click.Path(),
     help="Output file path where to save converted files.",
 )
 @click.option(
-    "--output_file_suffix", type=click.Path(), help="Output file name suffix to add"
+    "--output-file-suffix", type=click.Path(), help="Output file name suffix to add"
 )
 @click.option(
     "--config", "-c", type=click.Path(exists=True), help="Path to configuration file"
 )
 @click.option(
-    "--new_config",
+    "--new-config",
     is_eager=True,
     callback=save_new_config,
     type=click.Path(exists=False),
     help="Generate a new configuration file at the given path",
 )
 @click.option(
-    "--parser_list",
+    "--parser-list",
     is_eager=True,
     is_flag=True,
     callback=get_parser_list,
     help="Get the list of parsers available",
 )
-@click.version_option(version=__version__, package_name="ocean_data_parser")
-def cli_files(**kwargs):
+@click.option(
+    "--show-arguments",
+    is_flag=False,
+    flag_value="True",
+    type=click.Choice(["stop", "True"]),
+    default=None,
+    help="Print present argument values. If  stop argument is given, do not run the conversion.",
+)
+@click.version_option(version=__version__, package_name="ocean-data-parser.convert")
+def convert(**kwargs):
     """Run ocean-data-parser conversion on given files."""
     # Drop empty kwargs
+    if kwargs.get("show_arguments"):
+        click.echo("odpy convert parameter inputs:")
+        click.echo("\n".join([f"{key}={value}" for key, value in kwargs.items()]))
+        if kwargs["show_arguments"] == "stop":
+            return
+    kwargs.pop("show_arguments", None)
+
     kwargs = {
         key: None if value == "None" else value
         for key, value in kwargs.items()
         if value
     }
+
     BatchConversion(**kwargs).run()
 
 
@@ -459,4 +425,4 @@ def convert_file(file: str, parser: str, config: dict) -> str:
 
 
 if __name__ == "__main__":
-    cli_files()
+    convert(auto_envvar_prefix="ODPY_CONVERT")

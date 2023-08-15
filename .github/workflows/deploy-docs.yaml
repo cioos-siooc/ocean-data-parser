@@ -1,0 +1,38 @@
+name: Test linter, full pytest and generate docs on push
+
+on:
+  push:
+    branches:
+      - main
+      - development
+
+jobs:
+  deploy_docs:
+    environment: 
+      name: ${{github.ref_name}}
+      url: ${{ github.ref == 'main' && 'https://cioos-siooc.github.io/ocean-data-parser/main/' || 'https://cioos-siooc.github.io/ocean-data-parser/dev/' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV 
+      - uses: actions/cache@v3
+        with:
+          key: mkdocs-material-${{ env.cache_id }}
+          path: .cache
+          restore-keys: |
+            mkdocs-material-
+      - run: pip install . |
+              pip install -r docs-requirements.txt
+      - run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+      - run: |
+          if [[ "${{github.ref_name}}" == "main" ]]; then
+              mike deploy main 
+          else
+              mike deploy dev
+          fi
+          mike set-default dev

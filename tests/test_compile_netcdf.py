@@ -4,12 +4,12 @@ from pathlib import Path
 
 from click.testing import CliRunner
 
-from ocean_data_parser.compile.netcdf import cli_variables, variables
+from ocean_data_parser.inspect import inspect_variables, variables
 
 PACKAGE_PATH = Path(__file__).parent
 logger = logging.getLogger(__name__)
 logger.setLevel("DEBUG")
-TEST_FILE_PATH = PACKAGE_PATH / "parser_test_files" / "dfo" / "bio"
+TEST_FILE_PATH = str(PACKAGE_PATH / "parser_test_files" / "dfo" / "bio")
 
 
 class CompileNetcdfVariablesTests(unittest.TestCase):

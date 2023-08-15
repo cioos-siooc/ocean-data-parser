@@ -12,7 +12,6 @@ from typing import Union
 
 import pandas as pd
 import xarray as xr
-
 from o2conversion import O2ctoO2p, O2ctoO2s
 
 logger = logging.getLogger(__name__)
@@ -54,7 +53,7 @@ def minidot_txt(path, read_csv_kwargs=None):
         errors=read_csv_kwargs.get("encoding_errors"),
     ) as f:
         # Read the headre
-        serial_number = f.readline().replace("\n", "") 
+        serial_number = f.readline().replace("\n", "")
         logger.debug("Parse file from serial number: %s", serial_number)
         metadata = re.search(
             r"OS REV: (?P<software_version>\d+\.\d+) Sensor Cal: (?P<instrument_calibration>\d*)",
