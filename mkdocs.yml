@@ -32,6 +32,10 @@ theme:
     - toc.follow
     - navigation.tabs
     - navigation.tabs.sticky
+    - content.code.copy
+    - content.code.select
+    
+
 
 plugins:
   - mkdocstrings
@@ -53,7 +57,21 @@ markdown_extensions:
     - def_list
     - pymdownx.tasklist:
         custom_checkbox: true
-
+    - pymdownx.highlight:
+        anchor_linenums: true
+        line_spans: __span
+        pygments_lang_class: true
+    - pymdownx.inlinehilite
+    - pymdownx.snippets
+    - pymdownx.superfences
+    - admonition
+    - pymdownx.details
+    - pymdownx.superfences
+    - attr_list
+    - pymdownx.emoji:
+        emoji_index: !!python/name:materialx.emoji.twemoji
+        emoji_generator: !!python/name:materialx.emoji.to_svg
+        
 nav:
   - Welcome: index.md
   - Install: install.md
