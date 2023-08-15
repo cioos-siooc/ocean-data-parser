@@ -214,12 +214,12 @@ def get_spatial_coverage_attributes(
     return ds
 
 
-def convert_datetime_str(time_str:str, **to_datetime_kwargs) -> pd.Timestamp:
+def convert_datetime_str(time_str: str, **to_datetime_kwargs) -> pd.Timestamp:
     """Parse time stamp string  to a pandas Timestamp"""
     date_format = None
     if time_str is None:
         return pd.NaT
-    
+
     if re.fullmatch(r"\d\d\d\d-\d\d-\d\d", time_str):
         date_format = "%Y-%m-%d"
     elif re.fullmatch(r"\d\d-\d\d-\d\d\d\d", time_str):
