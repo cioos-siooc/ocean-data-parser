@@ -5,10 +5,20 @@ on:
     branches:
       - main
       - development
+    path:
+      - setup.py
+      - MANIFEST.in
+      - ocean_data_parser/**
+      - tests/**
   push:
     branches:
       - main
       - development
+    path:
+      - setup.py
+      - MANIFEST.in
+      - ocean_data_parser/**
+      - tests/**
 
 jobs:
   testing:
