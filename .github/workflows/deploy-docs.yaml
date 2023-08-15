@@ -1,4 +1,4 @@
-name: Test linter, full pytest and generate docs on push
+name: Build documentation
 
 on:
   push:
@@ -24,8 +24,9 @@ jobs:
           path: .cache
           restore-keys: |
             mkdocs-material-
-      - run: pip install . |
-              pip install -r docs-requirements.txt
+      - run: |
+          pip install . |
+          pip install -r docs-requirements.txt
       - run: |
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
