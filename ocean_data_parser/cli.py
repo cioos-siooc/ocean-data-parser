@@ -24,6 +24,7 @@ LOG_FORMAT = (
 logger.remove()
 logger.configure(extra={"source_file": ""})
 
+
 # Redirect logging loggers to loguru
 class InterceptHandler(logging.Handler):
     """
@@ -92,7 +93,6 @@ classic_logger = logging.getLogger()
     help="Print present argument values",
 )
 def main(verbose, log_level, log_file, log_file_level, show_arguments):
-
     log_format = VERBOSE_LOG_FORMAT if verbose else LOG_FORMAT
     logger.add(
         sys.stderr,
