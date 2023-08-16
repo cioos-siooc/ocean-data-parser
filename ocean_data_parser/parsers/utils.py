@@ -228,12 +228,12 @@ def convert_datetime_str(time_str: str, **to_datetime_kwargs) -> pd.Timestamp:
         date_format = "%d-%b-%Y"
     elif re.fullmatch(r"\d\d-\w\w\w-\d\d", time_str):
         date_format = "%d-%b-%y"
-    elif re.fullmatch(r"\d\d-\w\w\w-\d\d\d\d", time_str):
+    elif re.fullmatch(r"\d+-\w\w\w-\d\d\d\d", time_str):
         date_format = "%d-%b-%Y"
 
     if date_format:
         time = pd.to_datetime(time_str, format=date_format, **to_datetime_kwargs)
-        if not isinstance(time, pd.DatetimeTZDtype):
+        if not isinstance(time, pd.Timestamp):
             logger.warning("Failed to parse datetime: %s", time_str)
         return time
     logger.warning("Unknown time format: %s", time_str)
