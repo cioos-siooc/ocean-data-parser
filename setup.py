@@ -31,6 +31,7 @@ setup(
         "click",
         "loguru",
         "python-dotenv",
+        "paramiko",
         "sentry-sdk[loguru]",
         "cioos_data_transform @ git+https://github.com/cioos-siooc/cioos-siooc_data_transform.git@ios-parser-extra-vocabulary#egg=cioos_data_transform&subdirectory=cioos_data_transform",
         "cioos_data_transform_projects @ git+https://github.com/cioos-siooc/cioos-siooc_data_transform.git@ios-parser-extra-vocabulary#egg=cioos_data_transform_projects&subdirectory=projects",
