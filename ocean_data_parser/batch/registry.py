@@ -138,9 +138,6 @@ class FileConversionRegistry:
             .last()
         )
 
-    def _get_sources(self, sources: list) -> list:
-        return sources if isinstance(sources, list) else self.data.index.to_list()
-
     def _is_different_hash(self):
         # Speed up hash difference by first filtering out data with unchanged mtime
         is_different = self._is_different_mtime()
@@ -172,7 +169,7 @@ class FileConversionRegistry:
             sources (list, optional): Subset of file sources to update.
               Defaults to all entries.
         """
-        sources = self._get_sources(sources)
+        sources = sources or self.data.index.to_list()
         self.data.loc[sources, "hash"] = list(map(self._get_hash, sources))
         self.data.loc[sources, "mtime"] = list(map(self._get_mtime, sources))
 
@@ -181,7 +178,7 @@ class FileConversionRegistry:
         sources: list = None,
         placeholder=None,
         dataframe: Union[list, pd.DataFrame] = None,
-        **kwargs
+        **kwargs,
     ):
         """Update registry sources with given values
 
@@ -202,9 +199,8 @@ class FileConversionRegistry:
                 "Can't update fields with a mix of arguments " "and keyword arguments"
             )
 
-        # If unique source is given convert it to a string
-        if not isinstance(sources, list) and sources in self.data.index:
-            sources = [sources]
+        # if no source pass apply to all 
+        sources = sources or self.data.index
 
         # Generate update dataframe
         if not isinstance(dataframe, pd.DataFrame):
@@ -249,12 +245,13 @@ class FileConversionRegistry:
         is_missing = ~self.data.index.to_series().map(Path).apply(Path.exists)
         return self.data.loc[is_missing].index.tolist()
 
-    def summarize(self, sources=None, by="error_message", output=None):
+    def summarize(
+        self, sources: list = None, by: str = "error_message", output: str = None
+    ):
         """Generate a summary of the file registry errors"""
-        if sources:
-            data = self.data[self.data[sources]]
-        else:
-            data = self.data
+        sources = sources or self.data.index.to_list()
+        data = self.data[self.data[sources]]
+
         succeed = len(data.query("error_message.isna()"))
         logger.info("%s/%s sources were processed", succeed, len(data))
         errors = (
