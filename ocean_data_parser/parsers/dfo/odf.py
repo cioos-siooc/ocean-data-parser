@@ -1,10 +1,9 @@
 """
-# Fisheries and Ocean Canada - ODF Format
-This module regroups all the tools related to the ODF format actively used by the Fisheries and Ocean Canada offices:
+The ODF format is a common standard format used by different govermental and academic organizations:
 
+- [Bedford Institute of Ocean Sciences (BIO)](https://www.bio.gc.ca/)
 - [Institute Maurice Lamontagne (MLI)](https://www.qc.dfo-mpo.gc.ca/institut-maurice-lamontagne)
-- [Bedford Institude of Ocean Sciences (BIO)](https://www.bio.gc.ca/)
-
+- [Marine Institute of science of Rimouski (ISMER)](https://www.ismer.ca/)
 """
 
 import logging
@@ -101,9 +100,9 @@ def bio_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
     Returns:
         dataset (xarray dataset): Parsed xarray dataset
     """
-    return odf(
+    return _odf(
         path,
-        institution="BIO",
+        vocabularies=["BIO","GF3"],
         global_attributes={**bio_global_attributes, **(global_attributes or {})},
     )
 
@@ -117,25 +116,25 @@ def mli_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
     Returns:
         dataset (xarray dataset): Parsed xarray dataset
     """
-    return odf(
+    return _odf(
         path,
-        institution="MLI",
+        vocabularies=["MLI","GF3"],
         global_attributes={**mli_global_attributes, **(global_attributes or {})},
     )
 
 
-def odf(path: str, institution: str = None, global_attributes: dict = None):
+def _odf(path: str, vocabularies: list = None, global_attributes: dict = None):
     """ODF format parser
 
     Args:
         path (str): Path to the odf file to parse
-        institution (str): Institution to use for the vocabulary mapping
+        vocabularies (str): Vocabulary list to use for the vocabulary mapping
         global_attributes (dict): file specific global attributes
     Returns:
         dataset (xarray dataset): Parsed xarray dataset
     """
     return parse_odf(
         path,
-        institution=institution,
+        vocabularies=vocabularies,
         global_attributes={**odf_global_attributes, **(global_attributes or {})},
     )
