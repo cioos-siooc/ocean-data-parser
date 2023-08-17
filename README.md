@@ -1,6 +1,7 @@
 <!-- NOTE: All sections are placeholders. Use the relevant ones-->
 
-![Logo](docs/images/logo_EN_FR-1024x208.png)
+![Logo](docs/images/logo_EN_FR-1024x208.png#gh-light-mode-only)
+![Logo](docs/images/cioos-national_EN_FR_W-01.png#gh-dark-mode-only)
 
 <!-- Make a favicon/logo using something like:
 
@@ -15,7 +16,7 @@
 [![Build documentation](https://github.com/cioos-siooc/ocean-data-parser/actions/workflows/deploy-docs.yaml/badge.svg)](https://github.com/cioos-siooc/ocean-data-parser/actions/workflows/deploy-docs.yaml)
 
 
-`ocean-data-parser` - a python Package for parsing oceanographic proprietary data formats to [xarray Dataset](https://docs.xarray.dev/en/stable/).
+`ocean-data-parser` - a python package for parsing oceanographic proprietary data formats to [xarray Dataset](https://docs.xarray.dev/en/stable/).
 
 [A more detailed documentation is available here](https://cioos-siooc.github.io/ocean-data-parser/).
 
