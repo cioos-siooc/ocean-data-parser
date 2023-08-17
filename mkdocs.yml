@@ -1,7 +1,9 @@
 site_name: Ocean Data Parser
 site_url: https://cioos-siooc.github.io/ocean-data-parser/
+
 repo_name: ocean-data-parser
 repo_url: https://github.com/cioos-siooc/ocean-data-parser
+
 theme:
   name: material
   logo: images/logo.svg
@@ -24,6 +26,7 @@ theme:
         name: Switch to system preference
       primary: custom
       accent: custom
+  custom_dir: docs/theme_override_home/
   features:
     - header.autohide
     - navigation.top
@@ -34,8 +37,6 @@ theme:
     - navigation.tabs.sticky
     - content.code.copy
     - content.code.select
-    
-
 
 plugins:
   - mkdocstrings
@@ -100,10 +101,10 @@ nav:
   #   - NERC: metadata/nerc.md
   #   - Polar Data Catalog: metadata/pdc.md
   - Example Notebooks:
-    - Amundsen INT: notebooks/amundsen_int_parser_example.ipynb
-    - DFO BIO ODF parsing: notebooks/bio_odf_parsing_example.ipynb
-    - DFO BIO NAFC Pfiles parsing: notebooks/read_dfo_nafc_p_file.ipynb
-    - NMEA Parsing: notebooks/nmea_example.ipynb
+    - Amundsen INT example: notebooks/amundsen_int_parser_example.ipynb
+    - DFO BIO ODF example: notebooks/dfo_bio_odf_parser_example.ipynb
+    - DFO BIO NAFC Pfiles example: notebooks/dfo_nafc_p_file_parser_example.ipynb
+    - NMEA example: notebooks/nmea_parser_example.ipynb
     # - Seabird CNV: notebooks/seabird_cnv_and_btl_example.ipynb
   - Development: development.md
 
