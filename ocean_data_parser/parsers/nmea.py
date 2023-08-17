@@ -147,6 +147,7 @@ nmea_dtype_mapping = {
     "source": str,
     "engine_no": str,
     "speed": float,
+    "nav_status": str,
 }
 
 
