@@ -12,7 +12,7 @@ def quote_column(col):
     return "`" + col + "`"
 
 def add_vocabularies_dir():
-    vocab_dir = Path('docs/vocabularies')
+    vocab_dir = Path('docs/user_guide/vocabularies')
     if not vocab_dir.exists():
         vocab_dir.mkdir()
 
