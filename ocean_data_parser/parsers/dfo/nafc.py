@@ -241,30 +241,33 @@ def pfile(
     rename_variables: bool = True,
     generate_extra_variables: bool = True,
 ) -> xr.Dataset:
-    """Convert P-File to an xarray Dataset object
+    """Parse DFO NAFC P file format
 
     Args:
-        file (str): Path to pfile to parse
+        file (str): file path
+        encoding (str, optional): file encoding. Defaults to "UTF-8".
+        rename_variables (bool, optional): Rename variables to BODC
+            standard. Defaults to True.
+        generate_extra_variables (bool, optional): Generate extra
+            BODC mapping variables. Defaults to True.
+
+    Raises:
+        TypeError: File provided isn't a p file.
 
     Returns:
-        xr.Dataset
+        xr.Dataset: Parser dataset
     """
 
     def _check_ship_trip_stn():
         """Review if the ship,trip,stn string is the same
-        accorss the 3 metadata rows
-        """
+        accorss the 3 metadata rows"""
         ship_trip_stn = [line[:9] for line in metadata_lines[1:]]
-        if len(set(ship_trip_stn)) != 1:
-            logger.error(
-                "Ship,trip,station codes do not match" " in the header metadata: %s",
-                ship_trip_stn,
-            )
-            raise RuntimeError(
-                "Ship,trip,station codes do not match" " in the header metadata"
-            )
+        assert (
+            len(set(ship_trip_stn)) != 1
+        ), f"Ship,trip,station isn't consistent: {set(ship_trip_stn)}"
 
     def _get_variable_vocabulary(variable: str) -> dict:
+        """Retrieve variable vocabulary"""
         matching_vocabulary = p_file_vocabulary.query(
             f"legacy_p_code == '{variable}' and "
             f"(accepted_instruments.isna() or "
@@ -321,7 +324,7 @@ def pfile(
 
     # Review metadata
     if metadata_lines[0] == "NAFC_Y2K_HEADER":
-        raise RuntimeError(
+        raise TypeError(
             "File header doesn't contain pfile first line 'NAFC_Y2K_HEADER'"
         )
     _check_ship_trip_stn()

@@ -1,4 +1,4 @@
-:::ocean_data_parser.parsers.seabird
+::: ocean_data_parser.parsers.seabird
 
 ## Vocabulary
 

@@ -11,12 +11,16 @@ from ocean_data_parser import PARSERS
 def quote_column(col):
     return "`" + col + "`"
 
+
 def add_vocabularies_dir():
-    vocab_dir = Path('docs/user_guide/vocabularies')
+    vocab_dir = Path("docs/user_guide/vocabularies")
     if not vocab_dir.exists():
         vocab_dir.mkdir()
 
-def get_dfo_pfile_vocab_markdown(output="docs/user_guide/vocabularies/dfo-nafc-p-files.md"):
+
+def get_dfo_pfile_vocab_markdown(
+    output="docs/user_guide/vocabularies/dfo-nafc-p-files.md",
+):
     """Convert P file vocabulary to markdown table"""
     df = pd.read_csv("ocean_data_parser/vocabularies/dfo_nafc_p_files_vocabulary.csv")
     for column in ["accepted_instruments"]:
