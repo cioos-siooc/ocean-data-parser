@@ -60,11 +60,19 @@ def _add_seabird_vocabulary(variable_attributes: dict) -> dict:
 
 
 def cnv(
-    file_path: str, encoding: str = "UTF-8", kwargs_read_csv: dict = None
+    file_path: str, encoding: str = "UTF-8"
 ) -> xarray.Dataset:
+    """Parse Seabird CNV format
+
+    Args:
+        file_path (str): file path
+        encoding (str, optional): encoding to use. Defaults to "UTF-8".
+
+    Returns:
+        xarray.Dataset: Dataset
+    """    
     """Import Seabird cnv format as an xarray dataset."""
-    if kwargs_read_csv is None:
-        kwargs_read_csv = {}
+
     with open(file_path, encoding=encoding) as f:
         header = _parse_seabird_file_header(f)
         header["variables"] = _add_seabird_vocabulary(header["variables"])
@@ -76,7 +84,6 @@ def cnv(
                 var: var_dtypes.get(var, float) for var in header["variables"].keys()
             },
             na_values=["-1.#IO", "-9.99E-29"],
-            **kwargs_read_csv,
         )
 
     header = _generate_seabird_cf_history(header)
@@ -86,11 +93,17 @@ def cnv(
 
 
 def btl(
-    file_path: str, encoding: str = "UTF-8", kwargs_read_fwf: dict = None
+    file_path: str, encoding: str = "UTF-8"
 ) -> xarray.Dataset:
-    """Import Seabird btl format as an xarray dataset."""
-    if kwargs_read_fwf is None:
-        kwargs_read_fwf = {}
+    """Parse Seabird BTL format
+
+    Args:
+        file_path (str): file path
+        encoding (str, optional): Encoding to use. Defaults to "UTF-8".
+
+    Returns:
+        xarray.Dataset: Dataset
+    """
 
     with open(file_path, encoding=encoding) as f:
         header = _parse_seabird_file_header(f)
@@ -104,7 +117,6 @@ def btl(
             widths=[10, 12] + [11] * (len(header["bottle_columns"]) - 1),
             names=variable_list,
             dtype={var: var_dtypes.get(var, float) for var in variable_list},
-            **kwargs_read_fwf,
         )
 
     # Split statistical data info separate dateframes
@@ -175,7 +187,7 @@ def _parse_seabird_file_header(f):
         if line in ("* S>\n"):
             return
         header["history"] += [re.sub(r"\*\s|\n", "", line)]
-        if line.startswith(('* advance', '* delete')) or 'added to scan' in line:
+        if line.startswith(("* advance", "* delete")) or "added to scan" in line:
             return
         logger.warning("Unknown line format: %s", line)
 
