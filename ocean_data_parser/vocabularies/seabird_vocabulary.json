@@ -3678,5 +3678,9 @@
         "sdn_uom_urn": "SDN:P06::UPAA",
         "sdn_uom_name": "Degrees Celsius",
         "definition": "The square root of the average of the squares of deviations about the mean of a set of values of the specified measurement."
+    },
+    "time": {
+        "long_name": "Time", 
+        "standard_name": "time"
     }
 }

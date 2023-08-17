@@ -175,6 +175,8 @@ def _parse_seabird_file_header(f):
         if line in ("* S>\n"):
             return
         header["history"] += [re.sub(r"\*\s|\n", "", line)]
+        if line.startswith(('* advance', '* delete')) or 'added to scan' in line:
+            return
         logger.warning("Unknown line format: %s", line)
 
     def standardize_attribute(attribute):
