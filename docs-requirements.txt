@@ -5,7 +5,6 @@ mkdocs-jupyter
 mkdocs-gen-files
 mkdocs-simple-hooks
 mkdocs-click
-mkdocs-embed-external-markdown
 mike
 tabulate
 pandas

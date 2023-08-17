@@ -1,7 +1,3 @@
----
-hide:
-  - navigation
----
 ### Conversion
 
 ??? question "Convert files to netcdf"
@@ -13,7 +9,7 @@ hide:
     odpy convert --input-path input/**/*.cnv --parser=seabird.cnv --output_path=output
     ``` 
 
-    See [commmand line section](cli.md) for more detail or use the command: `odpy convert --help`
+    See [commmand line section](../user_guide/cli.md) for more detail or use the command: `odpy convert --help`
 
 ??? question "Avoid reconverting over again the same files"
 

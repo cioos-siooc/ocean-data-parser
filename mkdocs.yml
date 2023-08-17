@@ -48,7 +48,6 @@ plugins:
   - mkdocs-simple-hooks:
       hooks:
         on_pre_build: "docs.scripts.hooks:on_pre_build"
-  - external-markdown
   - search
         
 markdown_extensions:
@@ -75,27 +74,31 @@ markdown_extensions:
         
 nav:
   - Home: index.md
-  - Install: install.md
-  - How to: how-to.md
-  - Commands (CLI): cli.md
-  - Data Parsers:
-      - Parsers: parsers/index.md
-      - amundsen: parsers/amundsen-hook.md
-      - dfo:
-          - odf: parsers/dfo/odf-hook.md
-          - ios:
-            - ios_shell: parsers/dfo/ios-hook.md
-          - nafc:
-            - P Format: parsers/dfo/p-hook.md
-      - electricblue: parsers/electricblue.md
-      - nmea: parsers/nmea.md
-      - onset: parsers/onset.md
-      - pme: parsers/pme.md
-      - rbr: parsers/rbr.md
-      - seabird: parsers/seabird-hook.md
-      - star_oddi: parsers/star-oddi.md
-      - sunburst: parsers/sunburst.md
-      - van_essen_instruments: parsers/van-essen-intruments.md
+  - Get Started: 
+    - Installation: get_started/installation.md
+    - How to: get_started/how-to.md
+    - Development: get_started/development.md
+    - Contributions: get_started/contributions.md
+  - User Guide:
+    - Commands (CLI): user_guide/cli.md
+    - Data Parsers:
+        - Parsers: user_guide/parsers/index.md
+        - amundsen: user_guide/parsers/amundsen-hook.md
+        - dfo:
+            - odf: user_guide/parsers/dfo/odf-hook.md
+            - ios:
+              - ios_shell: user_guide/parsers/dfo/ios-hook.md
+            - nafc:
+              - P Format: user_guide/parsers/dfo/p-hook.md
+        - electricblue: user_guide/parsers/electricblue.md
+        - nmea: user_guide/parsers/nmea.md
+        - onset: user_guide/parsers/onset.md
+        - pme: user_guide/parsers/pme.md
+        - rbr: user_guide/parsers/rbr.md
+        - seabird: user_guide/parsers/seabird.md
+        - star_oddi: user_guide/parsers/star-oddi.md
+        - sunburst: user_guide/parsers/sunburst.md
+        - van_essen_instruments: user_guide/parsers/van-essen-intruments.md
   # - Metadata: # TODO 
   #   - CF: metadata/cf.md
   #   - NERC: metadata/nerc.md
@@ -105,8 +108,8 @@ nav:
     - DFO BIO ODF example: notebooks/dfo_bio_odf_parser_example.ipynb
     - DFO BIO NAFC Pfiles example: notebooks/dfo_nafc_p_file_parser_example.ipynb
     - NMEA example: notebooks/nmea_parser_example.ipynb
-    # - Seabird CNV: notebooks/seabird_cnv_and_btl_example.ipynb
-  - Development: development.md
+    # - Seabird CNV and BTL files example: notebooks/seabird_cnv_and_btl_parser_example.ipynb
+
 
 extra:
   version:
