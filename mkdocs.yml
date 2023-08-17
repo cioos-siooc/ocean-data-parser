@@ -83,13 +83,13 @@ nav:
     - Commands (CLI): user_guide/cli.md
     - Data Parsers:
         - Parsers: user_guide/parsers/index.md
-        - amundsen: user_guide/parsers/amundsen-hook.md
+        - amundsen: user_guide/parsers/amundsen.md
         - dfo:
-            - odf: user_guide/parsers/dfo/odf-hook.md
+            - odf: user_guide/parsers/dfo/odf.md
             - ios:
-              - ios_shell: user_guide/parsers/dfo/ios-hook.md
+              - ios_shell: user_guide/parsers/dfo/ios.md
             - nafc:
-              - P Format: user_guide/parsers/dfo/p-hook.md
+              - P Format: user_guide/parsers/dfo/p.md
         - electricblue: user_guide/parsers/electricblue.md
         - nmea: user_guide/parsers/nmea.md
         - onset: user_guide/parsers/onset.md
