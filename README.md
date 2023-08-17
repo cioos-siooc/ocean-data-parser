@@ -64,6 +64,8 @@ ds.to_netcdf('save-path.nc')
 ```
 The `ocean-data-parser` can then be used within either a python package, script or jupyter notebook. See [documentation Notebook section](https://cioos-siooc.github.io/ocean-data-parser) for examples on how to use the package within a jupyter notebook.
 
-## Contributing
+## Contributions
 
-All contributions, bug reports, bug fixes, documentation improvements, enhancements, and ideas are welcome.
+All contributions are welcome! 
+
+Please create a new [discussion](https://github.com/cioos-siooc/ocean-data-parser/discussions) or [issue](https://github.com/cioos-siooc/ocean-data-parser/issues) within the github repository for any questions, ideas and suggestions. 
