@@ -12,8 +12,8 @@ from difflib import get_close_matches
 import pandas as pd
 
 from ocean_data_parser.parsers.seabird import (
-    get_seabird_instrument_from_header,
-    get_seabird_processing_history,
+    _get_seabird_instrument_from_header,
+    _get_seabird_processing_history,
 )
 from ocean_data_parser.vocabularies.load import dfo_platforms
 
@@ -257,10 +257,10 @@ def _generate_instrument_attributes(odf_header, instrument_manufacturer_header=N
     # Instrument Specific Information
     attributes = {}
     if instrument_manufacturer_header:
-        attributes["instrument"] = get_seabird_instrument_from_header(
+        attributes["instrument"] = _get_seabird_instrument_from_header(
             instrument_manufacturer_header
         )
-        attributes["seabird_processing_modules"] = get_seabird_processing_history(
+        attributes["seabird_processing_modules"] = _get_seabird_processing_history(
             instrument_manufacturer_header
         )
     elif "INSTRUMENT_HEADER" in odf_header:

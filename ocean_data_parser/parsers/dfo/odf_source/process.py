@@ -98,12 +98,12 @@ def parse_odf(
 
     # Instrument specific variables and attributes
     if dataset.attrs["instrument_manufacturer_header"].startswith("* Sea-Bird"):
-        dataset = seabird.add_seabird_instruments(
+        dataset = seabird._add_seabird_instruments(
             dataset,
             dataset.attrs["instrument_manufacturer_header"],
             match_by="sdn_parameter_urn",
         )
-        dataset = seabird.update_attributes_from_seabird_header(
+        dataset = seabird._update_attributes_from_seabird_header(
             dataset, dataset.attrs["instrument_manufacturer_header"]
         )
     # Standardize
