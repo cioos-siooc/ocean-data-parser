@@ -86,10 +86,8 @@ nav:
         - amundsen: user_guide/parsers/amundsen.md
         - dfo:
             - odf: user_guide/parsers/dfo/odf.md
-            - ios:
-              - ios_shell: user_guide/parsers/dfo/ios.md
-            - nafc:
-              - P Format: user_guide/parsers/dfo/p.md
+            - ios: user_guide/parsers/dfo/ios.md
+            - nafc: user_guide/parsers/dfo/nafc.md
         - electricblue: user_guide/parsers/electricblue.md
         - nmea: user_guide/parsers/nmea.md
         - onset: user_guide/parsers/onset.md

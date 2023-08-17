@@ -1,13 +1,8 @@
 """
-P-files is a file format used by the DFO NewfoundLand office.
+The Fisheries and Oceans Canada - Newfoundland and Labrador Region -
+North Atlantic Fisheries Centre
 
-According to the pfile documentation, the format is:
 
-1) NAFC_Y2K_HEADER
-2) 3 single line 80 byte headers, the formats of which is described on an attached page.
-3) A variable length block of processing history information
-4) A line of channel name identifiers
-5) A start of data flag line -- DATA --
 
 """
 
@@ -31,9 +26,7 @@ logger = logging.getLogger(__name__)
 MODULE_PATH = Path(__file__).parent
 p_file_vocabulary = dfo_nafc_p_file_vocabulary()
 p_file_shipcode = dfo_platforms()
-# nafc_instruments = pd.read_csv(
-#     MODULE_PATH / ".." / "vocabularies" / "dfo_nafc_instruments.csv"
-# ).set_index("instrument_id")
+
 global_attributes = {
     "Conventions": "CF-1.6,CF-1.7,CF-1.8,ACDD-1.3,IOOS 1.2",
     "naming_authority": "ca.gc.nafc",
@@ -241,7 +234,16 @@ def pfile(
     rename_variables: bool = True,
     generate_extra_variables: bool = True,
 ) -> xr.Dataset:
-    """Parse DFO NAFC P file format
+    """Parse DFO NAFC oceanography p-file format
+
+    The NAFC oceanography p-files format is according 
+    to the pfile documentation,:
+
+    1. NAFC_Y2K_HEADER
+    2. 3 single line 80 byte headers, the formats of which is described on an attached page.
+    3. A variable length block of processing history information
+    4. A line of channel name identifiers
+    5. A start of data flag line -- DATA --
 
     Args:
         file (str): file path
