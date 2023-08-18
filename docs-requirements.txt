@@ -8,3 +8,4 @@ mkdocs-click
 mike
 tabulate
 pandas
+material-plausible-plugin

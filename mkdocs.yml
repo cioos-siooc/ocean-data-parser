@@ -51,6 +51,7 @@ plugins:
       hooks:
         on_pre_build: "docs.scripts.hooks:on_pre_build"
   - search
+  - material-plausible
         
 markdown_extensions:
     - mkdocs-click
@@ -118,6 +119,10 @@ extra:
     - icon: fontawesome/brands/github 
       link: https://github.com/cioos-siooc
   generator: false
+  analytics:
+    provider: plausible
+    domain: cioos-siooc.github.io/ocean-data-parser
+    src: "http://plausible.server.hakai.app/js/script.js"
 
 extra_css:
   - stylesheets/extra.css
