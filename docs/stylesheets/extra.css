@@ -44,3 +44,17 @@ th, td {
 .md-footer-meta {
     background-color: black;
 }
+
+.xr-wrap {
+    font-size: 10px;
+    color: pink;
+}
+
+.xr-text-repr-fallback {
+   font-size: 10px;
+   color: pink;
+}
+
+.xr-var-item{
+    display: -webkit-box;
+}
