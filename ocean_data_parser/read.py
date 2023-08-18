@@ -6,7 +6,6 @@ import re
 from importlib import import_module
 from pathlib import Path
 
-from typing_extensions import Unpack
 from xarray import Dataset
 
 logger = logging.getLogger(__name__)
