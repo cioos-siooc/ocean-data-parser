@@ -97,7 +97,7 @@ def get_parser_list(output="docs/user_guide/parsers/parser-list.md"):
         if "." not in parser:
             return parser
         parser_module, _ = parser.rsplit(".", 1)
-        return f"[{parser}](../{parser_module.replace('.','/')}/#ocean_data_parser.parsers.{parser})"
+        return f"[{parser}](parsers/{parser_module.replace('.','/')}/#ocean_data_parser.parsers.{parser})"
 
     with open(output, "w") as file:
         file.write("## Available Parsers\n")
