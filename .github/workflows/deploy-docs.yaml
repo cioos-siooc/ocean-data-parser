@@ -36,4 +36,4 @@ jobs:
           else
               mike deploy dev --push --force
           fi
-          mike set-default dev
+          mike set-default dev --push
