@@ -1,10 +1,11 @@
 mkdocs
-mkdocs-material
-mkdocstrings[python]
-mkdocs-jupyter
-mkdocs-gen-files
-mkdocs-simple-hooks
 mkdocs-click
+mkdocs-gen-files
+mkdocs-jupyter
+mkdocs-material
+mkdocs-simple-hooks
+mkdocstrings[python]
+mkdocs-section-index
 mike
 tabulate
 pandas
