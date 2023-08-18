@@ -122,7 +122,7 @@ extra:
   analytics:
     provider: plausible
     domain: cioos-siooc.github.io/ocean-data-parser
-    src: "http://plausible.server.hakai.app/js/script.js"
+    src: "https://plausible.server.hakai.app/js/script.js"
 
 extra_css:
   - stylesheets/extra.css
