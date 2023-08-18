@@ -1,9 +1,9 @@
-## Command line interface
-The ocean-data-parser provides a command line interface (CLI) that can be use to run a number of different data transformations.
+The ocean-data-parser provides a `odpy [ODPY OPTIONS] convert [convert OPTIONS]` method to convert compatible files to netcdf.
 
 ::: mkdocs-click
     :module: ocean_data_parser.cli
-    :command: main
+    :command: convert
+    :depth: 0
 
 !!! Tip "Environment Variables"
     All the inputs available within the `odpy` command can be defined through environment variables:  `ODPY_*`, `ODPY_CONVERT_*` and `ODPY_COMPILE_*` respectively. 
@@ -15,7 +15,7 @@ The ocean-data-parser provides a command line interface (CLI) that can be use to
 !!! Warning
     An argument take priority over an environment variable.
 
-## Convert Configuration
+# configuration file
 `odpy convert` can be used via a configuration file like the following:
 
 ``` {.yaml title="odpy-convert-config.yaml" .annotate}

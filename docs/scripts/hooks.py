@@ -94,14 +94,16 @@ def copy_notebooks(output="docs/notebooks"):
 
 def get_parser_list(output="docs/user_guide/parsers/parser-list.md"):
     def _get_parser_page_link(parser):
-        if '.' not in parser:
+        if "." not in parser:
             return parser
-        parser_module,_ = parser.rsplit('.',1)
+        parser_module, _ = parser.rsplit(".", 1)
         return f"[{parser}](../{parser_module.replace('.','/')}/#ocean_data_parser.parsers.{parser})"
-    
+
     with open(output, "w") as file:
         file.write("## Available Parsers\n")
-        file.write("\n".join([f"- {_get_parser_page_link(parser)}" for parser in PARSERS]))
+        file.write(
+            "\n".join([f"- {_get_parser_page_link(parser)}" for parser in PARSERS])
+        )
 
 
 def on_pre_build(config, **kwargs) -> None:

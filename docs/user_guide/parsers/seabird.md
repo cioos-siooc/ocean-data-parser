@@ -1,5 +1,5 @@
 ::: ocean_data_parser.parsers.seabird
 
-## Vocabulary
+## vocabulary
 
 --8<-- "docs/user_guide/vocabularies/seabird.md"

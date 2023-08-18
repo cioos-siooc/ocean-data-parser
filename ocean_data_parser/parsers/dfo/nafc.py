@@ -236,7 +236,7 @@ def pfile(
 ) -> xr.Dataset:
     """Parse DFO NAFC oceanography p-file format
 
-    The NAFC oceanography p-files format is according 
+    The NAFC oceanography p-files format is according
     to the pfile documentation,:
 
     1. NAFC_Y2K_HEADER

@@ -102,7 +102,7 @@ def bio_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
     """
     return _odf(
         path,
-        vocabularies=["BIO","GF3"],
+        vocabularies=["BIO", "GF3"],
         global_attributes={**bio_global_attributes, **(global_attributes or {})},
     )
 
@@ -118,7 +118,7 @@ def mli_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
     """
     return _odf(
         path,
-        vocabularies=["MLI","GF3"],
+        vocabularies=["MLI", "GF3"],
         global_attributes={**mli_global_attributes, **(global_attributes or {})},
     )
 

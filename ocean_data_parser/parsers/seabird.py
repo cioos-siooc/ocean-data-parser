@@ -1,6 +1,5 @@
 """
-# Seabird Scientific
-<https://www.seabird.com>
+This module contains all the different tools used to handle the different [Seabird Scientific](https://www.seabird.com) file formats.
 
 """
 
@@ -59,9 +58,7 @@ def _add_seabird_vocabulary(variable_attributes: dict) -> dict:
     return variable_attributes
 
 
-def cnv(
-    file_path: str, encoding: str = "UTF-8"
-) -> xarray.Dataset:
+def cnv(file_path: str, encoding: str = "UTF-8") -> xarray.Dataset:
     """Parse Seabird CNV format
 
     Args:
@@ -70,7 +67,7 @@ def cnv(
 
     Returns:
         xarray.Dataset: Dataset
-    """    
+    """
     """Import Seabird cnv format as an xarray dataset."""
 
     with open(file_path, encoding=encoding) as f:
@@ -92,9 +89,7 @@ def cnv(
     return standardize_dataset(ds)
 
 
-def btl(
-    file_path: str, encoding: str = "UTF-8"
-) -> xarray.Dataset:
+def btl(file_path: str, encoding: str = "UTF-8") -> xarray.Dataset:
     """Parse Seabird BTL format
 
     Args:

@@ -1,15 +1,19 @@
+"""
+This module contains all the different tools needed to parse a file.
+"""
 import logging
 import re
 from importlib import import_module
 from pathlib import Path
 
+from typing_extensions import Unpack
 from xarray import Dataset
 
 logger = logging.getLogger(__name__)
 
 
 def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
-    """Detect for a given file, which parser should be used to parse it.
+    """Detect corresponding data parser for a given file.
 
     The parser suggestion is based on the file extension and the
     first few lines of the file itself.
@@ -101,14 +105,19 @@ def load_parser(parser: str):
 
 
 def file(path: str, parser: str = None, **kwargs) -> Dataset:
-    """Automatically detect file format and load it as an xarray dataset.
+    """Load compatible file format as an xarray dataset.
+
+    ```python
+    from ocean_data_parser import read
+
+    ds = read.file('path_to_file.cnv')
+    ```
 
     Args:
-        path (str): path to file to parse
-        parser (str, optional): Give parser to use to parse the given data.
-                Defaults to auto mode which is looking at the extension
-                and file header to asses the appropriate parser to use.
-        **kwargs: extra keyword arguments to pass to parser.
+        path (str): File path
+        parser (str, optional): Parser to use.
+                Defaults to auto `detect_file_format` output if None
+        **kwargs: Keyword arguments to pass to the parser
 
     Returns:
         xarray.Dataset: Parsed xarray dataset for provided file

@@ -21,6 +21,7 @@ HANDLED_DATA_TYPES = (
     "cur",
 )
 
+
 def shell(filename: str) -> xarray.Dataset:
     """Parse DFO-IOS Shell format
 

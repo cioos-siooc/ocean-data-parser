@@ -66,7 +66,7 @@ classic_logger = logging.getLogger()
 @click.option(
     "--verbose",
     is_flag=True,
-    help=f"Logger format present more information",
+    help="Logger format present more information",
     default=False,
 )
 @click.option(
@@ -91,8 +91,10 @@ classic_logger = logging.getLogger()
     is_flag=True,
     default=False,
     help="Print present argument values",
+    hidden=True,
 )
 def main(verbose, log_level, log_file, log_file_level, show_arguments):
+    """Ocean Data Parser command line main interface."""
     log_format = VERBOSE_LOG_FORMAT if verbose else LOG_FORMAT
     logger.add(
         sys.stderr,
