@@ -16,7 +16,7 @@
 
     .tx-container {
         padding-top: .0rem;
-        background: linear-gradient(to bottom, var(--md-primary-fg-color),hsla(160deg,47%,55%,1) 99%,#fff 99%)
+        background: linear-gradient(to bottom, var(--md-primary-fg-color),hsla(160deg,47%,55%,1) 100%)
     }
 
     .tx-hero {
@@ -82,7 +82,7 @@
     }
 
     .feature-item h2 {
-        color: #333;
+        color: var(--md-default-fg-color);
         font-weight: 300;
         font-size: 25px;
         white-space: nowrap;
@@ -99,7 +99,7 @@
         line-height: 1.8em;
         text-rendering: optimizeLegibility;
         -webkit-font-smoothing: antialiased;
-        color: #111;
+        color: var(--md-default-fg-color);
         margin: 0 0 10px;
         display: block;
     }
@@ -242,44 +242,35 @@
 <div class="top-hr">
     <div class="feature-item">
         <h2>
-            <img src="images/layers-minimalistic-svgrepo-com.svg" widht="24" height="24">
+            <img src="images/layers-minimalistic-svgrepo-com.svg" widht="24" height="24" class="'feature-item-logo">
             Compatibility
         </h2>
-        <p>Compatible with a number of broadly used proprietary formats.</p>
+        <p>Compatible with a number of broadly used proprietary formats</p>
     </div>
     <div class="feature-item">
         <h2>
-            <img src="images/globus-svgrepo-com.svg" widht="24" height="24">
+            <img src="images/globus-svgrepo-com.svg" widht="24" height="24" class="'feature-item-logo">
             Standards
         </h2>
-        <p>Follow common metadata standards: CF, ACDD, IOOS, etc.</p>
+        <p>Follow common metadata standards: CF, ACDD, IOOS, etc</p>
     </div>
     <div class="feature-item">
         <h2>
-            <img src="images/python-svgrepo-com.svg" widht="24" height="24">
-            Pipeline Integration
+            <img src="images/python-svgrepo-com.svg" widht="24" height="24" color="#1C274C" class="'feature-item-logo">
+            Integration
         </h2>
-        <p>Seamless Integration with xarray and cli interface.</p>
+        <p>Seamless Integration with xarray and command line interface available</p>
     </div>
     <div class="feature-item">
         <h2>
-            <img src="images/programming-svgrepo-com.svg" widht="24" height="24">
-            CLI
-        </h2>
-        <p>Command line interface</p>
-    </div>
-    <div class="feature-item">
-        <h2>
-            <img src="images/book-bookmark-svgrepo-com.svg" widht="24" height="24">
+            <img src="images/book-bookmark-svgrepo-com.svg" widht="24" height="24" class="'feature-item-logo">
             Documentation
         </h2>
-        <p>Notebook examples and api documentation available.</p>
+        <p>Notebook examples and api documentation available</p>
     </div>
 </div>
 
 <div class="top-hr">
-    <div class="hr">
-    </div>
 </div>
 
 
