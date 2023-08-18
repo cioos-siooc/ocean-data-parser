@@ -35,3 +35,12 @@ th, td {
 [data-md-color-scheme="slate"] .md-typeset__table tr:nth-child(2n) {
     background-color: hsla(var(--md-hue),25%,25%,1)
 }
+
+.md-footer {
+    color: var(--md-default-fg-color);
+    background-color: var(--md-default-bg-color);
+}
+
+.md-footer-meta {
+    background-color: black;
+}
