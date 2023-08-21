@@ -65,7 +65,7 @@ datetime_regex_to_formats = [
     (r"^\d\d\-\d\d\-\d\d\s+\d{1,2}\:\d\d$", r"%y-%m-%d %H:%M"),
     (r"^\d\d\-\d\d\-\d\d\s+\d{1,2}\:\d\d\:\d\d$", r"%y-%m-%d %H:%M:%S"),
     (r"^\d\d\d\d\-\d\d\-\d\d\s+\d{1,2}\:\d\d$", r"%Y-%m-%d %H:%M"),
-    (r"^\d\d\/\d\d\/\d\d\d\d\s\d\d\:\d\d",r"%m/%d/%Y %H:%M")
+    (r"^\d\d\/\d\d\/\d\d\d\d\s\d\d\:\d\d", r"%m/%d/%Y %H:%M"),
 ]
 
 
@@ -202,7 +202,7 @@ def csv(
         path,
         na_values=[" "],
         sep=",",
-        engine='python',
+        engine="python",
         header=header_lines,
         memory_map=True,
         names=column_names,
@@ -210,7 +210,7 @@ def csv(
         **read_csv_kwargs,
     )
     df[header["time_variables"]] = df[header["time_variables"]].applymap(
-       lambda x: _parse_onset_time(x,header['timezone'])
+        lambda x: _parse_onset_time(x, header["timezone"])
     )
 
     # Convert to dataset
