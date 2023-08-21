@@ -25,11 +25,13 @@ from ocean_data_parser.parsers.dfo.odf_source.parser import _convert_odf_time
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
 
-def test_parsed_dataset(ds, source):
-    assert isinstance(ds,xr.Dataset)
+
+def review_parsed_dataset(ds, source):
+    assert isinstance(ds, xr.Dataset)
     assert ds.attrs, "dataset do not contains any global attributes"
     assert ds.variables, "Dataset has no variables."
-    ds.to_netcdf(source + '_test.nc')
+    ds.to_netcdf(source + "_test.nc")
+
 
 class TestPMEParsers:
     @pytest.mark.parametrize(
@@ -37,19 +39,19 @@ class TestPMEParsers:
     )
     def test_txt_parser(self, path):
         ds = pme.minidot_txt(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
 
 class TestSeabirdParsers:
     @pytest.mark.parametrize("path", glob("tests/parsers_test_files/seabird/**/*.btl"))
     def test_btl_parser(self, path):
         ds = seabird.btl(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
     @pytest.mark.parametrize("path", glob("tests/parsers_test_files/seabird/**/*.cnv"))
     def test_cnv_parser(self, path):
         ds = seabird.cnv(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
 
 class TestVanEssenParsers:
@@ -58,56 +60,73 @@ class TestVanEssenParsers:
     )
     def test_mon_parser(self, path):
         ds = van_essen_instruments.mon(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
 
 class TestOnsetParser:
     @pytest.mark.parametrize("path", glob("tests/parsers_test_files/onset/**/*.csv"))
     def test_csv_parser(self, path):
         ds = onset.csv(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
 
 class TestRBRParser:
-    @pytest.mark.parametrize(
-        "path", glob("tests/parsers_test_files/rbr/rtext/*.txt")
-    )
+    @pytest.mark.parametrize("path", glob("tests/parsers_test_files/rbr/rtext/*.txt"))
     def test_reng_parser(self, path):
         ds = rbr.rtext(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
+
 
 class TestSunburstParsers:
     @pytest.mark.parametrize(
-        "path", [path for path in glob("tests/parsers_test_files/sunburst/superCO2/*pCO2*.txt") if "_notes_" not in path]
+        "path",
+        [
+            path
+            for path in glob("tests/parsers_test_files/sunburst/superCO2/*pCO2*.txt")
+            if "_notes_" not in path
+        ],
     )
     def test_sunburst_pCO2_parser(self, path):
         ds = sunburst.superCO2(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/sunburst/superCO2/*pCO2_notes*.txt")
     )
     def test_sunburst_pCO2_notes_parser(self, path):
         ds = sunburst.superCO2_notes(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
 
 class TestNMEAParser:
     @pytest.mark.parametrize(
-        "path", glob("tests/parsers_test_files/nmea/*.*")
+        "path",
+        [
+            path
+            for path in glob("tests/parsers_test_files/nmea/**/*")
+            if not path.endswith(".nc")
+        ],
     )
     def test_all_files_in_nmea(self, path):
-        ds = nmea.file(path)
-        test_parsed_dataset(ds, path)
+        ds = nmea.nmea_0183(path)
+        review_parsed_dataset(ds, path)
 
 
 class TestAmundsenParser:
     @pytest.mark.parametrize(
-        "path", [path for path in glob("tests/parsers_test_files/amundsen/**/*.int", recursive=True) if not path.endswith('info.int')]
+        "path",
+        [
+            path
+            for path in glob(
+                "tests/parsers_test_files/amundsen/**/*.int", recursive=True
+            )
+            if not path.endswith("info.int")
+        ],
     )
     def test_amundsen_int_parser(self, path):
         ds = amundsen.int_format(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
+
 
 class TestODFParser:
     @pytest.mark.parametrize(
@@ -205,7 +224,7 @@ class TestODFBIOParser:
     def test_bio_odf_ctd_parser(self, path):
         """Test DFO BIO ODF Parser"""
         ds = dfo.odf.bio_odf(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
 
 class TestODFMLIParser:
@@ -223,7 +242,7 @@ class TestODFMLIParser:
     def test_mli_profile_odf_parser(self, path):
         """Test DFO BIO ODF Parser"""
         ds = dfo.odf.mli_odf(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
     @pytest.mark.parametrize(
         "path",
@@ -239,7 +258,7 @@ class TestODFMLIParser:
     def test_mli_timeseries_odf_parser(self, path):
         """Test DFO BIO ODF Parser"""
         ds = dfo.odf.mli_odf(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
     @pytest.mark.parametrize(
         "path",
@@ -255,7 +274,7 @@ class TestODFMLIParser:
     def test_mli_trajectory_odf_parser(self, path):
         """Test DFO BIO ODF Parser"""
         ds = dfo.odf.mli_odf(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
     @pytest.mark.parametrize(
         "path",
@@ -267,7 +286,7 @@ class TestODFMLIParser:
     def test_mli_madcp_odf_parser(self, path):
         """Test DFO BIO ODF Parser"""
         ds = dfo.odf.mli_odf(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
     @pytest.mark.parametrize(
         "path",
@@ -279,7 +298,7 @@ class TestODFMLIParser:
     def test_mli_plnkg_odf_parser(self, path):
         """Test DFO BIO ODF Parser"""
         ds = dfo.odf.mli_odf(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
 
 # pylint: disable=W0212
@@ -298,7 +317,7 @@ class TestDFOpFiles:
     def test_dfo_nafc_pfile(self, path):
         """Test DFO BIO ODF Parser"""
         ds = dfo.nafc.pfile(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
     def test_ship_code_mapping(self):
         """Test ship code mapping"""
@@ -366,76 +385,76 @@ class TestDfoIosShell:
     )
     def test_ios_shell_cruise_ctd_parser(self, path):
         ds = dfo.ios.shell(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/dfo/ios/shell/cruise/BOT/*.bot")
     )
     def test_ios_shell_cruise_bot_parser(self, path):
         ds = dfo.ios.shell(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/dfo/ios/shell/cruise/CHE/*.che")
     )
     def test_ios_shell_cruise_che_parser(self, path):
         ds = dfo.ios.shell(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/dfo/ios/shell/cruise/TOB/*.tob")
     )
     def test_ios_shell_cruise_tob_parser(self, path):
         ds = dfo.ios.shell(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/dfo/ios/shell/mooring/CTD/*.ctd")
     )
     def test_ios_shell_mooring_ctd_parser(self, path):
         ds = dfo.ios.shell(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/dfo/ios/shell/mooring/CUR/*.CUR")
     )
     def test_ios_shell_mooring_cur_parser(self, path):
         ds = dfo.ios.shell(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/dfo/ios/shell/DRF/*.drf")
     )
     def test_ios_shell_drifter_parser(self, path):
         ds = dfo.ios.shell(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
 
 class TestBlueElectricParse:
     @pytest.mark.parametrize(
-        "path",  [path for path in glob(
-            "tests/parsers_test_files/electricblue/*.csv"
-        ) if "/log" not in path]
+        "path",
+        [
+            path
+            for path in glob("tests/parsers_test_files/electricblue/*.csv")
+            if "/log" not in path
+        ],
     )
-    def test_blue_electric_csv_parser(self,path):
+    def test_blue_electric_csv_parser(self, path):
         ds = electricblue.csv(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)
 
     @pytest.mark.parametrize(
-        "path",  glob(
-            "./tests/parsers_test_files/electricblue/log*.csv", recursive=True
-        )
+        "path", glob("./tests/parsers_test_files/electricblue/log*.csv", recursive=True)
     )
     def test_blue_electric_log_csv_parser(self, path):
-         ds = electricblue.log_csv(path)
-         test_parsed_dataset(ds, path)
-        
+        ds = electricblue.log_csv(path)
+        review_parsed_dataset(ds, path)
 
 
 class TestStarOddiParsers:
     @pytest.mark.parametrize(
-        "path",  glob("tests/parsers_test_files/star_oddi/**/*.DAT", recursive=True)
+        "path", glob("tests/parsers_test_files/star_oddi/**/*.DAT", recursive=True)
     )
     def test_star_oddi_dat_parser(self, path):
         ds = star_oddi.DAT(path)
-        test_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path)

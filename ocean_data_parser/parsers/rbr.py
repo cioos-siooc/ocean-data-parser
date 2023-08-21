@@ -7,7 +7,7 @@ import re
 
 import pandas as pd
 
-from ocean_data_parser.parsers.utils import test_parsed_dataset
+from ocean_data_parser.parsers.utils import standardize_dataset
 
 
 def rtext(file_path, encoding="UTF-8", output=None):
@@ -57,27 +57,19 @@ def rtext(file_path, encoding="UTF-8", output=None):
         metadata["number_of_samples"] = int(line.rsplit("=")[1])
 
         # Read data
-        df = pd.read_csv(fid, sep=r"\s\s+", engine="python")
+        ds = pd.read_csv(fid, sep=r"\s\s+", engine="python").to_xarray()
 
         # Make sure that line count is good
-        if len(df) != metadata["number_of_samples"]:
+        if ds.dims["index"] != metadata["number_of_samples"]:
             raise RuntimeError("Data length do not match expected Number of Samples")
 
         # Convert to datset
-        ds = df.to_xarray()
-        ds.attrs = metadata
-        ds.attrs["instrument_manufacturer"] = "RBR"
-        ds.attrs["instrument_model"] = metadata["Model"]
-        ds.attrs["instrument_sn"] = metadata["Serial"]
+        ds.attrs = {
+            **metadata,
+            "instrument_manufacturer": "RBR",
+            "instrument_model": metadata["Model"],
+            "instrument_sn": metadata["Serial"],
+        }
 
-        # Test parsed data
-        test_parsed_dataset(ds)
-
-        # Ouput
-        if output == "dataframe":
-            for var in ["instrument_manufacturer", "instrument_model", "instrument_sn"][
-                ::-1
-            ]:
-                df.insert(0, var, ds.attrs[var])
-            return df
+        ds = standardize_dataset(ds)
         return ds

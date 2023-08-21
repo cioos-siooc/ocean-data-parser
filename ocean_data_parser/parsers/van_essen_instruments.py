@@ -10,9 +10,9 @@ import re
 import pandas as pd
 import xarray
 
-from .utils import standardize_dataset, test_parsed_dataset
-
 logger = logging.getLogger(__name__)
+
+global_attributes = {"Convention": "CF-1.6"}
 
 van_essen_variable_mapping = {
     "PRESSURE": "pressure",
@@ -101,11 +101,11 @@ def mon(
             skipfooter=1,
             engine="python",
             comment="END OF DATA FILE OF DATALOGGER FOR WINDOWS",
-            parse_dates=["time"],
-            date_parser=lambda col: pd.to_datetime(col + timezone, utc=True),
-            infer_datetime_format=True,
             **read_csv_kwargs,
         )
+
+    # handle time variable
+    df["time"] = pd.to_datetime(df["time"] + timezone, utc=True)
 
     # If there's less data then expected send a warning
     if len(df) < info["n_records"]:
@@ -117,6 +117,7 @@ def mon(
 
     # Generate global_attributes
     ds.attrs = {
+        **global_attributes,
         "instrument_manufacturer": "Van Essen Instruments",
         "instrument_type": info["Logger settings"]["Instrument type"],
         "instrument_sn": info["Logger settings"]["Serial number"],
@@ -176,8 +177,6 @@ def mon(
     if standardize_variable_names:
         ds = ds.rename(van_essen_variable_mapping)
 
-    # Run tests on parsed data
-    test_parsed_dataset(ds)
     return standardize_dataset(ds)
 
 
