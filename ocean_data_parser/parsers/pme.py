@@ -15,17 +15,33 @@ import xarray as xr
 from o2conversion import O2ctoO2p, O2ctoO2s
 
 logger = logging.getLogger(__name__)
-vars_attributes = {
+variable_attributes = {
+    "index": {},
+    "Time (sec)": {"long_name": "Time", "standard_name": "time"},
     "T (deg C)": {
-        "units": "degree_c",
+        "long_name": "Time",
+        "units": "degrees_celsius",
         "standard_name": "temperature_of_sensor_for_oxygen_in_sea_water",
     },
     "DO (mg/l)": {
-        "units": "Volts",
+        "long_name": "Dissolved Oxygen Conentration",
+        "units": "mg/L",
         "standard_name": "mass_concentration_of_oxygen_in_sea_water",
         "comments": "at Salinity=0 and pressure=0",
     },
+    "DO (perc)": {
+        "long_name": "Dissolved Oxygen Percentage of saturation",
+        "units": "percent",
+        "standard_name": "fractional_saturation_of_oxygen_in_sea_water",
+        "comments": "at Salinity=0 and pressure=0",
+    },
+    "pO2 (mbar)": {
+        "long_name": "Partial Pressure of Oxygen",
+        "units": "mbar",
+        "comments": "at Salinity=0 and pressure=0",
+    },
     "BV (Volts)": {"long_name": "Battery Voltage", "units": "Volts"},
+    "Q ()": {"long_name": "Q"},
 }
 
 vars_rename = {
@@ -36,11 +52,35 @@ vars_rename = {
     "Q ()": "q",
 }
 
+variable_attributes = {
+    "Time (sec)": dict(long_name="Time", standard_name="time"),
+    "T (deg C)": dict(
+        long_name="Temperature",
+        units="degrees_celsius",
+        standard_name="sea_water_temperature",
+    ),
+    "BV (Volts)": dict(long_name="Battery Voltage", units="Volts"),
+    "DO (mg/l)": dict(
+        long_name="Dissolved Oxygen Concentration",
+        units="mg/l",
+        standard_name="mass_concentration_of_oxygen_in_sea_water",
+    ),
+    "Q ()": dict(long_name="Q"),
+}
 
-def minidot_txt(path, read_csv_kwargs=None):
+global_attributes = {"Conventions": "CF-1.6"}
+
+
+def minidot_txt(
+    path: str, read_csv_kwargs: dict = None, rename_variables: bool = True
+) -> xr.Dataset:
     """
     minidot_txt parses the txt format provided by the PME Minidot instruments.
     """
+
+    def _append_to_history(msg):
+        ds.attrs["history"] += f"{pd.Timestamp.utcnow():%Y-%m-%dT%H:%M:%SZ} {msg}"
+
     # Default read_csv_kwargs
     if read_csv_kwargs is None:
         read_csv_kwargs = {}
@@ -56,7 +96,10 @@ def minidot_txt(path, read_csv_kwargs=None):
         serial_number = f.readline().replace("\n", "")
         logger.debug("Parse file from serial number: %s", serial_number)
         metadata = re.search(
-            r"OS REV: (?P<software_version>\d+\.\d+) Sensor Cal: (?P<instrument_calibration>\d*)",
+            (
+                r"OS REV: (?P<software_version>\d+\.\d+)\s"
+                r"Sensor Cal: (?P<instrument_calibration>\d*)"
+            ),
             f.readline(),
         )
 
@@ -68,9 +111,7 @@ def minidot_txt(path, read_csv_kwargs=None):
         # Read the data with pandas
         ds = pd.read_csv(
             f,
-            parse_dates=[0],
-            infer_datetime_format=True,
-            date_parser=lambda x: pd.to_datetime(x, unit="s", utc=True),
+            converters={0: lambda x: pd.to_datetime(x, unit="s", utc=True)},
             **read_csv_kwargs,
         ).to_xarray()
 
@@ -78,36 +119,43 @@ def minidot_txt(path, read_csv_kwargs=None):
     ds = ds.rename({var: var.strip() for var in ds.keys()})
 
     # Global attributes
-    ds.attrs = metadata.groupdict()
-    ds.attrs.update(
-        {
-            "instrument_manufacturer": "PME",
-            "instrument_model": "MiniDot",
-            "instrument_sn": serial_number,
-            "history": "",
-        }
-    )
+    ds.attrs = {
+        **global_attributes,
+        **metadata.groupdict(),
+        "instrument_manufacturer": "PME",
+        "instrument_model": "MiniDot",
+        "instrument_sn": serial_number,
+        "history": "",
+    }
 
-    # Retrieve raw saturation values from minidot, assume 0 salinity and at surface (pressure=0).
+    # Retrieve raw saturation values from minidot
+    #  assume:
+    #   - 0 salinity
+    #   - surface (pressure=0).
     if "DO (mg/l)" in ds:
-        ds["do_perc_sat"] = retrieve_oxygen_saturation_percent(
-            ds["DO (mg/l)"], ds["T (deg C)"], salinity=0, pressure=0, units="mg/l"
+        ds["DO (perc)"] = O2ctoO2s(31.2512 * ds["DO (mg/l)"], ds["T (deg C)"], S=0, P=0)
+        _append_to_history(
+            "Derive DO (perc) from = "
+            "o2Conversion.O2ctoO2s( 31.2512*'DO (mg/l)', 'T (deg C)', S=0, P=0)",
         )
-        ds.attrs[
-            "history"
-        ] += f"\n{datetime.now().isoformat()} Retrieve Oxygen Saturation Percentage values from 'DO (mg/l)' and 'T (deg C)' by assuming 0 salinity and at surface (pressure=0)"
-        ds["po2"] = retrieve_po2(
-            ds["DO (mg/l)"], ds["T (deg C)"], salinity=0, pressure=0, units="mg/l"
+
+        ds["pO2 (mbar)"] = O2ctoO2p(
+            31.2512 * ds["DO (mg/l)"], ds["T (deg C)"], S=0, P=0
         )
-        ds.attrs[
-            "history"
-        ] += f"\n{datetime.now().isoformat()} Retrieve Partial Pressure of Oxygen values from 'DO (mg/l)' and 'T (deg C)' by assuming 0 salinity and at surface (pressure=0)"
+        _append_to_history(
+            "Derive pO2 (mbar) from = "
+            "o2Conversion.O2ctoO2s(31.2512*'DO (mg/l)', 'T (deg C)', S=0, P=0)",
+        )
 
     # Add attributes to the dataset and rename variables to mapped names.
-    for var in ds:
-        if var in vars_attributes:
-            ds[var].attrs = vars_attributes[var]
-    ds = ds.rename_vars(vars_rename)
+    for var in ds.variables:
+        if var not in variable_attributes:
+            logger.warning("Unknown variable: %s", var)
+            continue
+        ds[var].attrs = variable_attributes[var]
+
+    if rename_variables:
+        ds = ds.rename_vars(vars_rename)
     ds.attrs[
         "history"
     ] += f"\n{datetime.now().isoformat()} Rename variables: {vars_rename}"
@@ -139,7 +187,7 @@ def minidot_txts(paths: Union[list, str]) -> xr.Dataset:
     return xr.merge(datasets)
 
 
-def minidot_cat(path, read_csv_kwargs=None):
+def minidot_cat(path: str, read_csv_kwargs: dict = None) -> xr.Dataset:
     """
     cat reads PME MiniDot concatenated CAT files
     """
@@ -178,41 +226,3 @@ def minidot_cat(path, read_csv_kwargs=None):
     ).groupdict()
 
     return ds
-
-
-def retrieve_oxygen_saturation_percent(
-    do_conc,
-    temp,
-    pressure=0,
-    salinity=0,
-    units="mg/l",
-):
-    """Convert minidot raw oxygen concentration corrected for temperature and add fix salinity and pressure to saturation percent."""
-    # Convert mg/l to umol/l concentration
-    if units == "mg/l":
-        do_conc = 31.2512 * do_conc
-        units = "umol/l"
-    if units != "umol/l":
-        logger.error("Uncompatble units: %s", units)
-        return
-
-    return O2ctoO2s(do_conc, temp, salinity, pressure)
-
-
-def retrieve_po2(
-    do_conc,
-    temp,
-    pressure=0,
-    salinity=0,
-    units="mg/l",
-):
-    """Convert minidot raw oxygen concentration corrected for temperature and add fix salinity and pressure to saturation percent."""
-    # Convert mg/l to umol/l concentration
-    if units == "mg/l":
-        do_conc = 31.2512 * do_conc
-        units = "umol/l"
-    if units != "umol/l":
-        logger.error("Uncompatble units: %s", units)
-        return
-
-    return O2ctoO2p(do_conc, temp, salinity, pressure)
