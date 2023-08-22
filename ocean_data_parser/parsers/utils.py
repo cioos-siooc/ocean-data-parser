@@ -9,7 +9,10 @@ import pandas as pd
 
 logger = logging.getLogger(__name__)
 
-
+time_variables_default_encoding = {
+    "units": "seconds since 1970-01-01T00:00:00",
+    "dtype": "float64",
+}
 def rename_variables_to_valid_netcdf(dataset):
     def _transform(variable_name):
         variable_name = re.sub(r"[\(\)\-\s]+", "_", variable_name.strip())
@@ -33,7 +36,7 @@ def get_history_handler():
 
 
 def standardize_dataset(
-    ds, time_variables_encoding="seconds since 1970-01-01T00:00:00", utc=True
+    ds, time_variables_encoding:dict=None, utc=True
 ):
     """Standardize dataset to be easily serializable to netcdf and compatible with ERDDAP"""
 
@@ -81,7 +84,7 @@ def standardize_dataset(
     for var in ds.variables:
         ds.encoding[var] = {}
         if "datetime" in ds[var].dtype.name:
-            ds[var].encoding.update({"units": time_variables_encoding})
+            ds[var].encoding.update(time_variables_encoding or time_variables_default_encoding)
             if "tz" in ds[var].dtype.name or utc:
                 ds[var].encoding["units"] += "Z"
             ds[var].attrs.pop("units", None)
@@ -98,7 +101,7 @@ def standardize_dataset(
                     pd.to_datetime(ds[var].values, utc=timezone_aware).tz_convert(None),
                 )
             ds[var].attrs = var_attrs
-            ds[var].encoding.update({"units": time_variables_encoding})
+            ds[var].encoding.update(time_variables_encoding or time_variables_default_encoding)
             ds[var].attrs.pop("units", None)
             if timezone_aware:
                 ds[var].attrs["timezone"] = "UTC"
