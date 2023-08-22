@@ -211,7 +211,10 @@ def _generate_extra_terms(nmea):
     return extra
 
 
-def file(
+global_attributes = {"Convention": "CF-1.6"}
+
+
+def nmea_0183(
     path: str, encoding: str = "UTF-8", nmea_delimiter: str = "$"
 ) -> xarray.Dataset:
     """Parse NMEA 0183 standard protocol file into a pandas dataframe
@@ -278,60 +281,31 @@ def file(
 
     # Convert NMEA to a dataframe
     df = pd.DataFrame(nmea).replace({np.nan: None, "": None})
+    df = df.astype(
+        {
+            var: dtype
+            for var, dtype in nmea_dtype_mapping.items()
+            if var in df and dtype != datetime
+        }
+    )
 
     # Cast variables to the appropriate type
-    for col in df:
-        if col not in nmea_dtype_mapping:
-            logger.warning(
-                "nmea column '%s' do not have a corresponding data type", col
-            )
+    unknown_variables_dtype = [var for var in df if var not in nmea_dtype_mapping]
+    if unknown_variables_dtype:
+        logger.warning("unknown dtype for nmea columns: %s", unknown_variables_dtype)
     # Convert datetime columns
-    datetime_cols = [
-        var
-        for var, dtype in nmea_dtype_mapping.items()
-        if var in df and dtype in [datetime]
-    ]
-    for col in datetime_cols:
+    for col in df:
+        if nmea_dtype_mapping.get(col) != datetime:
+            continue
         df[col] = (
             pd.to_datetime(df[col], utc=True).dt.tz_convert(None).dt.to_pydatetime()
         )
 
-    try:
-        df = df.astype(
-            {
-                var: dtype
-                for var, dtype in nmea_dtype_mapping.items()
-                if var in df and var not in datetime_cols
-            }
-        )
-    except ValueError:
-        # Go one column at the time
-        for var in [
-            col
-            for col in df.columns
-            if col in nmea_dtype_mapping
-            and nmea_dtype_mapping[col]
-            and col not in datetime_cols
-        ]:
-            try:
-                df[var] = df[var].astype(nmea_dtype_mapping[var])
-            except ValueError:
-                if df[var].dtype == object and nmea_dtype_mapping[var] == float:
-                    df[var] = df[var].str.extract(r"(\d+\.*\d*)").astype(float)
-                elif df[var].dtype == object and nmea_dtype_mapping[var] == int:
-                    df[var] = df[var].str.extract(r"(\d+)").astype(float)
-                else:
-                    logger.error(
-                        "Failed to convert NMEA variable %s to %s",
-                        var,
-                        nmea_dtype_mapping[var],
-                        exc_info=True,
-                    )
-
-    df = df.replace({"None": None})
+    df = df.replace({np.nan: None, "": None, "None": None})
 
     # Convert to xarray
     ds = df.to_xarray()
+    ds.attrs = global_attributes
 
     # Add attributes
     # TODO Apply vocabulary

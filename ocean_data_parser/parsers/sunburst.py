@@ -15,6 +15,8 @@ logger = logging.getLogger(__name__)
 
 MAXIMUM_TIME_DIFFERENCE_IN_SECONDS = 300
 
+global_attributes = {"Convention": "CF-1.6"}
+
 notes_dtype_mapping = {
     "day_of_year": float,
     "note_type": str,
@@ -140,7 +142,15 @@ def superCO2(path: str, output: str = None) -> xarray.Dataset:
 
 
 def superCO2_notes(path: str) -> xarray.Dataset:
-    """Parse superCO2 notes files and return a pandas dataframe"""
+    """Parse superCO2 notes files and return an xarray Dataset
+
+    Args:
+        path (str): file path
+
+    Returns:
+        xarray.Dataset: Parsed dataset
+    """
+    """Parse superCO2 notes files and return an xarray Dataset"""
     line = True
     notes = []
     with open(path, "r", encoding="utf-8") as f:
@@ -168,4 +178,7 @@ def superCO2_notes(path: str) -> xarray.Dataset:
     df = pd.DataFrame.from_dict(notes)
     df["time"] = pd.to_datetime(df["time"]).dt.to_pydatetime()
     df = df.astype(dtype=notes_dtype_mapping, errors="ignore")
-    return df.to_xarray()
+
+    ds = df.to_xarray()
+    ds.attrs = {"Convention": "CF-1.6"}
+    return ds

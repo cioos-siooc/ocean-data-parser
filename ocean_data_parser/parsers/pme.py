@@ -14,6 +14,8 @@ import pandas as pd
 import xarray as xr
 from o2conversion import O2ctoO2p, O2ctoO2s
 
+from ocean_data_parser.parsers.utils import standardize_dataset
+
 logger = logging.getLogger(__name__)
 variable_attributes = {
     "index": {},
@@ -159,6 +161,8 @@ def minidot_txt(
     ds.attrs[
         "history"
     ] += f"\n{datetime.now().isoformat()} Rename variables: {vars_rename}"
+
+    ds = standardize_dataset(ds)
     return ds
 
 

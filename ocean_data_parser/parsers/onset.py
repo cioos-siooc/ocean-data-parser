@@ -14,7 +14,9 @@ import pandas as pd
 import xarray
 from dateutil.parser._parser import ParserError
 
-from .utils import test_parsed_dataset
+from ocean_data_parser.parsers.utils import standardize_dataset
+
+global_attributes = {"Convention": "CF-1.6"}
 
 logger = logging.getLogger(__name__)
 _onset_variables_mapping = {
@@ -215,7 +217,7 @@ def csv(
 
     # Convert to dataset
     ds = df.to_xarray()
-    ds.attrs = header
+    ds.attrs = {**global_attributes, **header}
     for var in ds:
         ds[var].attrs = variables[var]
 
@@ -251,6 +253,7 @@ def csv(
             )
 
     # Test daylight saving issue
+    # TODO move this daylight saving detection test elsewhere
     dt = ds["time"].diff("index")
     sampling_interval = dt.median().values
     dst_fall = -pd.Timedelta("1h") + sampling_interval
@@ -273,8 +276,8 @@ def csv(
             dst_fall,
             sampling_interval,
         )
-    # Test dataset
-    test_parsed_dataset(ds)
+
+    ds = standardize_dataset(ds)
     return ds
 
 

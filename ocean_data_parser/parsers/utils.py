@@ -6,20 +6,16 @@ from io import StringIO
 
 import numpy as np
 import pandas as pd
+import xarray as xr
 
 logger = logging.getLogger(__name__)
 
+time_variables_default_encoding = {
+    "units": "seconds since 1970-01-01T00:00:00",
+    "dtype": "float64",
+}
 
-def test_parsed_dataset(ds):
-    # instrument_sn
-    if "instrument_sn" not in ds and ds.attrs.get("instrument_sn") is None:
-        logger.warning("Failed to retrieve instrument serial number")
-    elif "instrument_sn" in ds and ds["instrument_sn"].isna().any():
-        logger.warning("Some records aren't associated with instrument serial number")
-
-    # time
-    if "time" not in ds:
-        logger.warning("Missing time variable")
+object_variables_default_encoding = {"dtype": "str"}
 
 
 def rename_variables_to_valid_netcdf(dataset):
@@ -44,10 +40,20 @@ def get_history_handler():
     return nc_logger, nc_handler
 
 
-def standardize_dataset(
-    ds, time_variables_encoding="seconds since 1970-01-01T00:00:00", utc=True
-):
-    """Standardize dataset to be easily serializable to netcdf and compatible with ERDDAP"""
+def standardize_attributes(attrs) -> dict:
+    """Standardize attributes with the following steps:
+        - datetime, timestamps -> ISO format text string
+        - dict ->  JSON strings
+        - list -> np.array
+        - bool -> str True/False
+        - Drop empty attributes pd.isna !=0 and ==""
+
+    Args:
+        attrs (dict): Attributes dictionary
+
+    Returns:
+        dict: Standardized dictionary
+    """
 
     def _consider_attribute(value):
         return isinstance(value, (dict, tuple, list, np.ndarray)) or (
@@ -70,30 +76,45 @@ def standardize_dataset(
         else:
             return value
 
-    ds = get_spatial_coverage_attributes(ds, utc=utc)
-    ds = standardize_variable_attributes(ds)
-    ds.attrs = standardize_global_attributes(ds.attrs)
-
-    # Encode global attributes and drop empty values
-    ds.attrs = {
-        att: _encode_attribute(value)
-        for att, value in ds.attrs.items()
+    return {
+        attr: _encode_attribute(value)
+        for attr, value in attrs.items()
         if _consider_attribute(value)
     }
 
-    # Drop empty variable attributes
-    for var in ds.variables:
-        ds[var].attrs = {
-            attr: _encode_attribute(value)
-            for attr, value in ds[var].attrs.items()
-            if _consider_attribute(value)
-        }
 
-    # Specify encoding for some variables (ex time variables)
-    for var in ds.variables:
+def generate_variables_encoding(
+    ds: xr.Dataset,
+    variables: list = None,
+    object_variables_encoding=None,
+    time_variables_encoding: dict = None,
+    utc: bool = True,
+):
+    """Generate time variables encoding
+
+    Args:
+        ds (xr.Dataset): Dataset
+        variables (list, optional): List of time variables to encode.
+            Defaults to detect automatically datetime/timestamp variables.
+        object_varaibles_encoding = Encoding to apply object variables.
+            Defaults to: dtype: str
+        time_variables_encoding (dict, optional): Encoding to apply.
+            Defaults to:
+                + units="seconds since 1970-01-01T00:00:00"
+                + dtype="float64"
+        utc (bool, optional): Assign UTC timezone and converte
+            timezone aware timestamps to UTC. Defaults to True.
+
+    Returns:
+        xr..Dataset: Dataset with encoding attribute generated.
+    """
+
+    for var in variables or ds.variables:
         ds.encoding[var] = {}
         if "datetime" in ds[var].dtype.name:
-            ds[var].encoding.update({"units": time_variables_encoding})
+            ds[var].encoding.update(
+                time_variables_encoding or time_variables_default_encoding
+            )
             if "tz" in ds[var].dtype.name or utc:
                 ds[var].encoding["units"] += "Z"
             ds[var].attrs.pop("units", None)
@@ -110,20 +131,33 @@ def standardize_dataset(
                     pd.to_datetime(ds[var].values, utc=timezone_aware).tz_convert(None),
                 )
             ds[var].attrs = var_attrs
-            ds[var].encoding.update({"units": time_variables_encoding})
+            ds[var].encoding.update(
+                time_variables_encoding or time_variables_default_encoding
+            )
             ds[var].attrs.pop("units", None)
             if timezone_aware:
                 ds[var].attrs["timezone"] = "UTC"
                 ds[var].encoding["units"] += "Z"
 
         elif ds[var].dtype.name == "object":
-            ds[var].encoding["dtype"] = "str"
-
+            ds[var].encoding.update(
+                object_variables_encoding or object_variables_default_encoding
+            )
     return ds
 
 
-def _sort_attributes(attrs, attribute_order):
-    """Sort attributes by given order. Attributes missing from the ordered list are followed alphabetically."""
+def sort_attributes(attrs: dict, attribute_order: list) -> dict:
+    """Sort attributes by given order.
+
+    Args:
+        attrs (dict): Attributes dictionary
+        attribute_order (list): List order to sort the attributes by.
+           Attributes not present within this list will
+           be sorted alphabetically after the known attributes.
+
+    Returns:
+        dict: Sorted attributes
+    """
     attrs_output = {attr: attrs[attr] for attr in attribute_order if attr in attrs}
     unknown_order_attrs = dict(
         sorted([attr for attr in attrs.items() if attr not in attribute_order])
@@ -131,9 +165,42 @@ def _sort_attributes(attrs, attribute_order):
     return {**attrs_output, **unknown_order_attrs}
 
 
+def standardize_dataset(
+    ds: xr.Dataset, time_variables_encoding: dict = None, utc: bool = True
+) -> xr.Dataset:
+    """Standardize dataset to be easily serializable to netcdf
+    and compatible with ERDDAP. Apply the following steps:
+        - Generate geospatial attributes
+        - Apply standardize_variable_attributes
+        - Apply standardize_global_attributes
+        - Define time variables encoding
+
+    Args:
+        ds (xr.Dataset): Dataset to standardized
+        time_variables_encoding (dict, optional): Time variables encoding.
+            Defaults to
+                + units="seconds since 1970-01-01T00:00:00"
+                + dtype="float64"
+        utc (bool, optional): Timestamps are UTC or standardize to UTC. Defaults to True.
+
+    Returns:
+        xr.Dataset: Standardized dataset
+    """
+
+    ds = get_spatial_coverage_attributes(ds, utc=utc)
+    ds = standardize_variable_attributes(ds)
+    ds.attrs = standardize_global_attributes(ds.attrs)
+    ds = generate_variables_encoding(
+        ds, time_variables_encoding=time_variables_encoding, utc=utc
+    )
+
+    return ds
+
+
 def standardize_global_attributes(attrs):
     """Standardize global attributes order"""
-    return _sort_attributes(attrs, global_attributes_order)
+    attrs = standardize_attributes(attrs)
+    return sort_attributes(attrs, global_attributes_order)
 
 
 def standardize_variable_attributes(ds):
@@ -151,8 +218,8 @@ def standardize_variable_attributes(ds):
                     ds[var].dtype
                 )
             )
-
-        ds[var].attrs = _sort_attributes(ds[var].attrs, variable_attributes_order)
+        ds[var].attrs = standardize_attributes(ds[var].attrs)
+        ds[var].attrs = sort_attributes(ds[var].attrs, variable_attributes_order)
     return ds
 
 

@@ -133,10 +133,10 @@ class Processing:
         name: str = None,
         suffix: str = None,
         overwrite=True,
-        time_variables_encoding="seconds since 1970-01-01T00:00:00",
+        time_variables_encoding=None,
+        utc=True,
         **kwargs,
     ):
-        ds = self.standardize()
         name = Path(name or self.get_filename_from_convention(suffix=suffix))
         if name.suffix != ".nc":
             name = name.with_suffix(".nc")
@@ -147,8 +147,11 @@ class Processing:
         if overwrite == False and name.exists():
             logger.warning("File already exists and won't be overwritten")
             return
-        ds = utils.standardize_dataset(
-            ds, time_variables_encoding=time_variables_encoding
+
+        ds = self.standardize(
+            time_variables_encoding=time_variables_encoding
+            or utils.time_variables_default_encoding,
+            utc=utc,
         )
         ds.to_netcdf(
             name or self.get_filename_from_convention(suffix=suffix) + ".nc", **kwargs
@@ -159,8 +162,13 @@ class Processing:
             suffix or ""
         )
 
-    def standardize(self):
-        return utils.standardize_dataset(self._obj)
+    def standardize(self, time_variables_encoding=None, utc=True):
+        return utils.standardize_dataset(
+            self._obj,
+            time_variables_encoding=time_variables_encoding
+            or utils.time_variables_default_encoding,
+            utc=True,
+        )
 
     def add_to_history(self, comment, timestamp=None):
         if timestamp is None:
