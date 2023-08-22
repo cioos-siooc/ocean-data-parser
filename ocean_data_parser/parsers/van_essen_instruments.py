@@ -10,6 +10,8 @@ import re
 import pandas as pd
 import xarray
 
+from ocean_data_parser.parsers.utils import standardize_dataset
+
 logger = logging.getLogger(__name__)
 
 global_attributes = {"Convention": "CF-1.6"}
