@@ -81,15 +81,13 @@ def csv(
                 metadata[attr] = value
 
         columns = line.split(",")
+        time_zone = metadata.pop("time_zone")
         df = pd.read_csv(
             f,
             sep=",",
             header=None,
             names=columns,
-            parse_dates=[0],
-            date_parser=lambda x: pd.to_datetime(
-                x + metadata.pop("time_zone"), utc=True
-            ),
+            converters={0: lambda x: pd.to_datetime(x + time_zone, utc=True)},
         )
         if len(df) != metadata["samples"]:
             logger.warning(
