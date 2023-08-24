@@ -1,10 +1,11 @@
-import logging
-import unittest
 from glob import glob
+import json
 
 import pandas as pd
 import pytest
 import xarray as xr
+from compliance_checker.runner import CheckSuite, ComplianceChecker
+from loguru import logger
 
 from ocean_data_parser.parsers import (
     amundsen,
@@ -22,15 +23,71 @@ from ocean_data_parser.parsers import (
 from ocean_data_parser.parsers.dfo.odf_source.attributes import _review_station
 from ocean_data_parser.parsers.dfo.odf_source.parser import _convert_odf_time
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger()
+# Load compliance checker classes
+# Load all available checker classes
+check_suite = CheckSuite()
+check_suite.load_all_available_checkers()
+
+# Run cf and adcc checks
+cchecks = dict(
+    checker_names=["cf:1.6", "acdd:1.3"],
+    verbose=True,
+    criteria="strict",
+    output_format="json",
+)
 
 
 def review_parsed_dataset(ds, source):
+    """Run parser standard test by:
+    - Parsing the test file
+    - Make sure the output is an xarray Dataset
+    - Global attribtutes are resent
+    - Variables are present
+    - Save to a NetCDF
+    - Run compliance-checker on the NetCDF file
+        + CF-1.6 compliant (default)
+        + ACDD 1.3 complient (default)
+        + any convention provided within the
+          Conventions attribute
+
+    Args:
+        ds (xr:Dataset): Parsed dataset
+        source (str): Source File Path
+    """
     assert isinstance(ds, xr.Dataset)
     assert ds.attrs, "dataset do not contains any global attributes"
     assert ds.variables, "Dataset has no variables."
-    ds.to_netcdf(source + "_test.nc")
+    netcdf_path = source + "_test.nc"
+    ds.to_netcdf(netcdf_path)
+
+    # Run compliance checker
+    cchecks = dict(
+        checker_names=["cf:1.6", "acdd:1.3"],
+        verbose=2,
+        criteria="strict",
+        output_format="html",
+    )
+    if "Conventions" in ds.attrs:
+        cchecks["checker_names"] += [
+            convention
+            for convention in ds.attrs["Conventions"]
+            .replace("-", ":")
+            .lower()
+            .split(",")
+            if convention not in cchecks["checker_names"]
+        ]
+
+    cc_report_path = netcdf_path + "_cc_report.html"
+    response, errors = ComplianceChecker.run_checker(
+        netcdf_path, **cchecks, output_filename=cc_report_path
+    )
+    # assert response, "Compliance checker failed"
+    if errors:
+        logger.error("Some errors were encountered by the compliance checker")
+        assert not errors, f"See report {cc_report_path}"
+
+    # with open(cc_report_path) as file:
+    #     cc_report = json.load(file)
 
 
 class TestPMEParsers:
