@@ -58,12 +58,3 @@ th, td {
 .xr-var-item{
     display: -webkit-box;
 }
-
-.md-footer-meta__inner {
-    flex-wrap: wrap-reverse;
-}
-
-.md-footer-meta__inner img {
-    width: 300px;
-    height: 35px;
-}
