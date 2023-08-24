@@ -27,7 +27,7 @@ odf_dtypes = {
     "QQQQ": "int32",
 }
 
-vocabulary = dfo_odf_vocabulary()
+odf_vocabulary = dfo_odf_vocabulary()
 vocabulary_attribute_list = [
     "long_name",
     "units",
@@ -278,7 +278,7 @@ def read(filename, encoding_format="Windows-1252"):
 
 def add_vocabulary_attributes(
     ds,
-    organizations=None,
+    vocabularies=None,
     add_attributes_existing_variables=True,
     generate_new_vocabulary_variables=True,
 ):
@@ -331,17 +331,17 @@ def add_vocabulary_attributes(
         - global instrument_type instrument_model
         """
         # Among these matching terms find matching ones
-        match_vocabulary = vocabulary["Vocabulary"].isin(organizations)
+        match_vocabulary = odf_vocabulary["Vocabulary"].isin(vocabularies)
         match_code = (
-            vocabulary["name"] == ds[var].attrs["legacy_gf3_code"].split("_")[0]
+            odf_vocabulary["name"] == ds[var].attrs["legacy_gf3_code"].split("_")[0]
         )
-        match_units = vocabulary["accepted_units"].apply(
+        match_units = odf_vocabulary["accepted_units"].apply(
             lambda x: _review_term(ds[var].attrs.get("units"), x)
         )
-        match_scale = vocabulary["accepted_scale"].apply(
+        match_scale = odf_vocabulary["accepted_scale"].apply(
             lambda x: _review_term(ds[var].attrs.get("scale"), x)
         )
-        match_instrument = vocabulary["accepted_instruments"].apply(
+        match_instrument = odf_vocabulary["accepted_instruments"].apply(
             lambda x: _review_term(
                 ds[var].attrs.get("long_name"),
                 x,
@@ -349,7 +349,7 @@ def add_vocabulary_attributes(
                 search_flag=re.IGNORECASE,
             )
         )
-        match_instrument_global = vocabulary["accepted_instruments"].apply(
+        match_instrument_global = odf_vocabulary["accepted_instruments"].apply(
             lambda x: _review_term(
                 f"{ds.attrs.get('instrument_type')} {ds.attrs.get('instrument_model')}".strip(),
                 x,
@@ -357,7 +357,7 @@ def add_vocabulary_attributes(
                 search_flag=re.IGNORECASE,
             )
         )
-        return vocabulary.loc[
+        return odf_vocabulary.loc[
             match_vocabulary
             & match_code
             & match_units
@@ -381,7 +381,7 @@ def add_vocabulary_attributes(
     # vocabulary["instrument"] = vocabulary["accepted_instrument"].str.split("|").str[0]
 
     # Find matching vocabulary
-    vocabulary["apply_function"] = vocabulary["apply_function"].fillna("x")
+    odf_vocabulary["apply_function"] = odf_vocabulary["apply_function"].fillna("x")
     new_variables_mapping = {}
     new_variables = {}
     new_variables_attributes = {}
@@ -419,7 +419,7 @@ def add_vocabulary_attributes(
         # Consider only the first organization that has this term
         selected_organization = [
             organization
-            for organization in organizations
+            for organization in vocabularies
             if organization in matching_terms["Vocabulary"].tolist()
         ][0]
         matching_terms = matching_terms.query(

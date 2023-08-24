@@ -1,3 +1,7 @@
+"""
+Fisheries and Ocean Canada - Pacific Region - Institute of Ocean Sciences
+"""
+
 import logging
 
 import xarray
@@ -19,7 +23,17 @@ HANDLED_DATA_TYPES = (
 
 
 def shell(filename: str) -> xarray.Dataset:
-    """Read IOS Shell format to xarray"""
+    """Parse DFO-IOS Shell format
+
+    Args:
+        filename (str): path to file
+
+    Raises:
+        RuntimeError: Failed to read file
+
+    Returns:
+        xarray.Dataset
+    """
     extension = filename.rsplit(".", 1)[1]
     if extension == "cur":
         fdata = CurFile(filename=filename, debug=False)

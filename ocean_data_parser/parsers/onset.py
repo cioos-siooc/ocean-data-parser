@@ -7,13 +7,16 @@ import logging
 import re
 from csv import reader
 from datetime import datetime
+from typing import Union
 
 import numpy as np
 import pandas as pd
 import xarray
 from dateutil.parser._parser import ParserError
 
-from .utils import test_parsed_dataset
+from ocean_data_parser.parsers.utils import standardize_dataset
+
+global_attributes = {"Convention": "CF-1.6"}
 
 logger = logging.getLogger(__name__)
 _onset_variables_mapping = {
@@ -54,33 +57,37 @@ _ignored_variables = [
     "",
 ]
 
+datetime_regex_to_formats = [
+    (r"\d\d\/\d\d\/\d\d\s+\d\d\:\d\d\:\d\d\s+\w\w", r"%m/%d/%y %I:%M:%S %p"),
+    (r"\d\d\d\d\/\d\d\/\d\d\s+\d\d\:\d\d\:\d\d\s+\w\w", r"%Y/%m/%d %I:%M:%S %p"),
+    (r"\d\d\/\d\d\/\d\d\s+\d\d\:\d\d", r"%m/%d/%y %H:%M"),
+    (r"\d+\/\d+\/\d\d\s+\d\d\:\d\d", r"%m/%d/%y %H:%M"),
+    (r"^\d\d\d\d\-\d\d\-\d\d\s+\d\d\:\d\d\:\d\d$", r"%Y-%m-%d %H:%M:%S"),
+    (r"\d\d\d\d\-\d\d\-\d\d\s+\d\d\:\d\d\:\d\d (AM|PM)", r"%Y-%m-%d %I:%M:%S %p"),
+    (r"^\d\d\-\d\d\-\d\d\s+\d{1,2}\:\d\d$", r"%y-%m-%d %H:%M"),
+    (r"^\d\d\-\d\d\-\d\d\s+\d{1,2}\:\d\d\:\d\d$", r"%y-%m-%d %H:%M:%S"),
+    (r"^\d\d\d\d\-\d\d\-\d\d\s+\d{1,2}\:\d\d$", r"%Y-%m-%d %H:%M"),
+    (r"^\d\d\/\d\d\/\d\d\d\d\s\d\d\:\d\d", r"%m/%d/%Y %H:%M"),
+]
 
-def _parse_onset_time(time, timezone="UTC"):
-    """Convert onset timestamps to pd.Timestamp objects"""
+
+def _parse_onset_time(
+    time: Union[str, np.datetime64], timezone: str = "UTC"
+) -> pd.Timestamp:
+    """Convert Onset timestamps to UTC pd.Timestamps"""
+    if time in ("", None) or pd.isna(time):
+        return pd.NaT
+
     if isinstance(time, np.datetime64):
         time_format = None
-    elif re.match(r"\d\d\/\d\d\/\d\d\s+\d\d\:\d\d\:\d\d\s+\w\w", time):
-        time_format = r"%m/%d/%y %I:%M:%S %p"
-    elif re.match(r"\d\d\d\d\/\d\d\/\d\d\s+\d\d\:\d\d\:\d\d\s+\w\w", time):
-        time_format = r"%Y/%m/%d %I:%M:%S %p"
-    elif re.match(r"\d\d\/\d\d\/\d\d\s+\d\d\:\d\d", time):
-        time_format = r"%m/%d/%y %H:%M"
-    elif re.match(r"\d+\/\d+\/\d\d\s+\d\d\:\d\d", time):
-        time_format = r"%m/%d/%y %H:%M"
-    elif re.match(r"^\d\d\d\d\-\d\d\-\d\d\s+\d\d\:\d\d\:\d\d$", time):
-        time_format = r"%Y-%m-%d %H:%M:%S"
-    elif re.match(r"\d\d\d\d\-\d\d\-\d\d\s+\d\d\:\d\d\:\d\d (AM|PM)", time):
-        time_format = r"%Y-%m-%d %I:%M:%S %p"
-    elif re.match(r"^\d\d\-\d\d\-\d\d\s+\d{1,2}\:\d\d$", time):
-        time_format = r"%y-%m-%d %H:%M"
-    elif re.match(r"^\d\d\-\d\d\-\d\d\s+\d{1,2}\:\d\d\:\d\d$", time):
-        time_format = r"%y-%m-%d %H:%M:%S"
-    elif re.match(r"^\d\d\d\d\-\d\d\-\d\d\s+\d{1,2}\:\d\d$", time):
-        time_format = r"%Y-%m-%d %H:%M"
-    elif time in ("", None):
-        return pd.NaT
     else:
-        time_format = None
+        for regex, datetime_format in datetime_regex_to_formats:
+            if re.match(regex, time):
+                time_format = datetime_format
+                break
+        else:
+            logger.error("Unkown datetime format: %s", time)
+            return pd.NaT
     try:
         return (
             pd.to_datetime(time, format=time_format)
@@ -166,7 +173,8 @@ def csv(
         path: The path to the CSV file
         convert_units_to_si: Whether to standardize data units to SI units
         read_csv_kwargs: dictionary of keyword arguments to be passed to pd.read_csv
-        standardize_variable_names: Rename the variable names a standardize name convention
+        standardize_variable_names: Rename the variable names a standardize name
+        convention
     Returns:
         xarray.Dataset
     """
@@ -195,24 +203,21 @@ def csv(
     df = pd.read_csv(
         path,
         na_values=[" "],
-        infer_datetime_format=True,
-        parse_dates=header["time_variables"],
-        converters={
-            header["time_variables"][0]: lambda col: _parse_onset_time(
-                col, header["timezone"]
-            )
-        },
         sep=",",
+        engine="python",
         header=header_lines,
         memory_map=True,
         names=column_names,
         usecols=[id for id, name in enumerate(column_names)],
         **read_csv_kwargs,
     )
+    df[header["time_variables"]] = df[header["time_variables"]].applymap(
+        lambda x: _parse_onset_time(x, header["timezone"])
+    )
 
     # Convert to dataset
     ds = df.to_xarray()
-    ds.attrs = header
+    ds.attrs = {**global_attributes, **header}
     for var in ds:
         ds[var].attrs = variables[var]
 
@@ -225,12 +230,16 @@ def csv(
     if convert_units_to_si:
         if standardize_variable_names:
             if "temperature" in ds and ("C" not in ds["temperature"].attrs["units"]):
-                temp_units = ds["temperature"].attrs["units"]
-                string_comment = f"Convert temperature ({temp_units}) to degree Celsius [(degF-32)/1.8000]"
-                logger.warning(string_comment)
-                ds["temperature"] = (ds["temperature"] - 32.0) / 1.8000
+                logger.warning("Temperaure in farenheit will be converted to celsius")
+                ds["temperature"] = _farenheit_to_celsius(ds["temperature"])
                 ds["temperature"].attrs["units"] = "degC"
-                ds.attrs["history"] += f"{datetime.now()} {string_comment}"
+                ds.attrs["history"] += " ".join(
+                    [
+                        f"{datetime.now()}",
+                        f"Convert temperature ({ ds['temperature'].attrs['units']}) to"
+                        "degree Celsius [(degF-32)/1.8000]",
+                    ]
+                )
             if (
                 "conductivity" in ds
                 and "uS/cm" not in ds["conductivity"].attrs["units"]
@@ -244,24 +253,31 @@ def csv(
             )
 
     # Test daylight saving issue
+    # TODO move this daylight saving detection test elsewhere
     dt = ds["time"].diff("index")
     sampling_interval = dt.median().values
     dst_fall = -pd.Timedelta("1h") + sampling_interval
     dst_spring = pd.Timedelta("1h") + sampling_interval
     if any(dt == dst_fall):
         logger.warning(
-            "Time gaps (=%s) for sampling interval of %s suggest a Fall daylight saving issue is present",
+            (
+                "Time gaps (=%s) for sampling interval of %s "
+                "suggest a Fall daylight saving issue is present"
+            ),
             dst_fall,
             sampling_interval,
         )
     if any(dt == dst_spring):
         logger.warning(
-            "Time gaps (=%s) for sampling interval of %s suggest a Spring daylight saving issue is present",
+            (
+                "Time gaps (=%s) for sampling interval of %s "
+                "suggest a Spring daylight saving issue is present"
+            ),
             dst_fall,
             sampling_interval,
         )
-    # Test dataset
-    test_parsed_dataset(ds)
+
+    ds = standardize_dataset(ds)
     return ds
 
 
@@ -313,3 +329,14 @@ def _detect_instrument_type(ds):
             "Unknown Hobo instrument type with variables: %s", vars_of_interest
         )
     return instrument_type
+
+
+def _farenheit_to_celsius(farenheit):
+    """Convert temperature in Farenheit to Celcius
+    Args:
+        farenheit (float): Temperature in Farenheint
+
+    Returns:
+        float: Temperature in celsisus
+    """
+    return (farenheit - 32.0) / 1.8000

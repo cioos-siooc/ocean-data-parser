@@ -40,7 +40,7 @@ ODF_COMPATIBLE_DATA_TYPES = [
 def parse_odf(
     odf_path,
     global_attributes=None,
-    institution=None,
+    vocabularies=None,
     add_attributes_existing_variables=True,
     generate_new_vocabulary_variables=True,
 ):
@@ -88,7 +88,7 @@ def parse_odf(
     # Add Vocabulary attributes
     dataset = odf_parser.add_vocabulary_attributes(
         dataset,
-        organizations=[institution, "GF3"],
+        vocabularies=vocabularies,
         add_attributes_existing_variables=add_attributes_existing_variables,
         generate_new_vocabulary_variables=generate_new_vocabulary_variables,
     )
@@ -98,12 +98,12 @@ def parse_odf(
 
     # Instrument specific variables and attributes
     if dataset.attrs["instrument_manufacturer_header"].startswith("* Sea-Bird"):
-        dataset = seabird.add_seabird_instruments(
+        dataset = seabird._add_seabird_instruments(
             dataset,
             dataset.attrs["instrument_manufacturer_header"],
             match_by="sdn_parameter_urn",
         )
-        dataset = seabird.update_attributes_from_seabird_header(
+        dataset = seabird._update_attributes_from_seabird_header(
             dataset, dataset.attrs["instrument_manufacturer_header"]
         )
     # Standardize

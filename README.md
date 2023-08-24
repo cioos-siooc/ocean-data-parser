@@ -1,6 +1,7 @@
 <!-- NOTE: All sections are placeholders. Use the relevant ones-->
 
-![Logo](docs/images/logo_EN_FR-1024x208.png)
+![Logo](docs/images/logo_EN_FR-1024x208.png#gh-light-mode-only)
+![Logo](docs/images/cioos-national_EN_FR_W-01.png#gh-dark-mode-only)
 
 <!-- Make a favicon/logo using something like:
 
@@ -15,7 +16,7 @@
 [![Build documentation](https://github.com/cioos-siooc/ocean-data-parser/actions/workflows/deploy-docs.yaml/badge.svg)](https://github.com/cioos-siooc/ocean-data-parser/actions/workflows/deploy-docs.yaml)
 
 
-`ocean-data-parser` - a python Package for parsing oceanographic proprietary data formats to [xarray Dataset](https://docs.xarray.dev/en/stable/).
+`ocean-data-parser` - a python package for parsing oceanographic proprietary data formats to [xarray Dataset](https://docs.xarray.dev/en/stable/).
 
 [A more detailed documentation is available here](https://cioos-siooc.github.io/ocean-data-parser/).
 
@@ -63,6 +64,8 @@ ds.to_netcdf('save-path.nc')
 ```
 The `ocean-data-parser` can then be used within either a python package, script or jupyter notebook. See [documentation Notebook section](https://cioos-siooc.github.io/ocean-data-parser) for examples on how to use the package within a jupyter notebook.
 
-## Contributing
+## Contributions
 
-All contributions, bug reports, bug fixes, documentation improvements, enhancements, and ideas are welcome.
+All contributions are welcome! 
+
+Please create a new [discussion](https://github.com/cioos-siooc/ocean-data-parser/discussions) or [issue](https://github.com/cioos-siooc/ocean-data-parser/issues) within the github repository for any questions, ideas and suggestions. 

@@ -1,13 +1,8 @@
 """
-P-files is a file format used by the DFO NewfoundLand office.
+The Fisheries and Oceans Canada - Newfoundland and Labrador Region -
+North Atlantic Fisheries Centre
 
-According to the pfile documentation, the format is:
 
-1) NAFC_Y2K_HEADER
-2) 3 single line 80 byte headers, the formats of which is described on an attached page.
-3) A variable length block of processing history information
-4) A line of channel name identifiers
-5) A start of data flag line -- DATA --
 
 """
 
@@ -31,9 +26,7 @@ logger = logging.getLogger(__name__)
 MODULE_PATH = Path(__file__).parent
 p_file_vocabulary = dfo_nafc_p_file_vocabulary()
 p_file_shipcode = dfo_platforms()
-# nafc_instruments = pd.read_csv(
-#     MODULE_PATH / ".." / "vocabularies" / "dfo_nafc_instruments.csv"
-# ).set_index("instrument_id")
+
 global_attributes = {
     "Conventions": "CF-1.6,CF-1.7,CF-1.8,ACDD-1.3,IOOS 1.2",
     "naming_authority": "ca.gc.nafc",
@@ -241,30 +234,42 @@ def pfile(
     rename_variables: bool = True,
     generate_extra_variables: bool = True,
 ) -> xr.Dataset:
-    """Convert P-File to an xarray Dataset object
+    """Parse DFO NAFC oceanography p-file format
+
+    The NAFC oceanography p-files format is according
+    to the pfile documentation,:
+
+    1. NAFC_Y2K_HEADER
+    2. 3 single line 80 byte headers, the formats of which is described on an attached page.
+    3. A variable length block of processing history information
+    4. A line of channel name identifiers
+    5. A start of data flag line -- DATA --
 
     Args:
-        file (str): Path to pfile to parse
+        file (str): file path
+        encoding (str, optional): file encoding. Defaults to "UTF-8".
+        rename_variables (bool, optional): Rename variables to BODC
+            standard. Defaults to True.
+        generate_extra_variables (bool, optional): Generate extra
+            BODC mapping variables. Defaults to True.
+
+    Raises:
+        TypeError: File provided isn't a p file.
 
     Returns:
-        xr.Dataset
+        xr.Dataset: Parser dataset
     """
 
     def _check_ship_trip_stn():
         """Review if the ship,trip,stn string is the same
-        accorss the 3 metadata rows
-        """
+        accorss the 3 metadata rows"""
         ship_trip_stn = [line[:9] for line in metadata_lines[1:]]
-        if len(set(ship_trip_stn)) != 1:
-            logger.error(
-                "Ship,trip,station codes do not match" " in the header metadata: %s",
-                ship_trip_stn,
-            )
-            raise RuntimeError(
-                "Ship,trip,station codes do not match" " in the header metadata"
-            )
+        assert (
+            len(set(ship_trip_stn)) == 1
+        ), f"Ship,trip,station isn't consistent: {set(ship_trip_stn)}"
 
     def _get_variable_vocabulary(variable: str) -> dict:
+        """Retrieve variable vocabulary"""
         matching_vocabulary = p_file_vocabulary.query(
             f"legacy_p_code == '{variable}' and "
             f"(accepted_instruments.isna() or "
@@ -321,7 +326,7 @@ def pfile(
 
     # Review metadata
     if metadata_lines[0] == "NAFC_Y2K_HEADER":
-        raise RuntimeError(
+        raise TypeError(
             "File header doesn't contain pfile first line 'NAFC_Y2K_HEADER'"
         )
     _check_ship_trip_stn()
