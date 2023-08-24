@@ -1,6 +1,5 @@
 site_name: Ocean Data Parser
-site_url: https://cioos-siooc.github.io/ocean-data-parser/
-copyright: Copyright @ Canadian Integrated Ocean Observing System
+site_url: https://cioos-siooc.github.io/ocean-data-parser/  
 
 repo_name: ocean-data-parser
 repo_url: https://github.com/cioos-siooc/ocean-data-parser
