@@ -86,10 +86,10 @@ def csv(
             sep=",",
             header=None,
             names=columns,
-            parse_dates=[0],
-            date_parser=lambda x: pd.to_datetime(
+            converters= {0: lambda x: pd.to_datetime(
                 x + metadata.pop("time_zone"), utc=True
-            ),
+            )}
+ 
         )
         if len(df) != metadata["samples"]:
             logger.warning(
