@@ -39,3 +39,4 @@ notebooks/1801_001.int
 notebooks/nmeadata-*.txt
 notebooks/MI18MHDR.btl
 notebooks/56001001.p2022
+tests/**/*cc_report.html
