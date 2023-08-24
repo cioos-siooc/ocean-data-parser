@@ -1,6 +1,17 @@
 {#-
     This file was automatically generated - do not edit
   -#}
+  <style>
+    .md-footer-meta__inner {
+        flex-wrap: wrap-reverse;
+    }
+
+    .md-footer-meta__inner img {
+        width: 300px;
+        height: 35px;
+        margin-left: 40px;
+    }
+  </style>
   <footer class="md-footer">
     {% if "navigation.footer" in features %}
       {% if page.previous_page or page.next_page %}
@@ -47,10 +58,6 @@
     {% endif %}
     <div class="md-footer-meta md-typeset">
       <div class="md-footer-meta__inner md-grid">
-        <!-- <div class="md-footer-logo-copyright">
-            <img src="{{ 'images/cioos_website_top_banner_en.png' | url }}" alt="CIOOS">
-            {% include "partials/copyright.html" %}
-        </div> -->
         <img src="{{ 'images/cioos_website_top_banner_en.png' | url }}" alt="CIOOS">
         {% include "partials/copyright.html" %}
         {% if config.extra.social %}
