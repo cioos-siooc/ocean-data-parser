@@ -101,6 +101,12 @@ nav:
         - star_oddi: user_guide/parsers/star-oddi.md
         - sunburst: user_guide/parsers/sunburst.md
         - van_essen_instruments: user_guide/parsers/van-essen-intruments.md
+    - vocabularies: 
+        - amundsen: user_guide/vocabularies/amundsen-int.md
+        - dfo.odf: user_guide/vocabularies/dfo-odf.md
+        - dfo.ios.shell: user_guide/vocabularies/dfo-ios-shell.md
+        - dfo.nafc.pfile: user_guide/vocabularies/dfo-nafc-p-files.md
+        - seabird: user_guide/vocabularies/seabird.md
   # - Metadata: # TODO 
   #   - CF: metadata/cf.md
   #   - NERC: metadata/nerc.md
@@ -110,7 +116,7 @@ nav:
     - DFO BIO ODF example: notebooks/dfo_bio_odf_parser_example.ipynb
     - DFO BIO NAFC Pfiles example: notebooks/dfo_nafc_p_file_parser_example.ipynb
     - NMEA example: notebooks/nmea_parser_example.ipynb
-    # - Seabird CNV and BTL files example: notebooks/seabird_cnv_and_btl_parser_example.ipynb
+    - Seabird CNV and BTL files example: notebooks/seabird_cnv_and_btl_parser_example.ipynb
 
 
 extra:
