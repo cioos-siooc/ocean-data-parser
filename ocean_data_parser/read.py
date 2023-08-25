@@ -96,9 +96,9 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
     return parser
 
 
-def load_parser(parser: str):
+def import_parser(parser: str):
     read_module, filetype = parser.rsplit(".", 1)
-    logger.info("Import module: ocean_data_parser.parses.%s", read_module)
+    logger.info("Import module: ocean_data_parser.parsers.%s", read_module)
     mod = import_module(f"ocean_data_parser.parsers.{read_module}")
     return getattr(mod, filetype)
 

@@ -230,7 +230,7 @@ class BatchConversion:
         logger.info("Load parser={}", self.config.get("parser", "None"))
         if not self.config.get("parser"):
             return None
-        return read.load_parser(self.config["parser"])
+        return read.import_parser(self.config["parser"])
 
     def _convert(self, files: list) -> list:
         # Load parser and generate inputs to conversion scripts
