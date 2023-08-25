@@ -143,8 +143,6 @@ def int_format(
             file,
             sep=r"\s+",
             names=column_names,
-            # parse_dates=parse_dates,
-            # date_parser=date_parser,
         )
 
         # Sort column attributes

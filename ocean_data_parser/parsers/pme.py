@@ -113,7 +113,7 @@ def minidot_txt(
         # Read the data with pandas
         ds = pd.read_csv(
             f,
-            converters={0: lambda x: pd.to_datetime(x, unit="s", utc=True)},
+            converters={0: lambda x: pd.Timestamp(int(x), unit="s", tz="UTC")},
             **read_csv_kwargs,
         ).to_xarray()
 
@@ -160,7 +160,7 @@ def minidot_txt(
         ds = ds.rename_vars(vars_rename)
     ds.attrs[
         "history"
-    ] += f"\n{datetime.now().isoformat()} Rename variables: {vars_rename}"
+    ] += f"\n{pd.Timestamp.now().isoformat()} Rename variables: {vars_rename}"
 
     ds = standardize_dataset(ds)
     return ds
