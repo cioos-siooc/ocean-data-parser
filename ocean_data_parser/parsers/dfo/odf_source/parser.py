@@ -259,8 +259,7 @@ def read(filename, encoding_format="Windows-1252"):
             na_values={
                 key: att.pop("null_value") for key, att in variable_attributes.items()
             },
-            date_parser=_convert_odf_time,
-            parse_dates=time_columns,
+            converters={var: _convert_odf_time for var in time_columns},
             encoding=encoding_format,
         )
 
