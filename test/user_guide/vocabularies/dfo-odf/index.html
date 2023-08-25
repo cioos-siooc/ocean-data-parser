@@ -1,0 +1,5886 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://cioos-siooc.github.io/ocean-data-parser/main/user_guide/vocabularies/dfo-odf/">
+      
+      
+        <link rel="prev" href="../amundsen-int/">
+      
+      
+        <link rel="next" href="../dfo-ios-shell/">
+      
+      <link rel="icon" href="../../../images/logo.svg">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
+    
+    
+      
+        <title>dfo.odf - Ocean Data Parser</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.26e3688c.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ecc896b0.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  <script
+  defer
+  data-domain="cioos-siooc.github.io/ocean-data-parser"
+  src="https://plausible.server.hakai.app/js/script.js"
+></script>
+
+<script>
+  window.plausible = window.plausible || function () { (window.plausible.q = window.plausible.q || []).push(arguments) };
+
+  /* Register event handlers after documented loaded */
+  document.addEventListener("DOMContentLoaded", function () {
+    /* Set up search tracking */
+    if (document.forms.search) {
+      var query = document.forms.search.query;
+      query.addEventListener("blur", function() {
+        if (this.value) plausible("Search", { props: { search_term: this.value } });
+      })
+    }
+
+    /* Set up feedback, i.e. "Was this page helpful?" */
+    document$.subscribe(function () {
+      var feedback = document.forms.feedback;
+      if (typeof feedback === "undefined") return;
+
+      /* Send feedback to Plausible */
+      for (var button of feedback.querySelectorAll("[type=submit]")) {
+        button.addEventListener("click", function (ev) {
+          ev.preventDefault();
+
+          var page = document.location.pathname;
+          var value = this.getAttribute("data-md-value");
+          console.log("[feedback] User clicked", { value });
+          plausible(`Feedback: ${value}`);
+
+          /* Disable form and show note, if given */
+          feedback.firstElementChild.disabled = true;
+          var note = feedback.querySelector(".md-feedback__note [data-md-value='" + value + "']");
+          if (note) note.hidden = false;
+        })
+
+        /* Show feedback */
+        feedback.hidden = false;
+      }
+    });
+  });
+</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Ocean Data Parser" class="md-header__button md-logo" aria-label="Ocean Data Parser" data-md-component="logo">
+      
+  <img src="../../../images/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Ocean Data Parser
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              dfo.odf
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+            
+              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+            
+              <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_1" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+        </form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/cioos-siooc/ocean-data-parser" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ocean-data-parser
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../.." class="md-tabs__link">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../get_started/installation/" class="md-tabs__link">
+        Get Started
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../" class="md-tabs__link md-tabs__link--active">
+        User Guide
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../notebooks/amundsen_int_parser_example/" class="md-tabs__link">
+        Example Notebooks
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Ocean Data Parser" class="md-nav__button md-logo" aria-label="Ocean Data Parser" data-md-component="logo">
+      
+  <img src="../../../images/logo.svg" alt="logo">
+
+    </a>
+    Ocean Data Parser
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/cioos-siooc/ocean-data-parser" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ocean-data-parser
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          Get Started
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Get Started
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../get_started/installation/" class="md-nav__link">
+        Installation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../get_started/how-to/" class="md-nav__link">
+        How to
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../get_started/development/" class="md-nav__link">
+        Development
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../get_started/contributions/" class="md-nav__link">
+        Contributions
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          User Guide
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          User Guide
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        main
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../odpy/" class="md-nav__link">
+        odpy (cli)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../read/" class="md-nav__link">
+        ocean_data_parser.read
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+          ocean_data_parser.parsers
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          ocean_data_parser.parsers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../parsers/how-to/" class="md-nav__link">
+        How to
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../parsers/amundsen/" class="md-nav__link">
+        amundsen
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4_3" id="__nav_3_4_3_label" tabindex="0">
+          dfo
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_4_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_4_3">
+          <span class="md-nav__icon md-icon"></span>
+          dfo
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../parsers/dfo/odf/" class="md-nav__link">
+        odf
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../parsers/dfo/ios/" class="md-nav__link">
+        ios
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../parsers/dfo/nafc/" class="md-nav__link">
+        nafc
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../parsers/electricblue/" class="md-nav__link">
+        electricblue
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../parsers/nmea/" class="md-nav__link">
+        nmea
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../parsers/onset/" class="md-nav__link">
+        onset
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../parsers/pme/" class="md-nav__link">
+        pme
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../parsers/rbr/" class="md-nav__link">
+        rbr
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../parsers/seabird/" class="md-nav__link">
+        seabird
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../parsers/star-oddi/" class="md-nav__link">
+        star_oddi
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../parsers/sunburst/" class="md-nav__link">
+        sunburst
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../parsers/van-essen-intruments/" class="md-nav__link">
+        van_essen_instruments
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+          vocabularies
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3_5">
+          <span class="md-nav__icon md-icon"></span>
+          vocabularies
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../amundsen-int/" class="md-nav__link">
+        amundsen
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        dfo.odf
+      </a>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dfo-ios-shell/" class="md-nav__link">
+        dfo.ios.shell
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dfo-nafc-p-files/" class="md-nav__link">
+        dfo.nafc.pfile
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../seabird/" class="md-nav__link">
+        seabird
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Example Notebooks
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Example Notebooks
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notebooks/amundsen_int_parser_example/" class="md-nav__link">
+        Amundsen INT example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notebooks/dfo_bio_odf_parser_example/" class="md-nav__link">
+        DFO BIO ODF example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notebooks/dfo_nafc_p_file_parser_example/" class="md-nav__link">
+        DFO BIO NAFC Pfiles example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notebooks/nmea_parser_example/" class="md-nav__link">
+        NMEA example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notebooks/seabird_cnv_and_btl_parser_example/" class="md-nav__link">
+        Seabird CNV and BTL files example
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+  <h1>dfo.odf</h1>
+
+<table>
+<thead>
+<tr>
+<th align="left">Vocabulary</th>
+<th align="left">name</th>
+<th align="left">Users</th>
+<th align="left">accepted_units</th>
+<th align="left">accepted_scale</th>
+<th align="left">accepted_instruments</th>
+<th align="left">calibration_review</th>
+<th align="left">apply_function</th>
+<th align="left">variable_name</th>
+<th align="left">long_name</th>
+<th align="left">units</th>
+<th align="left">instrument</th>
+<th align="left">scale</th>
+<th align="left">standard_name</th>
+<th align="left">sdn_parameter_urn</th>
+<th align="left">sdn_parameter_name</th>
+<th align="left">sdn_uom_urn</th>
+<th align="left">sdn_uom_name</th>
+<th align="left">definition</th>
+<th align="left">convention</th>
+<th align="left">legacy_gf3_code</th>
+<th align="left">SDN:P01::Alternative Name</th>
+<th align="left">comments</th>
+<th align="left">coverage_content_type</th>
+<th align="left">ioos_category</th>
+<th align="left">seabird_term</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">BIO</td>
+<td align="left">COND</td>
+<td align="left">BIO</td>
+<td align="left"><code>mmHo</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">COND</td>
+<td align="left">Conductance</td>
+<td align="left">mS</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Electrical Conductance</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">COND</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Conductivity</td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">CNTR</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>^CNTR_|^Counter|^scan number|^CNTR$</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">ScanNumber</td>
+<td align="left">Scan Number</td>
+<td align="left">1</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::UUUU</td>
+<td align="left">Dimensionless</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CNTR</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">auxiliaryInformation</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">CNTR</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>^SNCNTR_|Scans per Bin</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">RecPerBin</td>
+<td align="left">Number of scans per bin</td>
+<td align="left">1</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::UUUU</td>
+<td align="left">Dimensionless</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CNTR</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">auxiliaryInformation</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">SNCN</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>^Scan Counter</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">RecPerBin</td>
+<td align="left">Number of scans per bin</td>
+<td align="left">1</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::UUUU</td>
+<td align="left">Dimensionless</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CNTR</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">auxiliaryInformation</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">SNCN</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>^SNCNTR_|Scans per Bin</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">RecPerBin</td>
+<td align="left">Number of scans per bin</td>
+<td align="left">1</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::UUUU</td>
+<td align="left">Dimensionless</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CNTR</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">auxiliaryInformation</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">SNCN</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">RecPerBin</td>
+<td align="left">Number of scans per bin</td>
+<td align="left">1</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::UUUU</td>
+<td align="left">Dimensionless</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CNTR</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">auxiliaryInformation</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">CRAT</td>
+<td align="left"></td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>CTD|STD|GUILDLINE|GUILDLN\.*|SBE\s*19|SBE\s*9|SBE\s*37|SBE\s*25|Microcat|Maestro|Concerto|XR\-*620|XR\-*420</code></td>
+<td align="left"></td>
+<td align="left"><code>42.814*x/10</code></td>
+<td align="left">CNDCST01</td>
+<td align="left">Electrical Conductivity</td>
+<td align="left">S/m</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_electrical_conductivity</td>
+<td align="left">SDN:P01::CNDCST01</td>
+<td align="left">Electrical conductivity of the water body by CTD</td>
+<td align="left">SDN:P06::UECA</td>
+<td align="left">Siemens per metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CNDC</td>
+<td align="left">CTDCond</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Conductivity</td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">CRAT</td>
+<td align="left"></td>
+<td align="left"><code>dimensionless|none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CRAT_XX</td>
+<td align="left">Conductivity Ratio</td>
+<td align="left">1</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::UUUU</td>
+<td align="left">Dimensionless</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CRAT</td>
+<td align="left"></td>
+<td align="left">Conductivity Ratio was calculated by using the following equation: CRAT = Conductivity [S/m] * 10.0 / 42.814</td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left">Conductivity</td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">FLOR</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>mg/m^3|mg/m**3|milligram per metre cube|ug/L|ug/l|none</code></td>
+<td align="left"></td>
+<td align="left"><code>^FC_</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CPHLPR01</td>
+<td align="left">Fluorescence, Chelsea Aqua</td>
+<td align="left">mg/m^3</td>
+<td align="left">Chelsea Technologies Group Aquatracka III fluorometer</td>
+<td align="left"></td>
+<td align="left">mass_concentration_of_chlorophyll_in_sea_water</td>
+<td align="left">SDN:P01::CPHLPR01</td>
+<td align="left">Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate &gt;unknown phase] by in-situ chlorophyll fluorometer</td>
+<td align="left">SDN:P06::UMMC</td>
+<td align="left">Milligrams per cubic metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">FLOR</td>
+<td align="left">chl-a_water_ISfluor</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">FLOR</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>mg/m^3|mg/m**3|milligram per metre cube|ug/L|ug/l|none</code></td>
+<td align="left"></td>
+<td align="left"><code>^FCUVA_</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CDOMZZ01</td>
+<td align="left">Concentration of coloured dissolved organic matter {CDOM Gelbstoff} per unit volume of the water body [dissolved plus reactive particulate phase] by fluorometry</td>
+<td align="left">mg/m^3</td>
+<td align="left">Chelsea Technologies Group UV Aquatracka fluorometer</td>
+<td align="left"></td>
+<td align="left">concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate</td>
+<td align="left">SDN:P01::CDOMZZ01</td>
+<td align="left">Concentration of coloured dissolved organic matter {CDOM Gelbstoff} per unit volume of the water body [dissolved plus reactive particulate phase] by fluorometry</td>
+<td align="left">SDN:P06::UMMC</td>
+<td align="left">Milligrams per cubic metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">FLOR</td>
+<td align="left">CDOM_fluor</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Colored Dissolved Organic Matter</td>
+<td align="left">Fluorometer, Chelsea UV Aquatracka</td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">FLOR</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>mg/m^3|mg/m**3|milligram per metre cube|ug/L|ug/l|none</code></td>
+<td align="left"></td>
+<td align="left"><code>^FECO_</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CPHLPR01</td>
+<td align="left">Fluorometer, WET Labs ECO-AFL/FL</td>
+<td align="left">mg/m^3</td>
+<td align="left">Chelsea Technologies Group Aquatracka III fluorometer</td>
+<td align="left"></td>
+<td align="left">mass_concentration_of_chlorophyll_in_sea_water</td>
+<td align="left">SDN:P01::CPHLPR01</td>
+<td align="left">Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate &gt;unknown phase] by in-situ chlorophyll fluorometer</td>
+<td align="left">SDN:P06::UMMC</td>
+<td align="left">Milligrams per cubic metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">FLOR</td>
+<td align="left">chl-a_water_ISfluor</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">FLOR</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>mg/m^3|mg/m**3|milligram per metre cube|ug/L|ug/l|none</code></td>
+<td align="left"></td>
+<td align="left"><code>^FS_</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CPHLPR01</td>
+<td align="left">Fluorescence, SeaTech</td>
+<td align="left">mg/m^3</td>
+<td align="left">Seapoint Chlorophyll Fluorometer</td>
+<td align="left"></td>
+<td align="left">mass_concentration_of_chlorophyll_in_sea_water</td>
+<td align="left">SDN:P01::CPHLPR01</td>
+<td align="left">Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate &gt;unknown phase] by in-situ chlorophyll fluorometer</td>
+<td align="left">SDN:P06::UMMC</td>
+<td align="left">Milligrams per cubic metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">FLOR</td>
+<td align="left">chl-a_water_ISfluor</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">FLOR</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>mg/m^3|mg/m**3|milligram per metre cube|ug/L|ug/l|none</code></td>
+<td align="left"></td>
+<td align="left"><code>^FSP_</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CPHLPR01</td>
+<td align="left">Fluorescence, Seapoint</td>
+<td align="left">mg/m^3</td>
+<td align="left">Seapoint Chlorophyll Fluorometer</td>
+<td align="left"></td>
+<td align="left">mass_concentration_of_chlorophyll_in_sea_water</td>
+<td align="left">SDN:P01::CPHLPR01</td>
+<td align="left">Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate &gt;unknown phase] by in-situ chlorophyll fluorometer</td>
+<td align="left">SDN:P06::UMMC</td>
+<td align="left">Milligrams per cubic metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">FLOR</td>
+<td align="left">chl-a_water_ISfluor</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">FLOR</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>mg/m^3|mg/m**3|milligram per metre cube|ug/L|ug/l|none</code></td>
+<td align="left"></td>
+<td align="left"><code>^FCMINI</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CPHLPR01</td>
+<td align="left">Fluorescence, Seapoint</td>
+<td align="left">mg/m^3</td>
+<td align="left">Chelsea Mini Chl Con</td>
+<td align="left"></td>
+<td align="left">mass_concentration_of_chlorophyll_in_sea_water</td>
+<td align="left">SDN:P01::CPHLPR01</td>
+<td align="left">Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate &gt;unknown phase] by in-situ chlorophyll fluorometer</td>
+<td align="left">SDN:P06::UMMC</td>
+<td align="left">Milligrams per cubic metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">FLOR</td>
+<td align="left">chl-a_water_ISfluor</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">FLOR</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>mg/m^3|mg/m**3|milligram per metre cube|ug/L|ug/l|none</code></td>
+<td align="left"></td>
+<td align="left"><code>^FSPUV_</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CDOMZZ01</td>
+<td align="left">Fluorescence, Seapoint Ultraviolet</td>
+<td align="left">mg/m^3</td>
+<td align="left">Seapoint Ultraviolet Fluorometer</td>
+<td align="left"></td>
+<td align="left">concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate</td>
+<td align="left">SDN:P01::CDOMZZ01</td>
+<td align="left">Concentration of coloured dissolved organic matter {CDOM Gelbstoff} per unit volume of the water body [dissolved plus reactive particulate phase] by fluorometry</td>
+<td align="left">SDN:P06::UMMC</td>
+<td align="left">Milligrams per cubic metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">FLOR</td>
+<td align="left">CDOM_fluor</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Colored Dissolved Organic Matter</td>
+<td align="left">Fluorometer, Seapoint Ultraviolet</td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">FLOR</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>mg/m^3|mg/m**3|milligram per metre cube|ug/L|ug/l|none</code></td>
+<td align="left"></td>
+<td align="left"><code>^FWETLABS_|^FWGREEN</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CPHLPR01</td>
+<td align="left">Fluorescence, WET Labs</td>
+<td align="left">mg/m^3</td>
+<td align="left">WETLabs WETStar fluorometer</td>
+<td align="left"></td>
+<td align="left">mass_concentration_of_chlorophyll_in_sea_water</td>
+<td align="left">SDN:P01::CPHLPR01</td>
+<td align="left">Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate &gt;unknown phase] by in-situ chlorophyll fluorometer</td>
+<td align="left">SDN:P06::UMMC</td>
+<td align="left">Milligrams per cubic metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">FLOR</td>
+<td align="left">chl-a_water_ISfluor</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">FLOR</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>mg/m^3|mg/m**3|milligram per metre cube|ug/L|ug/l|none</code></td>
+<td align="left"></td>
+<td align="left"><code>^WETCDOM_</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CDOMZZ01</td>
+<td align="left">Concentration of coloured dissolved organic matter {CDOM Gelbstoff} per unit volume of the water body [dissolved plus reactive particulate phase] by fluorometry</td>
+<td align="left">mg/m^3</td>
+<td align="left">WETLabs CDOM fluorometer</td>
+<td align="left"></td>
+<td align="left">concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate</td>
+<td align="left">SDN:P01::CDOMZZ01</td>
+<td align="left">Concentration of coloured dissolved organic matter {CDOM Gelbstoff} per unit volume of the water body [dissolved plus reactive particulate phase] by fluorometry</td>
+<td align="left">SDN:P06::UMMC</td>
+<td align="left">Milligrams per cubic metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">FLOR</td>
+<td align="left">CDOM_fluor</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Colored Dissolved Organic Matter</td>
+<td align="left">Fluorescence, WET Labs CDOM</td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">FLOR</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>mg/m^3|mg/m**3|milligram per metre cube|ug/L|ug/l|none</code></td>
+<td align="left"></td>
+<td align="left"><code>fluoresdence|fluo|Flourescence|^FLOR(_|$)|Chlorophyl|OVFLOR_1</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CPHLPR01</td>
+<td align="left">Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate &gt;unknown phase] by in-situ chlorophyll fluorometer</td>
+<td align="left">mg/m^3</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">mass_concentration_of_chlorophyll_in_sea_water</td>
+<td align="left">SDN:P01::CPHLPR01</td>
+<td align="left">Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate &gt;unknown phase] by in-situ chlorophyll fluorometer</td>
+<td align="left">SDN:P06::UMMC</td>
+<td align="left">Milligrams per cubic metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">FLOR</td>
+<td align="left">chl-a_water_ISfluor</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">IDEN</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>scan number|sample number</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">ScanNumber</td>
+<td align="left">Scan Number</td>
+<td align="left">1</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::UUUU</td>
+<td align="left">Dimensionless</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">IDEN</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">auxiliaryInformation</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">PSAR</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>ueinsteins/s/m^2|micromole per metre square per second|micromoles/m^2/sec|umol photons/m2/s|none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">IRRDUV01</td>
+<td align="left">Photosynthetically Active Radiation</td>
+<td align="left">uEinsteins/s/m^2</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">downwelling_photosynthetic_photon_spherical_irradiance_in_sea_water</td>
+<td align="left">SDN:P01::IRRDUV01</td>
+<td align="left">Downwelling vector irradiance as photons of electromagnetic radiation (PAR wavelengths) in the water body by cosine-collector radiometer</td>
+<td align="left">SDN:P06::UMES</td>
+<td align="left">MicroEinsteins per square metre per second</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">PSAR</td>
+<td align="left">SubsurVPAR</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Optical Properties</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">SPAR</td>
+<td align="left">BIO,MEDS</td>
+<td align="left"><code>ueinsteins/s/m^2|umol photons/m2/s|umol photons/m2/s, logarithmic|none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">IRRDSV01</td>
+<td align="left">Surface Photosynthetically Active Radiation</td>
+<td align="left">uEinsteins/s/m^2</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">surface_downwelling_photosynthetic_photon_spherical_irradiance_in_sea_water</td>
+<td align="left">SDN:P01::IRRDSV01</td>
+<td align="left">Downwelling vector irradiance as photons of electromagnetic radiation (PAR wavelengths) in the atmosphere by cosine-collector radiometer</td>
+<td align="left">SDN:P06::UMES</td>
+<td align="left">MicroEinsteins per square metre per second</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SPAR</td>
+<td align="left">SurfVPAR</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Optical Properties</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">ATBE</td>
+<td align="left"></td>
+<td align="left"><code>1/m</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">ATTNZS01</td>
+<td align="left">Attenuation (red light wavelength) per unit length of the water body by transmissometer</td>
+<td align="left">1/m</td>
+<td align="left">WETLabs C-Star transmissometer</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P01::ATTNZR01</td>
+<td align="left">Attenuation (red light wavelength) per unit length of the water body by transmissometer</td>
+<td align="left">SDN:P06::UPRM</td>
+<td align="left">per metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">ATBE</td>
+<td align="left">Atten_red</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Optical Properties</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left"></td>
+<td align="left"><code>1/m</code></td>
+<td align="left"></td>
+<td align="left"><code>CStarAt0</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">ATTNZS01</td>
+<td align="left">Attenuation (red light wavelength) per unit length of the water body by transmissometer</td>
+<td align="left">1/m</td>
+<td align="left">WETLabs C-Star transmissometer</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P01::ATTNZR01</td>
+<td align="left">Attenuation (red light wavelength) per unit length of the water body by transmissometer</td>
+<td align="left">SDN:P06::UPRM</td>
+<td align="left">per metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">ATBE</td>
+<td align="left">Atten_red</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Optical Properties</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left"></td>
+<td align="left"><code>%</code></td>
+<td align="left"></td>
+<td align="left"><code>CStarTr0</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">OPTCPS01</td>
+<td align="left">Transmittance (red light wavelength) per unit length of the water body</td>
+<td align="left">%</td>
+<td align="left">WET Labs C-Star</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P01::OPTCPS01</td>
+<td align="left">Transmittance (red light wavelength) per unit length of the water body</td>
+<td align="left">SDN:P06::UPCT</td>
+<td align="left">Percent</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TRAN</td>
+<td align="left">TransmRedLight</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Optical Properties</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left"></td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>oxsatML/L</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">DOconc_at_sat</td>
+<td align="left">Oxygen Concentration at Saturation</td>
+<td align="left">mL/L</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left"></td>
+<td align="left"><code>umol photons/m2/s</code></td>
+<td align="left"></td>
+<td align="left"><code>par/log</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">IRRDUV01</td>
+<td align="left">Photosynthetically Active Radiation</td>
+<td align="left">uEinsteins/s/m^2</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">downwelling_photosynthetic_photon_spherical_irradiance_in_sea_water</td>
+<td align="left">SDN:P01::IRRDUV01</td>
+<td align="left">Downwelling vector irradiance as photons of electromagnetic radiation (PAR wavelengths) in the water body by cosine-collector radiometer</td>
+<td align="left">SDN:P06::UMES</td>
+<td align="left">MicroEinsteins per square metre per second</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">PSAR</td>
+<td align="left">SubsurVPAR</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Optical Properties</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left"></td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>par|PSAR_01</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">IRRDUV01</td>
+<td align="left">Photosynthetically Active Radiation</td>
+<td align="left">uEinsteins/s/m^2</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">downwelling_photosynthetic_photon_spherical_irradiance_in_sea_water</td>
+<td align="left">SDN:P01::IRRDUV01</td>
+<td align="left">Downwelling vector irradiance as photons of electromagnetic radiation (PAR wavelengths) in the water body by cosine-collector radiometer</td>
+<td align="left">SDN:P06::UMES</td>
+<td align="left">MicroEinsteins per square metre per second</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">PSAR</td>
+<td align="left">SubsurVPAR</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Optical Properties</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left">BIO,MEDS</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>spar</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">IRRDSV01</td>
+<td align="left">Surface Photosynthetically Active Radiation</td>
+<td align="left">uEinsteins/s/m^2</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">surface_downwelling_photosynthetic_photon_spherical_irradiance_in_sea_water</td>
+<td align="left">SDN:P01::IRRDSV01</td>
+<td align="left">Downwelling vector irradiance as photons of electromagnetic radiation (PAR wavelengths) in the atmosphere by cosine-collector radiometer</td>
+<td align="left">SDN:P06::UMES</td>
+<td align="left">MicroEinsteins per square metre per second</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SPAR</td>
+<td align="left">SurfVPAR</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Optical Properties</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left">BIO</td>
+<td align="left"><code>m^-1/sr</code></td>
+<td align="left"></td>
+<td align="left"><code>turbWETbb0</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">VSCTXX01</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left">m^-1/sr</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">volume_scattering_function_of_radiative_flux_in_sea_water</td>
+<td align="left">SDN:P01::VSCTXXXX</td>
+<td align="left">Volume scattering of light (unspecified wavelengths) by the water body</td>
+<td align="left">SDN:P06::PMSR</td>
+<td align="left">per metre per steradian</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left"></td>
+<td align="left">TURW</td>
+<td align="left">Light_scattering</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Total Suspended Matter</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>wetStar|Flor</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CPHLPR01</td>
+<td align="left">Fluorescence, WET Labs</td>
+<td align="left">mg/m^3</td>
+<td align="left">WETLabs WETStar fluorometer</td>
+<td align="left"></td>
+<td align="left">mass_concentration_of_chlorophyll_in_sea_water</td>
+<td align="left">SDN:P01::CPHLPR01</td>
+<td align="left">Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate &gt;unknown phase] by in-situ chlorophyll fluorometer</td>
+<td align="left">SDN:P06::UMMC</td>
+<td align="left">Milligrams per cubic metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">FLOR</td>
+<td align="left">chl-a_water_ISfluor</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>FS_</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CPHLPR01</td>
+<td align="left">Fluorescence, Sea Tech</td>
+<td align="left">mg/m^3</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">mass_concentration_of_chlorophyll_in_sea_water</td>
+<td align="left">SDN:P01::CPHLPR01</td>
+<td align="left">Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate &gt;unknown phase] by in-situ chlorophyll fluorometer</td>
+<td align="left">SDN:P06::UMMC</td>
+<td align="left">Milligrams per cubic metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">FLOR</td>
+<td align="left">chl-a_water_ISfluor</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left"></td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>upoly\d+</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>oxMm/kg</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">DOXMZZ01</td>
+<td align="left">Concentration of oxygen {O2 CAS 7782-44-7} per unit mass of the water body [dissolved plus reactive particulate phase]</td>
+<td align="left">umol/kg</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">moles_of_oxygen_per_unit_mass_in_sea_water</td>
+<td align="left">SDN:P01::DOXMZZ01</td>
+<td align="left">Concentration of oxygen {O2 CAS 7782-44-7} per unit mass of the water body [dissolved plus reactive particulate phase]</td>
+<td align="left">SDN:P06::KGUM</td>
+<td align="left">Micromoles per kilogram</td>
+<td align="left">Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase] by in-situ sensor</td>
+<td align="left"></td>
+<td align="left">DOXY</td>
+<td align="left">DissO2_Mass</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Dissolved O2</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left"></td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>SEATM|SeaTurbMtr</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TURBFTUXX</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left">FTU</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_turbidity</td>
+<td align="left">SDN:P01::TURBXXXX</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left">SDN:P06::UFNU</td>
+<td align="left">Formazin Nephelometric Units</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left"></td>
+<td align="left">TURB</td>
+<td align="left">Turbidity</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Total Suspended Matter</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left"></td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>oxTC</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">OXYTAAOP</td>
+<td align="left">Temperature of oxygen determination by optode</td>
+<td align="left">degree_celsius</td>
+<td align="left">Beckman/YSI</td>
+<td align="left"></td>
+<td align="left">temperature_of_sensor_for_oxygen_in_sea_water</td>
+<td align="left">SDN:P01::OXYTAAOP</td>
+<td align="left">Temperature of oxygen determination by optode</td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">O2_temp</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">OBKS</td>
+<td align="left"></td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>SEATM</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TURBFTUXX</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left">FTU</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_turbidity</td>
+<td align="left">SDN:P01::TURBXXXX</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left">SDN:P06::UFNU</td>
+<td align="left">Formazin Nephelometric Units</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left"></td>
+<td align="left">TURB</td>
+<td align="left">Turbidity</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Total Suspended Matter</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>none|kg/m^3</code></td>
+<td align="left"></td>
+<td align="left"><code>sigma-t00|Sigma-T</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SIGTEQSTXX</td>
+<td align="left">Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm</td>
+<td align="left">kg/m^3</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_sigma_t</td>
+<td align="left">SDN:P01::SIGTEQST</td>
+<td align="left">Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm</td>
+<td align="left">SDN:P06::UKMC</td>
+<td align="left">Kilograms per cubic metre</td>
+<td align="left">Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm</td>
+<td align="left"></td>
+<td align="left">SIGT</td>
+<td align="left">Sigma-T</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left">BIO,MEDS</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>^alt$|ALT_01</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">AHSFZZ01</td>
+<td align="left">Height (spatial coordinate) relative to bed surface in the water body</td>
+<td align="left">m</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">height_above_sea_floor</td>
+<td align="left">SDN:P01::AHSFZZ01</td>
+<td align="left">Height (spatial coordinate) relative to bed surface in the water body</td>
+<td align="left">SDN:P06::ULAA</td>
+<td align="left">Metres</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">ALTB</td>
+<td align="left">HeightAboveBed</td>
+<td align="left"></td>
+<td align="left">coordinate</td>
+<td align="left">Location</td>
+<td align="left">Altimeter</td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">TRAN</td>
+<td align="left"></td>
+<td align="left"><code>%</code></td>
+<td align="left"></td>
+<td align="left"><code>xmiss|Light Transmission|Transmissivity|OVTRAN_1</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">OPTCPS01</td>
+<td align="left">Transmittance (red light wavelength) per unit length of the water body</td>
+<td align="left">%</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P01::OPTCPS01</td>
+<td align="left">Transmittance (red light wavelength) per unit length of the water body</td>
+<td align="left">SDN:P06::UPCT</td>
+<td align="left">Percent</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TRAN</td>
+<td align="left">TransmRedLight</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Optical Properties</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left"></td>
+<td align="left"><code>%|none</code></td>
+<td align="left"></td>
+<td align="left"><code>xmiss</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">OPTCPS01</td>
+<td align="left">Transmittance (red light wavelength) per unit length of the water body</td>
+<td align="left">%</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P01::OPTCPS01</td>
+<td align="left">Transmittance (red light wavelength) per unit length of the water body</td>
+<td align="left">SDN:P06::UPCT</td>
+<td align="left">Percent</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TRAN</td>
+<td align="left">TransmRedLight</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Optical Properties</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left">BIO</td>
+<td align="left"><code>VDC|volts|none</code></td>
+<td align="left"></td>
+<td align="left"><code>SBEOXY Voltage|Oxygen Voltage (pri|sec)|AMT DO (volts)|v\d+</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">OXYOCPVLXX</td>
+<td align="left">Raw signal (voltage) of instrument output by oxygen sensor</td>
+<td align="left">volts</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P01::OXYOCPVL</td>
+<td align="left">Raw signal (voltage) of instrument output by oxygen sensor</td>
+<td align="left">SDN:P06::UVLT</td>
+<td align="left">Volts</td>
+<td align="left">Raw signal (voltage) of instrument output by oxygen sensor</td>
+<td align="left"></td>
+<td align="left">OXYV</td>
+<td align="left">Oxy_output_V</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left">BIO</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>^t0$</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TEMPPR01</td>
+<td align="left">Temperature of the water body</td>
+<td align="left">degree Celsius</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_temperature</td>
+<td align="left">SDN:P01::TEMPPR01</td>
+<td align="left">Temperature of the water body</td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left">Temperature of the water body</td>
+<td align="left"></td>
+<td align="left">TEMP</td>
+<td align="left">Temp</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left">BIO</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>^depS$</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">depth</td>
+<td align="left">Depth (spatial coordinate) relative to water surface in the water body</td>
+<td align="left">meters</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">depth</td>
+<td align="left">SDN:P01::ADEPZZ01</td>
+<td align="left">Depth (spatial coordinate) relative to water surface in the water body</td>
+<td align="left">SDN:P06::ULAA</td>
+<td align="left">Metres</td>
+<td align="left">The distance of a sensor or sampling point below the sea surface</td>
+<td align="left"></td>
+<td align="left">DEPH</td>
+<td align="left">DepBelowSurf</td>
+<td align="left"></td>
+<td align="left">coordinate</td>
+<td align="left">Location</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left">BIO</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>^c0$</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CNDCST01</td>
+<td align="left">Electrical Conductivity</td>
+<td align="left">S/m</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_electrical_conductivity</td>
+<td align="left">SDN:P01::CNDCST01</td>
+<td align="left">Electrical conductivity of the water body by CTD</td>
+<td align="left">SDN:P06::UECA</td>
+<td align="left">Siemens per metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CNDC</td>
+<td align="left">CTDCond</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Conductivity</td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">UNKN</td>
+<td align="left">BIO</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>^potemp$</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">POTMCV01</td>
+<td align="left">Potential temperature of the water body by computation using UNESCO 1983 algorithm</td>
+<td align="left">degree Celsius</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_potential_temperature</td>
+<td align="left">SDN:P01::POTMCV01</td>
+<td align="left">Potential temperature of the water body by computation using UNESCO 1983 algorithm</td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">POTM</td>
+<td align="left">WC_Potemp</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">NONE</td>
+<td align="left"></td>
+<td align="left"><code>none|(none)</code></td>
+<td align="left"></td>
+<td align="left"><code>par</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">IRRDUV01</td>
+<td align="left">Photosynthetically Active Radiation</td>
+<td align="left">uEinsteins/s/m^2</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">downwelling_photosynthetic_photon_spherical_irradiance_in_sea_water</td>
+<td align="left">SDN:P01::IRRDUV01</td>
+<td align="left">Downwelling vector irradiance as photons of electromagnetic radiation (PAR wavelengths) in the water body by cosine-collector radiometer</td>
+<td align="left">SDN:P06::UMES</td>
+<td align="left">MicroEinsteins per square metre per second</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">PSAR</td>
+<td align="left">SubsurVPAR</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Optical Properties</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">BIO</td>
+<td align="left">NONE</td>
+<td align="left"></td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>NONE</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">NONE</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">UNKN</td>
+<td align="left">BIO</td>
+<td align="left"><code>FTU|Formazine Turbidity Unit |none</code></td>
+<td align="left"></td>
+<td align="left"><code>SeaTurbMtr</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TURBFTUXX</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left">FTU</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_turbidity</td>
+<td align="left">SDN:P01::TURBXXXX</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left">SDN:P06::UFNU</td>
+<td align="left">Formazin Nephelometric Units</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left"></td>
+<td align="left">TURB</td>
+<td align="left">Turbidity</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Total Suspended Matter</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">ALKW</td>
+<td align="left">IML</td>
+<td align="left"><code>umol/kg</code></td>
+<td align="left"></td>
+<td align="left"><code>bottle|sample</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">ALKYZZXX</td>
+<td align="left">Total alkalinity per unit volume of the water body</td>
+<td align="left">umol/kg</td>
+<td align="left">bottle</td>
+<td align="left"></td>
+<td align="left">sea_water_alkalinity_expressed_as_mole_equivalent</td>
+<td align="left">SDN:P01::ALKYZZXX</td>
+<td align="left">Total alkalinity per unit volume of the water body</td>
+<td align="left">SDN:P06::KGUM</td>
+<td align="left">Micromoles per kilogram</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">ALKW</td>
+<td align="left">TotAlk</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">ALTB</td>
+<td align="left">BIO,MEDS</td>
+<td align="left"><code>m|metre|metres</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">AHSFZZ01</td>
+<td align="left">Height (spatial coordinate) relative to bed surface in the water body</td>
+<td align="left">m</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">height_above_sea_floor</td>
+<td align="left">SDN:P01::AHSFZZ01</td>
+<td align="left">Height (spatial coordinate) relative to bed surface in the water body</td>
+<td align="left">SDN:P06::ULAA</td>
+<td align="left">Metres</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">ALTB</td>
+<td align="left">HeightAboveBed</td>
+<td align="left"></td>
+<td align="left">coordinate</td>
+<td align="left">Location</td>
+<td align="left">Altimeter</td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">AMON</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>mmol/m^3|millimole per metre cube</code></td>
+<td align="left"></td>
+<td align="left"><code>bottle</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">AMONZZXX</td>
+<td align="left">Concentration of ammonium {NH4+ CAS 14798-03-9} per unit volume of the water body [unknown phase]</td>
+<td align="left">mmol/m^3</td>
+<td align="left">bottle</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P01::AMONZZXX</td>
+<td align="left">Concentration of ammonium {NH4+ CAS 14798-03-9} per unit volume of the water body [unknown phase]</td>
+<td align="left">SDN:P06::MMCM</td>
+<td align="left">Millimoles per cubic metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">AMON</td>
+<td align="left">NH4</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">CDOM</td>
+<td align="left">BIO,MEDS</td>
+<td align="left"><code>mg/m^3</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CDOMZZ01</td>
+<td align="left">Concentration of coloured dissolved organic matter {CDOM Gelbstoff} per unit volume of the water body [dissolved plus reactive particulate phase] by fluorometry</td>
+<td align="left">mg/m^3</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate</td>
+<td align="left">SDN:P01::CDOMZZ01</td>
+<td align="left">Concentration of coloured dissolved organic matter {CDOM Gelbstoff} per unit volume of the water body [dissolved plus reactive particulate phase] by fluorometry</td>
+<td align="left">SDN:P06::UMMC</td>
+<td align="left">Milligrams per cubic metre</td>
+<td align="left">Concentration of coloured dissolved organic matter {CDOM Gelbstoff} per unit volume of the water body [dissolved plus reactive particulate phase] by fluorometry</td>
+<td align="left"></td>
+<td align="left">CDOM</td>
+<td align="left">CDOM_fluor</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">CNDC</td>
+<td align="left"></td>
+<td align="left"><code>S/m|mhos/m|siemens/m</code></td>
+<td align="left"></td>
+<td align="left"><code>CTD|STD|GUILDLINE|GUILDLN\.*|SBE\s*19|SBE\s*9|SBE\s*37|SBE\s*25|Microcat|Maestro|Concerto|XR\-*620|XR\-*420|Electrical Conductivity</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CNDCST01</td>
+<td align="left">Electrical Conductivity</td>
+<td align="left">S/m</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_electrical_conductivity</td>
+<td align="left">SDN:P01::CNDCST01</td>
+<td align="left">Electrical conductivity of the water body by CTD</td>
+<td align="left">SDN:P06::UECA</td>
+<td align="left">Siemens per metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CNDC</td>
+<td align="left">CTDCond</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Conductivity</td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">CNTR</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">ScanNumber</td>
+<td align="left">Scan Number</td>
+<td align="left">1</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::UUUU</td>
+<td align="left">Dimensionless</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CNTR</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">auxiliaryInformation</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">CPHL</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>milligram per metre cube|mg/m^3</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CPHLZZXX</td>
+<td align="left">Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate &gt;unknown phase]</td>
+<td align="left">milligram per metre cube</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">mass_concentration_of_chlorophyll_a_in_sea_water</td>
+<td align="left">SDN:P01::CPHLZZXX</td>
+<td align="left">Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate &gt;unknown phase]</td>
+<td align="left">SDN:P06::UMMC</td>
+<td align="left">Milligrams per cubic metre</td>
+<td align="left">Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate &gt;unknown phase]</td>
+<td align="left"></td>
+<td align="left">CPHL</td>
+<td align="left">Chlorophyll-a</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">CRAT</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>dimensionless</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CRAT_XX</td>
+<td align="left">Conductivity Ratio</td>
+<td align="left">1</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::UUUU</td>
+<td align="left">Dimensionless</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CRAT</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left">Conductivity</td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">DENS</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>kilogram per metre cube|kg/m^3</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">DENSWB01</td>
+<td align="left">Density of the water body by gravimetry</td>
+<td align="left">kilogram per metre cube</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_density</td>
+<td align="left">SDN:P01::DENSWB01</td>
+<td align="left">Density of the water body by gravimetry</td>
+<td align="left">SDN:P06::UKMC</td>
+<td align="left">Kilograms per cubic metre</td>
+<td align="left">Density of the water body by gravimetry</td>
+<td align="left"></td>
+<td align="left">DENS</td>
+<td align="left">WaterDens</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">DEPH</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>metre|metres</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">depth</td>
+<td align="left">Depth (spatial coordinate) relative to water surface in the water body</td>
+<td align="left">meters</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">depth</td>
+<td align="left">SDN:P01::ADEPZZ01</td>
+<td align="left">Depth (spatial coordinate) relative to water surface in the water body</td>
+<td align="left">SDN:P06::ULAA</td>
+<td align="left">Metres</td>
+<td align="left">The distance of a sensor or sampling point below the sea surface</td>
+<td align="left"></td>
+<td align="left">DEPH</td>
+<td align="left">DepBelowSurf</td>
+<td align="left"></td>
+<td align="left">coordinate</td>
+<td align="left">Location</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">DOXY</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>ml/L|millilitre per litre|ml/l</code></td>
+<td align="left"></td>
+<td align="left"><code>bottle|sample</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">DOXYWITX</td>
+<td align="left">Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase] by Winkler titration</td>
+<td align="left">ml/L</td>
+<td align="left">Winkler Titration</td>
+<td align="left"></td>
+<td align="left">volume_fraction_of_oxygen_in_sea_water</td>
+<td align="left">SDN:P01::DOXYWITX</td>
+<td align="left">Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase] by Winkler titration</td>
+<td align="left">SDN:P06::UMLL</td>
+<td align="left">Millilitres per litre</td>
+<td align="left">Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase] by Winkler titration</td>
+<td align="left"></td>
+<td align="left">DOXY</td>
+<td align="left">WC_dissO2_Winkler</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Dissolved O2</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">DOXY</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>ml/L|millilitre per litre|ml/l</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">DOXYZZ01</td>
+<td align="left">Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase] by in-situ sensor</td>
+<td align="left">ml/L</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">volume_fraction_of_oxygen_in_sea_water</td>
+<td align="left">SDN:P01::DOXYZZ01</td>
+<td align="left">Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase] by in-situ sensor</td>
+<td align="left">SDN:P06::UMLL</td>
+<td align="left">Millilitres per litre</td>
+<td align="left">Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase] by in-situ sensor</td>
+<td align="left"></td>
+<td align="left">DOXY</td>
+<td align="left">WC_dissO2_IS</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Dissolved O2</td>
+<td align="left">Oxygen, SBE 43</td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">DPDT</td>
+<td align="left"></td>
+<td align="left"><code>metres/sec|m/s</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">dpdt</td>
+<td align="left">Lowering Rate</td>
+<td align="left">m/s</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">platform_heave_rate_down</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">DPDT</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">auxiliaryInformation</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">FFFF</td>
+<td align="left"></td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">FFFF_XX</td>
+<td align="left">Quality Flag: FFFF</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">status_flag</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">FFFF</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">qualityInformation</td>
+<td align="left">Quality</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">LABT</td>
+<td align="left">IML</td>
+<td align="left"><code>degree_celsius|Degrees C</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Lab Temperature</td>
+<td align="left">degree_celsius</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left">Lab temperature for pH calculation</td>
+<td align="left"></td>
+<td align="left">LABT</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">LATD</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>degrees_north|degree|deg|degrees</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">preciseLat</td>
+<td align="left">Latitude East</td>
+<td align="left">degrees_north</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">latitude</td>
+<td align="left">SDN:P01::ALATZZ01</td>
+<td align="left">Latitude north</td>
+<td align="left">SDN:P06::DEGN</td>
+<td align="left">Degrees north</td>
+<td align="left">Latitude north</td>
+<td align="left"></td>
+<td align="left">LATD</td>
+<td align="left">Lat</td>
+<td align="left"></td>
+<td align="left">coordinate</td>
+<td align="left">Location</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">LOND</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>degrees_east|degree|deg|degrees</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">preciseLon</td>
+<td align="left">Longitude North</td>
+<td align="left">degrees_east</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">longitude</td>
+<td align="left">SDN:P01::ALONZZ01</td>
+<td align="left">Longitude east</td>
+<td align="left">SDN:P06::DEGE</td>
+<td align="left">Degrees east</td>
+<td align="left">Longitude east</td>
+<td align="left"></td>
+<td align="left">LOND</td>
+<td align="left">Lon</td>
+<td align="left"></td>
+<td align="left">coordinate</td>
+<td align="left">Location</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">LPHT</td>
+<td align="left">IML</td>
+<td align="left"><code>Total scale</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">PHMASSXX</td>
+<td align="left">pH (total scale) {pH[T]} of the water body</td>
+<td align="left">Total scale</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_ph_reported_on_total_scale</td>
+<td align="left">SDN:P01::PHMASSXX</td>
+<td align="left">pH (total scale) {pH[T]} of the water body</td>
+<td align="left">SDN:P06::UUPH</td>
+<td align="left">pH units</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">LPHT</td>
+<td align="left">Total_pHmass</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">CO2</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">NTRI</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>mmol/m^3|millimole per metre cube</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">NTRIXXDZ</td>
+<td align="left">Concentration of nitrite {NO2- CAS 14797-65-0} per unit volume of the water body [dissolved plus reactive particulate &lt;unknown phase]</td>
+<td align="left">mmol/m^3</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">mole_concentration_of_nitrite_in_sea_water</td>
+<td align="left">SDN:P01::NTRIXXDZ</td>
+<td align="left">Concentration of nitrite {NO2- CAS 14797-65-0} per unit volume of the water body [dissolved plus reactive particulate &lt;unknown phase]</td>
+<td align="left">SDN:P06::MMCM</td>
+<td align="left">Millimoles per cubic metre</td>
+<td align="left">Concentration of nitrite {NO2- CAS 14797-65-0} per unit volume of the water body [dissolved plus reactive particulate &lt;unknown phase]</td>
+<td align="left"></td>
+<td align="left">NTRI</td>
+<td align="left">NO2_Filt</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Nutrients</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">NUM</td>
+<td align="left"></td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"><code>number of scans averaged</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">RecPerBin</td>
+<td align="left">Number of scans per bin</td>
+<td align="left">1</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::UUUU</td>
+<td align="left">Dimensionless</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CNTR</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">auxiliaryInformation</td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">OCUR</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>uA|microampere|ua</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">OXYCRWuA01</td>
+<td align="left">Raw signal (current) of instrument output by oxygen sensor</td>
+<td align="left">uA</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P01::OXYCRW01</td>
+<td align="left">Raw signal (current) of instrument output by oxygen sensor</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Raw signal (current) of instrument output by oxygen sensor</td>
+<td align="left"></td>
+<td align="left">OCUR</td>
+<td align="left">RawOxyMembCurr</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">OCUR</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>mA|milliampere|ma</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">OXYCRWmA01</td>
+<td align="left">Raw signal (current) of instrument output by oxygen sensor</td>
+<td align="left">mA</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P01::OXYCRW01</td>
+<td align="left">Raw signal (current) of instrument output by oxygen sensor</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Raw signal (current) of instrument output by oxygen sensor</td>
+<td align="left"></td>
+<td align="left">OCUR</td>
+<td align="left">RawOxyMembCurr</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">OSAT</td>
+<td align="left"></td>
+<td align="left"><code>%</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">OXYSZZ01</td>
+<td align="left">Oxygen Saturation</td>
+<td align="left">%</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">fractional_saturation_of_oxygen_in_sea_water</td>
+<td align="left">SDN:P01::OXYSZZ01</td>
+<td align="left">Saturation of oxygen {O2 CAS 7782-44-7} in the water body [dissolved plus reactive particulate phase]</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">OSAT</td>
+<td align="left">O2Sat</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Dissolved O2</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">OXV</td>
+<td align="left"></td>
+<td align="left"><code>volts|V</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">OXYOCPVLXX</td>
+<td align="left">Raw signal (voltage) of instrument output by oxygen sensor</td>
+<td align="left">volts</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P01::OXYOCPVL</td>
+<td align="left">Raw signal (voltage) of instrument output by oxygen sensor</td>
+<td align="left">SDN:P06::UVLT</td>
+<td align="left">Volts</td>
+<td align="left">Raw signal (voltage) of instrument output by oxygen sensor</td>
+<td align="left"></td>
+<td align="left">OXV</td>
+<td align="left">Oxy_output_V</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">OXYV</td>
+<td align="left">BIO</td>
+<td align="left"><code>volts|V</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">OXYOCPVLXX</td>
+<td align="left">Raw signal (voltage) of instrument output by oxygen sensor</td>
+<td align="left">volts</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P01::OXYOCPVL</td>
+<td align="left">Raw signal (voltage) of instrument output by oxygen sensor</td>
+<td align="left">SDN:P06::UVLT</td>
+<td align="left">Volts</td>
+<td align="left">Raw signal (voltage) of instrument output by oxygen sensor</td>
+<td align="left"></td>
+<td align="left">OXYV</td>
+<td align="left">Oxy_output_V</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">PHA</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>mg/m^3</code></td>
+<td align="left"></td>
+<td align="left"><code>bottle|sample</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">PHAEZZXX</td>
+<td align="left">Concentration of phaeopigments {pheopigments} per unit volume of the water body [particulate &gt;unknown phase]</td>
+<td align="left">mg/m^3</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P01::PHAEZZXX</td>
+<td align="left">Concentration of phaeopigments {pheopigments} per unit volume of the water body [particulate &gt;unknown phase]</td>
+<td align="left">SDN:P06::UMMC</td>
+<td align="left">Milligrams per cubic metre</td>
+<td align="left">Concentration of phaeopigments {pheopigments} per unit volume of the water body [particulate &gt;unknown phase]</td>
+<td align="left"></td>
+<td align="left">PHA_</td>
+<td align="left">Phae_unspec</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">PHOS</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>mmol/m^3|millimole per metre cube</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">PHOSYYDZ</td>
+<td align="left">Concentration of phosphate {PO43- CAS 14265-44-2} per unit volume of the water body [dissolved plus reactive particulate phase]</td>
+<td align="left">mmol/m^3</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">mole_concentration_of_phosphate_in_sea_water</td>
+<td align="left">SDN:P01::PHOSYYDZ</td>
+<td align="left">Concentration of phosphate {PO43- CAS 14265-44-2} per unit volume of the water body [dissolved plus reactive particulate phase]</td>
+<td align="left">SDN:P06::MMCM</td>
+<td align="left">Millimoles per cubic metre</td>
+<td align="left">Concentration of phosphate {PO43- CAS 14265-44-2} per unit volume of the water body [dissolved plus reactive particulate phase]</td>
+<td align="left"></td>
+<td align="left">PHOS</td>
+<td align="left">PO4_Unfilt</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Nutrients</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">PHPH</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>dimensionless</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">PHXXZZXX</td>
+<td align="left">pH (unspecified scale) of the water body</td>
+<td align="left">dimensionless</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_ph_reported_on_total_scale</td>
+<td align="left">SDN:P01::PHXXZZXX</td>
+<td align="left">pH (unspecified scale) of the water body</td>
+<td align="left">SDN:P06::UUUU</td>
+<td align="left">Dimensionless</td>
+<td align="left">pH per unit volume of the water body</td>
+<td align="left"></td>
+<td align="left">PHPH</td>
+<td align="left">pH</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">CO2</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">PHT</td>
+<td align="left">IML</td>
+<td align="left"><code>Total scale</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">PHMASSXX</td>
+<td align="left">pH (total scale) {pH[T]} of the water body</td>
+<td align="left">Total scale</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_ph_reported_on_total_scale</td>
+<td align="left">SDN:P01::PHMASSXX</td>
+<td align="left">pH (total scale) {pH[T]} of the water body</td>
+<td align="left">SDN:P06::UUPH</td>
+<td align="left">pH units</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">PHT_</td>
+<td align="left">Total_pHmass</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">CO2</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">POTM</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>degree Celsius|IPTS-68, deg C|degrees C|ITS-68, deg C</code></td>
+<td align="left"><code>IPTS-68</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">POTMS601</td>
+<td align="left">Potential temperature of the water body by CTD and computation from pressure, salinity and IPTS-68 temperature using UNESCO algorithm</td>
+<td align="left">degree Celsius</td>
+<td align="left"></td>
+<td align="left">IPTS-68</td>
+<td align="left">sea_water_potential_temperature</td>
+<td align="left">SDN:P01::POTMS601</td>
+<td align="left">Potential temperature of the water body by CTD and computation from pressure, salinity and IPTS-68 temperature using UNESCO algorithm</td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">POTM</td>
+<td align="left">Potemp_ipts68</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">POTM</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>degree Celsius|IPTS-68, deg C|degrees C|ITS-68, deg C|ITS-90, deg C</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">POTMCV01</td>
+<td align="left">Potential temperature of the water body by computation using UNESCO 1983 algorithm</td>
+<td align="left">degree Celsius</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_potential_temperature</td>
+<td align="left">SDN:P01::POTMCV01</td>
+<td align="left">Potential temperature of the water body by computation using UNESCO 1983 algorithm</td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">POTM</td>
+<td align="left">WC_Potemp</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">PRES</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>decibar|decibars|db</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"><code>-1*gsw.z_from_p(x,latitude)</code></td>
+<td align="left">depth</td>
+<td align="left">Depth (spatial coordinate) relative to water surface in the water body</td>
+<td align="left">meters</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">depth</td>
+<td align="left">SDN:P01::ADEPZZ01</td>
+<td align="left">Depth (spatial coordinate) relative to water surface in the water body</td>
+<td align="left">SDN:P06::ULAA</td>
+<td align="left">Metres</td>
+<td align="left">The distance of a sensor or sampling point below the sea surface</td>
+<td align="left"></td>
+<td align="left">DEPH</td>
+<td align="left">DepBelowSurf</td>
+<td align="left"></td>
+<td align="left">coordinate</td>
+<td align="left">Location</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">PRES</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>decibar|decibars|db</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">PRESPR01</td>
+<td align="left">Pressure (spatial coordinate) exerted by the water body by profiling pressure sensor and correction to read zero at sea level</td>
+<td align="left">decibar</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_pressure</td>
+<td align="left">SDN:P01::PRESPR01</td>
+<td align="left">Pressure (spatial coordinate) exerted by the water body by profiling pressure sensor and correction to read zero at sea level</td>
+<td align="left">SDN:P06::UPDB</td>
+<td align="left">Decibars</td>
+<td align="left">Pressure (spatial coordinate) exerted by the water body by profiling pressure sensor and correction to read zero at sea level</td>
+<td align="left"></td>
+<td align="left">PRES</td>
+<td align="left">Pres_Z</td>
+<td align="left"></td>
+<td align="left">coordinate</td>
+<td align="left">Location</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">PSAL</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>1e-3|psu|PSU|practical salinity unit (PSS-78)||none</code></td>
+<td align="left"><code>PSS-78</code></td>
+<td align="left"><code>bottle|sample</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">PSALBSTX</td>
+<td align="left">Practical salinity of the water body by bench salinometer and computation using UNESCO 1983 algorithm</td>
+<td align="left">1e-3</td>
+<td align="left">bottle</td>
+<td align="left">PSS-78</td>
+<td align="left">sea_water_practical_salinity</td>
+<td align="left">SDN:P01::PSALBSTX</td>
+<td align="left">Practical salinity of the water body by bench salinometer and computation using UNESCO 1983 algorithm</td>
+<td align="left">SDN:P06::UUUU</td>
+<td align="left">Dimensionless</td>
+<td align="left">Practical salinity of the water body</td>
+<td align="left"></td>
+<td align="left">PSAL</td>
+<td align="left">P_sal_salinom</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Salinity</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">PSAL</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>1e-3|psu|PSU|practical salinity unit (PSS-78)||none</code></td>
+<td align="left"><code>PSS-78</code></td>
+<td align="left"><code>CTD|STD|GUILDLINE|GUILDLN\.*|SBE\s*19|SBE\s*9|SBE\s*37|SBE\s*25|Microcat|Maestro|Concerto|XR\-*620|XR\-*420</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">PSALST01</td>
+<td align="left">Practical salinity of the water body by CTD and computation using UNESCO 1983 algorithm</td>
+<td align="left">1e-3</td>
+<td align="left">CTD</td>
+<td align="left">PSS-78</td>
+<td align="left">sea_water_practical_salinity</td>
+<td align="left">SDN:P01::PSALST01</td>
+<td align="left">Practical salinity of the water body by CTD and computation using UNESCO 1983 algorithm</td>
+<td align="left">SDN:P06::UUUU</td>
+<td align="left">Dimensionless</td>
+<td align="left">Practical salinity of the water body</td>
+<td align="left"></td>
+<td align="left">PSAL</td>
+<td align="left">P_sal_CTD</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Salinity</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">PSAL</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>1e-3|psu|PSU|practical salinity unit (PSS-78)||none</code></td>
+<td align="left"><code>PSS-78</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">PSLTZZ01</td>
+<td align="left">Practical salinity of the water body</td>
+<td align="left">1e-3</td>
+<td align="left"></td>
+<td align="left">PSS-78</td>
+<td align="left">sea_water_practical_salinity</td>
+<td align="left">SDN:P01::PSLTZZ01</td>
+<td align="left">Practical salinity of the water body</td>
+<td align="left">SDN:P06::UUUU</td>
+<td align="left">Dimensionless</td>
+<td align="left">Practical salinity of the water body</td>
+<td align="left"></td>
+<td align="left">PSAL</td>
+<td align="left">P_sal</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Salinity</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">PSAR</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>ueinsteins/s/m^2|micromole per metre square per second|micromoles/m^2/sec|umol photons/m2/s</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">IRRDUV01</td>
+<td align="left">Photosynthetically Active Radiation</td>
+<td align="left">uEinsteins/s/m^2</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">downwelling_photosynthetic_photon_spherical_irradiance_in_sea_water</td>
+<td align="left">SDN:P01::IRRDUV01</td>
+<td align="left">Downwelling vector irradiance as photons of electromagnetic radiation (PAR wavelengths) in the water body by cosine-collector radiometer</td>
+<td align="left">SDN:P06::UMES</td>
+<td align="left">MicroEinsteins per square metre per second</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">PSAR</td>
+<td align="left">SubsurVPAR</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Optical Properties</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">QCFF</td>
+<td align="left"></td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">QCFF_XX</td>
+<td align="left">Quality Flag: QCFF</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">status_flag</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">QCFF</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">qualityInformation</td>
+<td align="left">Quality</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">SECC</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>m</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SECCSDNX</td>
+<td align="left">Visibility in the water body by Secchi disk</td>
+<td align="left">m</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">secchi_depth_of_sea_water</td>
+<td align="left">SDN:P01::SECCSDNX</td>
+<td align="left">Visibility in the water body by Secchi disk</td>
+<td align="left">SDN:P06::ULAA</td>
+<td align="left">Metres</td>
+<td align="left">Visibility in the water body by Secchi disk</td>
+<td align="left"></td>
+<td align="left">SECC</td>
+<td align="left">Secchi</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Optical Properties</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">SIGP</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>kg/m^3|kilogram per metre cube|sigma-theta, kg/m^3|sigma-theta, Kg/m^3</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SIGTEQ01</td>
+<td align="left">Sigma-theta of the water body by computation from salinity and potential temperature using UNESCO algorithm</td>
+<td align="left">kg/m^3</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_sigma_theta</td>
+<td align="left">SDN:P01::SIGTEQ01</td>
+<td align="left">Sigma-theta of the water body by computation from salinity and potential temperature using UNESCO algorithm</td>
+<td align="left">SDN:P06::UKMC</td>
+<td align="left">Kilograms per cubic metre</td>
+<td align="left">Sigma-theta of the water body by computation from salinity and potential temperature using UNESCO algorithm</td>
+<td align="left"></td>
+<td align="left">SIGP</td>
+<td align="left">SigmaTheta</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">SIGT</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>kg/m^3|kilogram per metre cube</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SIGTEQSTXX</td>
+<td align="left">Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm</td>
+<td align="left">kg/m^3</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_sigma_t</td>
+<td align="left">SDN:P01::SIGTEQST</td>
+<td align="left">Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm</td>
+<td align="left">SDN:P06::UKMC</td>
+<td align="left">Kilograms per cubic metre</td>
+<td align="left">Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm</td>
+<td align="left"></td>
+<td align="left">SIGT</td>
+<td align="left">Sigma-T</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">SLCA</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>mmol/m^3|millimole per metre cube</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SLCAZZXX</td>
+<td align="left">Concentration of silicate {SiO44- CAS 17181-37-2} per unit volume of the water body [unknown phase]</td>
+<td align="left">mmol/m^3</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">mole_concentration_of_silicate_in_sea_water</td>
+<td align="left">SDN:P01::SLCAZZXX</td>
+<td align="left">Concentration of silicate {SiO44- CAS 17181-37-2} per unit volume of the water body [unknown phase]</td>
+<td align="left">SDN:P06::MMCM</td>
+<td align="left">Millimoles per cubic metre</td>
+<td align="left">Concentration of silicate {SiO44- CAS 17181-37-2} per unit volume of the water body [unknown phase]</td>
+<td align="left"></td>
+<td align="left">SLCA</td>
+<td align="left">SiOx</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Nutrients</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">SPAR</td>
+<td align="left">BIO,MEDS</td>
+<td align="left"><code>ueinsteins/s/m^2|umol photons/m2/s|umol photons/m2/s, logarithmic</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">IRRDSV01</td>
+<td align="left">Surface Photosynthetically Active Radiation</td>
+<td align="left">uEinsteins/s/m^2</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">surface_downwelling_photosynthetic_photon_spherical_irradiance_in_sea_water</td>
+<td align="left">SDN:P01::IRRDSV01</td>
+<td align="left">Downwelling vector irradiance as photons of electromagnetic radiation (PAR wavelengths) in the atmosphere by cosine-collector radiometer</td>
+<td align="left">SDN:P06::UMES</td>
+<td align="left">MicroEinsteins per square metre per second</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SPAR</td>
+<td align="left">SurfVPAR</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Optical Properties</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">SYTM</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>UTC|GMT|none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">measurement_time</td>
+<td align="left">Exact Measurement Time</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">time</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SYTM</td>
+<td align="left">measurement_time</td>
+<td align="left"></td>
+<td align="left">coordinate</td>
+<td align="left">Time</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">TE90</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>degree Celsius|degree c|degrees C|deg C|ITS-90, deg C</code></td>
+<td align="left"><code>ITS-90</code></td>
+<td align="left"><code>CTD|STD|GUILDLINE|GUILDLN\.*|SBE\s*19|SBE\s*9|SBE\s*37|SBE\s*25|Microcat|Maestro|Concerto|XR\-*620|XR\-*420</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TEMPS901</td>
+<td align="left">Temperature (ITS-90) of the water body by CTD or STD</td>
+<td align="left">degree Celsius</td>
+<td align="left">CTD</td>
+<td align="left">ITS-90</td>
+<td align="left">sea_water_temperature</td>
+<td align="left">SDN:P01::TEMPS901</td>
+<td align="left">Temperature (ITS-90) of the water body by CTD or STD</td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left">Temperature of the water body</td>
+<td align="left"></td>
+<td align="left">TEMP</td>
+<td align="left">CTDTmp90</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">TE90</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>degree Celsius|degree c|degrees C|deg C|ITS-90, deg C</code></td>
+<td align="left"><code>ITS-90</code></td>
+<td align="left"><code>Reverse Thermometer</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TEMPR901</td>
+<td align="left">Temperature (ITS-90) of the water body by reversing thermometer</td>
+<td align="left">degree Celsius</td>
+<td align="left">Reverse Thermometer</td>
+<td align="left">ITS-90</td>
+<td align="left">sea_water_temperature</td>
+<td align="left">SDN:P01::TEMPR901</td>
+<td align="left">Temperature (ITS-90) of the water body by reversing thermometer</td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left">Temperature of the water body</td>
+<td align="left"></td>
+<td align="left">TEMP</td>
+<td align="left">RTTemp90</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">TE90</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>degree Celsius|degree c|degrees C|deg C|ITS-90, deg C</code></td>
+<td align="left"><code>ITS-90</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TEMPP901</td>
+<td align="left">Temperature (ITS-90) of the water body</td>
+<td align="left">degree Celsius</td>
+<td align="left"></td>
+<td align="left">ITS-90</td>
+<td align="left">sea_water_temperature</td>
+<td align="left">SDN:P01::TEMPP901</td>
+<td align="left">Temperature (ITS-90) of the water body</td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left">Temperature of the water body</td>
+<td align="left"></td>
+<td align="left">TEMP</td>
+<td align="left">WC_temp90</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">TEMP</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>degree Celsius|degree c|degrees C|IPTS-68, deg C|ITS-68, deg C|deg C</code></td>
+<td align="left"><code>IPTS-68</code></td>
+<td align="left"><code>CTD|STD|GUILDLINE|GUILDLN\.*|SBE\s*19|SBE\s*9|SBE\s*37|SBE\s*25|Microcat|Maestro|Concerto|XR\-*620|XR\-*420</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TEMPS601</td>
+<td align="left">Temperature (IPTS-68) of the water body by CTD or STD</td>
+<td align="left">degree Celsius</td>
+<td align="left">CTD</td>
+<td align="left">IPTS-68</td>
+<td align="left">sea_water_temperature</td>
+<td align="left">SDN:P01::TEMPS601</td>
+<td align="left">Temperature (IPTS-68) of the water body by CTD or STD</td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left">Temperature of the water body</td>
+<td align="left"></td>
+<td align="left">TEMP</td>
+<td align="left">CTDTmp68</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">TEMP</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>degree Celsius|degree c|degrees C|IPTS-68, deg C|ITS-68, deg C|deg C</code></td>
+<td align="left"><code>IPTS-68</code></td>
+<td align="left"><code>Reverse Thermometer</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TEMPR601</td>
+<td align="left">Temperature (IPTS-68) of the water body by reversing thermometer</td>
+<td align="left">degree Celsius</td>
+<td align="left">Reverse Thermometer</td>
+<td align="left">IPTS-68</td>
+<td align="left">sea_water_temperature</td>
+<td align="left">SDN:P01::TEMPR601</td>
+<td align="left">Temperature (IPTS-68) of the water body by reversing thermometer</td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left">Temperature of the water body</td>
+<td align="left"></td>
+<td align="left">TEMP</td>
+<td align="left">RTTemp68</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">TEMP</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>degree Celsius|degree c|degrees C|IPTS-68, deg C|ITS-68, deg C|deg C</code></td>
+<td align="left"><code>IPTS-68</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TEMPP681</td>
+<td align="left">Temperature (IPTS-68) of the water body</td>
+<td align="left">degree Celsius</td>
+<td align="left"></td>
+<td align="left">IPTS-68</td>
+<td align="left">sea_water_temperature</td>
+<td align="left">SDN:P01::TEMPP681</td>
+<td align="left">Temperature (IPTS-68) of the water body</td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left">Temperature of the water body</td>
+<td align="left"></td>
+<td align="left">TEMP</td>
+<td align="left">WC_temp68</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">TEMP</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>degree Celsius|degree c|degrees C|deg C|ITS-90, deg C</code></td>
+<td align="left"><code>ITS-90</code></td>
+<td align="left"><code>CTD|STD|GUILDLINE|GUILDLN\.*|SBE\s*19|SBE\s*9|SBE\s*37|SBE\s*25|Microcat|Maestro|Concerto|XR\-*620|XR\-*420</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TEMPS901</td>
+<td align="left">Temperature (ITS-90) of the water body by CTD or STD</td>
+<td align="left">degree Celsius</td>
+<td align="left">CTD</td>
+<td align="left">ITS-90</td>
+<td align="left">sea_water_temperature</td>
+<td align="left">SDN:P01::TEMPS901</td>
+<td align="left">Temperature (ITS-90) of the water body by CTD or STD</td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left">Temperature of the water body</td>
+<td align="left"></td>
+<td align="left">TEMP</td>
+<td align="left">CTDTmp90</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">TEMP</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>degree Celsius|degree c|degrees C|IPTS-68, deg C|ITS-68, deg C|deg C</code></td>
+<td align="left"><code>IPTS-68</code></td>
+<td align="left"><code>CTD|STD|GUILDLINE|GUILDLN\.*|SBE\s*19|SBE\s*9|SBE\s*37|SBE\s*25|Microcat|Maestro|Concerto|XR\-*620|XR\-*420</code></td>
+<td align="left"></td>
+<td align="left"><code>gsw.t90_from_t68(x)</code></td>
+<td align="left">TEMPS901</td>
+<td align="left">Temperature (ITS-90) of the water body by CTD or STD</td>
+<td align="left">degree Celsius</td>
+<td align="left">CTD</td>
+<td align="left">ITS-90</td>
+<td align="left">sea_water_temperature</td>
+<td align="left">SDN:P01::TEMPS901</td>
+<td align="left">Temperature (ITS-90) of the water body by CTD or STD</td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left">Unavailable</td>
+<td align="left"></td>
+<td align="left">TEMP</td>
+<td align="left">CTDTmp90</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">TEMP</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>degree Celsius|degree c|degrees C|deg C|ITS-90, deg C</code></td>
+<td align="left"><code>ITS-90</code></td>
+<td align="left"><code>Reverse Thermometer</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TEMPR901</td>
+<td align="left">Temperature (ITS-90) of the water body by reversing thermometer</td>
+<td align="left">degree Celsius</td>
+<td align="left">Reverse Thermometer</td>
+<td align="left">ITS-90</td>
+<td align="left">sea_water_temperature</td>
+<td align="left">SDN:P01::TEMPR901</td>
+<td align="left">Temperature (ITS-90) of the water body by reversing thermometer</td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left">Temperature of the water body</td>
+<td align="left"></td>
+<td align="left">TEMP</td>
+<td align="left">RTTemp90</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">TEMP</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>degree Celsius|degree c|degrees C|IPTS-68, deg C|ITS-68, deg C|deg C</code></td>
+<td align="left"><code>IPTS-68</code></td>
+<td align="left"><code>Reverse Thermometer</code></td>
+<td align="left"></td>
+<td align="left"><code>gsw.t90_from_t68(x)</code></td>
+<td align="left">TEMPR901</td>
+<td align="left">Temperature (ITS-90) of the water body by reversing thermometer</td>
+<td align="left">degree Celsius</td>
+<td align="left">Reverse Thermometer</td>
+<td align="left">ITS-90</td>
+<td align="left">sea_water_temperature</td>
+<td align="left">SDN:P01::TEMPR901</td>
+<td align="left">Temperature (ITS-90) of the water body by reversing thermometer</td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TEMP</td>
+<td align="left">RTTemp90</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">TEMP</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>degree Celsius|degree c|degrees C|deg C|ITS-90, deg C</code></td>
+<td align="left"><code>ITS-90</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TEMPP901</td>
+<td align="left">Temperature (ITS-90) of the water body</td>
+<td align="left">degree Celsius</td>
+<td align="left"></td>
+<td align="left">ITS-90</td>
+<td align="left">sea_water_temperature</td>
+<td align="left">SDN:P01::TEMPP901</td>
+<td align="left">Temperature (ITS-90) of the water body</td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left">Temperature of the water body</td>
+<td align="left"></td>
+<td align="left">TEMP</td>
+<td align="left">WC_temp90</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">TEMP</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>degree Celsius|degree c|degrees C|IPTS-68, deg C|ITS-68, deg C|deg C</code></td>
+<td align="left"><code>IPTS-68</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"><code>gsw.t90_from_t68(x)</code></td>
+<td align="left">TEMPP901</td>
+<td align="left">Temperature (ITS-90) of the water body</td>
+<td align="left">degree Celsius</td>
+<td align="left"></td>
+<td align="left">ITS-90</td>
+<td align="left">sea_water_temperature</td>
+<td align="left">SDN:P01::TEMPP901</td>
+<td align="left">Temperature (ITS-90) of the water body</td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left">Temperature (ITS-90) of the water body</td>
+<td align="left"></td>
+<td align="left">TE90</td>
+<td align="left">WC_temp90</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">TEMP</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>degree Celsius|degree c|degrees C|IPTS-68, deg C|ITS-68, deg C|deg C</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TEMPPR01</td>
+<td align="left">Temperature of the water body</td>
+<td align="left">degree Celsius</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_temperature</td>
+<td align="left">SDN:P01::TEMPPR01</td>
+<td align="left">Temperature of the water body</td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left">Temperature of the water body</td>
+<td align="left"></td>
+<td align="left">TEMP</td>
+<td align="left">Temp</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">TICW</td>
+<td align="left">IML</td>
+<td align="left"><code>umol/kg</code></td>
+<td align="left"></td>
+<td align="left"><code>bottle|sample</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">MDMAP010</td>
+<td align="left">Concentration of organic carbon {organic_C CAS 7440-44-0} {POC} per unit volume of the water body [particulate &gt;unknown phase]</td>
+<td align="left">umol/kg</td>
+<td align="left">bottle</td>
+<td align="left"></td>
+<td align="left">mole_concentration_of_dissolved_inorganic_carbon_in_sea_water</td>
+<td align="left">SDN:P01::MDMAP010</td>
+<td align="left">Concentration of organic carbon {organic_C CAS 7440-44-0} {POC} per unit volume of the water body [particulate &gt;unknown phase]</td>
+<td align="left">SDN:P06::KGUM</td>
+<td align="left">Micromoles per kilogram</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TICW</td>
+<td align="left">POC</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Colored Dissolved Organic Matter</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">TRB</td>
+<td align="left">MEDS,IML</td>
+<td align="left"><code>NTU</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TURBNTUXX</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left">NTU</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_turbidity</td>
+<td align="left">SDN:P01::TURBXXXX</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left">SDN:P06::USTU</td>
+<td align="left">Nephelometric Turbidity Units</td>
+<td align="left">Estimate of suspended sediment concentration based on the proportion of a light transmission in the water column that is reflected back to a co-located receiver.</td>
+<td align="left"></td>
+<td align="left">TRB4</td>
+<td align="left">Turbidity</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Total Suspended Matter</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">TURB</td>
+<td align="left">MEDS,IML</td>
+<td align="left"><code>NTU</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TURBNTUXX</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left">NTU</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_turbidity</td>
+<td align="left">SDN:P01::TURBXXXX</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left">SDN:P06::USTU</td>
+<td align="left">Nephelometric Turbidity Units</td>
+<td align="left">Estimate of suspended sediment concentration based on the proportion of a light transmission in the water column that is reflected back to a co-located receiver.</td>
+<td align="left"></td>
+<td align="left">TRB4</td>
+<td align="left">Turbidity</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Total Suspended Matter</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">TURB</td>
+<td align="left">BIO</td>
+<td align="left"><code>m^-1/sr</code></td>
+<td align="left"></td>
+<td align="left"><code>WETECOBB|TURW_01</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">VSCTXX01</td>
+<td align="left">Volume scattering of light (unspecified wavelengths) by the water body</td>
+<td align="left">m^-1/sr</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">volume_scattering_function_of_radiative_flux_in_sea_water</td>
+<td align="left">SDN:P01::VSCTXXXX</td>
+<td align="left">Volume scattering of light (unspecified wavelengths) by the water body</td>
+<td align="left">SDN:P06::PMSR</td>
+<td align="left">per metre per steradian</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left"></td>
+<td align="left">TURW</td>
+<td align="left">Light_scattering</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Total Suspended Matter</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">TURB</td>
+<td align="left">BIO</td>
+<td align="left"><code>FTU|Formazine Turbidity Unit</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TURBFTUXX</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left">FTU</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_turbidity</td>
+<td align="left">SDN:P01::TURBXXXX</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left">SDN:P06::UFNU</td>
+<td align="left">Formazin Nephelometric Units</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left"></td>
+<td align="left">TURB</td>
+<td align="left">Turbidity</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Total Suspended Matter</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">TURW</td>
+<td align="left">BIO</td>
+<td align="left"><code>m^-1/sr</code></td>
+<td align="left"></td>
+<td align="left"><code>WETECOBB|TURW_01</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">VSCTXX01</td>
+<td align="left">Volume scattering of light (unspecified wavelengths) by the water body</td>
+<td align="left">m^-1/sr</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">volume_scattering_function_of_radiative_flux_in_sea_water</td>
+<td align="left">SDN:P01::VSCTXXXX</td>
+<td align="left">Volume scattering of light (unspecified wavelengths) by the water body</td>
+<td align="left">SDN:P06::PMSR</td>
+<td align="left">per metre per steradian</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left"></td>
+<td align="left">TURW</td>
+<td align="left">Light_scattering</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Total Suspended Matter</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">VAIS</td>
+<td align="left"></td>
+<td align="left"><code>hertz</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">BV_Freq</td>
+<td align="left">Brunt Vaisala Frequency</td>
+<td align="left">Hz</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">VAIS</td>
+<td align="left">BV_Freq</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">WETECOBB</td>
+<td align="left"></td>
+<td align="left"><code>m^-1 sr^-1|m^-1/sr</code></td>
+<td align="left"></td>
+<td align="left"><code>turbWETbb0|WETECOBB</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">VSCTXX01</td>
+<td align="left">Volume scattering of light (unspecified wavelengths) by the water body</td>
+<td align="left">m^-1/sr</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">volume_scattering_function_of_radiative_flux_in_sea_water</td>
+<td align="left">SDN:P01::VSCTXXXX</td>
+<td align="left">Volume scattering of light (unspecified wavelengths) by the water body</td>
+<td align="left">SDN:P06::PMSR</td>
+<td align="left">per metre per steradian</td>
+<td align="left">Turbidity of water in the water body</td>
+<td align="left"></td>
+<td align="left">TURW</td>
+<td align="left">Light_scattering</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Total Suspended Matter</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">GEOP</td>
+<td align="left"></td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">GEOP_XX</td>
+<td align="left"></td>
+<td align="left">1</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">GEOP</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">IML</td>
+<td align="left">NTRA</td>
+<td align="left">IML</td>
+<td align="left"><code>mmol/m^3|millimole per metre cube</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">mmol/m^3</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">mole_concentration_of_nitrate_in_sea_water</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">NO3</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Nutrients</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">OTMP</td>
+<td align="left"></td>
+<td align="left"><code>degrees C|deg C</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">OTMP_XX</td>
+<td align="left">Temperature of oxygen determination by optode</td>
+<td align="left">degree Celsius</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">temperature_of_sensor_for_oxygen_in_sea_water</td>
+<td align="left">SDN:P01::OXYTAAOP</td>
+<td align="left">Temperature of oxygen determination by optode</td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">OTMP</td>
+<td align="left">O2_temp</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">IML</td>
+<td align="left">SDEV</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDEV_XX</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">auxiliaryInformation</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">SPVO</td>
+<td align="left"></td>
+<td align="left"><code>m^3/kg|mg**3/kg</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SPVO_XX</td>
+<td align="left"></td>
+<td align="left">m^3/kg</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">IML</td>
+<td align="left">UNKN</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"><code>^v\d+$|^upoly\d+$</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">IML</td>
+<td align="left">UNKN</td>
+<td align="left"></td>
+<td align="left"><code>(none)</code></td>
+<td align="left"></td>
+<td align="left"><code>^v\d+$|^upoly\d+$</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">SVEL</td>
+<td align="left">BIO</td>
+<td align="left"><code>m/s</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SVELXX01</td>
+<td align="left">Sound velocity in the water body</td>
+<td align="left">m/s</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">speed_of_sound_in_sea_water</td>
+<td align="left">SDN:P01:SVELXXXX</td>
+<td align="left">The rate at which sound travels through the water column.</td>
+<td align="left">SDN:P06:UVAA</td>
+<td align="left">Metres per second</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SVEL</td>
+<td align="left">SndVel_WC</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">ATTU</td>
+<td align="left">BIO</td>
+<td align="left"><code>/m|m-1|1/m</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">ATTNZZ01</td>
+<td align="left">Attenuation (unspecified wavelength) per unit length of the water body by transmissometer</td>
+<td align="left">1/m</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">volume_beam_attenuation_coefficient_of_radiative_flux_in_sea_water</td>
+<td align="left">SDN:P01::ATTNZZ01</td>
+<td align="left">Red light unspecified path length transmissometer</td>
+<td align="left">SDN:P06::UPRM</td>
+<td align="left">per metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">ATTU</td>
+<td align="left">Atten</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Optical Properties</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">REFR</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">SPVA</td>
+<td align="left">BIO,IML</td>
+<td align="left"><code>m^3/kg</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SPVA</td>
+<td align="left">Specific Volume Anomaly</td>
+<td align="left">m^3/kg</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">OPPR</td>
+<td align="left">BIO,IML</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">OPPR</td>
+<td align="left">Oxygen Partial Pressure</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">OXYM</td>
+<td align="left">IML</td>
+<td align="left"><code>µM</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">OXYM</td>
+<td align="left">Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase]</td>
+<td align="left">umol/L</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">mole_concentration_of_dissolved_molecular_oxygen_in_sea_water</td>
+<td align="left">SDN:P01::DOXYZZXX</td>
+<td align="left">Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase]</td>
+<td align="left">SDN:P06::MMPL</td>
+<td align="left">Micromoles per litre</td>
+<td align="left">Concentration of dissolved oxygen per unit volume of the water column. Oxygen may be expressed in terms of mass, volume or quantity of substance.</td>
+<td align="left"></td>
+<td align="left">OXYM</td>
+<td align="left">WC_dissO2</td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Dissolved O2</td>
+<td align="left">dissolved_o2</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">PTCH</td>
+<td align="left">IML</td>
+<td align="left"><code>degrees</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">PITCH</td>
+<td align="left">Platform Pitch Angle</td>
+<td align="left">degrees</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">platform_pitch</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::UAAA</td>
+<td align="left">Degrees</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">PTCH</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">coordinate</td>
+<td align="left">unknown</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">ROLL</td>
+<td align="left">IML</td>
+<td align="left"><code>degrees</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">ROLL</td>
+<td align="left">Platform Roll Angle</td>
+<td align="left">degrees</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">platform_roll</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::UAAA</td>
+<td align="left">Degrees</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">ROLL</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">coordinate</td>
+<td align="left">unknown</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">HEAD</td>
+<td align="left">IML</td>
+<td align="left"><code>True degrees</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">HEAD</td>
+<td align="left">Platform Orientation Angle</td>
+<td align="left">degrees</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">platform_orientation</td>
+<td align="left">SDN:P01:HEADCMMG</td>
+<td align="left">Orientation (horizontal relative to magnetic north) of measurement platform {heading} by compass</td>
+<td align="left">SDN:P06::UABB</td>
+<td align="left">Degrees True</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">HEAD</td>
+<td align="left">Avg_Head</td>
+<td align="left"></td>
+<td align="left">coordinate</td>
+<td align="left">unknown</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">TILT</td>
+<td align="left">IML</td>
+<td align="left"><code>degrees</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TILT</td>
+<td align="left">Platform Tilt Angle</td>
+<td align="left">degrees</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::UAAA</td>
+<td align="left">Degrees</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">TILT</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">coordinate</td>
+<td align="left">unknown</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">EWCT</td>
+<td align="left">IML</td>
+<td align="left"><code>m/s</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">HCSP</td>
+<td align="left">East (true) Component of Current</td>
+<td align="left">m/s</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">eastward_sea_water_velocity</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::UVAA</td>
+<td align="left">m/s</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">EWCT</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">currents</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">NSCT</td>
+<td align="left">IML</td>
+<td align="left"><code>m/s</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">NWCT</td>
+<td align="left">North true) Component of Current</td>
+<td align="left">m/s</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">northward_sea_water_velocity</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::UVAA</td>
+<td align="left">m/s</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">NSCT</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">currents</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">VCSP</td>
+<td align="left">IML</td>
+<td align="left"><code>m/s</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">VCSP</td>
+<td align="left">Vertical Current Speed (positive up)</td>
+<td align="left">m/s</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">upward_sea_water_velocity</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::UVAA</td>
+<td align="left">m/s</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">VCSP</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">currents</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">ERRV</td>
+<td align="left">IML</td>
+<td align="left"><code>m/s</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">ERRV</td>
+<td align="left">Error Velocity (ADCP)</td>
+<td align="left">m/s</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">indicative_error_from_multibeam_acoustic_doppler_velocity_profiler_in_sea_water</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::UVAA</td>
+<td align="left">m/s</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">ERRV</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">currents</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">HCSP</td>
+<td align="left">IML</td>
+<td align="left"><code>m/s</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">HCSP</td>
+<td align="left">Horizontal Current Speed</td>
+<td align="left">m/s</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_speed</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::UVAA</td>
+<td align="left">m/s</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">HCSP</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">currents</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">GF3</td>
+<td align="left">HCDM</td>
+<td align="left">IML</td>
+<td align="left"><code>degrees</code></td>
+<td align="left"></td>
+<td align="left"><code>Horizontal Current Direction (magnetic)</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">HCDM</td>
+<td align="left">Horizontal Current Direction (magnetic)</td>
+<td align="left">degrees (magnetic)</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">HCDM</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">currents</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">CNDC</td>
+<td align="left"></td>
+<td align="left"><code>S/m|mhos/m|siemens/m</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CNDCST01</td>
+<td align="left">Electrical Conductivity</td>
+<td align="left">S/m</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_water_electrical_conductivity</td>
+<td align="left">SDN:P01::CNDCST01</td>
+<td align="left">Electrical conductivity of the water body by CTD</td>
+<td align="left">SDN:P06::UECA</td>
+<td align="left">Siemens per metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CNDC</td>
+<td align="left">CTDCond</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">salinity</td>
+<td align="left">Conductivity</td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">FLOR</td>
+<td align="left">BIO,IML,MEDS</td>
+<td align="left"><code>mg/m^3|mg/m**3|milligram per metre cube|ug/L|ug/l|none</code></td>
+<td align="left"></td>
+<td align="left"><code>fluoresdence|fluo|Flourescence|^FLOR(_|$)|Fluorescence|CTD fluorescence</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CPHLPR01</td>
+<td align="left">Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate &gt;unknown phase] by in-situ chlorophyll fluorometer</td>
+<td align="left">mg/m^3</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">mass_concentration_of_chlorophyll_in_sea_water</td>
+<td align="left">SDN:P01::CPHLPR01</td>
+<td align="left">Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate &gt;unknown phase] by in-situ chlorophyll fluorometer</td>
+<td align="left">SDN:P06::UMMC</td>
+<td align="left">Milligrams per cubic metre</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">FLOR</td>
+<td align="left">chl-a_water_ISfluor</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">WSPD</td>
+<td align="left">IML</td>
+<td align="left"><code>m/s</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">EWSBZZ01</td>
+<td align="left">Speed of wind {wind speed} in the atmosphere</td>
+<td align="left">m/s</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">wind_speed</td>
+<td align="left">SDN:P01::EWSBZZ01</td>
+<td align="left">Speed of wind {wind speed} in the atmosphere</td>
+<td align="left">SDN:P06::UVAA</td>
+<td align="left">m/s</td>
+<td align="left">Sustained speed of the wind (distance moved per unit time by a parcel of air) parallel to the ground at a given place and time.</td>
+<td align="left"></td>
+<td align="left">WSPD</td>
+<td align="left">WindSpd</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">wind</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">GSPD</td>
+<td align="left">IML</td>
+<td align="left"><code>m/s</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">EGTSZZ01</td>
+<td align="left">Speed of wind (gust) {wind speed} in the atmosphere</td>
+<td align="left">m/s</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">wind_speed_of_gust</td>
+<td align="left">SDN:P01::EGTSZZ01</td>
+<td align="left">Speed of wind (gust) {wind speed} in the atmosphere</td>
+<td align="left">SDN:P06::UVAA</td>
+<td align="left">m/s</td>
+<td align="left">Maximum speed of the wind (distance moved per unit time by a parcel of air) parallel to the ground during a gust event (generally regarded as an increase over sustained speed of more than 5 m/s lasting less than 20 seconds).</td>
+<td align="left"></td>
+<td align="left">GSPD</td>
+<td align="left">GustWindSpd</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">wind</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">WDIR</td>
+<td align="left">IML</td>
+<td align="left"><code>degrees</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">EWDAZZ01</td>
+<td align="left">Direction (from) of wind relative to True North {wind direction} in the atmosphere</td>
+<td align="left">degrees</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">wind_from_direction</td>
+<td align="left">SDN:P01::EWDAZZ01</td>
+<td align="left">Direction (from) of wind relative to True North {wind direction} in the atmosphere</td>
+<td align="left">SDN:P06::UABB</td>
+<td align="left">Degrees True</td>
+<td align="left">Direction relative to true north from which the wind is blowing</td>
+<td align="left"></td>
+<td align="left">WDIR</td>
+<td align="left">WindDirFrom</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">wind</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">DRYT</td>
+<td align="left">IML</td>
+<td align="left"><code>degrees C</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CDTASS01</td>
+<td align="left">Temperature of the atmosphere by dry bulb thermometer</td>
+<td align="left">degree_celsius</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">air_temperature</td>
+<td align="left">SDN:P01::CDTASS01</td>
+<td align="left">Temperature of the atmosphere by dry bulb thermometer</td>
+<td align="left">SDN:P06::UPAA</td>
+<td align="left">Degrees Celsius</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">DRYT</td>
+<td align="left">AirTemp</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Temperature</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">RELH</td>
+<td align="left">IML</td>
+<td align="left"><code>%</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CRELZZ01</td>
+<td align="left">Relative humidity of the atmosphere</td>
+<td align="left">%</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">relative_humidity</td>
+<td align="left">SDN:P01::CRELZZ01</td>
+<td align="left">Relative humidity of the atmosphere</td>
+<td align="left">SDN:P06::UPCT</td>
+<td align="left">Percent</td>
+<td align="left">The ratio of the amount of water vapour in the air compared to the maximum amount of water vapour that can theoretically be held at the air's temperature</td>
+<td align="left"></td>
+<td align="left">RELH</td>
+<td align="left">Air_humid</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">other</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">ATMP</td>
+<td align="left">IML</td>
+<td align="left"><code>hPa</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">CAPHZZ01</td>
+<td align="left">Pressure (measured variable) exerted by the atmosphere</td>
+<td align="left">hPa</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">air_pressure</td>
+<td align="left">SDN:P01::CAPHZZ01</td>
+<td align="left">Pressure (measured variable) exerted by the atmosphere</td>
+<td align="left">SDN:P06::HPAX</td>
+<td align="left">Hectopascals</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">ATMP</td>
+<td align="left">AirPress</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left">Pressure</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">ACO2</td>
+<td align="left">IML</td>
+<td align="left"><code>ppm</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">ACO2CV01</td>
+<td align="left">Concentration of carbon dioxide {CO2 CAS 124-38-9} per unit volume of cave atmosphere by carbon dioxide probe</td>
+<td align="left">ppm</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">PCO2</td>
+<td align="left">IML</td>
+<td align="left"><code>ppm</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">PCO2XXXX</td>
+<td align="left">Partial pressure of carbon dioxide {CO2 CAS 124-38-9} {pCO2} in the water body</td>
+<td align="left">ppm</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">partial_pressure_of_carbon_dioxide_in_sea_water</td>
+<td align="left">SDN:P01::PCO2XXXX</td>
+<td align="left">Partial pressure of carbon dioxide {CO2 CAS 124-38-9} {pCO2} in the water body</td>
+<td align="left">SDN:P06::UPPM</td>
+<td align="left">ppm</td>
+<td align="left">The partial pressure of carbon dioxide in air in equilibrium with a water sample.</td>
+<td align="left"></td>
+<td align="left">PCO2</td>
+<td align="left">pCO2</td>
+<td align="left"></td>
+<td align="left">physicalMeasurement</td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">VRMS</td>
+<td align="left">IML</td>
+<td align="left"><code>m</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Wave mean height</td>
+<td align="left">m</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_surface_wave_mean_height</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::ULAA</td>
+<td align="left">Metres</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">VRMS</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">VMXL</td>
+<td align="left">IML</td>
+<td align="left"><code>m</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Wave maximum height</td>
+<td align="left">m</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_surface_wave_maximum_height</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::ULAA</td>
+<td align="left">Metres</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">VMXL</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">VTCA</td>
+<td align="left">IML</td>
+<td align="left"><code>s</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Wave period</td>
+<td align="left">s</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">sea_surface_wave_mean_period</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">SDN:P06::UTBB</td>
+<td align="left">Seconds</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">VTCA</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">TAXN</td>
+<td align="left">IML</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Taxonomic Name</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">MODF</td>
+<td align="left">IML</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Additional taxonomic information</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">TSN</td>
+<td align="left">IML</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Taxonomic Serial Number</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">BNO7</td>
+<td align="left">IML</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Best NODC7 number</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">AUTH</td>
+<td align="left">IML</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Authority</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">LHIS</td>
+<td align="left">IML</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Life History or Development Stage</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">TRPH</td>
+<td align="left">IML</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Trophic Descriptor</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">MNSV</td>
+<td align="left">IML</td>
+<td align="left"><code>microns</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Retention Filter Size</td>
+<td align="left">microns</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">MXSV</td>
+<td align="left">IML</td>
+<td align="left"><code>microns</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Larges Sieve Used</td>
+<td align="left">microns</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">MNSZ</td>
+<td align="left">IML</td>
+<td align="left"><code>microns</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Minimum size of organisms</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">MXSZ</td>
+<td align="left">IML</td>
+<td align="left"><code>microns</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Maximum size of organisms</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">SEX</td>
+<td align="left">IML</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Sex</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">PHY</td>
+<td align="left">IML</td>
+<td align="left"><code>10^3cells/L</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Phytoplankton Counts</td>
+<td align="left">10^3cells/L</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">ZOO</td>
+<td align="left">IML</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">'Zooplankton counts'</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">SPFR</td>
+<td align="left">IML</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Fraction of Sample</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">WTWT</td>
+<td align="left">IML</td>
+<td align="left"><code>g</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Wet Weight of Organisms</td>
+<td align="left">g</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">DRWT</td>
+<td align="left">IML</td>
+<td align="left"><code>g</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Dry Weight of Organisms</td>
+<td align="left">g</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">MLI</td>
+<td align="left">CMNT</td>
+<td align="left">IML</td>
+<td align="left"><code>none</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">Comments</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </button>
+        
+      </main>
+      
+        <style>
+    .md-footer-meta__inner {
+        flex-wrap: wrap-reverse;
+    }
+
+    .md-footer-meta__inner img {
+        width: 300px;
+        height: 35px;
+        margin-left: 40px;
+    }
+  </style>
+  <footer class="md-footer">
+    
+      
+        
+        <nav class="md-footer__inner md-grid" aria-label="Footer" >
+          
+            
+            <a href="../amundsen-int/" class="md-footer__link md-footer__link--prev" aria-label="Previous: amundsen" rel="prev">
+              <div class="md-footer__button md-icon">
+                
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+              </div>
+              <div class="md-footer__title">
+                <span class="md-footer__direction">
+                  Previous
+                </span>
+                <div class="md-ellipsis">
+                  amundsen
+                </div>
+              </div>
+            </a>
+          
+          
+            
+            <a href="../dfo-ios-shell/" class="md-footer__link md-footer__link--next" aria-label="Next: dfo.ios.shell" rel="next">
+              <div class="md-footer__title">
+                <span class="md-footer__direction">
+                  Next
+                </span>
+                <div class="md-ellipsis">
+                  dfo.ios.shell
+                </div>
+              </div>
+              <div class="md-footer__button md-icon">
+                
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+              </div>
+            </a>
+          
+        </nav>
+      
+    
+    <div class="md-footer-meta md-typeset">
+      <div class="md-footer-meta__inner md-grid">
+        <img src="../../../images/cioos_website_top_banner_en.png" alt="CIOOS">
+        <div class="md-copyright">
+  
+  
+</div>
+        
+          <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/cioos-siooc" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+        
+      </div>
+    </div>
+  </footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["header.autohide", "navigation.footer", "navigation.top", "navigation.tracking", "toc.integrate", "toc.follow", "navigation.tabs", "navigation.tabs.sticky", "content.code.copy", "content.code.select"], "search": "../../../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.220ee61c.min.js"></script>
+      
+        
+          <script src="https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js"></script>
+        
+      
+        
+          <script src="../../../javascripts/tablesort.js"></script>
+        
+      
+    
+  </body>
+</html>
