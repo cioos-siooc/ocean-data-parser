@@ -126,5 +126,5 @@ def file(path: str, parser: str = None, **kwargs) -> Dataset:
         parser = detect_file_format(path)
 
     # Load the appropriate parser and read the file
-    parser_func = load_parser(parser) if isinstance(parser, str) else parser
+    parser_func = import_parser(parser) if isinstance(parser, str) else parser
     return parser_func(path, **kwargs)
