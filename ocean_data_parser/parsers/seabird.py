@@ -76,7 +76,7 @@ def cnv(
         encoding (str, optional): encoding to use. Defaults to "UTF-8".
         parse_manual_inputs (bool, optional): Attempt to parse the manual
             inputs available in the header ('** lines ...). Defaults to True.
-        generate_instruments_variables (bool, optional): Generate instrument 
+        generate_instruments_variables (bool, optional): Generate instrument
             specific variables based on the IOOS 1.2 convention. Defaults to True.
 
     Returns:
@@ -121,7 +121,7 @@ def btl(
         encoding (str, optional): Encoding to use. Defaults to "UTF-8".
         parse_manual_inputs (bool, optional): Attempt to parse the manual
             inputs available in the header ('** lines ...). Defaults to True.
-        generate_instruments_variables (bool, optional): Generate instrument 
+        generate_instruments_variables (bool, optional): Generate instrument
             specific variables based on the IOOS 1.2 convention. Defaults to True.
 
     Returns:
@@ -539,6 +539,7 @@ def _update_attributes_from_seabird_header(
     seabird_header: str,
     parse_manual_inputs: bool = False,
     generate_instruments_variables: bool = True,
+    match_instruments_by="long_name",
 ) -> xarray.Dataset:
     """Add Seabird specific attributes parsed from Seabird header into a xarray dataset"""
     # sourcery skip: identity-comprehension, remove-redundant-if
@@ -556,12 +557,7 @@ def _update_attributes_from_seabird_header(
 
     # Generate instruments variables
     if generate_instruments_variables:
-        if re.search(r"\<Sensors .+\<\/Sensors\>", seabird_header,re.DOTALL):
-            ds,_ = _generate_instruments_variables_from_xml(ds, seabird_header)
-        elif re.search(r"\# sensor (?P<id>\d+) = (?P<text>.*)\n", seabird_header):
-            ds = _generate_instruments_variables_from_sensor(ds, seabird_header)
-        else:
-            logger.info("No instrument metadata seems to be available")
+        ds = _add_seabird_instruments(ds, seabird_header, match_by=match_instruments_by)
     return ds
 
 
