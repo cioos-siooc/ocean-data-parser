@@ -62,13 +62,24 @@ def get_amundsen_vocab_markdown(output="docs/user_guide/vocabularies/amundsen-in
         vocab = json.load(file_handle)
     df = pd.DataFrame(
         [
-            {"Amundsen Name": name, **(attrs if isinstance(attrs, dict) else {})}
-            for name, options in vocab.items()
-            for attrs in options
-            if attrs and name != "VARIABLE_NAME"
-        ]
+            {"Amundsen Name": var, **attrs}
+            for var, versions in vocab.items()
+            for attrs in (versions if isinstance(versions, list) else [versions])
+        ][1:]
     )
-    df.replace({np.nan: ""}).to_markdown(output, index=False, tablefmt="pipe")
+    df["accepted_units"] = df["accepted_units"].apply(lambda x: f'`{x}`' if pd.notna(x) else x)
+    df[
+        [
+            "Amundsen Name",
+            "accepted_units",
+            "rename",
+            "long_name",
+            "units",
+            "standard_name",
+            "comments",
+            "source",
+        ]
+    ].replace({np.nan: ""}).to_markdown(output, index=False, tablefmt="pipe")
 
 
 def get_seabird_vocab_markdown(output="docs/user_guide/vocabularies/seabird.md"):
