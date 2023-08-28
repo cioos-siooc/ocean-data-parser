@@ -1,7 +1,7 @@
 import logging
 from glob import glob
 
-from ocean_data_parser.parsers import amundsen, onset, van_essen_instruments
+from ocean_data_parser.parsers import amundsen, onset, van_essen_instruments, seabird
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
@@ -38,4 +38,20 @@ def test_benchmark_van_essen_mon(benchmark):
         files=glob(
             "tests/parsers_test_files/van_essen_instruments/**/*.MON", recursive=True
         ),
+    )
+
+
+def test_benchmark_seabird_cnv(benchmark):
+    benchmark(
+        batch_parse_and_save_to_netcdf,
+        parser=seabird.cnv,
+        files=glob("tests/parsers_test_files/seabird/**/*.cnv", recursive=True),
+    )
+
+
+def test_benchmark_seabird_btl(benchmark):
+    benchmark(
+        batch_parse_and_save_to_netcdf,
+        parser=seabird.btl,
+        files=glob("tests/parsers_test_files/seabird/**/*.btl", recursive=True),
     )
