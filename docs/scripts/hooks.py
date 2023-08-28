@@ -67,7 +67,9 @@ def get_amundsen_vocab_markdown(output="docs/user_guide/vocabularies/amundsen-in
             for attrs in (versions if isinstance(versions, list) else [versions])
         ][1:]
     )
-    df["accepted_units"] = df["accepted_units"].apply(lambda x: f'`{x}`' if pd.notna(x) else x)
+    df["accepted_units"] = df["accepted_units"].apply(
+        lambda x: f"`{x}`" if pd.notna(x) else x
+    )
     df[
         [
             "Amundsen Name",
