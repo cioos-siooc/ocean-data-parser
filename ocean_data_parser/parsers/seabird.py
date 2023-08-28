@@ -47,7 +47,7 @@ sbe_data_processing_modules = [
     "section",
     "wild",
     "window",
-    "bottlesum"
+    "bottlesum",
 ]
 sbe_time = re.compile(
     r"(?P<time>\w\w\w\s+\d{1,2}\s+\d{1,4}\s+\d\d\:\d\d\:\d\d)(?P<comment>.*)"
