@@ -13,7 +13,7 @@ import pandas as pd
 
 from ocean_data_parser.parsers.seabird import (
     _get_seabird_instrument_from_header,
-    _get_seabird_processing_history,
+    sbe_data_processing_modules,
 )
 from ocean_data_parser.vocabularies.load import dfo_platforms
 
@@ -488,3 +488,17 @@ def _standardize_chief_scientist(name):
     """
     name = re.sub(r"\s+(\~|\/)", ",", name)
     return re.sub(r"(^|\s)(d|D)r\.{0,1}", "", name).strip().title()
+
+
+def _get_seabird_processing_history(seabird_header: str) -> str:
+    """
+    Retrieve the different rows within a Seabird header associated
+    with the sbe data processing tool
+    """
+    return "\n".join(
+        [
+            line
+            for line in seabird_header.split("\n")
+            if re.match(r"\# (" + "|".join(sbe_data_processing_modules) + r").*", line)
+        ]
+    )

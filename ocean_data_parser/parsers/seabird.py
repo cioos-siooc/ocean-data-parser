@@ -32,6 +32,7 @@ var_dtypes = {
     "stats": str,
     "scan": int,
 }
+xml_sections = {"#": "instrument_xml", "*": "data_xml"}
 
 sbe_data_processing_modules = [
     "datcnv",
@@ -289,6 +290,15 @@ def _parse_seabird_file_header(f: TextIO) -> dict:
         else:
             unknown_line(line)
 
+    def _is_xml_line(line, first_character):
+        return (
+            re.match(rf"\{first_character}\s*\<", line)
+            or re.match(rf"^\{first_character}\s*$", line)
+            or line.startswith("** ")
+            or line.startswith("* cast")
+            or re.search(r"\>\s*$", line)
+        )
+
     line = "*"
     header = {
         "variables": {},
@@ -300,9 +310,9 @@ def _parse_seabird_file_header(f: TextIO) -> dict:
     while "*END*" not in line and line.startswith(("*", "#")):
         if read_next_line:
             line = f.readline()
+            header["original_header"] += line
         else:
             read_next_line = True
-        header["original_header"] += line
         # Ignore empty lines or last header line
         if re.match(r"^\*\s*$|\s*Bottle .*", line) or "*END*" in line:
             continue
@@ -314,33 +324,17 @@ def _parse_seabird_file_header(f: TextIO) -> dict:
             # Retriveve the whole block of XML header
             xml_section = ""
             first_character = line[0]
-            while (
-                re.match(rf"\{first_character}\s*\<", line)
-                or re.match(rf"^\{first_character}\s*$", line)
-                or line.startswith("** ")
-                or line.startswith("* cast")
-                or re.search(r"\>\s*$", line)
-            ):
+            while _is_xml_line(line, first_character):
                 if "**" in line:
                     read_comments(line)
                 xml_section += line[1:]
                 line = f.readline()
                 header["original_header"] += line
-            else:
-                header["original_header"] = header["original_header"][:-1]
             read_next_line = False
-            # Add section_name
-            if first_character == "*":
-                section_name = "data_xml"
-            elif first_character == "#":
-                section_name = "instrument_xml"
-            xml_dictionary = xmltodict.parse(f"<temp>{xml_section}</temp>")["temp"]
-            if section_name in header:
-                header[section_name].update(xml_dictionary)
-            else:
-                header[section_name] = xml_dictionary
+            header[xml_sections[first_character]] = xmltodict.parse(
+                f"<temp>{xml_section}</temp>"
+            )["temp"]
 
-            read_next_line = False
         elif line.startswith("** "):
             read_comments(line)
         elif line.startswith("* "):
@@ -388,7 +382,7 @@ def _update_attributes_from_seabird_header(
     generate_instruments_variables: bool = True,
     match_instruments_by="long_name",
 ) -> xarray.Dataset:
-    """Add Seabird specific attributes parsed from Seabird header into a xarray dataset"""
+    """Add Seabird specific attributes parsed from Seabird header"""
     # sourcery skip: identity-comprehension, remove-redundant-if
     # Instrument
     ds.attrs["instrument"] = _get_seabird_instrument_from_header(seabird_header)
@@ -497,26 +491,6 @@ def _get_seabird_instrument_from_header(seabird_header: str) -> str:
         return f"Sea-Bird SBE {''.join(instrument)}"
 
 
-def _get_sbe_instrument_type(instrument: str) -> str:
-    """Map SBE instrument number a type of instrument"""
-    if re.match(r"SBE\s*(9|16|19|25|37)", instrument):
-        return "CTD"
-    logger.warning("Unknown instrument type for %s", instrument)
-
-
-def _get_seabird_processing_history(seabird_header: str) -> str:
-    """
-    Retrieve the different rows within a Seabird header associated
-    with the sbe data processing tool
-    """
-    if "# datcnv" in seabird_header:
-        sbe_hist = r"\# (" + "|".join(sbe_data_processing_modules) + r").*"
-        return "\n".join(
-            [line for line in seabird_header.split("\n") if re.match(sbe_hist, line)]
-        )
-    logger.warning("Failed to retrieve Seabird Processing Modules history")
-
-
 def _generate_binned_attributes(
     ds: xarray.Dataset, seabird_header: str
 ) -> xarray.Dataset:
@@ -559,9 +533,22 @@ def _generate_binned_attributes(
 def generate_seabird_instruments_variables(
     ds: xarray.Dataset, seabird_header: str, match_by: str = "long_name"
 ) -> xarray.Dataset:
-    """
-    Extract seabird sensor information and generate instrument variables which
-    follow the IOOS 1.2 convention. The instrument variables are then matched to their respective data
+    """Extract seabird sensor information and generate instrument variables which
+    follow the IOOS 1.2 convention. The instrument variables are then matched
+    to their respective data.
+
+    Args:
+        ds (xarray.Dataset): dataset
+        seabird_header (str): original seabird header
+        match_by (str, optional): Attribute used to matched the instruments to
+            their associated variables. Defaults to "long_name".
+                + "long_name": expect the original seabird long name
+                + "sdn_parameter_urn": Match via the BODC variable.
+                  (see seabird to bodc mapping in
+                  ocean_data_parser/parsers/seabird.py)
+
+    Returns:
+        xarray.Dataset: dataset with extra instruments variables.
     """
     # Retrieve sensors information
     if "# <Sensors count" in seabird_header:
@@ -575,6 +562,21 @@ def generate_seabird_instruments_variables(
         logger.info("No Seabird sensors information was detected")
         return ds
 
+    ds = _generate_instruments_attributes(ds, sensors_map, match_by)
+
+    return ds
+
+
+def _generate_instruments_attributes(
+    ds, sensors_map: dict, match_by="long_name"
+) -> xarray.Dataset:
+    def _add_instrument(var, instrument):
+        """Append to instrument attribute"""
+        if "instrument" not in ds[var].attrs:
+            ds[var].attrs["instrument"] = instrument
+        else:
+            ds[var].attrs["instrument"] += f",{instrument}"
+
     # Match instrument variables to their associated variables
     for name, sensor_variable in sensors_map.items():
         if match_by == "sdn_parameter_urn":
@@ -585,9 +587,11 @@ def generate_seabird_instruments_variables(
         else:
             values = [name]
 
-        has_matched = False
         for value in values:
             matched_variables = ds.filter_by_attrs(**{match_by: value})
+            if not matched_variables:
+                logger.warning("Failed to match instrument %s to any variables.", name)
+                continue
 
             # Some variables are not necessearily BODC specifc
             # we'll try to match them based on the long_name
@@ -620,14 +624,7 @@ def generate_seabird_instruments_variables(
                     )
 
             for var in matched_variables:
-                if ds[var].attrs.get("instrument"):
-                    ds[var].attrs["instrument"] += "," + sensor_variable
-                else:
-                    ds[var].attrs["instrument"] = sensor_variable
-                has_matched = True
-        if not has_matched:
-            logger.info("Failed to match instrument %s to any variables.", name)
-
+                _add_instrument(var, sensor_variable)
     return ds
 
 
