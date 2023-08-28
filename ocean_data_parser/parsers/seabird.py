@@ -370,12 +370,9 @@ def _parse_seabird_file_header(f: TextIO) -> dict:
 
     # btl header row
     if "Bottle" in line:
-        var_columns = line[22:-1]
-        var_width = 11
-        header["bottle_columns"] = ["Bottle", "Date"] + [
-            var_columns[index : index + var_width].strip()
-            for index in range(0, len(var_columns), var_width)
-        ]
+        header["bottle_columns"] = ["Bottle", "Date"] + list(
+            map(str.strip, re.findall(".{11}", line[22:-1]))
+        )
         # Read  Position Time line
         line = f.readline()
         header["original_header"] += line
