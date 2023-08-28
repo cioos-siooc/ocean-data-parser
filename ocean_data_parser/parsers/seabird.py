@@ -32,6 +32,23 @@ var_dtypes = {
     "stats": str,
     "scan": int,
 }
+
+sbe_data_processing_modules = [
+    "datcnv",
+    "filter",
+    "align",
+    "celltm",
+    "loopedit",
+    "derive",
+    "Derive",
+    "binavg",
+    "split",
+    "strip",
+    "section",
+    "wild",
+    "window",
+    "bottlesum"
+]
 sbe_time = re.compile(
     r"(?P<time>\w\w\w\s+\d{1,2}\s+\d{1,4}\s+\d\d\:\d\d\:\d\d)(?P<comment>.*)"
 )
@@ -95,8 +112,6 @@ def cnv(
             na_values=["-1.#IO", "-9.99E-29"],
         )
 
-    header = _generate_seabird_cf_history(header)
-
     ds = _convert_sbe_dataframe_to_dataset(df, header)
     ds = _update_attributes_from_seabird_header(
         ds,
@@ -159,8 +174,7 @@ def btl(
     df = df.drop(columns=drop_columns)
 
     # Improve metadata
-    n_scan_per_bottle = int(header["datcnv_scans_per_bottle"])
-    header = _generate_seabird_cf_history(header)
+    n_scan_per_bottle = int(re.search('# datcnv_scans_per_bottle = (\d+)',header['original_header'])[1])
 
     # Retrieve vocabulary associated with each variables
     header["variables"] = {var: header["variables"].get(var, {}) for var in df.columns}
@@ -289,8 +303,10 @@ def _parse_seabird_file_header(f: TextIO) -> dict:
         # Ignore empty lines or last header line
         if re.match(r"^\*\s*$|\s*Bottle .*", line) or "*END*" in line:
             continue
-
-        if re.match(r"(\*|\#)\s*\<", line):
+        if re.match(rf"#\s+({'|'.join(sbe_data_processing_modules)}_)", line):
+            # SBE processing steps will be parse later
+            continue
+        elif re.match(r"(\*|\#)\s*\<", line):
             # Load XML header
             # Retriveve the whole block of XML header
             xml_section = ""
@@ -307,6 +323,8 @@ def _parse_seabird_file_header(f: TextIO) -> dict:
                 xml_section += line[1:]
                 line = f.readline()
                 header["original_header"] += line
+            else:
+                header["original_header"] = header["original_header"][:-1]
             read_next_line = False
             # Add section_name
             if first_character == "*":
@@ -346,6 +364,9 @@ def _parse_seabird_file_header(f: TextIO) -> dict:
                 new_attributes[key + "_comment"] = time_attr["comment"].strip()
     header.update(new_attributes)
 
+    # Seabird history
+    header["history"] = _generate_seabird_cf_history(header["original_header"])
+
     # btl header row
     if "Bottle" in line:
         var_columns = line[22:-1]
@@ -360,42 +381,57 @@ def _parse_seabird_file_header(f: TextIO) -> dict:
     return header
 
 
-def _generate_seabird_cf_history(attrs, drop_processing_attrs=False):
+def _update_attributes_from_seabird_header(
+    ds: xarray.Dataset,
+    seabird_header: str,
+    parse_manual_inputs: bool = False,
+    generate_instruments_variables: bool = True,
+    match_instruments_by="long_name",
+) -> xarray.Dataset:
+    """Add Seabird specific attributes parsed from Seabird header into a xarray dataset"""
+    # sourcery skip: identity-comprehension, remove-redundant-if
+    # Instrument
+    ds.attrs["instrument"] = _get_seabird_instrument_from_header(seabird_header)
+
+    # Bin Averaged
+    ds = _generate_binned_attributes(ds, seabird_header)
+
+    # Manual inputs
+    manual_inputs = re.findall(r"\*\* (?P<key>.*): (?P<value>.*)\n", seabird_header)
+    if parse_manual_inputs:
+        for key, value in manual_inputs:
+            ds.attrs[key.replace(r" ", r"_").lower()] = value
+
+    # Generate instruments variables
+    if generate_instruments_variables:
+        ds = generate_seabird_instruments_variables(
+            ds, seabird_header, match_by=match_instruments_by
+        )
+    return ds
+
+
+def _generate_seabird_cf_history(original_header):
     """Generate CF standard history from Seabird parsed attributes"""
-    history = []
-    for step in sbe_data_processing_modules:
-        step_attrs = {
-            key.replace(step + "_", ""): value
-            for key, value in attrs.items()
-            if key.startswith(step)
-        }
-        if not step_attrs:
-            continue
 
-        date_line = step_attrs.pop("date")
-        if isinstance(date_line, datetime):
-            iso_date_str = date_line.isoformat()
-            extra = attrs.pop(step + "_comment") if f"{step}_comment" in attrs else None
+    def make_cf_history_line(module):
+        return rf"{pd.to_datetime(module['date'][:20], format=SBE_TIME_FORMAT)} - SBEDataProcessing: {module}".replace('\\\\','\\')
+
+    sbe_processing_lines = re.findall(
+        f"^#\s+(?P<module>{'|'.join(sbe_data_processing_modules)})_(?P<parameter>[^\s]+) = (?P<input>.*)$",
+        original_header,
+        re.MULTILINE,
+    )
+    processing = []
+    # TODO investigate why duplicated lines are given
+    for module, parameter, input in sbe_processing_lines:
+        if parameter == "date":
+            processing += [{"module": module, parameter: input}]
+        elif module == processing[-1]["module"]:
+            processing[-1][parameter] = input
         else:
-            date_str, extra = date_line.split(",", 1)
-            iso_date_str = pd.to_datetime(date_str).isoformat()
-        if extra:
-            extra = re.search(
-                r"^\s(?P<software_version>[\d\.]+)\s*(?P<date_extra>.*)", extra
-            )
-            step_attrs.update(extra.groupdict())
-        history += [f"{iso_date_str} - {step_attrs}"]
-    # Sort history by date
-    attrs["history"] = "\n".join(attrs.get("history", []) + sorted(history))
+            logger.error("Failed to parse the following sbe processing line: %s")
 
-    # Drop processing attributes
-    if drop_processing_attrs:
-        drop_keys = [
-            key for key in attrs.keys() if key.startswith(sbe_data_processing_modules)
-        ]
-        for key in drop_keys:
-            attrs.pop(key)
-    return attrs
+    return '\n'.join([make_cf_history_line(step) for step in processing])
 
 
 seabird_to_bodc = {
@@ -446,22 +482,6 @@ seabird_to_bodc = {
     "User Polynomial, 2": [],
     "User Polynomial, 3": [],
 }
-
-sbe_data_processing_modules = [
-    "datcnv",
-    "filter",
-    "align",
-    "celltm",
-    "loopedit",
-    "derive",
-    "Derive",
-    "binavg",
-    "split",
-    "strip",
-    "section",
-    "wild",
-    "window",
-]
 
 
 def _get_seabird_instrument_from_header(seabird_header: str) -> str:
@@ -534,30 +554,78 @@ def _generate_binned_attributes(
     return ds
 
 
-def _update_attributes_from_seabird_header(
-    ds: xarray.Dataset,
-    seabird_header: str,
-    parse_manual_inputs: bool = False,
-    generate_instruments_variables: bool = True,
-    match_instruments_by="long_name",
+def generate_seabird_instruments_variables(
+    ds: xarray.Dataset, seabird_header: str, match_by: str = "long_name"
 ) -> xarray.Dataset:
-    """Add Seabird specific attributes parsed from Seabird header into a xarray dataset"""
-    # sourcery skip: identity-comprehension, remove-redundant-if
-    # Instrument
-    ds.attrs["instrument"] = _get_seabird_instrument_from_header(seabird_header)
+    """
+    Extract seabird sensor information and generate instrument variables which
+    follow the IOOS 1.2 convention. The instrument variables are then matched to their respective data
+    """
+    # Retrieve sensors information
+    if "# <Sensors count" in seabird_header:
+        ds, sensors_map = _generate_instruments_variables_from_xml(ds, seabird_header)
+    elif "# sensor" in seabird_header:
+        ds = _generate_instruments_variables_from_sensor(ds, seabird_header)
+        logger.info("Unable to map old seabird sensor header to appropriate variables")
+        return ds
+    else:
+        # If no calibration detected give a warning and return dataset
+        logger.info("No Seabird sensors information was detected")
+        return ds
 
-    # Bin Averaged
-    ds = _generate_binned_attributes(ds, seabird_header)
+    # Match instrument variables to their associated variables
+    for name, sensor_variable in sensors_map.items():
+        if match_by == "sdn_parameter_urn":
+            if name not in seabird_to_bodc:
+                logger.warning("Missing Seabird to BODC mapping of: %s", name)
+                continue
+            values = [f"SDN:P01::{item}" for item in seabird_to_bodc[name]]
+        else:
+            values = [name]
 
-    # Manual inputs
-    manual_inputs = re.findall(r"\*\* (?P<key>.*): (?P<value>.*)\n", seabird_header)
-    if parse_manual_inputs:
-        for key, value in manual_inputs:
-            ds.attrs[key.replace(r" ", r"_").lower()] = value
+        has_matched = False
+        for value in values:
+            matched_variables = ds.filter_by_attrs(**{match_by: value})
 
-    # Generate instruments variables
-    if generate_instruments_variables:
-        ds = _add_seabird_instruments(ds, seabird_header, match_by=match_instruments_by)
+            # Some variables are not necessearily BODC specifc
+            # we'll try to match them based on the long_name
+            if (
+                len(matched_variables) > 1
+                and match_by == "sdn_parameter_urn"
+                and ("Fluorometer" in name or "Turbidity" in name)
+            ):
+                # Find the closest match based on the file name
+                var_longname = difflib.get_close_matches(
+                    name,
+                    [
+                        matched_variables[var].attrs["long_name"]
+                        for var in matched_variables
+                    ],
+                )
+                matched_variables = matched_variables[
+                    [
+                        var
+                        for var in matched_variables
+                        if ds[var].attrs["long_name"] in var_longname
+                    ]
+                ]
+
+                # If there's still multiple matches give a warning
+                if len(matched_variables) > 1:
+                    logger.warning(
+                        "Unable to link multiple %s instruments via sdn_parameter_urn attribute.",
+                        name,
+                    )
+
+            for var in matched_variables:
+                if ds[var].attrs.get("instrument"):
+                    ds[var].attrs["instrument"] += "," + sensor_variable
+                else:
+                    ds[var].attrs["instrument"] = sensor_variable
+                has_matched = True
+        if not has_matched:
+            logger.info("Failed to match instrument %s to any variables.", name)
+
     return ds
 
 
@@ -676,78 +744,3 @@ def _generate_instruments_variables_from_sensor(
         dataset[sensor_code] = sensor
         dataset[sensor_code].attrs = attrs
     return dataset
-
-
-def _add_seabird_instruments(
-    ds: xarray.Dataset, seabird_header: str, match_by: str = "long_name"
-) -> xarray.Dataset:
-    """
-    Extract seabird sensor information and generate instrument variables which
-    follow the IOOS 1.2 convention
-    """
-    # Retrieve sensors information
-    if "# <Sensors count" in seabird_header:
-        ds, sensors_map = _generate_instruments_variables_from_xml(ds, seabird_header)
-    elif "# sensor" in seabird_header:
-        ds = _generate_instruments_variables_from_sensor(ds, seabird_header)
-        logger.info("Unable to map old seabird sensor header to appropriate variables")
-        return ds
-    else:
-        # If no calibration detected give a warning and return dataset
-        logger.info("No Seabird sensors information was detected")
-        return ds
-
-    # Match instrument variables to their associated variables
-    for name, sensor_variable in sensors_map.items():
-        if match_by == "sdn_parameter_urn":
-            if name not in seabird_to_bodc:
-                logger.warning("Missing Seabird to BODC mapping of: %s", name)
-                continue
-            values = [f"SDN:P01::{item}" for item in seabird_to_bodc[name]]
-        else:
-            values = [name]
-
-        has_matched = False
-        for value in values:
-            matched_variables = ds.filter_by_attrs(**{match_by: value})
-
-            # Some variables are not necessearily BODC specifc
-            # we'll try to match them based on the long_name
-            if (
-                len(matched_variables) > 1
-                and match_by == "sdn_parameter_urn"
-                and ("Fluorometer" in name or "Turbidity" in name)
-            ):
-                # Find the closest match based on the file name
-                var_longname = difflib.get_close_matches(
-                    name,
-                    [
-                        matched_variables[var].attrs["long_name"]
-                        for var in matched_variables
-                    ],
-                )
-                matched_variables = matched_variables[
-                    [
-                        var
-                        for var in matched_variables
-                        if ds[var].attrs["long_name"] in var_longname
-                    ]
-                ]
-
-                # If there's still multiple matches give a warning
-                if len(matched_variables) > 1:
-                    logger.warning(
-                        "Unable to link multiple %s instruments via sdn_parameter_urn attribute.",
-                        name,
-                    )
-
-            for var in matched_variables:
-                if ds[var].attrs.get("instrument"):
-                    ds[var].attrs["instrument"] += "," + sensor_variable
-                else:
-                    ds[var].attrs["instrument"] = sensor_variable
-                has_matched = True
-        if not has_matched:
-            logger.info("Failed to match instrument %s to any variables.", name)
-
-    return ds
