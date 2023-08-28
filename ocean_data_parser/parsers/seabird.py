@@ -175,7 +175,9 @@ def btl(
     df = df.drop(columns=drop_columns)
 
     # Improve metadata
-    n_scan_per_bottle = int(re.search('# datcnv_scans_per_bottle = (\d+)',header['original_header'])[1])
+    n_scan_per_bottle = int(
+        re.search("# datcnv_scans_per_bottle = (\d+)", header["original_header"])[1]
+    )
 
     # Retrieve vocabulary associated with each variables
     header["variables"] = {var: header["variables"].get(var, {}) for var in df.columns}
