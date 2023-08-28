@@ -412,7 +412,9 @@ def _generate_seabird_cf_history(original_header):
     """Generate CF standard history from Seabird parsed attributes"""
 
     def make_cf_history_line(module):
-        return rf"{pd.to_datetime(module['date'][:20], format=SBE_TIME_FORMAT)} - SBEDataProcessing: {module}".replace('\\\\','\\')
+        return rf"{pd.to_datetime(module['date'][:20], format=SBE_TIME_FORMAT)} - SBEDataProcessing: {module}".replace(
+            "\\\\", "\\"
+        )
 
     sbe_processing_lines = re.findall(
         f"^#\s+(?P<module>{'|'.join(sbe_data_processing_modules)})_(?P<parameter>[^\s]+) = (?P<input>.*)$",
@@ -429,7 +431,7 @@ def _generate_seabird_cf_history(original_header):
         else:
             logger.error("Failed to parse the following sbe processing line: %s")
 
-    return '\n'.join([make_cf_history_line(step) for step in processing])
+    return "\n".join([make_cf_history_line(step) for step in processing])
 
 
 seabird_to_bodc = {
