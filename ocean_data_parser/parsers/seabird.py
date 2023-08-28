@@ -65,6 +65,7 @@ def _convert_to_netcdf_var_name(var_name):
 
 
 def _add_seabird_vocabulary(variable_attributes: dict) -> dict:
+    """Match seabird vocabulary to a given variable based on its atributes."""
     for var in variable_attributes:
         var_lower = var.lower()
         if var_lower in seabird_variable_attributes:
