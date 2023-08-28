@@ -104,8 +104,8 @@ def cnv(
     original_header = []
     with open(file_path, encoding=encoding) as f:
         while not original_header or "*END*" not in original_header[-1]:
-            original_header += f.readline()
-        header = parse_seabird_file_header(original_header)
+            original_header += [f.readline()]
+        header = parse_seabird_file_header("\n".join(original_header))
         header["variables"] = _add_seabird_vocabulary(header["variables"])
 
         df = pd.read_csv(
@@ -158,9 +158,14 @@ def btl(
         header = parse_seabird_file_header("\n".join(original_header))
 
         # Retrieve variables from bottle header and lower the first letter of each variable
-        variable_list = ['bottle','date'] + [var.strip()[0].lower() + var.strip()[1:] for var in re.findall('.{11}',original_header[-2][22:])] + [
-            "stats"
-        ]
+        variable_list = (
+            ["bottle", "date"]
+            + [
+                var.strip()[0].lower() + var.strip()[1:]
+                for var in re.findall(".{11}", original_header[-2][22:])
+            ]
+            + ["stats"]
+        )
         df = pd.read_fwf(
             f,
             widths=[10, 12] + [11] * (len(variable_list) - 2),
@@ -294,7 +299,6 @@ def parse_seabird_file_header(original_header: str) -> dict:
             standardize_attribute(key): __cast_value(value)
             for key, value in attrs.items()
         }
-    
 
     header = {
         "software_version": re.search(r"\* Software (v|V)ersion (.*)", original_header)[
