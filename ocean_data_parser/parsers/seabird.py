@@ -174,8 +174,9 @@ def btl(
     df = df.drop(columns=drop_columns)
 
     # Retrieve vocabulary associated with each variables
-    header["variables"] = {var: header["variables"].get(var, {}) for var in df.columns}
-    header["variables"] = _add_seabird_vocabulary(header["variables"])
+    header["variables"] = _add_seabird_vocabulary(
+        {var: header["variables"].get(var, {}) for var in df.columns}
+    )
 
     # Convert to xarray
     ds = _convert_sbe_dataframe_to_dataset(df, header)
@@ -225,23 +226,45 @@ def _convert_sbe_dataframe_to_dataset(df, header):
 
 
 def get_seabird_xml_from_header(original_header: str) -> dict:
+    """Convert Seabird XML header sections to dictionary
+
+    Args:
+        original_header (str): Original Seabird header
+
+    Returns:
+        dict: Parsed xml in dictionary format
+            {
+                "data_xml": "* ... xml section',
+                "instrument_xml": "# ... xml section',
+            }
+    """
+
     def get_xml_section(line_start):
         xml_rows = [
             id
             for id, line in enumerate(original_header.split("\n"))
             if re.match(rf"\{line_start}\s+\<.*", line)
         ]
-        if xml_rows:
-            return xmltodict.parse(
-                f"<temp>{[line[1:] for line in original_header[min(xml_rows):(max(xml_rows)+1)]]}</temp>"
-            )["temp"]
+        if not xml_rows:
+            return {}
+        sbe_xml = [
+            line[1:] for line in original_header[min(xml_rows) : (max(xml_rows) + 1)]
+        ]
+        return xmltodict.parse(f"<temp>{sbe_xml}</temp>")["temp"]
 
     return {"data_xml": get_xml_section("*"), "instrument_xml": get_xml_section("#")}
 
 
-def parse_seabird_file_header(f: FileIO, regex_stop: str) -> dict:
-    """Parsed seabird file header available within
-    the different formats: CNV, BTL, and  HEX"""
+def parse_seabird_file_header(f: FileIO, header_end_regex: str) -> dict:
+    """Parse seabird file header (CNV,BTL, and HEX) to dictionary
+
+    Args:
+        f (FileIO): FileIO to read
+        header_end_regex (str): Regex expression which marks the end of the header
+
+    Returns:
+        dict: Parsed seabird header
+    """
 
     def __cast_value(value):
         if re.fullmatch(r"\d+", value):
@@ -259,7 +282,7 @@ def parse_seabird_file_header(f: FileIO, regex_stop: str) -> dict:
         line = f.readline()
         header["original_header"] += line
 
-        if re.search(regex_stop, line):
+        if re.search(header_end_regex, line):
             break
         elif line.strip() in ("*", "#"):
             continue
@@ -272,7 +295,8 @@ def parse_seabird_file_header(f: FileIO, regex_stop: str) -> dict:
             variables[variable["id"]] = variable
         elif line.startswith("# span"):
             span = re.search(
-                r"\# span (?P<id>\d+) =\s*(?P<value_min>[e\-\+\d\.]+),\s*(?P<value_max>[e\-\+\d\.]+)",
+                r"\# span (?P<id>\d+) =\s*"
+                r"(?P<value_min>[e\-\+\d\.]+),\s*(?P<value_max>[e\-\+\d\.]+)",
                 line,
             ).groupdict()
             variables[span["id"]].update(span)
@@ -374,17 +398,17 @@ def get_seabird_cf_history_from_header(original_header: str) -> str:
     """Generate CF standard history from Seabird parsed attributes"""
 
     def make_cf_history_line(module):
-        return rf"{pd.to_datetime(module['date'][:20], format=SBE_TIME_FORMAT)} - SBEDataProcessing: {module}".replace(
+        timestamp = pd.to_datetime(module['date'][:20], format=SBE_TIME_FORMAT)
+        return rf"{timestamp.isoformat()} - SBEDataProcessing: {module}".replace(
             "\\\\", "\\"
         )
-
+    modules = '|'.join(sbe_data_processing_modules)
     sbe_processing_lines = re.findall(
-        rf"^#\s+(?P<module>{'|'.join(sbe_data_processing_modules)})_(?P<parameter>[^\s]+) = (?P<input>.*)$",
+        rf"^#\s+(?P<module>{modules})_(?P<parameter>[^\s]+) = (?P<input>.*)$",
         original_header,
         re.MULTILINE,
     )
     processing = []
-    # TODO investigate why duplicated lines are given
     for module, parameter, input in sbe_processing_lines:
         if parameter == "date":
             processing += [{"module": module, parameter: input}]
@@ -464,7 +488,8 @@ def _generate_binned_attributes(
     apply it to the different related attributes and variable attributes."""
 
     binavg = re.search(
-        r"\# binavg_bintype \= (?P<bintype>.*)\n\# binavg_binsize \= (?P<binsize>\d+)\n",
+        r"\# binavg_bintype \= (?P<bintype>.*)\n"
+        r"\# binavg_binsize \= (?P<binsize>\d+)\n",
         seabird_header,
     )
     if binavg:
@@ -585,7 +610,7 @@ def _generate_instruments_attributes(
                 # If there's still multiple matches give a warning
                 if len(matched_variables) > 1:
                     logger.warning(
-                        "Unable to link multiple %s instruments via sdn_parameter_urn attribute.",
+                        "Unable to link multiple %s instruments via sdn_parameter_urn.",
                         name,
                     )
 
@@ -661,7 +686,8 @@ def _generate_instruments_variables_from_xml(
             logger.warning("Duplicated instrument variable %s", sensor_var_name)
 
         # Try fit IOOS 1.2 which request to add a instrument variable for each
-        # instruments and link this variable to data variable by using the instrument attribute
+        # instruments and link this variable to data variable by using the
+        # instrument attribute:
         # https://ioos.github.io/ioos-metadata/ioos-metadata-profile-v1-2.html#instrument
         ds[sensor_var_name] = json.dumps(attrs)
         ds[sensor_var_name].attrs = {
@@ -685,7 +711,10 @@ def _generate_instruments_variables_from_xml(
 def _generate_instruments_variables_from_sensor(
     dataset: xarray.Dataset, seabird_header: str
 ) -> xarray.Dataset:
-    """Parse older Seabird Header sensor information and generate instrument variables"""
+    
+    """Parse older Seabird Header sensor information and generate
+    instrument variables
+    """
     sensors = re.findall(r"\# sensor (?P<id>\d+) = (?P<text>.*)\n", seabird_header)
     for index, sensor in sensors:
         if "Voltage" in sensor:
@@ -697,8 +726,10 @@ def _generate_instruments_variables_from_sensor(
             }
         else:
             attrs_dict = re.search(
-                r"(?P<channel>Frequency\s+\d+|Stored Volt\s+\d+|Extrnl Volt  \d+|Pressure Number\,)\s+"
-                + r"(?P<sensor_description>.*)",
+                r"(?P<channel>"
+                r"Frequency\s+\d+|Stored Volt\s+\d+|Extrnl Volt  \d+|Pressure Number\,"
+                r")\s+"
+                r"(?P<sensor_description>.*)",
                 sensor,
             )
             if attrs_dict is None:
