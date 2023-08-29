@@ -135,7 +135,7 @@ class IosFile(object):
         # try reading file using format specified in 'FORMAT'
         try:
             self.data = self.get_data(formatline=self.file.get("FORMAT"))
-        except Exception as e:
+        except Exception:
             logger.info(
                 "Could not read file data using FORMAT=%s ",
                 self.file.get("FORMAT"),
@@ -146,7 +146,7 @@ class IosFile(object):
             try:
                 # self.channel_details = self.get_channel_detail()
                 self.data = self.get_data(formatline=None)
-            except Exception as e:
+            except Exception:
                 logger.error("Failed to read file: %s", self.filename)
                 return 0
 
@@ -154,7 +154,10 @@ class IosFile(object):
         self.rename_date_time_variables()
         chnList = [i.strip().lower() for i in self.channels["Name"]]
         if "date" in chnList and ("time" in chnList or "time:utc" in chnList):
-            self.get_obs_time()
+            self.get_obs_time_from_date_time()
+        elif self.get_file_extension().lower() in ("cur", "loop", "drf"):
+            self.get_obs_time_from_time_increment()
+
         return 1
 
     def get_date_created(self):
@@ -629,7 +632,7 @@ class IosFile(object):
             geo_code = "None"
         self.geo_code = geo_code
 
-    def get_obs_time(self):
+    def get_obs_time_from_date_time(self):
         # Return a timeseries
         chnList = [i.strip().lower() for i in self.channels["Name"]]
 
@@ -670,23 +673,24 @@ class IosFile(object):
                 timezone("UTC").localize(i + timedelta(hours=0)) for i in self.obs_time
             ]
         else:
-            logger.info("Unable to find date/time columns in file")
-            try:
-                time_increment = self.get_dt()
-                self.obs_time = [
-                    self.start_dateobj + timedelta(seconds=time_increment * (i))
-                    for i in range(int(self.file["NUMBER OF RECORDS"]))
-                ]
-            except Exception as e:
-                raise Exception("ERROR: Unable to use time increment", self.filename)
-                # return 0
+            logger.error("Unable to find date/time columns in variables")
+            return 0
 
-        # date/time section in data is supposed to be in UTC.
-        # check if they match, if not then raise fatal error
-        dt = pd.Timedelta("1minute")
+        self.compare_obs_time_to_star_date()
+
+    def get_obs_time_from_time_increment(self):
+
+        time_increment = self.get_dt()
+        self.obs_time = [
+            self.start_dateobj + timedelta(seconds=time_increment * (i))
+            for i in range(int(self.file["NUMBER OF RECORDS"]))
+        ]
+        self.compare_obs_time_to_star_date()
+
+    def compare_obs_time_to_star_date(self, dt=pd.Timedelta("1minute")):
         if not (-dt < self.obs_time[0] - self.start_dateobj < dt):
             logger.error(
-                "Error: First record in data does not match start date in header  self.obs_time[0]-self.start_dateobj=%s",
+                "First record does not match start date: obs_time[0]-start_dateobj=%s",
                 self.obs_time[0] - self.start_dateobj,
             )
             return 0
