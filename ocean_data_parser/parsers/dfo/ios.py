@@ -21,7 +21,7 @@ HANDLED_DATA_TYPES = (
     "bot",
     "che",
     "med",
-    # "cur",
+    "cur",
 )
 TRACJECTORY_DATA_TYPES = ("tob", "drf", "loop")
 

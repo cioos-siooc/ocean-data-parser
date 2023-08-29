@@ -990,7 +990,7 @@ class IosFile(object):
             else None,
             axis="columns",
         )
-        variables["_FillValues"] = _FillValues if not _FillValues.empty else None
+        variables["_FillValues"] = None if _FillValues.empty else _FillValues
         variables["renamed_name"] = variables.apply(
             lambda x: x["matching_vocabularies"][-1].get("rename", x["ios_name"]),
             axis="columns",
@@ -1121,6 +1121,7 @@ class IosFile(object):
 
         if append_sub_variables:
             ds = ds_sub
+
         # Replace date/time variables by a single time column
         if self.obs_time and replace_date_time_variables:
             ds = ds.drop([var for var in ds if var in ["Date", "Time"]])
