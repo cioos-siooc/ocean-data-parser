@@ -892,9 +892,6 @@ class IosFile(object):
             "date_created": self.date_created.isoformat(),
         }
 
-    def get_geospatial_attributes(self):
-        return {}
-
     def to_xarray(
         self,
         rename_variables=True,
@@ -948,7 +945,6 @@ class IosFile(object):
             return dataset.where(~dataset.isin(bad_values))
 
         # Fix time variable(s)
-        self.rename_date_time_variables()
         self.fix_variable_names()
 
         # Retrieve the different variable attributes
@@ -1045,7 +1041,6 @@ class IosFile(object):
         )
         ds = _flag_bad_values(ds)
         ds.attrs = self.get_global_attributes()
-        ds.attrs.update(self.get_geospatial_attributes())
 
         # Add variable attributes
         if append_sub_variables is True:
