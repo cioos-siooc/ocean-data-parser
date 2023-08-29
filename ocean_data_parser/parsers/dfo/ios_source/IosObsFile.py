@@ -795,6 +795,14 @@ class IosFile(object):
                 "Rename duplicated flag 'Quality_Flag:Phos' -> 'Quality_Flag:Phosphate(inorg)'"
             )
             self.channels["Name"][ids[-1]] = "Quality_Flag:Phosphate(inorg)"
+        
+        if any(
+            variable.endswith('[ml/l]') for variable in variables
+        ):
+            logger.warning("Units [ml/l] present within variable name will be dropped")
+            for id, variable in enumerate(variables):
+                if variable.endswith('[ml/l]'):
+                    self.channels['Name'][id] = variable[:-7].strip()
 
     def rename_date_time_variables(self):
         rename_channels = self.channels["Name"]
