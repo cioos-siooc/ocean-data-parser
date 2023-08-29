@@ -10,6 +10,7 @@ import json
 import logging
 import os
 import re
+from io import FileIO
 
 import pandas as pd
 import xarray
@@ -101,15 +102,12 @@ def cnv(
     Returns:
         xarray.Dataset: Dataset
     """
-    original_header = []
-    with open(file_path, encoding=encoding) as f:
-        while not original_header or "*END*" not in original_header[-1]:
-            original_header += [f.readline()]
-        header = parse_seabird_file_header("\n".join(original_header))
+    with open(file_path, encoding=encoding) as file:
+        header = parse_seabird_file_header(file, r"\*END\*")
         header["variables"] = _add_seabird_vocabulary(header["variables"])
 
         df = pd.read_csv(
-            f,
+            file,
             delimiter=r"\s+",
             names=header["variables"].keys(),
             dtype={
@@ -148,47 +146,31 @@ def btl(
     Returns:
         xarray.Dataset: Dataset
     """
-    with open(file_path, encoding=encoding) as f:
-        original_header = []
-        while True:
-            original_header += [f.readline()]
-            if re.match(r"\s+Bottle", original_header[-1]):
-                original_header += [f.readline()]
-                break
-        header = parse_seabird_file_header("\n".join(original_header))
+    with open(file_path, encoding=encoding) as file:
+        header = parse_seabird_file_header(file, r"\s+Bottle")
 
-        # Retrieve variables from bottle header and lower the first letter of each variable
-        variable_list = (
-            ["bottle", "date"]
-            + [
-                var.strip()[0].lower() + var.strip()[1:]
-                for var in re.findall(".{11}", original_header[-2][22:])
-            ]
-            + ["stats"]
-        )
         df = pd.read_fwf(
-            f,
-            widths=[10, 12] + [11] * (len(variable_list) - 2),
-            names=variable_list,
-            dtype={var: var_dtypes.get(var, float) for var in variable_list},
+            file,
+            widths=[10, 12] + [11] * (len(header["bottle_columns"]) - 2),
+            names=header["bottle_columns"],
+            dtype={var: var_dtypes.get(var, float) for var in header["bottle_columns"]},
         )
 
-    # Split statistical data info separate dateframes
+    # Split statistical data info separate dateframes and unstack stats
     df["bottle"] = df["bottle"].ffill().astype(int)
     df["stats"] = df["stats"].str.extract(r"\((.*)\)")
-    df = df.set_index("bottle")
-
-    # Pivot statistical variables
-    df_grouped = df.query("stats=='avg'")
-    for stats in df.query("stats!='avg'")["stats"].drop_duplicates().to_list():
-        df_grouped = df_grouped.join(df.query("stats==@stats").add_suffix(f"_{stats}"))
-    df = df_grouped
+    df = df.set_index(["bottle", "stats"]).unstack(level="stats")
 
     # Generate time variable
-    df["time"] = pd.to_datetime(df.filter(like="date").apply(" ".join, axis="columns"))
+    df["time"] = pd.to_datetime(df["date"].apply(" ".join, axis="columns"))
+
+    # rename variables
+    df.columns = [
+        f"{var}_{stats}" if stats != "avg" else var for var, stats in df.columns
+    ]
 
     # Ignore extra variables
-    drop_columns = [col for col in df if re.search("^date|^stats|^bottle_", col)]
+    drop_columns = [col for col in df if col.startswith(("date", "stats", "bottle_"))]
     df = df.drop(columns=drop_columns)
 
     # Retrieve vocabulary associated with each variables
@@ -200,9 +182,10 @@ def btl(
 
     # Add cell_method attribute
     n_scan_per_bottle = int(
-        re.search("# datcnv_scans_per_bottle = (\d+)", header["original_header"])[1]
+        re.search(r"# datcnv_scans_per_bottle = (\d+)", header["original_header"])[1]
     )
     for var in ds:
+        # TODO handle the other stats that can be generated in bottle files
         if var.endswith("_sdev") and var[:-5] in ds:
             ds[var].attrs[
                 "cell_method"
@@ -256,15 +239,12 @@ def get_seabird_xml_from_header(original_header: str) -> dict:
     return {"data_xml": get_xml_section("*"), "instrument_xml": get_xml_section("#")}
 
 
-def parse_seabird_file_header(original_header: str) -> dict:
+def parse_seabird_file_header(f: FileIO, regex_stop: str) -> dict:
     """Parsed seabird file header available within
     the different formats: CNV, BTL, and  HEX"""
 
     def __cast_value(value):
-        value = value.strip()
-        if sbe_time.match(value):
-            return pd.to_datetime(value, format=SBE_TIME_FORMAT)
-        elif re.fullmatch(r"\d+", value):
+        if re.fullmatch(r"\d+", value):
             return int(value)
         elif re.fullmatch(r"[\de\.\+\-]+", value):
             return float(value)
@@ -273,79 +253,91 @@ def parse_seabird_file_header(original_header: str) -> dict:
     def standardize_attribute(attribute):
         return re.sub(r" |\|\)|\/", "_", attribute.strip()).lower()
 
-    def __get_key_value_attributes(sbe_header):
-        attrs = dict(
-            [
-                row[2:].split("=", 1)
-                for row in sbe_header.split("\n")
-                if row.startswith(("* ", "# "))
-                and "=" in row
-                and not re.search(
-                    rf'(\*|\#)\s+\<|#\s+name|#\s+span|\#\d+({"|".join(sbe_data_processing_modules)})',
-                    row,
+    variables = {}
+    header = {"instrument_type": "", "original_header": ""}
+    while True:
+        line = f.readline()
+        header["original_header"] += line
+
+        if re.search(regex_stop, line):
+            break
+        elif line.strip() in ("*", "#"):
+            continue
+        elif line.startswith("# name"):
+            variable = re.search(
+                r"\# name (?P<id>\d+) = (?P<sbe_variable>[^\s]+)\: (?P<long_name>.*)"
+                r"( \[(?P<units>.*)\](?P<comments>.*))*",
+                line,
+            ).groupdict()
+            variables[variable["id"]] = variable
+        elif line.startswith("# span"):
+            span = re.search(
+                r"\# span (?P<id>\d+) =\s*(?P<value_min>[e\-\+\d\.]+),\s*(?P<value_max>[e\-\+\d\.]+)",
+                line,
+            ).groupdict()
+            variables[span["id"]].update(span)
+        elif re.match(r"(\*|\#)\s+\<", line):
+            # xml is parsed after
+            continue
+        elif re.match(rf"\# ({'|'.join(sbe_data_processing_modules)})", line):
+            # processing lines are parsed after as part of the history
+            continue
+        elif line.startswith("** "):
+            # Read comments
+            if re.search("[:=]", line):
+                key, value = re.split("[:=]", line[2:].strip(), 1)
+                header[standardize_attribute(key)] = __cast_value(value)
+            else:
+                header["comments"] += line
+        elif "=" in line:
+            key, value = line[1:].strip().split("=", 1)
+            key = standardize_attribute(key)
+            sbe_time_stamp = sbe_time.match(value)
+            if sbe_time_stamp and sbe_time_stamp["comment"]:
+                header[f"{key}_comment"] = sbe_time_stamp["comment"]
+                header[key] = pd.to_datetime(
+                    sbe_time_stamp["time"], format=SBE_TIME_FORMAT
                 )
-            ]
-        )
-        # Retrieve comments associated with time stamps
-        timestamp_attrs = [
-            {key: value[:21], f"{key}_comment": value[21:]}
-            for key, value in attrs.items()
-            if sbe_time.match(value.strip())
-        ]
-        for items in timestamp_attrs:
-            attrs.update(items)
+            else:
+                header[key] = __cast_value(value.strip())
 
-        return {
-            standardize_attribute(key): __cast_value(value)
-            for key, value in attrs.items()
-        }
-
-    header = {
-        "software_version": re.search(r"\* Software (v|V)ersion (.*)", original_header)[
-            1
-        ],
-        "instrument_type": "".join(
-            [
+        elif re.search(r"\* Software (v|V)ersion (.*)", line):
+            header["software_version"] = re.search(
+                r"\* Software (v|V)ersion (.*)", line
+            )[1]
+        elif re.search(r"\* Sea-Bird (.*) Data File\:|\* SBE (.*)", line):
+            header["instrument_type"] += [
                 item
                 for item in re.search(
-                    r"\* Sea-Bird (.*) Data File\:|\* SBE (.*)", original_header
+                    r"\* Sea-Bird (.*) Data File\:|\* SBE (.*)", line
                 ).groups()
                 if item
+            ][0]
+        else:
+            logger.debug("Unknown sbe header line: %s", line)
+
+    header.update(
+        {
+            "history": get_seabird_cf_history_from_header(header["original_header"]),
+            **get_seabird_xml_from_header(header["original_header"]),
+            "variables": {
+                attrs["sbe_variable"]: attrs for _, attrs in variables.items()
+            },
+        }
+    )
+
+    # Get bottle files columns
+    if re.match(r"\s+Bottle\s+", line):
+        header["bottle_columns"] = (
+            ["bottle", "date"]
+            + [
+                item.strip()[0].lower() + item.strip()[1:]
+                for item in re.findall(".{11}", line[22:])
             ]
-        ),
-        **__get_key_value_attributes(original_header),
-        **get_seabird_xml_from_header(original_header),
-        "history": get_seabird_cf_history_from_header(original_header),
-        "original_header": original_header,
-    }
-
-    # Variables
-    variables = [
-        m.groupdict()
-        for m in re.finditer(
-            r"\# name (?P<id>\d+) = (?P<sbe_variable>[^\s]+)\: (?P<long_name>.*)"
-            + r"( \[(?P<units>.*)\](?P<comments>.*))*",
-            header["original_header"],
+            + ["stats"]
         )
-    ]
-    for index, min_span, max_span in re.findall(
-        r"\# span (?P<id>\d+) =\s*(?P<min>[e\-\+\d\.]+),\s*(?P<max>[e\-\+\d\.]+)",
-        header["original_header"],
-    ):
-        variables[int(index)].update(
-            {"value_min": __cast_value(min_span), "value_max": __cast_value(max_span)}
-        )
+        header["original_header"] += f.readline()
 
-    header["variables"] = {variable["sbe_variable"]: variable for variable in variables}
-
-    # # btl header row
-    # if "Bottle" in line:
-    #     header["bottle_columns"] = ["Bottle", "Date"] + list(
-    #         map(str.strip, re.findall(".{11}", line[22:-1]))
-    #     )
-    #     # Read  Position Time line
-    #     line = f.readline()
-    #     header["original_header"] += line
     return header
 
 
@@ -387,7 +379,7 @@ def get_seabird_cf_history_from_header(original_header: str) -> str:
         )
 
     sbe_processing_lines = re.findall(
-        f"^#\s+(?P<module>{'|'.join(sbe_data_processing_modules)})_(?P<parameter>[^\s]+) = (?P<input>.*)$",
+        rf"^#\s+(?P<module>{'|'.join(sbe_data_processing_modules)})_(?P<parameter>[^\s]+) = (?P<input>.*)$",
         original_header,
         re.MULTILINE,
     )
