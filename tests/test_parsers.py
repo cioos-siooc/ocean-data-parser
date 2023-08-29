@@ -1,5 +1,4 @@
 import logging
-import unittest
 from glob import glob
 
 import pandas as pd
