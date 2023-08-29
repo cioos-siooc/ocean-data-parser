@@ -7,7 +7,7 @@ import logging
 import xarray
 from cioos_data_transform.IosObsFile import CurFile, GenFile
 
-from ocean_data_parser.parsers.dfo.ios_source import IosObsFile
+from ocean_data_parser.parsers.dfo.ios_source.IosObsFile import IosFile
 
 logger = logging.getLogger(__name__)
 HANDLED_DATA_TYPES = (
@@ -71,7 +71,7 @@ def shell(fname: str, config: dict = {}) -> xarray.Dataset:
         raise RuntimeError(f"Package is not compatible yet with {extension} files.")
 
     # Load file
-    fdata = IosObsFile.GenFile(filename=fname, debug=False)
+    fdata = IosFile(filename=fname, debug=False)
     imported = fdata.import_data()
     if not imported:
         raise RuntimeError("Failed to import data")

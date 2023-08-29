@@ -60,7 +60,7 @@ def get_dtype_from_ios_name(ios_name):
         return float
 
 
-class ObsFile(object):
+class IosFile(object):
     """
     Class template for all the different data file types
     Contains data from the IOS file and methods to read the IOS format
@@ -109,8 +109,53 @@ class ObsFile(object):
             self.status = 0
             exit(0)
 
+    
     def import_data(self):
-        pass
+        sections_available = self.get_list_of_sections()
+        self.type = None
+        self.start_dateobj, self.start_date = self.get_date(opt="start")
+        self.end_dateobj, self.end_date = (
+            self.get_date(opt="end") if "END TIME" in self.file else (None, None)
+        )
+        self.time_increment = self.get_dt() if "TIME INCREMENT" in self.file else None
+        self.location = self.get_location()
+        self.channels = self.get_channels()
+        self.comments = self.get_comments_like("COMMENTS")
+        self.remarks = self.get_comments_like("REMARKS")
+        self.administration = self.get_section("ADMINISTRATION")
+        self.instrument = self.get_section("INSTRUMENT")
+        self.channel_details = self.get_channel_detail()
+        self.history = self.get_section("HISTORY")
+        if "DEPLOYMENT" in sections_available:
+            self.deployment = self.get_section("DEPLOYMENT")
+        if "RECOVERY" in sections_available:
+            self.recovery = self.get_section("RECOVERY")
+
+        if self.channel_details is None:
+            logger.info("Unable to get channel details from header...")
+        # try reading file using format specified in 'FORMAT'
+        try:
+            self.data = self.get_data(formatline=self.file.get("FORMAT"))
+        except Exception as e:
+            logger.info(
+                "Could not read file data using FORMAT=%s ",
+                self.file.get("FORMAT"),
+            )
+            self.data = None
+
+        if self.data is None:
+            try:
+                # self.channel_details = self.get_channel_detail()
+                self.data = self.get_data(formatline=None)
+            except Exception as e:
+                logger.error("Failed to read file: %s", self.filename)
+                return 0
+
+        chnList = [i.strip().lower() for i in self.channels["Name"]]
+        if "date" in chnList and ("time" in chnList or "time:utc" in chnList):
+            self.get_obs_time()
+        return 1
+
 
     def get_date_created(self):
         return pd.to_datetime(self.lines[0][1:], utc=True)
@@ -1152,252 +1197,3 @@ class ObsFile(object):
                 key: value for key, value in ds[var].attrs.items() if value
             }
         return ds
-
-
-#
-# ********************              END DEFINITION FOR OBSFILE CLASS          **************************
-#
-
-
-# class CtdFile(ObsFile):
-#     """
-#     Read CTD file in IOS format
-#     inherits methods from ObsFile class creates a new method called import_data
-#     this method processes files in manner that is specific to CTD dataset
-#     Author: Pramod Thupaki pramod.thupaki@hakai.org
-#     """
-
-#     def import_data(self):
-#         self.type = "ctd"
-#         self.start_dateobj, self.start_date = self.get_date(opt="start")
-#         self.location = self.get_location()
-#         self.channels = self.get_channels()
-#         self.comments = self.get_comments_like("COMMENTS")
-#         self.remarks = self.get_comments_like("REMARKS")
-#         self.administration = self.get_section("ADMINISTRATION")
-#         self.instrument = self.get_section("INSTRUMENT")
-#         self.channel_details = self.get_channel_detail()
-#         if self.channel_details is None:
-#             logger.info("Unable to get channel details from header...")
-
-#         # try reading file using format specified in 'FORMAT'
-#         try:
-#             self.data = self.get_data(formatline=self.file.get("FORMAT"))
-#         except Exception as e:
-#             self.data = None
-#             logger.info("Could not read file using 'FORMAT' description ...")
-#         if self.data is None:
-#             try:
-#                 # self.channel_details = self.get_channel_detail()
-#                 self.data = self.get_data(formatline=None)
-#             except Exception as e:
-#                 logger.exception(
-#                     "Failed to parse data with and without 'FORMAT' description"
-#                 )
-#                 return 0
-
-#         return 1
-
-
-# class CurFile(ObsFile):
-#     """
-#     Read current meter file in IOS format
-#     """
-
-#     def import_data(self):
-#         self.type = "cur"
-#         self.start_dateobj, self.start_date = self.get_date(opt="start")
-#         self.location = self.get_location()
-#         self.channels = self.get_channels()
-#         self.comments = self.get_comments_like("COMMENTS")
-#         self.remarks = self.get_comments_like("REMARKS")
-#         self.administration = self.get_section("ADMINISTRATION")
-#         self.instrument = self.get_section("INSTRUMENT")
-#         self.deployment = self.get_section("DEPLOYMENT")
-#         self.recovery = self.get_section("RECOVERY")
-#         # time_increment = self.get_dt()
-
-#         self.channel_details = self.get_channel_detail()
-#         if self.channel_details is None:
-#             logger.info("Unable to get channel details from header...")
-#         # try reading file using format specified in 'FORMAT'
-#         try:
-#             self.data = self.get_data(formatline=self.file["FORMAT"])
-#         except Exception as e:
-#             logger.info("Could not read file using 'FORMAT' description...")
-#             self.data = None
-
-#         if self.data is None:
-#             try:
-#                 # self.channel_details = self.get_channel_detail()
-#                 self.data = self.get_data(formatline=None)
-#             except Exception as e:
-#                 logger.exception(
-#                     "Could not read file using 'struct' data format description..."
-#                 )
-#                 return 0
-
-#         # if time_increment is None:
-#         # logger.info("Did not find 'TIME INCREMENT'. Trying to calculate it from endtime and nrecs ...")
-#         # enddateobj, _ = self.get_date(opt='end')
-#         # logger.info((enddateobj - self.start_dateobj).total_seconds(), self.file['NUMBER OF RECORDS'])
-#         # time_increment = (enddateobj - self.start_dateobj).total_seconds()/(int(self.file['NUMBER OF RECORDS'])-1)
-#         # logger.info('New time increment =', time_increment)
-#         # logger.info('Getting time increment from data section ...')
-
-#         # get timeseries times from data directly. raise fatal error if not availale
-#         # (2021/Jan - tpp) time increment based method is nor reliable (burst mode/ incorrect nrec etc.)
-#         self.get_obs_time()
-#         # # Take difference of first two times in self.data
-#         # time_increment = (self.obs_time[1] - self.obs_time[0]).total_seconds()
-
-#         # self.obs_time = [self.start_dateobj + timedelta(seconds=time_increment * (i))
-#         # for i in range(int(self.file['NUMBER OF RECORDS']))]
-
-#         return 1
-
-
-# class MCtdFile(ObsFile):
-#     """
-#     Read Mooring CTD file in IOS format
-#     inherits methods from ObsFile class creates a new method called import_data
-#     this method processes files in manner that is specific to CTD dataset
-#     Author: Pramod Thupaki pramod.thupaki@hakai.org
-#     """
-
-#     def import_data(self):
-#         from datetime import timedelta
-
-#         self.type = "mctd"
-#         self.start_dateobj, self.start_date = self.get_date(opt="start")
-#         self.location = self.get_location()
-#         self.channels = self.get_channels()
-#         self.comments = self.get_comments_like("COMMENTS")
-#         self.remarks = self.get_comments_like("REMARKS")
-#         self.administration = self.get_section("ADMINISTRATION")
-#         self.instrument = self.get_section("INSTRUMENT")
-#         self.deployment = self.get_section("DEPLOYMENT")
-#         self.recovery = self.get_section("RECOVERY")
-#         time_increment = self.get_dt()
-#         self.channel_details = self.get_channel_detail()
-#         if self.channel_details is None:
-#             logger.info("Unable to get channel details from header...")
-
-#         # if time_increment is None:
-#         # logger.info("Did not find 'TIME INCREMENT'. Trying to calculate it from endtime and nrecs ...")
-#         # enddateobj, _ = self.get_date(opt='end')
-#         # time_increment = (enddateobj - self.start_dateobj).total_seconds()/(int(self.file['NUMBER OF RECORDS'])-1)
-#         # logger.info('New time increment =', time_increment)
-
-#         # self.obs_time = [self.start_dateobj + timedelta(seconds=time_increment * (i))
-#         #  for i in range(int(self.file['NUMBER OF RECORDS']))]
-#         logger.debug(
-#             "first obs_time[[0,1]]=%s",
-#             [self.obs_time[0], self.obs_time[-1]] if self.obs_time else None,
-#         )
-#         # try reading file using format specified in 'FORMAT'
-#         try:
-#             self.data = self.get_data(formatline=self.file["FORMAT"])
-#         except Exception as e:
-#             logger.info("Could not read file using 'FORMAT' description...")
-#             self.data = None
-
-#         if self.data is None:
-#             try:
-#                 # self.channel_details = self.get_channel_detail()
-#                 self.data = self.get_data(formatline=None)
-#             except Exception as e:
-#                 logger.exception(e)
-#                 return 0
-
-#         # get timeseries times from data directly. raise fatal error if not availale
-#         # (2021/Jan - tpp) time increment based method is nor reliable (burst mode/ incorrect nrec etc.)
-
-#         self.get_obs_time()
-
-#         return 1
-
-
-# class BotFile(ObsFile):
-#     """
-#     Read bottle files in IOS format
-#     """
-
-#     def import_data(self):
-#         self.type = "bot"
-#         self.start_dateobj, self.start_date = self.get_date(opt="start")
-#         self.location = self.get_location()
-#         self.channels = self.get_channels()
-#         self.comments = self.get_comments_like("COMMENTS")
-#         self.remarks = self.get_comments_like("REMARKS")
-#         self.administration = self.get_section("ADMINISTRATION")
-#         self.instrument = self.get_section("INSTRUMENT")
-#         self.channel_details = self.get_channel_detail()
-#         if self.channel_details is None:
-#             logger.warning("Unable to get channel details from header...")
-#         # try reading file using format specified in 'FORMAT'
-#         try:
-#             self.data = self.get_data(formatline=self.file["FORMAT"])
-#         except Exception as e:
-#             logger.info("Could not read file using 'FORMAT' description...")
-#             self.data = None
-
-#         if self.data is None:
-#             try:
-#                 # self.channel_details = self.get_channel_detail()
-#                 self.data = self.get_data(formatline=None)
-#             except Exception as e:
-#                 logger.exception("Failed to parse file data")
-#                 return 0
-
-#         return 1
-
-
-class GenFile(ObsFile):
-    """General method used to parse the different IOS data types."""
-
-    def import_data(self):
-        sections_available = self.get_list_of_sections()
-        self.type = None
-        self.start_dateobj, self.start_date = self.get_date(opt="start")
-        self.end_dateobj, self.end_date = (
-            self.get_date(opt="end") if "END TIME" in self.file else (None, None)
-        )
-        self.time_increment = self.get_dt() if "TIME INCREMENT" in self.file else None
-        self.location = self.get_location()
-        self.channels = self.get_channels()
-        self.comments = self.get_comments_like("COMMENTS")
-        self.remarks = self.get_comments_like("REMARKS")
-        self.administration = self.get_section("ADMINISTRATION")
-        self.instrument = self.get_section("INSTRUMENT")
-        self.channel_details = self.get_channel_detail()
-        self.history = self.get_section("HISTORY")
-        if "DEPLOYMENT" in sections_available:
-            self.deployment = self.get_section("DEPLOYMENT")
-        if "RECOVERY" in sections_available:
-            self.recovery = self.get_section("RECOVERY")
-
-        if self.channel_details is None:
-            logger.info("Unable to get channel details from header...")
-        # try reading file using format specified in 'FORMAT'
-        try:
-            self.data = self.get_data(formatline=self.file.get("FORMAT"))
-        except Exception as e:
-            logger.info(
-                "Could not read file data using FORMAT=%s ",
-                self.file.get("FORMAT"),
-            )
-            self.data = None
-
-        if self.data is None:
-            try:
-                # self.channel_details = self.get_channel_detail()
-                self.data = self.get_data(formatline=None)
-            except Exception as e:
-                logger.error("Failed to read file: %s", self.filename)
-                return 0
-
-        chnList = [i.strip().lower() for i in self.channels["Name"]]
-        if "date" in chnList and ("time" in chnList or "time:utc" in chnList):
-            self.get_obs_time()
-        return 1
