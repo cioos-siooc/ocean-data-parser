@@ -631,8 +631,6 @@ class IosFile(object):
 
     def get_obs_time(self):
         # Return a timeseries
-        from pandas import to_datetime
-
         chnList = [i.strip().lower() for i in self.channels["Name"]]
 
         if "time:utc" in chnList:
@@ -651,7 +649,7 @@ class IosFile(object):
             else:
                 dates = [i.strip() for i in self.data[:, chnList.index("date")]]
                 times = [i.strip() for i in self.data[:, chnList.index("time")]]
-            datetime = to_datetime(
+            datetime = pd.to_datetime(
                 [date.replace(" ", "") + " " + time for date, time in zip(dates, times)]
             )
             self.obs_time = datetime.to_pydatetime()
@@ -666,7 +664,7 @@ class IosFile(object):
                 ]
             else:
                 dates = [i.strip() for i in self.data[:, chnList.index("date")]]
-            datetime = to_datetime(dates)
+            datetime = pd.to_datetime(dates)
             self.obs_time = datetime.to_pydatetime()
             self.obs_time = [
                 timezone("UTC").localize(i + timedelta(hours=0)) for i in self.obs_time
