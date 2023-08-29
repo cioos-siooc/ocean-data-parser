@@ -1115,51 +1115,35 @@ class IosFile(object):
         if append_sub_variables:
             ds = ds_sub
 
-        # Replace date/time variables by a single time column
+        # coordinates
         if self.obs_time and replace_date_time_variables:
             ds = ds.drop([var for var in ds if var in ["Date", "Time"]])
             ds["time"] = (ds.dims, pd.Series(self.obs_time))
-            ds["time"].encoding["units"] = "seconds since 1970-01-01T00:00:00Z"
+            # ds["time"].encoding["units"] = "seconds since 1970-01-01T00:00:00Z"
+        elif self.start_dateobj:
+            ds["time"] = self.start_dateobj
 
-        ds.attrs["time_coverage_start"] = ds.attrs["start_time"]
-        ds.attrs["time_coverage_end"] = (
-            ds.attrs.get("end_time") or ds.attrs["start_time"]
-        )
-        ds.attrs["time_coverage_duration"] = pd.Timedelta(
-            (self.end_dateobj or self.start_dateobj) - self.start_dateobj
-        ).isoformat()
         ds.attrs["time_coverage_resolution"] = (
             pd.Timedelta(self.time_increment).isoformat()
             if self.time_increment
             else None
         )
 
-        ds.attrs["geospatial_lat_min"] = (
-            ds["latitude"].min().item(0) if "latitude" in ds else ds.attrs["latitude"]
-        )
-        ds.attrs["geospatial_lat_max"] = (
-            ds["latitude"].max().item(0) if "latitude" in ds else ds.attrs["latitude"]
-        )
-        ds.attrs["geospatial_lat_units"] = "degrees_north"
-        ds.attrs["geospatial_lon_min"] = (
-            ds["longitude"].min().item(0)
-            if "longitude" in ds
-            else ds.attrs["longitude"]
-        )
-        ds.attrs["geospatial_lon_max"] = (
-            ds["longitude"].max().item(0)
-            if "longitude" in ds
-            else ds.attrs["longitude"]
-        )
-        ds.attrs["geospatial_lon_units"] = "degrees_east"
+        if "latitude" not in ds and "latitude" in ds.attrs:
+            ds["latitude"] = ds.attrs["latitude"]
+            ds["latitude"].attrs = {
+                "long_name": "Latitude",
+                "units": "degrees_north",
+                "standard_name": "latitude",
+            }
+            ds["longitude"] = ds.attrs["longitude"]
+            ds["longitude"].attrs = {
+                "long_name": "Longitude",
+                "units": "degrees_east",
+                "standard_name": "longitude",
+            }
 
-        if "depth" in ds:
-            ds.attrs["geospatial_vertical_min"] = ds["depth"].min().item(0)
-            ds.attrs["geospatial_vertical_max"] = ds["depth"].max().item(0)
-            ds.attrs["geospatial_vertical_positive"] = "down"
-            ds.attrs["geospatial_vertical_units"] = ds["depth"].attrs["units"]
-
-        # replace index dimension by the appropriate dimension for this file
+        # Define dimensions
         if "time" in ds and ds["index"].size == ds["time"].size:
             ds = ds.swap_dims({"index": "time"})
         elif "depth" in ds and ds["index"].size == ds["depth"].size:
