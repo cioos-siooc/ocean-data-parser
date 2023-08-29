@@ -8,6 +8,7 @@ import xarray
 from cioos_data_transform.IosObsFile import CurFile, GenFile
 
 from ocean_data_parser.parsers.dfo.ios_source.IosObsFile import IosFile
+from ocean_data_parser.parsers.utils import standardize_dataset
 
 logger = logging.getLogger(__name__)
 HANDLED_DATA_TYPES = (
@@ -83,5 +84,4 @@ def shell(fname: str, config: dict = {}) -> xarray.Dataset:
     fdata.add_ios_vocabulary()
     ds = fdata.to_xarray()
     ds.attrs.update(config.get("global_attributes", {}))
-    ds.attrs["source"] = fname
-    return ds
+    return standardize_dataset(ds)
