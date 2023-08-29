@@ -109,7 +109,6 @@ class IosFile(object):
             self.status = 0
             exit(0)
 
-    
     def import_data(self):
         sections_available = self.get_list_of_sections()
         self.type = None
@@ -151,11 +150,12 @@ class IosFile(object):
                 logger.error("Failed to read file: %s", self.filename)
                 return 0
 
+        # time variable
+        self.rename_date_time_variables()
         chnList = [i.strip().lower() for i in self.channels["Name"]]
         if "date" in chnList and ("time" in chnList or "time:utc" in chnList):
             self.get_obs_time()
         return 1
-
 
     def get_date_created(self):
         return pd.to_datetime(self.lines[0][1:], utc=True)
@@ -720,7 +720,7 @@ class IosFile(object):
         # Filter vocabulary to handle only file extension and global terms
         vocab = (
             DFO_IOS_SHELL_VOCABULARY.query(
-                f"ios_file_extension == '{self.get_file_extension().lower()}' or " 
+                f"ios_file_extension == '{self.get_file_extension().lower()}' or "
                 "ios_file_extension.isna()"
             )
             .sort_values("ios_file_extension")
@@ -793,14 +793,12 @@ class IosFile(object):
                 "Rename duplicated flag 'Quality_Flag:Phos' -> 'Quality_Flag:Phosphate(inorg)'"
             )
             self.channels["Name"][ids[-1]] = "Quality_Flag:Phosphate(inorg)"
-        
-        if any(
-            variable.endswith('[ml/l]') for variable in variables
-        ):
+
+        if any(variable.endswith("[ml/l]") for variable in variables):
             logger.warning("Units [ml/l] present within variable name will be dropped")
             for id, variable in enumerate(variables):
-                if variable.endswith('[ml/l]'):
-                    self.channels['Name'][id] = variable[:-7].strip()
+                if variable.endswith("[ml/l]"):
+                    self.channels["Name"][id] = variable[:-7].strip()
 
     def rename_date_time_variables(self):
         rename_channels = self.channels["Name"]
