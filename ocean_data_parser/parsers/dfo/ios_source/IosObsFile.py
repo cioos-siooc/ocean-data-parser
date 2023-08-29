@@ -1142,7 +1142,7 @@ class IosFile(object):
             }
 
         # Define dimensions
-        if "time" in ds and ds['time'].dims and ds["index"].size == ds["time"].size:
+        if "time" in ds and ds["time"].dims and ds["index"].size == ds["time"].size:
             ds = ds.swap_dims({"index": "time"})
         elif "depth" in ds and ds["index"].size == ds["depth"].size:
             ds = ds.swap_dims({"index": "depth"})
