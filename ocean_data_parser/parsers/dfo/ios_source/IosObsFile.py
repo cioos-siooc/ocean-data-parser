@@ -1,7 +1,14 @@
 """
     Python class to read IOS data files and store data for conversion to netcdf format
-    Changelog Version 0.1: July 15 2019 - convert python scripts and functions into a python class
-    Author: Pramod Thupaki (pramod.thupaki@hakai.org)
+    Changelog Version
+        0.1: July 15 2019:
+            Convert python scripts and functions into a python class
+        0.2: August 2023:
+            Migrate the code to the ocean-data-parser package and reduce code base
+    Authors:
+        Pramod Thupaki (pramod.thupaki@hakai.org)
+        Jessy Barrette
+
 """
 import json
 import logging
@@ -21,15 +28,25 @@ from pytz import timezone
 from ocean_data_parser import __version__
 from ocean_data_parser.vocabularies.load import dfo_ios_vocabulary
 
-try:
-    from shapely.geometry import Point
-except ImportError:
-    Point = None
 
-VERSION = __version__
 logger = logging.getLogger(__name__)
 logger = logging.LoggerAdapter(logger, {"file": None})
+
+VERSION = __version__
 DFO_IOS_SHELL_VOCABULARY = dfo_ios_vocabulary()
+vocabulary_attributes = [
+    "ios_name",
+    "long_name",
+    "standard_name",
+    "units",
+    "scale",
+    "sdn_parameter_urn",
+    "sdn_parameter_name",
+    "sdn_uom_urn",
+    "sdn_uom_name",
+    "rename",
+    "apply_func",
+]
 
 ios_dtypes_to_python = {
     "R": "float32",
@@ -60,26 +77,34 @@ def get_dtype_from_ios_name(ios_name):
         return float
 
 
+ODF_SHELL_HEADER_SECTIONS = (
+    "COMMENTS",
+    "REMARK",
+    "ADMINISTRATION",
+    "INSTRUMENT",
+    "HISTORY",
+    "DEPLOYMENT",
+    "RECOVERY",
+)
+
+
 class IosFile(object):
     """
     Class template for all the different data file types
     Contains data from the IOS file and methods to read the IOS format
-    Specific improvements/modifications required to read filetypes will be make in derived classes
+    Specific improvements/modifications required
+    to read filetypes will be make in derived classes
     Author: Pramod Thupaki pramod.thupaki@hakai.org
     Incorporates functions from earlier versions of this toolbox
     """
 
-    def __init__(self, filename, debug):
+    def __init__(self, filename):
         # initializes object by reading *FILE and ios_header_version
         # reads entire file to memory for all subsequent processing
         # inputs are filename and debug state
 
         logger.extra["file"] = filename
-        if debug:
-            logger.setLevel("DEBUG")
-
-        self.type = None
-        self.debug = debug
+        self.type = filename.split(".", 1)[1]
         self.filename = filename
         self.start_date = None
         self.start_dateobj = None
@@ -96,22 +121,18 @@ class IosFile(object):
         self.obs_time = None
         self.vocabulary_attributes = None
         self.history = None
-        # try opening and reading the file. if error. soft-exit.
-        try:
-            with open(self.filename, "r", encoding="ASCII", errors="ignore") as fid:
-                self.lines = [l for l in fid.readlines()]
-            self.ios_header_version = self.get_header_version()
-            self.date_created = self.get_date_created()
-            self.file = self.get_section("FILE")
-            self.status = 1
-        except Exception as e:
-            logger.error("Unable to open file", filename, exc_info=True)
-            self.status = 0
-            exit(0)
+
+        # Load file
+        with open(self.filename, "r", encoding="ASCII") as file:
+            self.lines = file.readlines()
+
+        self.ios_header_version = self.get_header_version()
+        self.date_created = self.get_date_created()
+        self.file = self.get_section("FILE")
+        self.status = 1
 
     def import_data(self):
         sections_available = self.get_list_of_sections()
-        self.type = None
         self.start_dateobj, self.start_date = self.get_date(opt="start")
         self.end_dateobj, self.end_date = (
             self.get_date(opt="end") if "END TIME" in self.file else (None, None)
@@ -130,35 +151,41 @@ class IosFile(object):
         if "RECOVERY" in sections_available:
             self.recovery = self.get_section("RECOVERY")
 
+        unparsed_sections = [
+            section
+            for section in sections_available
+            if section not in ODF_SHELL_HEADER_SECTIONS
+        ]
+        if unparsed_sections:
+            logger.warning(
+                "Unknown sections: %s",
+                unparsed_sections,
+            )
+
         if self.channel_details is None:
             logger.info("Unable to get channel details from header...")
-        # try reading file using format specified in 'FORMAT'
+
+        # try reading file using format specified in 'FORMAT' if failed ignore 'FORMAT'
         try:
             self.data = self.get_data(formatline=self.file.get("FORMAT"))
-        except Exception:
+        except Exception as e:
+            if not self.file.get("FORMAT"):
+                raise e
             logger.info(
-                "Could not read file data using FORMAT=%s ",
+                "Failed to read data using FORMAT=%s ",
                 self.file.get("FORMAT"),
             )
-            self.data = None
-
-        if self.data is None:
-            try:
-                # self.channel_details = self.get_channel_detail()
-                self.data = self.get_data(formatline=None)
-            except Exception:
-                logger.error("Failed to read file: %s", self.filename)
-                return 0
+            self.data = self.get_data(formatline=None)
 
         # time variable
         self.rename_date_time_variables()
-        chnList = [i.strip().lower() for i in self.channels["Name"]]
+        chnList = [
+            channel_name.strip().lower() for channel_name in self.channels["Name"]
+        ]
         if "date" in chnList and ("time" in chnList or "time:utc" in chnList):
             self.get_obs_time_from_date_time()
         elif self.get_file_extension().lower() in ("cur", "loop", "drf"):
             self.get_obs_time_from_time_increment()
-
-        return 1
 
     def get_date_created(self):
         return pd.to_datetime(self.lines[0][1:], utc=True)
@@ -170,9 +197,9 @@ class IosFile(object):
     def find_index(self, string):
         # finds line number that starts with string
         # input: string (nominally the section)
-        for i, l in enumerate(self.lines):
-            if l.lstrip()[0 : len(string)] == string:
-                return i
+        for index, line in enumerate(self.lines):
+            if line.lstrip()[0 : len(string)] == string:
+                return index
 
         logger.debug("Index not found %s", string)
         return -1
@@ -189,11 +216,18 @@ class IosFile(object):
                 header[sec] = self.get_section(sec)
         return header
 
-    def get_section(self, section_name):
+    def get_section(self, section_name: str) -> dict:
         # deciphers the information in a particular section
         # reads table information
         # returns information as dictionary.
         # records (subsections) are returned as list of lines for subsequent processing
+        def _get_subsection(idx) -> list:
+            subsection = []
+            while self.lines[idx + 1].strip()[0:4] != "$END":
+                idx += 1
+                subsection += [self.lines[idx]]
+            return subsection, idx + 1
+
         if section_name[0] != "*":
             section_name = "*" + section_name
         idx = self.find_index(section_name)
@@ -204,53 +238,68 @@ class IosFile(object):
         # EOS = False # end of section logical
         while True:
             idx += 1
-            l = self.lines[idx]
-            if len(l.strip()) == 0:  # skip line if blank
+            line = self.lines[idx]
+            if not line.strip() or line[0] == "!":
+                # skip blank or commented lines
                 continue
-            elif l[0] == "!":
-                continue
-            elif l[0] in ["$", "*"]:
+            elif line[0] in ["$", "*"]:
                 break
-            elif "$" in l[1:5]:
-                # read record or 'sub-section'. This nominally starts with tab of 4 spaces
+            elif "$" in line[1:5]:
+                # read record or 'sub-section'.
+                # This nominally starts with tab of 4 spaces
                 # but can be 1 or 2 spaces as well for REMARKS
-                EOR = False
-                record_name = l.strip()
-
+                subsection_name = line.strip()
                 logger.debug(
-                    "Found subsection:%s in section:%s", record_name, section_name
+                    "Found subsection:%s in section:%s", subsection_name, section_name
                 )
-                info[record_name] = []
-                while not EOR:
-                    idx += 1
-                    l = self.lines[idx]
-                    if l.strip()[0:4] == "$END":
-                        EOR = True
-                    else:
-                        info[record_name].append(l)
+                info[subsection_name], idx = _get_subsection(idx)
             else:
-                logger.debug(l)
-                if len(l.split(":", 1)) > 1:
-                    info[l.split(":", 1)[0].strip()] = l.split(":", 1)[1]
+                logger.debug(line)
+                if ":" in line:
+                    key, value = line.split(":", 1)
+                    info[key.strip()] = value
         return info
 
-    def get_flag_convention(self, name, units=None):
+    def get_flag_convention(self, name: str, units: str = None) -> dict:
         if name.lower() == "flag:at_sea":
             return {
                 "rename": "flag:at_sea",
                 "flag_values": [0, 1, 2, 3, 4, 5],
-                "flag_meanings": "not_classified good:at_sea_freely_floating bad:at_sea_but_trapped_in_rocky_intertidal bad:on_land bad:at_sea bad:land_travel",
+                "flag_meanings": " ".join(
+                    [
+                        "not_classified",
+                        "good:at_sea_freely_floating",
+                        "bad:at_sea_but_trapped_in_rocky_intertidal",
+                        "bad:on_land",
+                        "bad:at_sea bad:land_travel",
+                    ]
+                ),
                 "units": None,
             }
         elif units.lower() == "igoss_flags":
             return {
                 "flag_values": [0, 1, 2, 3, 4, 5],
-                "flag_meanings": "not_checked appears_to_be_good inconsistent_with_climatology appears_to_be_doubtful appears_to_be_wrong value_was_changed_see_history_record",
+                "flag_meanings": " ".join(
+                    [
+                        "not_checked",
+                        "appears_to_be_good",
+                        "inconsistent_with_climatology",
+                        "appears_to_be_doubtful",
+                        "appears_to_be_wrong",
+                        "value_was_changed_see_history_record",
+                    ]
+                ),
             }
         elif name.lower() == "flag:ctd" or name.lower() == "flag":
             return {
                 "flag_values": [0, 2, 6],
-                "flag_meanings": "not_quality_control good interpolated_or_replaced_by_dual_sensor_or_upcast_value",
+                "flag_meanings": " ".join(
+                    [
+                        "not_quality_control",
+                        "good",
+                        "interpolated_or_replaced_by_dual_sensor_or_upcast_value",
+                    ]
+                ),
             }
         elif name.lower().startswith("flag") and self.filename.endswith("che"):
             return {
@@ -273,7 +322,7 @@ class IosFile(object):
         elif name.lower() == "sample_method":
             return {
                 "flag_values": ["UN", "US", "USM"],
-                "flag_meanings": "no_stop stop_for_30s up_stop_mix",
+                "flag_meanings": " ".join(["no_stop", "stop_for_30s", "up_stop_mix"]),
             }
         logger.warning("Unknown flag name=%s, units=%s", name, units)
         return {}
@@ -283,34 +332,26 @@ class IosFile(object):
             return self.filename.rsplit(".", 1)[1]
         return None
 
-    def get_subsection(self, name, section):
+    def get_subsection(self, name):
         # return subsection information from a section
         # used as interface for data actually read into dictionary by get_section
         # provides some useful debug information
         # returns lines that make up 'subsection' if all is well
-        info = None
-        if name[0] != "$":
-            logger.debug("Finding subsection %s", name)
-            name = "$" + name
         if name not in self.file.keys():
-            logger.warning("Did not find subsection:%s in %s", name, self.filename)
-        elif name == "$TABLE: CHANNELS":
-            info = self.file[name]
-        elif name == "$TABLE: CHANNEL DETAIL":
-            info = self.file[name]
-        return info
+            logger.info("Unvailable subsection:%s", name)
+            return None
+        return self.file[name]
 
     def get_dt(self):
         # converts time increment from ios format to seconds
         # float32 accurate (seconds are not rounded to integers)
-        if "TIME INCREMENT" in self.file and "n/a" not in self.file["TIME INCREMENT"]:
-            line = self.file["TIME INCREMENT"]
-            dt = np.asarray(line.split("!")[0].split(), dtype=float)
-            dt = sum(dt * [24.0 * 3600.0, 3600.0, 60.0, 1.0, 0.001])  # in seconds
-        else:
+        if "TIME INCREMENT" not in self.file or "n/a" in self.file["TIME INCREMENT"]:
             logger.warning("Time Increment not found in Section:FILE")
-            dt = None
-        return dt
+            return
+
+        line = self.file["TIME INCREMENT"].split("!")[0].split()
+        dt = np.asarray(line, dtype=float)
+        return sum(dt * [24.0 * 3600.0, 3600.0, 60.0, 1.0, 0.001])  # in seconds
 
     def get_date(self, opt="start"):
         # reads datetime string in "START TIME" and converts to datetime object
@@ -334,7 +375,7 @@ class IosFile(object):
         # get the naive (timezone unaware) datetime obj
         try:
             date_obj = datetime.strptime(date_string[4:], "%Y/%m/%d %H:%M:%S.%f")
-        except Exception as e:
+        except ValueError:
             if re.match(r"\d{4}\/\d{2}\/\d{2}", date_string[:4]):
                 logger.warning("No time available is available will assume midnight.")
                 date_obj = datetime.strptime(date_string[4:], "%Y/%m/%d")
@@ -397,8 +438,9 @@ class IosFile(object):
         idx = self.find_index("*END OF HEADER")
         lines = self.lines[idx + 1 :]
         data = []
-        # if formatline is None, try reading without any format (assume columns are space limited;
-        #       if space limited strategy does not work, try to create format line)
+        # if formatline is None, try reading without any format
+        # (assume columns are space limited;
+        #   if space limited strategy does not work, try to create format line)
         if formatline is None:
             try:
                 logger.debug(
@@ -411,16 +453,13 @@ class IosFile(object):
                 fmt_struct = self.channel_details["fmt_struct"]
                 for i in range(len(lines)):
                     if len(lines[i].strip()) > 1:
-                        # py2-3 migration...
-                        # data.append(struct.unpack(self.channel_details['fmt_struct'], lines[i].rstrip().ljust(fmt_len)))
                         data.append(
                             struct.unpack(
                                 fmt_struct,
                                 lines[i].rstrip().ljust(fmt_len).encode("utf-8"),
                             )
                         )
-                        # data.append([r for r in lines[i].split()])
-            except Exception as e:
+            except Exception:
                 data = np.genfromtxt(
                     StringIO("".join(lines)), delimiter="", dtype=str, comments=None
                 )
@@ -456,9 +495,6 @@ class IosFile(object):
         # Convert lat and lon
         info["LATITUDE"] = _convert_latlong_string(info.get("LATITUDE"))
         info["LONGITUDE"] = _convert_latlong_string(info.get("LONGITUDE"))
-        # initialize some dict items if not available
-        # if 'EVENT NUMBER' not in info.keys():
-        # info['EVENT NUMBER'] = ''
         return info
 
     def get_channel_detail(self):
@@ -469,84 +505,75 @@ class IosFile(object):
         # This is done because 'Format' information in 'CHANNEL DETAIL'
         # is not a fortran compatible description
         # CHANGELOG July 2019: decipher python 'struct' format from channel details
-        lines = self.get_subsection("TABLE: CHANNEL DETAIL", self.file)
+        lines = self.get_subsection("$TABLE: CHANNEL DETAIL")
         if lines is None:
             return None
         mask = lines[1].rstrip()
-        info = {}
-        ch_det = [self.apply_col_mask(l, mask) for l in lines[2:]]
-        info["Pad"] = [l[1] for l in ch_det]
-        info["Width"] = [l[3] for l in ch_det]
-        info["Format"] = [l[4] for l in ch_det]
-        info["Type"] = [l[5] for l in ch_det]
+        ch_det = [self.apply_col_mask(line, mask) for line in lines[2:]]
+        info = {
+            "Pad": [line[1] for line in ch_det],
+            "Width": [line[3] for line in ch_det],
+            "Format": [line[4] for line in ch_det],
+            "Type": [line[5] for line in ch_det],
+        }
         if int(self.file["NUMBER OF CHANNELS"]) != len(info["Pad"]):
             raise Exception(
                 "Number of channels in file record does not match channel_details!"
             )
-        elif any([item for item in info["Type"] if item.strip()]) or any(
+        elif not any([item for item in info["Type"] if item.strip()]) or not any(
             [item for item in info["Format"] if item.strip()]
         ):
-            fmt = ""
-            for i in range(len(info["Pad"])):
-                if info["Type"][i].strip() == "D":
-                    fmt = fmt + "11s"
-                elif info["Type"][i].strip() == "DT":
-                    fmt = fmt + "17s"
-                elif info["Format"][i].strip().upper() == "HH:MM:SS.SS":
-                    fmt = fmt + "12s"
-                elif info["Format"][i].strip().upper() == "HH:MM:SS":
-                    fmt = fmt + "9s"
-                elif info["Format"][i].strip().upper() == "HH:MM":
-                    fmt = fmt + "6s"
-                elif info["Width"][i].strip():
-                    fmt = fmt + info["Width"][i].strip() + "s"
-                elif re.match(r"F\d+\.\d+", info["Format"][i], re.IGNORECASE):
-                    fmt = (
-                        fmt
-                        + re.match(r"F(\d+)\.\d+\s*", info["Format"][i], re.IGNORECASE)[
-                            1
-                        ]
-                        + "s"
-                    )
-                elif re.match(r"I\d+", info["Format"][i], re.IGNORECASE):
-                    fmt = (
-                        fmt
-                        + re.match(r"I(\d+)", info["Format"][i], re.IGNORECASE)[1]
-                        + "s"
-                    )
-                elif info["Format"][i].strip() in ("F", "I", "f", "i"):
-                    logger.info(
-                        "Unable to retrieve the fmt format from the CHANNEL DETAIL Table"
-                    )
-                    break
-                else:
-                    logger.error(
-                        "Unknown variable format Format: %s, Type: %s",
-                        info["Format"][i],
-                        info["Type"][i],
-                    )
-                    raise Exception(
-                        "Unknown variable format Format: %s, Type: %s"
-                        % (info["Format"][i], info["Type"][i])
-                    )
-            else:
-                info["fmt_struct"] = fmt
+            return info
 
-            logger.debug("Python compatible data format: %s", fmt)
+        fmt = ""
+        for i in range(len(info["Pad"])):
+            if info["Type"][i].strip() == "D":
+                fmt += "11s"
+            elif info["Type"][i].strip() == "DT":
+                fmt += "17s"
+            elif info["Format"][i].strip().upper() == "HH:MM:SS.SS":
+                fmt += "12s"
+            elif info["Format"][i].strip().upper() == "HH:MM:SS":
+                fmt += "9s"
+            elif info["Format"][i].strip().upper() == "HH:MM":
+                fmt += "6s"
+            elif info["Width"][i].strip():
+                fmt += info["Width"][i].strip() + "s"
+            elif re.match(r"F\d+\.\d+", info["Format"][i], re.IGNORECASE):
+                fmt += (
+                    re.match(r"F(\d+)\.\d+\s*", info["Format"][i], re.IGNORECASE)[1]
+                    + "s"
+                )
+            elif re.match(r"I\d+", info["Format"][i], re.IGNORECASE):
+                fmt += re.match(r"I(\d+)", info["Format"][i], re.IGNORECASE)[1] + "s"
+            elif info["Format"][i].strip() in ("F", "I", "f", "i"):
+                logger.info(
+                    "Unable to retrieve the fmt format from " "the CHANNEL DETAIL Table"
+                )
+                break
+            else:
+                raise Exception(
+                    "Unknown variable format Format: %s, Type: %s"
+                    % (info["Format"][i], info["Type"][i])
+                )
+        else:
+            info["fmt_struct"] = fmt
+
+        logger.debug("Python compatible data format: %s", fmt)
         return info
 
     def get_channels(self):
         # get the details of al the channels in the file
         # return as dictionary with each column as list
-        lines = self.get_subsection("TABLE: CHANNELS", self.file)
+        lines = self.get_subsection("$TABLE: CHANNELS")
         mask = lines[1].rstrip()
-        info = {}
-        ch = [self.apply_col_mask(l, mask) for l in lines[2:]]
-        info["Name"] = [l[1] for l in ch]
-        info["Units"] = [l[2] for l in ch]
-        info["Minimum"] = [l[3] for l in ch]
-        info["Maximum"] = [l[4] for l in ch]
-        return info
+        channels = [self.apply_col_mask(line, mask) for line in lines[2:]]
+        return {
+            "Name": [line[1] for line in channels],
+            "Units": [line[2] for line in channels],
+            "Minimum": [line[3] for line in channels],
+            "Maximum": [line[4] for line in channels],
+        }
 
     def apply_col_mask(self, data, mask):
         # apply mask to string (data) to get columns
@@ -558,7 +585,8 @@ class IosFile(object):
         quoted = False
         pass_column_limit = False
         for i in range(len(data)):
-            # Some IOS tables have quoted values that extend over the limits of the colmns
+            # Some IOS tables have quoted values that extend over
+            # the limits of the colmns
             if data[i] == "'":
                 if quoted and pass_column_limit:
                     pass_column_limit = False
@@ -590,47 +618,48 @@ class IosFile(object):
         while True:
             idx += 1
             count += 1
-            l = self.lines[idx]
-            if len(l.strip()) == 0:  # skip line if blank
+            line = self.lines[idx]
+            if len(line.strip()) == 0:  # skip line if blank
                 continue
-            elif l[0] == "!":
+            elif line[0] == "!":
                 continue
-            elif l[0] in ["$", "*"]:
+            elif line[0] in ["$", "*"]:
                 break
             else:
-                logger.debug(l)
-                info["{:d}".format(count)] = l.rstrip()
+                logger.debug(line)
+                info["{:d}".format(count)] = line.rstrip()
         return info
 
     def get_list_of_sections(self):
         # parse the entire header and returns list of sections available
         # skip first 2 lines of file (that has date and ios_header_version)
         # skip * in beginning of section name
-        sections_list = []
-        for i, line in enumerate(self.lines[2:]):
+        sections_list = [
+            line.strip()[1:]
+            for line in self.lines[2:]
             if (
                 line[0] == "*"
                 and line[0:4] != "*END"
                 and line[1] not in ["*", " ", "\n"]
-            ):
-                sections_list.append(line.strip()[1:])
-            else:
-                continue
+            )
+        ]
         logger.debug(sections_list)
         return sections_list
 
-    def assign_geo_code(self, polygons_dict):
-        if Point is None:
-            logger.error("Install shapely to use assign_geo_code")
-            return
+    def assign_geo_code(self, polygons_dict, unknown_geographical_area="None"):
+        # TODO use the ocean-data-parser equivalent
+        try:
+            from shapely.geometry import Point
+        except ImportError:
+            logger.error("Missing package shapely, please install shapely")
 
-        geo_code = find_geographic_area(
-            polygons_dict, Point(self.location["LONGITUDE"], self.location["LATITUDE"])
+        self.geo_code = (
+            find_geographic_area(
+                polygons_dict,
+                Point(self.location["LONGITUDE"], self.location["LATITUDE"]),
+            )
+            or unknown_geographical_area
         )
-        if geo_code == "":
-            # geo_code = self.LOCATION['GEOGRAPHIC AREA'].strip()
-            geo_code = "None"
-        self.geo_code = geo_code
 
     def get_obs_time_from_date_time(self):
         # Return a timeseries
@@ -675,16 +704,16 @@ class IosFile(object):
         else:
             logger.error("Unable to find date/time columns in variables")
             return 0
-
+        # Test result
         self.compare_obs_time_to_star_date()
 
     def get_obs_time_from_time_increment(self):
-
         time_increment = self.get_dt()
         self.obs_time = [
             self.start_dateobj + timedelta(seconds=time_increment * (i))
             for i in range(int(self.file["NUMBER OF RECORDS"]))
         ]
+        # Test result
         self.compare_obs_time_to_star_date()
 
     def compare_obs_time_to_star_date(self, dt=pd.Timedelta("1minute")):
@@ -696,20 +725,6 @@ class IosFile(object):
             return 0
 
     def add_ios_vocabulary(self):
-        vocabulary_attributes = [
-            "ios_name",
-            "long_name",
-            "standard_name",
-            "units",
-            "scale",
-            "sdn_parameter_urn",
-            "sdn_parameter_name",
-            "sdn_uom_urn",
-            "sdn_uom_name",
-            "rename",
-            "apply_func",
-        ]
-
         def match_term(reference, value):
             if reference in (None, np.nan):
                 return False
@@ -733,9 +748,7 @@ class IosFile(object):
 
         # iterate over variables and find matching vocabulary
         self.vocabulary_attributes = []
-        for id, (name, units) in enumerate(
-            zip(self.channels["Name"], self.channels["Units"])
-        ):
+        for name, units in zip(self.channels["Name"], self.channels["Units"]):
             # Drop trailing spaces and commas
             name = re.sub(r"^\'|[\s\']+$", "", name.lower())
             units = re.sub(r"^\'|[\s\']+$", "", units)
@@ -747,7 +760,7 @@ class IosFile(object):
                 self.vocabulary_attributes += [[{}]]
                 continue
 
-            units = re.sub("^'|'$", "", units)
+            units = re.sub(r"^'|'$", "", units)
             name_match_type = vocab["ios_name"] == name.strip().lower()
             match_units = vocab["accepted_units"].apply(
                 lambda x: match_term(x, units.strip())
@@ -764,7 +777,7 @@ class IosFile(object):
                 self.vocabulary_attributes += [[{"long_name": name, "units": units}]]
                 continue
 
-            # consider only the vocabularies specific to this ios_file_extension group only
+            # Consider only the vocabularies specific to this ios_file_extension group
             matched_vocab = matched_vocab.filter(
                 items=matched_vocab.index.get_level_values(0), axis="index"
             )
