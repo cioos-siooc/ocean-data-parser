@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 from ocean_data_parser import PARSERS
-
+from ocean_data_parser.vocabularies import load
 
 def quote_column(col):
     return "`" + col + "`"
@@ -22,14 +22,14 @@ def get_dfo_pfile_vocab_markdown(
     output="docs/user_guide/vocabularies/dfo-nafc-p-files.md",
 ):
     """Convert P file vocabulary to markdown table"""
-    df = pd.read_csv("ocean_data_parser/vocabularies/dfo_nafc_p_files_vocabulary.csv")
+    df = load.dfo_nafc_p_file_vocabulary()
     for column in ["accepted_instruments"]:
         df[column] = quote_column(df[column])
     df.replace({np.nan: ""}).to_markdown(output, index=False, tablefmt="pipe")
 
 
 def get_odf_vocab_markdown(output="docs/user_guide/vocabularies/dfo-odf.md"):
-    df = pd.read_csv("ocean_data_parser/vocabularies/dfo_odf_vocabulary.csv")
+    df = load.dfo_odf_vocabulary()
     for column in [
         "accepted_units",
         "accepted_scale",
@@ -44,9 +44,7 @@ def get_odf_vocab_markdown(output="docs/user_guide/vocabularies/dfo-odf.md"):
 def get_ios_vocab_markdown(
     output="docs/user_guide/vocabularies/dfo-ios-shell.md",
 ):
-    df = pd.read_csv(
-        "https://raw.githubusercontent.com/cioos-siooc/cioos-siooc_data_transform/ios-parser-extra-vocabulary/cioos_data_transform/cioos_data_transform/utils/ios_vocabulary.csv"
-    )
+    df = load.dfo_ios_vocabulary()
     for column in [
         "ios_name",
         "accepted_units",
