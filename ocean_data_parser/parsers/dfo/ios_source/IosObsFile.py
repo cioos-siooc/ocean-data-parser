@@ -28,7 +28,6 @@ from pytz import timezone
 from ocean_data_parser import __version__
 from ocean_data_parser.vocabularies.load import dfo_ios_vocabulary
 
-
 logger = logging.getLogger(__name__)
 logger = logging.LoggerAdapter(logger, {"file": None})
 
@@ -56,6 +55,28 @@ ios_dtypes_to_python = {
     "T": str,
     "C": str,
     "E": "float32",
+}
+
+global_attributes = {
+    "institution": "DFO IOS",
+    "ices_edmo_code": 4155,
+    "sdn_institution_urn": "SDN:EDMO::4155",
+    "infoUrl": "https://science.gc.ca/site/science/en/educational-resources/marine-and-freshwater-sciences/institute-ocean-sciences",
+    "country": "Canada",
+    "ioc_country_code": 18,
+    "naming_authority": "ca.gc.ios",
+    "iso_3166_country_code": "CA",
+    "platform_vocabulary": "https://vocab.nerc.ac.uk/search_nvs/C17/",
+    "instrument_vocabulary": "https://vocab.nerc.ac.uk/search_nvs/L22/",
+    "Conventions": "CF-1.6,CF-1.7,CF-1.8,ACDD1.1,ACDD-1.3,IOOS-1.2",
+    "standard_name_vocabulary": "CF Standard Name Table v78",
+    "creator_name": "Institute of Ocean Sciences (IOS)",
+    "creator_institution": "Institute of Ocean Sciences (IOS)",
+    "creator_email": "info@dfo-mpo.gc.ca",
+    "creator_country": "Canada",
+    "creator_sector": "gov_federal",
+    "creator_url": "info@dfo-mpo.gc.ca",
+    "creator_type": "institution",
 }
 
 
@@ -964,9 +985,6 @@ class IosFile(object):
 
             return dataset.where(~dataset.isin(bad_values))
 
-        # Fix time variable(s)
-        self.fix_variable_names()
-
         # Retrieve the different variable attributes
         variables = (
             pd.DataFrame(
@@ -992,19 +1010,15 @@ class IosFile(object):
             variables["ios_type"]
             .fillna(variables["ios_format"])
             .apply(get_dtype_from_ios_type)
+            .fillna(variables["ios_name"].apply(get_dtype_from_ios_name))
         )
-        if variables["dtype"].isna().any():
-            variables["dtype"] = variables["dtype"].fillna(
-                variables["ios_name"].apply(get_dtype_from_ios_name)
-            )
 
-        _FillValues = variables.apply(
+        variables["_FillValues"] = variables.apply(
             lambda x: pd.Series(x["pad"]).astype(x["dtype"]).values[0]
             if x["pad"]
             else None,
             axis="columns",
         )
-        variables["_FillValues"] = None if _FillValues.empty else _FillValues
         variables["renamed_name"] = variables.apply(
             lambda x: x["matching_vocabularies"][-1].get("rename", x["ios_name"]),
             axis="columns",
@@ -1014,7 +1028,8 @@ class IosFile(object):
         duplicates = variables.duplicated(subset=["ios_name", "units"], keep=False)
         if duplicates.any():
             logger.warning(
-                "Duplicated variables (Name,Units) pair detected, only the first one will be considered:\n%s",
+                "Duplicated variables (Name,Units) pair detected, "
+                "only the first one will be considered:\n%s",
                 variables.loc[duplicates][["ios_name", "units"]],
             )
             variables.drop_duplicates(
@@ -1117,7 +1132,8 @@ class IosFile(object):
                     ufunc = eval(new_var_attrs["apply_func"], {"ds": ds, "gsw": gsw})
                     new_data = xr.apply_ufunc(ufunc, var)
                     self.add_to_history(
-                        f"Generate new variable from {row[col_name]} -> apply {new_var_attrs['apply_func']}) -> {new_var}"
+                        f"Generate new variable from {row[col_name]} ->"
+                        f" apply {new_var_attrs['apply_func']}) -> {new_var}"
                     )
 
                 else:

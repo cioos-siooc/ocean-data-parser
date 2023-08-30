@@ -60,8 +60,7 @@ def shell(fname: str, config: dict = {}) -> xarray.Dataset:
         config (dict, optional): Configuration. Defaults to {}.
 
     Raises:
-        RuntimeError: _description_
-        RuntimeError: _description_
+        RuntimeError: Incompatible file format.
 
     Returns:
         xarray.Dataset: Parsed xarray dataset
@@ -72,16 +71,17 @@ def shell(fname: str, config: dict = {}) -> xarray.Dataset:
         raise RuntimeError(f"Package is not compatible yet with {extension} files.")
 
     # Load file
-    fdata = IosFile(filename=fname, debug=False)
-    imported = fdata.import_data()
-    if not imported:
-        raise RuntimeError("Failed to import data")
+    ios_file = IosFile(filename=fname)
+    ios_file.import_data()
+
+    # Fix some issues associated with some files
+    ios_file.fix_variable_names()
 
     logger.debug("Imported data successfully!")
     if extension not in TRACJECTORY_DATA_TYPES:
-        fdata.assign_geo_code(config.get("geographic_area", {}))
+        ios_file.assign_geo_code(config.get("geographic_area", {}))
 
-    fdata.add_ios_vocabulary()
-    ds = fdata.to_xarray()
+    ios_file.add_ios_vocabulary()
+    ds = ios_file.to_xarray()
     ds.attrs.update(config.get("global_attributes", {}))
     return standardize_dataset(ds)
