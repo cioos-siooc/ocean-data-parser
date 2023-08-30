@@ -5,7 +5,6 @@ Fisheries and Ocean Canada - Pacific Region - Institute of Ocean Sciences
 import logging
 
 import xarray
-from cioos_data_transform.IosObsFile import CurFile, GenFile
 
 from ocean_data_parser.parsers.dfo.ios_source.IosObsFile import IosFile
 from ocean_data_parser.parsers.utils import standardize_dataset
@@ -25,31 +24,6 @@ HANDLED_DATA_TYPES = (
     "cur",
 )
 TRACJECTORY_DATA_TYPES = ("tob", "drf", "loop")
-
-
-def shell_cioos(filename: str) -> xarray.Dataset:
-    """Parse DFO-IOS Shell format with the cioos-siooc_data_transform package
-
-    Args:
-        filename (str): path to file
-
-    Raises:
-        RuntimeError: Failed to read file
-
-    Returns:
-        xarray.Dataset
-    """
-    extension = filename.rsplit(".", 1)[1]
-    if extension == "cur":
-        fdata = CurFile(filename=filename, debug=False)
-    elif extension.lower() in HANDLED_DATA_TYPES:
-        fdata = GenFile(filename=filename, debug=False)
-    else:
-        raise RuntimeError("File type not compatible")
-
-    fdata.import_data()
-    fdata.add_ios_vocabulary()
-    return fdata.to_xarray()
 
 
 def shell(fname: str, config: dict = {}) -> xarray.Dataset:

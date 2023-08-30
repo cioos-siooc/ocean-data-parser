@@ -22,7 +22,6 @@ import gsw
 import numpy as np
 import pandas as pd
 import xarray as xr
-from cioos_data_transform.utils.utils import find_geographic_area
 from pytz import timezone
 
 from ocean_data_parser import __version__
@@ -674,6 +673,11 @@ class IosFile(object):
 
     def assign_geo_code(self, polygons_dict, unknown_geographical_area="None"):
         # TODO use the ocean-data-parser equivalent
+        def find_geographic_area(poly_dict, point):
+            return "".join(
+                [key for key in poly_dict if poly_dict[key].contains(point)]
+            ).replace(" ", "-")
+
         try:
             from shapely.geometry import Point
         except ImportError:

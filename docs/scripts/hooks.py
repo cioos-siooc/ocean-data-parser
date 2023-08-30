@@ -8,6 +8,7 @@ import pandas as pd
 from ocean_data_parser import PARSERS
 from ocean_data_parser.vocabularies import load
 
+
 def quote_column(col):
     return "`" + col + "`"
 
