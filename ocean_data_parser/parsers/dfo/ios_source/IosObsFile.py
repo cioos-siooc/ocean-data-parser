@@ -905,6 +905,7 @@ class IosFile(object):
 
         # Generate global attributes
         return {
+            "id": self.filename,
             **_format_attributes("administration"),
             **{
                 key: value
@@ -928,9 +929,10 @@ class IosFile(object):
             "end_time": self.end_dateobj.isoformat() if self.end_dateobj else None,
             "source": self.filename,
             "ios_header_version": self.ios_header_version,
-            "cioos_data_transform_version": VERSION,
-            "product_version": f"ios_header={self.ios_header_version}; cioos_transform={VERSION}",
+            "ocean_data_transform_version": VERSION,
+            "product_version": f"ios_header={self.ios_header_version}; ocean-data-transform={VERSION}",
             "date_created": self.date_created.isoformat(),
+            **global_attributes,
         }
 
     def to_xarray(
