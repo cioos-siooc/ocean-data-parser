@@ -123,8 +123,13 @@ class IosFile(object):
         self.history = None
 
         # Load file
-        with open(self.filename, "r", encoding="ASCII") as file:
-            self.lines = file.readlines()
+        try:
+            with open(self.filename, "r", encoding="ASCII") as file:
+                self.lines = file.readlines()
+        except UnicodeDecodeError:
+            logger.warning("Bad characters were encountered. We will ignore them")
+            with open(self.filename, "r", encoding="ASCII", errors="ignore") as file:
+                self.lines = file.readlines()
 
         self.ios_header_version = self.get_header_version()
         self.date_created = self.get_date_created()
