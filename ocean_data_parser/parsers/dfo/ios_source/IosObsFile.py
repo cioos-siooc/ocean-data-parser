@@ -823,6 +823,15 @@ class IosFile(object):
         # get variable name list
         variables = [item.strip() for item in self.channels["Name"]]
 
+        bad_character_index = [
+            index for index, name in enumerate(self.channels["Name"]) if "%" in name
+        ]
+        if bad_character_index:
+            for index in bad_character_index:
+                self.channels["Name"][index] = self.channels["Name"][index].replace(
+                    "%", "perc"
+                )
+
         # Rename duplicated Quality_Flag:Phos flags in UBC files
         if (
             variables.count("Quality_Flag:Phos") == 2
