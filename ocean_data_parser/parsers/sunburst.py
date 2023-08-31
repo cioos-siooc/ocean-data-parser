@@ -100,7 +100,6 @@ def superCO2(path: str, output: str = None) -> xarray.Dataset:
             (df["Date"] + " " + df["Time"]), format="%Y%m%d %H%M%S", utc=True
         )
         .dt.tz_convert(None)
-        .dt.to_pydatetime()
     )
 
     # Review day of the year variable
@@ -112,7 +111,6 @@ def superCO2(path: str, output: str = None) -> xarray.Dataset:
             utc=True,
         )
         .dt.tz_convert(None)
-        .dt.to_pydatetime()
     )
 
     # Compare DOY_UTC vs Date + Time
@@ -176,7 +174,7 @@ def superCO2_notes(path: str) -> xarray.Dataset:
                 notes += [{**note_ensemble, **dict(zip(columns, data))}]
     # Convert notes to a dataframe
     df = pd.DataFrame.from_dict(notes)
-    df["time"] = pd.to_datetime(df["time"]).dt.to_pydatetime()
+    df["time"] = pd.to_datetime(df["time"])
     df = df.astype(dtype=notes_dtype_mapping, errors="ignore")
 
     ds = df.to_xarray()

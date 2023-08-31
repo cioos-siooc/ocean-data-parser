@@ -298,7 +298,7 @@ def nmea_0183(
         if nmea_dtype_mapping.get(col) != datetime:
             continue
         df[col] = (
-            pd.to_datetime(df[col], utc=True).dt.tz_convert(None).dt.to_pydatetime()
+            pd.to_datetime(df[col], utc=True).dt.tz_convert(None).dt
         )
 
     df = df.replace({np.nan: None, "": None, "None": None})
