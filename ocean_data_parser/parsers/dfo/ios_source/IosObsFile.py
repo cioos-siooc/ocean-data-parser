@@ -775,6 +775,7 @@ class IosFile(object):
             .sort_values("ios_file_extension")
             .set_index("ios_file_extension")
         )
+        vocab.index = vocab.index.fillna("all")
 
         # iterate over variables and find matching vocabulary
         self.vocabulary_attributes = []
@@ -808,8 +809,8 @@ class IosFile(object):
                 continue
 
             # Consider only the vocabularies specific to this ios_file_extension group
-            matched_vocab = matched_vocab.filter(
-                items=matched_vocab.index.get_level_values(0), axis="index"
+            matched_vocab = matched_vocab.query(
+                f'ios_file_extension == "{matched_vocab.index.get_level_values(0)[0]}"'
             )
             self.vocabulary_attributes += [
                 [
