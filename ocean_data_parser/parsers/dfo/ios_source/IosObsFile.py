@@ -1018,7 +1018,7 @@ class IosFile(object):
                     else "",
                 }
             )
-            .applymap(str.strip)
+            .map(str.strip)
             .replace({"": None, "n/a": None})
         )
         variables["matching_vocabularies"] = self.vocabulary_attributes
@@ -1169,7 +1169,7 @@ class IosFile(object):
 
         # coordinates
         if self.obs_time and replace_date_time_variables:
-            ds = ds.drop([var for var in ds if var in ["Date", "Time"]])
+            ds = ds.drop_vars([var for var in ds if var in ["Date", "Time"]])
             ds["time"] = (ds.dims, pd.Series(self.obs_time))
             # ds["time"].encoding["units"] = "seconds since 1970-01-01T00:00:00Z"
         elif self.start_dateobj:
