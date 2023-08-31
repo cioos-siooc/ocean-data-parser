@@ -409,7 +409,7 @@ class IosFile(object):
                     "Use pandas pd.to_datetime to parse date string: %s",
                     date_string[4:],
                 )
-                date_obj = pd.to_datetime(date_string[4:]).to_pydatetime()
+                date_obj = pd.to_datetime(date_string[4:])
             logger.info(date_obj)
         # make datetime object, aware of its timezone
         # for GMT, UTC
@@ -714,7 +714,7 @@ class IosFile(object):
             datetime = pd.to_datetime(
                 [date.replace(" ", "") + " " + time for date, time in zip(dates, times)]
             )
-            self.obs_time = datetime.to_pydatetime()
+            self.obs_time = datetime
             self.obs_time = [
                 timezone("UTC").localize(i + timedelta(hours=0)) for i in self.obs_time
             ]
@@ -727,7 +727,7 @@ class IosFile(object):
             else:
                 dates = [i.strip() for i in self.data[:, chnList.index("date")]]
             datetime = pd.to_datetime(dates)
-            self.obs_time = datetime.to_pydatetime()
+            self.obs_time = datetime
             self.obs_time = [
                 timezone("UTC").localize(i + timedelta(hours=0)) for i in self.obs_time
             ]
