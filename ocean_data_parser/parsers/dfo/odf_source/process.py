@@ -3,6 +3,8 @@ import logging
 import re
 from pathlib import Path
 
+import xarray as xr
+
 import ocean_data_parser.parsers.seabird as seabird
 from ocean_data_parser._version import __version__
 from ocean_data_parser.parsers.dfo.odf_source import attributes, flags
@@ -38,26 +40,35 @@ ODF_COMPATIBLE_DATA_TYPES = [
 
 
 def parse_odf(
-    odf_path,
-    global_attributes=None,
-    vocabularies=None,
-    add_attributes_existing_variables=True,
-    generate_new_vocabulary_variables=True,
-):
+    odf_path: str,
+    global_attributes: dict = None,
+    vocabularies: list = None,
+    add_attributes_existing_variables: bool = True,
+    generate_new_vocabulary_variables: bool = True,
+) -> xr.Dataset:
     """Convert an ODF file to an xarray object.
-    Args:
-        odf_path (str): path to ODF file to convert
-        config (dictionary, optional): Conversion configuration to apply.
-            Defaults to odf_transform/config.json.
-    """
 
+    Args:
+        odf_path (str): ODF file path
+        global_attributes (dict, optional): Global attribtes to append to dataaset.
+            Defaults to None.
+        vocabularies (list, optional): Vocabularies to use ['GF3','BIO','IML'].
+            Defaults to None.
+        add_attributes_existing_variables (bool, optional): Append vocabulary attributes.
+            Defaults to True.
+        generate_new_vocabulary_variables (bool, optional): Generate vocabulary variables.
+            Defaults to True.
+
+    Returns:
+        xr.Dataset: Parsed dataset
+    """
     # Parse the ODF file with the CIOOS python parsing tool
     metadata, dataset = odf_parser.read(odf_path)
 
-    # Review ODF data type compatible with odf_transform
+    # Review ODF data type compatible with ODF parser
     if metadata["EVENT_HEADER"]["DATA_TYPE"] not in ODF_COMPATIBLE_DATA_TYPES:
         logger.warning(
-            "ODF_transform is not yet fully compatible with the ODF Data Type: %s",
+            "ODF parser is not yet fully compatible with the ODF Data Type: %s",
             metadata["EVENT_HEADER"]["DATA_TYPE"],
         )
 
@@ -76,7 +87,7 @@ def parse_odf(
     dataset = attributes.global_attributes_from_header(dataset, metadata)
     dataset.attrs[
         "history"
-    ] += f"# Convert ODF to NetCDF with cioos_data_trasform.odf_transform V {__version__}\n"
+    ] += f"# Convert ODF to NetCDF with ocean_data_parser V {__version__}\n"
 
     # Handle ODF flag variables
     dataset = flags.rename_qqqq_flags(dataset)

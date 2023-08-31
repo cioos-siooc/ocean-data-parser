@@ -102,7 +102,7 @@ def compare_test_to_reference_netcdf(
     ignore_from_attr(
         "history",
         r"cioos_data_trasform.odf_transform V \d+\.\d+.\d+",
-        "cioos_data_trasform.odf_transform V VERSION",
+        "package_name_version",
     )
     ignore_from_attr(
         "history", r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.*\d*Z", "TIMESTAMP"
