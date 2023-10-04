@@ -43,7 +43,7 @@ def generate_output_path(
     # handle defaults
     original_source = Path(ds.attrs.get("source")) if ds.attrs.get("source") else None
     if file_name is None and original_source:
-        file_name = str(original_source.stem)
+        file_name = str(original_source.name)
     elif file_name is None:
         raise RuntimeError("No output source available. Please define source output.")
 
