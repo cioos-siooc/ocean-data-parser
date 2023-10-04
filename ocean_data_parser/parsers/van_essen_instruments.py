@@ -35,29 +35,26 @@ van_essen_vocabulary = {
 def mon(
     file_path: str,
     standardize_variable_names: bool = True,
-    read_csv_kwargs: dict = None,
     convert_pressure_to_dbar: bool = True,
 ) -> xarray.Dataset:
-    """
-    Read MON file format from Van Essen Instrument format.
-    :param errors: default ignore
-    :param encoding: default UTF-8
-    :param file_path: path to file to read
-    :return: metadata dictionary dataframe
-    """
-    header_end = "[Data]\n"
-    if read_csv_kwargs is None:
-        read_csv_kwargs = {}
+    """Parse Van Essen Instruments mon format to NetCDF.
 
+    Args:
+        file_path (str): File path to load
+        standardize_variable_names (bool, optional): Rename variables. Defaults to True.
+        convert_pressure_to_dbar (bool, optional): Convert pressure data in
+            cmH2O/mH2O to dbar. Defaults to True.
+
+    Returns:
+        xarray.Dataset: Parsed dataset
+    """
     with open(
         file_path,
-        encoding=read_csv_kwargs.get("encoding"),
-        errors=read_csv_kwargs.get("encoding_errors"),
     ) as fid:
         line = ""
         section = "header_info"
         info = {section: {}}
-        while not line.startswith(header_end):
+        while not line.startswith("[Data]\n"):
             # Read line by line
             line = fid.readline()
             if re.match(r"\[.+\]", line):
@@ -103,7 +100,6 @@ def mon(
             skipfooter=1,
             engine="python",
             comment="END OF DATA FILE OF DATALOGGER FOR WINDOWS",
-            **read_csv_kwargs,
         )
 
     # handle time variable

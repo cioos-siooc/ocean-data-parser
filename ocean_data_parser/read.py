@@ -51,8 +51,6 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
         parser = "electricblue.log_csv"
     elif ext == "DAT" and "Version	SeaStar" in header:
         parser = "star_oddi.DAT"
-    elif ext == "geojson":
-        parser = "geojson"
     elif ext == "int" and "% Cruise_Number:" in header:
         parser = "amundsen.int_format"
     elif "*IOS HEADER VERSION" in header:
