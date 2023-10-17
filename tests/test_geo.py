@@ -10,7 +10,7 @@ from ocean_data_parser import geo
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
 
-geojson_files = glob("./tests/parsers_test_files/geojson/**/*.geojson", recursive=True)
+geojson_files = ["tests/test-geo.geojson"]
 
 reference_stations = (("first", 50, -120), ("second", 70, -120))
 

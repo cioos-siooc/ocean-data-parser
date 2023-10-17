@@ -1,0 +1,200 @@
+*2023/06/14 08:48:35.75
+*IOS HEADER VERSION 2.0      2016/04/28 2016/06/13 IVF16
+
+*FILE
+    START TIME          : UTC 2023/02/16 21:25:27.000
+    NUMBER OF RECORDS   : 2
+    DATA DESCRIPTION    : Bottle:Wire + CTD:Down
+    FILE TYPE           : ASCII
+    NUMBER OF CHANNELS  : 21
+
+    $TABLE: CHANNELS
+    ! No Name                         Units           Minimum        Maximum
+    !--- ---------------------------- --------------- -------------- --------------
+       1 Pressure                     decibar         1              390.5
+       2 Depth                        metres          1.1            386.8
+       3 Temperature:Primary          'deg C (ITS90)' 6.9496         9.4565
+       4 Fluorescence:URU:Wetlabs     mg/m^3          0.395          1.15
+       5 Salinity:T0:C0               PSS-78          28.3984        31.2061
+       6 PAR                          uE/m^2/sec      0              104.6
+       7 Oxygen:Dissolved:SBE         mL/L            2.04           5.91
+       8 Oxygen:Dissolved:SBE         umol/kg         88.96427       258.2008
+       9 Conductivity:Primary         S/m             2.917741       3.405294
+      10 Sample_Number                n/a             1              2
+      11 Salinity:Bottle              PSS-78          28.4168        31.2091
+      12 Flag:Salinity:Bottle         ' '
+      13 Nitrate_plus_Nitrite         umol/L          29.06          30.41
+      14 Flag:Nitrate_plus_Nitrite    ' '
+      15 Silicate                     umol/L          60.86          69.69
+      16 Flag:Silicate                ' '
+      17 Phosphate                    umol/L          2.39           2.944
+      18 Flag:Phosphate               ' '
+      19 Chlorophyll:Extracted        mg/m^3          0.71           0.71
+      20 Flag:Chlorophyll:Extracted   ' '
+      21 Phaeo-Pigment:Extracted      mg/m^3          0.48           0.48
+    $END
+
+    $TABLE: CHANNEL DETAIL
+    ! No  Pad   Start  Width  Format  Type  Decimal_Places
+    !---  ----  -----  -----  ------  ----  --------------
+       1  -99   ' '        7  F       R4      1
+       2  -99   ' '        7  F       R4      1
+       3  -99   ' '        9  F       R4      4
+       4  -99   ' '        8  F       R4      3
+       5  -99   ' '        9  F       R4      4
+       6  -99   ' '        7  F       R4      1
+       7  -99   ' '        7  F       R4      2
+       8  -99   ' '        6  F       ' '     1
+       9  -99   ' '       10  F       R4      6
+      10  -99   ' '        5  I       I       0
+      11  -99   ' '        9  F       R4      4
+      12  ' '   ' '        3  NQ      C     ' '
+      13  -99   ' '        7  F       R4      2
+      14  ' '   ' '        3  NQ      C     ' '
+      15  -99   ' '        7  F       R4      2
+      16  ' '   ' '        3  NQ      C     ' '
+      17  -99   ' '        8  F       R4      3
+      18  ' '   ' '        3  NQ      C     ' '
+      19  -99   ' '        7  F       R4      2
+      20  ' '   ' '        3  NQ      C     ' '
+      21  -99   ' '        7  F       R4      2
+    $END
+    $REMARKS
+           Quality flags have the following significance:
+            ----------------------------------------------------------------------------------
+           0 = Acceptable measurement with no header comment
+           1 = Sample for this measurement was collected but not analyzed. Sample lost.
+           2 = Acceptable measurement with header comment
+           3 = Questionable measurement (Probably Good)
+           4 = Poor measurement (Probably Bad)
+           5 = Measurement not reported (Bad)
+           6 = Mean of replicate measurements
+           7 = Manual chromatographic peak measurement
+           8 = Irregular digital chromatographic peak integration
+           9 = Sample was planned for this measurement from this bottle but was not collected
+           ----------------------------------------------------------------------------------
+    $END
+
+*ADMINISTRATION
+    MISSION             : 2023-002
+    AGENCY              : IOS, Ocean Sciences Division, Sidney, B.C.
+    COUNTRY             : Canada
+    PROJECT             : Strait of Georgia Zooplankton
+    SCIENTIST           : Young K.
+    PLATFORM            : Neocaligus
+
+*LOCATION
+    GEOGRAPHIC AREA     : Strait of Georgia
+    STATION             : GEO1
+    EVENT NUMBER        : 1
+    LATITUDE            :  49  15.00480 N  ! (deg min)
+    LONGITUDE           : 123  45.02820 W  ! (deg min)
+    WATER DEPTH         : 406
+
+*INSTRUMENT
+    TYPE                : Sea-Bird CTD
+    MODEL               : SBE-25
+    SERIAL NUMBER       : 0456
+
+*HISTORY
+
+    $TABLE: PROGRAMS
+    !   Name     Vers   Date       Time     Recs In   Recs Out
+    !   -------- ------ ---------- -------- --------- ---------
+        SPRD2IS  5.3.1  2023/06/14 08:23:08         2         2
+        CLEAN    5.3    2023/06/14 08:46:48         2         2
+        CHGUNITS 3.2    2023/06/14 08:47:06         2         2
+        REORDER  1.3.1  2023/06/14 08:47:12 ?         ?
+        REMOVECH 8.2    2023/06/14 08:48:30         2         2
+        HDREDIT2 3.2    2023/06/14 08:48:35 ?         ?
+    $END
+    $REMARKS
+        -CLEAN functions: 2023/06/14 08:46:48
+         Reset #RECS, MIN & MAX values in header.
+         Change character data from " " to "0" in channels Flag:*
+         Set header Start and End times from the data.
+        -CHANGE units:
+         Temperature reference channel: Temperature:Primary [deg C (ITS90)]
+         Salinity    reference channel: Salinity:T0:C0 [PSS-78]
+         'Oxygen:Dissolved:SBE' changed from mL/L    to umol/kg
+        -REMOVECH 2023/06/14 08:48:30
+         The following CHANNEL(S) were removed:
+          Date
+          TIME:UTC
+        -HEADER EDITS: 2023/06/14 08:48:35
+         Applied edit header: D:\Telework\2023-002\Processing\doc\HYDRO\2023-002-bot-hdr.txt
+         Channel  1: Pressure [decibar]
+           Format: F9.4 ==> F7.1
+    $END
+
+*COMMENTS
+    Sample_Number    2: SIL: Chauvenet outlier in duplicate study
+
+    Analysis methods:
+    -----------------------
+    Salinity samples were collected in 200 mL type II glass bottles with disposable nylon
+    inserts and screw caps supplied by Ocean Scientific International Limited. They were
+    analyzed in a temperature-controlled lab on a Guildline 8400B Salinometer
+    standardized with IAPSO standard seawater within 23-25 days after collection.
+    For details, see document QF2023-002SAL*.xlsx.
+
+    Nutrient samples were collected in plastic tubes and quick frozen in aluminum
+    blocks stored in a -20C freezer.
+    All samples were returned to the Institute of Ocean Sciences and they were
+    analyzed using an Astoria-Pacific Analyzer following methods described in
+    IOS Nutrient Methods (1996) Barwell-Clarke, J. and F. Whitney.
+    For details see document QF2023-002_NUTS*.xlsx.
+
+    Chlorophyll samples were filtered onto 25mm GF/F filters after collection,
+    and immediately frozen and stored in a -80C freezer. All samples were returned
+    to the Institute of Ocean Sciences and analyzed 1-2 weeks after the cruise
+    on a Turner Trilogy7200-000.
+    Fluorescence readings taken before and after sample acidification were used
+    tp calculate chlorophyll and phaeopigment concentrations.
+    NOTE: Flags and comments apply to chlorophyll values only. No flags or comments
+    are assigned for Phaeo-Pigment values
+    For further details on methodology, see document QF 2023-002_CHL_*.xlsx
+    Methodology sheet.
+
+    References:
+      1. Barwell-Clarke, J. and Whitney, F. 1996. Institute of Ocean Sciences
+      Nutrient Methods and Analysis. Canadian Technical Report of Hydrography
+      and Ocean Sciences, No. 182, 43 pp.
+      2. Nemcek, N. and Pe�a, M.A. 2014. Institute of Ocean Sciences Protocols for
+      Phytoplankton Pigment Analysis by HPLC. Can. Tech. Rep. Fish. Aquat. Sci.
+      3117: x + 80 p.
+
+      * For PDF versions of these papers see folder
+          \\Cruise_Data\DOCUMENTS\Analysis Reference Papers
+    ---------------------------------------------------------------------------------
+
+        CTD Data Processing Notes:
+        ----------------------
+        Oxygen:Dissolved, Conductivity and Fluorescence:URU:Wetlabs data are nominal and
+        unedited except that some records were removed in editing temperature and salinity.
+
+        CTD salinity values were within +/-0.005 for 3 of the 4 bottle samples available from
+        near the bottom of casts. No recalibration was applied.
+
+        Extracted chlorophylls samples were available from the surface. The comparison of
+        fluorescence values with chlorophyll followed the usual pattern of fairly close
+        agreement for 7 cases when CHL was ~1ug/L and fluorescence being ~50% of CHL for
+        the 1 case with CHL ~5ug/L.
+
+        Oxygen:Dissolved:SBE values cannot be confirmed as there was no calibration sampling
+        for dissolved oxygen. Surface saturation values were low, between 74% and 90%. Most
+        of the casts were very well mixed in the top 5 to 20m which likely explains the low
+        values. Errors due to calibration drift or slow response for this type of sensor
+        generally involve values being low by only a few %.
+
+        For details on the processing see document: 2023-002_Processing_Report.doc.
+!--1--- --2--- ---3---- ---4--- ---5---- --6--- --7--- --8-- ----9---- -10- ---11--- 12 --13-- 14 --15-- 16 ---17-- 18 --19-- 20 --21--
+!Pressu Depth  Temperat Fluores Salinity  PAR   Oxygen Oxyge Conductiv Samp Salinity Fl Nitrat Fl Silica Fl Phospha Fl Chloro Fl Phaeo-
+!re            ure:     cence:  :T0:C0          :      n:    ity:      le_  :Bottle  ag e_     ag te     ag te      ag phyll: ag Pigmen
+!              Primary  URU:                    Dissol Disso Primary   Numb          ~o plus_  ~t        ~i         ~p Extrac ~a t:    
+!                       Wetlabs                 ved:   lved:           er            tt Nitrit ri        ca         ha ted    ct Extrac
+!                                               SBE    SBE                           le e      te        te         te        ed ted   
+!------ ------ -------- ------- -------- ------ ------ ----- --------- ---- -------- -- ------ -- ------ -- ------- -- ------ -- ------
+*END OF HEADER
+    1.0    1.1   6.9496   1.150  28.3984  104.6   5.91 258.2  2.917741    2  28.4168 6   29.06 6   60.86 36   2.390 6    0.71 0    0.48
+  390.5  386.8   9.4565   0.395  31.2061    0.0   2.04  89.0  3.405294    1  31.2091 0   30.41 0   69.69 0    2.944 0  -99.00 0  -99.00
