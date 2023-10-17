@@ -30,10 +30,16 @@ o2conversion = {git = "https://github.com/HakaiInstitute/python-o2-conversion.gi
 pytz = "^2023.3.post1"
 numpy = "^1.26.1"
 
+[tool.poetry.group.geo]
+optional = true
+
 
 [tool.poetry.group.geo.dependencies]
 geographiclib = "^2.0"
 shapely = "^2.0.2"
+
+[tool.poetry.group.process]
+optional = true
 
 
 [tool.poetry.group.process.dependencies]
@@ -41,6 +47,8 @@ plotly = "^5.17.0"
 ipywidgets = "^8.1.1"
 ipython = "^8.16.1"
 
+[tool.poetry.group.docs]
+optional = true
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = "^1.5.3"
@@ -56,12 +64,15 @@ tabulate = "^0.9.0"
 pandas = "^2.1.1"
 material-plausible-plugin = "^0.2.0"
 
+[tool.poetry.group.dev]
+optional = true
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.2"
 black = "^23.10.0"
 ioos-qc = "^2.1.0"
 pytest-benchmark = "^4.0.0"
+flake8 = "^6.1.0"
 
 [tool.poetry.scripts]
 odpy = 'ocean_data_parser.cli:main'
