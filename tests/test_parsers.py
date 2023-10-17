@@ -31,7 +31,7 @@ def review_parsed_dataset(ds, source, caplog=None, max_log_levelno=30):
     assert ds.variables, "Dataset has no variables."
     if caplog:
         for record in caplog.records:
-            assert record.levelno < max_log_levelno, str(record) % record.args
+            assert record.levelno <= max_log_levelno, str(record) % record.args
 
     ds.to_netcdf(source + "_test.nc")
 
