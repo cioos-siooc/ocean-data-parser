@@ -21,6 +21,10 @@ from ocean_data_parser.parsers import utils
 MODULE_PATH = Path(__file__).parent
 DEFAULT_CONFIG_PATH = MODULE_PATH / "default-batch-config.yaml"
 
+logger_sinks = {
+    "sys.stderr": sys.stderr,
+    "sys.stdout": sys.stdout,
+}
 
 def save_new_config(ctx, _, path):
     if not path or ctx.resilient_parsing:
@@ -134,6 +138,24 @@ def get_parser_list(ctx, _, value):
 @click.option(
     "--config", "-c", type=click.Path(exists=True), help="Path to configuration file"
 )
+@click.option("--log-file", type=click.Path(), help="Save log to file")
+@click.option(
+    "--log-file-level",
+    type=click.Choice(["DEBUG", "INFO", "WARNING", "ERROR"]),
+    help="File log level used",
+    default="WARNING",
+    show_default=True,
+)
+@click.option(
+    "--log-file-rotation",
+    type=str,
+    help="Rotate log file at a given interval. Given value must be compatible with pandas.TimeDelta",
+)
+@click.option(
+    "--log-file-retention",
+    type=str,
+    help="Delete log file after a given time period. Given value must be compatible with pandas.TimeDelta",
+)
 @click.option(
     "--new-config",
     is_eager=True,
@@ -170,7 +192,7 @@ def convert(**kwargs):
     kwargs = {
         key: None if value == "None" else value
         for key, value in kwargs.items()
-        if value
+        if value and not key.startswith("log_file")
     }
 
     BatchConversion(**kwargs).run()
@@ -202,6 +224,11 @@ class BatchConversion:
             for key in list(kwargs.keys())
             if key.startswith("registry_")
         }
+        cli_log_file = {
+            "sink" if input == "log_file" else input[9:]: value
+            for input, value in kwargs.items()
+            if input.startswith("log_file") and value
+        }
         config = {
             **load_config(DEFAULT_CONFIG_PATH),
             **(load_config(config) if isinstance(config, str) else config or {}),
@@ -209,6 +236,15 @@ class BatchConversion:
         }
         config["output"].update(output_kwarg)
         config["registry"].update(registry_kwarg)
+        if cli_log_file.get('sink'):
+            config['logger']['handlers'] += [cli_log_file]
+
+        if "logger" in config:
+            for handler in config['logger']['handlers']:
+                handler['sink'] = logger_sinks.get(handler['sink'],handler['sink'])
+            logger.info(config['logger'])
+            logger.configure(**config['logger'])
+
         return config
 
     def get_excluded_files(self) -> list:

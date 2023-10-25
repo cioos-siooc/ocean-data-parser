@@ -8,6 +8,13 @@ errors: "ignore" # raise|ignore
 registry:
   path: null # file_registry(.csv | .parquet)
 
+logger: 
+  handlers:
+    - sink: ocean-data-parser.log
+      level: WARNING
+    - sink: "sys.stdout"
+      level: INFO
+
 sentry:
   dsn: https://cd67597c647c4767adf0b3acf5d3f6a6@o56764.ingest.sentry.io/4505529390137344
   level: INFO
