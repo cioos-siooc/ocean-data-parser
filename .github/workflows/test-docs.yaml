@@ -22,10 +22,10 @@ jobs:
           restore-keys: |
             mkdocs-material-
       - run: |
-          pip install -r docs-requirements.txt  &
-          pip install .
+          pip install poetry
+          poetry install --with docs,geo
       - run: |
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
       - run: |
-          mike deploy test
+          poetry run mike deploy test

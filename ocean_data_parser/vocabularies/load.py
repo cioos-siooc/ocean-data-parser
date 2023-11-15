@@ -37,6 +37,10 @@ def dfo_platforms() -> pd.DataFrame:
     )
 
 
+def dfo_ios_vocabulary() -> pd.DataFrame:
+    return pd.read_csv(VOCABULARIES_DIRECTORY / "dfo_ios_vocabulary.csv")
+
+
 def dfo_odf_vocabulary() -> pd.DataFrame:
     return (
         pd.read_csv(VOCABULARIES_DIRECTORY / "dfo_odf_vocabulary.csv")

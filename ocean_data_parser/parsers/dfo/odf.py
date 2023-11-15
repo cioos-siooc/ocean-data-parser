@@ -7,11 +7,8 @@ The ODF format is a common standard format used by different govermental and aca
 """
 
 import logging
-from typing import Union
 
 import xarray
-from odf_transform.process import odf_to_xarray
-from odf_transform.process import read_config as cioos_odf_config
 
 from ocean_data_parser.parsers.dfo.odf_source.process import parse_odf
 
@@ -58,37 +55,6 @@ bio_global_attributes = {
     "creator_url": "https://www.bio.gc.ca/",
     "creator_type": "institution",
 }
-
-
-def bio_odf_cioos(path: str, config: Union[dict, str]) -> xarray.Dataset:
-    """Read BIO ODF with the CIOOS Data Transform package
-
-    Args:
-        path (str): file path to read.
-        config (Union[dict, str]): cioos-ioos-data-transform configurations
-
-    Returns:
-        xarray.Dataset: CIOOS Compliant Xarray object
-    """
-
-    config = cioos_odf_config(config)
-    config["organisationVocabulary"] = ["BIO", "GF3"]
-    return odf_to_xarray(path, config)
-
-
-def mli_odf_cioos(path: str, config: Union[dict, str]) -> xarray.Dataset:
-    """Read MLI ODF with the CIOOS Data Transform package
-
-    Args:
-        path (str): file path to read.
-        config (Union[dict, str]): cioos-ioos-data-transform configurations
-
-    Returns:
-        xarray.Dataset: CIOOS Compliant Xarray object
-    """
-    config = cioos_odf_config(config)
-    config["organisationVocabulary"] = ["MLI", "GF3"]
-    return odf_to_xarray(path, config)
 
 
 def bio_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:

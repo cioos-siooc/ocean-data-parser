@@ -131,6 +131,85 @@ class TestAmundsenParser:
         review_parsed_dataset(ds, path, caplog)
 
 
+class TestIOSShellParser:
+    @pytest.mark.parametrize(
+        "path", glob("tests/parsers_test_files/dfo/ios/shell/ANE/*.ane")
+    )
+    def test_dfo_ios_shell_ane_files(self, path):
+        ds = dfo.ios.shell(path)
+        review_parsed_dataset(ds, path)
+
+    @pytest.mark.parametrize(
+        "path", glob("tests/parsers_test_files/dfo/ios/shell/cruise/BOT/*.bot")
+    )
+    def test_dfo_ios_shell_cruise_bot_files(self, path):
+        ds = dfo.ios.shell(path)
+        review_parsed_dataset(ds, path)
+
+    @pytest.mark.parametrize(
+        "path", glob("tests/parsers_test_files/dfo/ios/shell/cruise/CHE/*.che")
+    )
+    def test_dfo_ios_shell_cruise_che_files(self, path):
+        ds = dfo.ios.shell(path)
+        review_parsed_dataset(ds, path)
+
+    @pytest.mark.parametrize(
+        "path", glob("tests/parsers_test_files/dfo/ios/shell/cruise/CTD/*.ctd")
+    )
+    def test_dfo_ios_shell_cruise_ctd_files(self, path):
+        ds = dfo.ios.shell(path)
+        review_parsed_dataset(ds, path)
+
+    @pytest.mark.parametrize(
+        "path", glob("tests/parsers_test_files/dfo/ios/shell/cruise/LOOP/*.loop")
+    )
+    def test_dfo_ios_shell_cruise_loop_files(self, path):
+        ds = dfo.ios.shell(path)
+        review_parsed_dataset(ds, path)
+
+    @pytest.mark.parametrize(
+        "path", glob("tests/parsers_test_files/dfo/ios/shell/cruise/MED/*.MED")
+    )
+    def test_dfo_ios_shell_cruise_med_files(self, path):
+        ds = dfo.ios.shell(path)
+        review_parsed_dataset(ds, path)
+
+    @pytest.mark.parametrize(
+        "path", glob("tests/parsers_test_files/dfo/ios/shell/cruise/TOB/*.tob")
+    )
+    def test_dfo_ios_shell_cruise_tob_files(self, path):
+        ds = dfo.ios.shell(path)
+        review_parsed_dataset(ds, path)
+
+    @pytest.mark.parametrize(
+        "path", glob("tests/parsers_test_files/dfo/ios/shell/cruise/UBC/*.UBC")
+    )
+    def test_dfo_ios_shell_cruise_ubc_files(self, path):
+        ds = dfo.ios.shell(path)
+        review_parsed_dataset(ds, path)
+
+    @pytest.mark.parametrize(
+        "path", glob("tests/parsers_test_files/dfo/ios/shell/DRF/*.drf")
+    )
+    def test_dfo_ios_shell_drf_files(self, path):
+        ds = dfo.ios.shell(path)
+        review_parsed_dataset(ds, path)
+
+    @pytest.mark.parametrize(
+        "path", glob("tests/parsers_test_files/dfo/ios/shell/mooring/CTD/*.ctd")
+    )
+    def test_dfo_ios_shell_moored_ctd_files(self, path):
+        ds = dfo.ios.shell(path)
+        review_parsed_dataset(ds, path)
+
+    @pytest.mark.parametrize(
+        "path", glob("tests/parsers_test_files/dfo/ios/shell/mooring/CUR/*.cur")
+    )
+    def test_dfo_ios_shell_moored_cur_files(self, path):
+        ds = dfo.ios.shell(path)
+        review_parsed_dataset(ds, path)
+
+
 class TestODFParser:
     @pytest.mark.parametrize(
         "timestamp,expected_response",
