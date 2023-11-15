@@ -594,6 +594,25 @@ files = [
 numpy = ">=1.21"
 
 [[package]]
+name = "gsw-xarray"
+version = "0.3.0"
+description = "Drop in wrapper for gsw which adds CF standard name and units attributes to xarray results"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "gsw-xarray-0.3.0.tar.gz", hash = "sha256:f89c27a9f37549a1a6ed88a002201b880a8ae2463e711e74030e43101a62e185"},
+    {file = "gsw_xarray-0.3.0-py3-none-any.whl", hash = "sha256:6394895ed57b3231224784ea1303476672ff1dc6f91aee333b9be223e27564e0"},
+]
+
+[package.dependencies]
+gsw = ">=3.4.0"
+xarray = ">=0.20.2"
+
+[package.extras]
+docs = ["Sphinx (>=4.4.0)", "furo (>=2022.1.2)"]
+pint = ["Pint (>=0.18)", "pint-xarray (>=0.2.1,<0.3.0)"]
+
+[[package]]
 name = "h5netcdf"
 version = "1.3.0"
 description = "netCDF4 via h5py"
@@ -3186,4 +3205,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.13"
-content-hash = "c33a6c1ecc5882e615547361177581c20da50b2b0d7b36169cdbf69894993bb3"
+content-hash = "c0b6f956b65d6631de23ca574840962651496c84e120a81473755fcd1f15506a"
