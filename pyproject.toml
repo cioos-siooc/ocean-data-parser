@@ -32,6 +32,7 @@ numpy = "^1.26.1"
 gsw = "^3.6.17"
 requests = "^2.31.0"
 xmltodict = "^0.13.0"
+fortranformat = "^2.0.0"
 
 [tool.poetry.group.geo]
 optional = true
