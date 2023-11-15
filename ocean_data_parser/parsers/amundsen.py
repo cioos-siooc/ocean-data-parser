@@ -108,6 +108,16 @@ def int_format(
             elif ":" in line:
                 key, value = line.strip()[1:].split(":", 1)
                 metadata[key.strip()] = value.strip()
+            elif line == "% Fluorescence [ug/L]":
+                metadata['Fluo'] = "Fluorescence [ug/L]"
+            elif line == "% Conservative Temperature (TEOS-10) [deg C]":
+                metadata['CONT'] = "Conservative Temperature (TEOS-10) [deg C]"
+            elif line == "% In situ density TEOS10 ((s, t, p) - 1000) [kg/m^3]":
+                metadata['D_CT'] = "In situ density TEOS10 ((s, t, p) - 1000) [kg/m^3]"
+            elif line == "% Potential density TEOS10 ((s, t, 0) - 1000) [kg/m^3]":
+                metadata['D0CT'] = "Potential density TEOS10 ((s, t, 0) - 1000) [kg/m^3]"
+            elif line == "% Potential density TEOS10 (s, t, 0) [kg/m^3]":
+                metadata['D0CT'] = "Potential density TEOS10 (s, t, 0) [kg/m^3]"
             elif re.match(r"% .* \[.+\]", line):
                 logger.warning(
                     "Unknown variable name will be saved to unknown_variables_information: %s",
@@ -191,7 +201,7 @@ def int_format(
             )
             ds["instrument_depth"] = -z_from_p(ds[pressure[0]], latitude)
 
-        # Map varibles to vocabulary
+        # Map variables to vocabulary
         variables_to_rename = {}
         for var in ds:
             if var not in variables:
@@ -215,7 +225,7 @@ def int_format(
                 if (
                     var_units is None  # Consider first if no units
                     or var_units == item.get("units")
-                    or (accepted_units and re.match(accepted_units, var_units))
+                    or (accepted_units and re.fullmatch(accepted_units, var_units))
                 ):
                     if "rename" in item:
                         variables_to_rename[var] = item["rename"]

@@ -67,7 +67,8 @@ datetime_regex_to_formats = [
     (r"^\d\d\-\d\d\-\d\d\s+\d{1,2}\:\d\d$", r"%y-%m-%d %H:%M"),
     (r"^\d\d\-\d\d\-\d\d\s+\d{1,2}\:\d\d\:\d\d$", r"%y-%m-%d %H:%M:%S"),
     (r"^\d\d\d\d\-\d\d\-\d\d\s+\d{1,2}\:\d\d$", r"%Y-%m-%d %H:%M"),
-    (r"^\d\d\/\d\d\/\d\d\d\d\s\d\d\:\d\d", r"%m/%d/%Y %H:%M"),
+    (r"^\d{1,2}\/\d{1,2}\/\d\d\d\d\s\d{1,2}\:\d\d", r"%m/%d/%Y %H:%M"),
+    (r"^\d\d\d\d\-\d\d\-\d\d\s+\d{1,2}:\d\d:\d\d (AM|PM)", r"%Y-%m-%d %I:%M:%S %p"),
 ]
 
 

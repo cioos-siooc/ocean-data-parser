@@ -284,15 +284,15 @@ class TestBatchGenerateName:
         source_ds.attrs["source"] = "source_file.csv"
         name = generate_output_path(source_ds)
         assert isinstance(name, Path)
-        assert str(name) == "source_file.nc"
+        assert str(name) == "source_file.csv.nc"
 
     @pytest.mark.parametrize(
         "input,expected_path",
         (
-            ({"path": "output"}, "output/source_file.nc"),
+            ({"path": "output"}, "output/source_file.csv.nc"),
             ({"file_name": "test"}, "test.nc"),
-            ({"file_preffix": "test_"}, "test_source_file.nc"),
-            ({"file_suffix": "_test"}, "source_file_test.nc"),
+            ({"file_preffix": "test_"}, "test_source_file.csv.nc"),
+            ({"file_suffix": "_test"}, "source_file.csv_test.nc"),
         ),
     )
     def test_generate_filename_with_unique_input(self, input, expected_path):
@@ -339,17 +339,17 @@ class TestBatchGenerateName:
 
     def test_generate_filename_with_prefix(self):
         name = generate_output_path(self._get_test_dataset(), file_preffix="test_")
-        assert str(name) == "test_source_file.nc"
+        assert str(name) == "test_source_file.csv.nc"
 
     def test_generate_filename_with_suffix(self):
         name = generate_output_path(self._get_test_dataset(), file_suffix="_test")
-        assert str(name) == "source_file_test.nc"
+        assert str(name) == "source_file.csv_test.nc"
 
     def test_generate_filename_with_prefix_and_suffix(self):
         name = generate_output_path(
             self._get_test_dataset(), file_preffix="test_", file_suffix="_test"
         )
-        assert str(name) == "test_source_file_test.nc"
+        assert str(name) == "test_source_file.csv_test.nc"
 
     def test_generate_filename_with_defaults(self):
         name = generate_output_path(

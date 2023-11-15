@@ -166,7 +166,7 @@ def _define_cdm_data_type_from_odf(odf_header: dict) -> dict:
         attributes["cdm_data_type"] = "Point"
     else:
         logger.error(
-            "ODF_transform is not yet incompatible with ODF DATA_TYPE: %s",
+            "ODF parser is not yet incompatible with ODF DATA_TYPE: %s",
             odf_data_type,
         )
     return attributes

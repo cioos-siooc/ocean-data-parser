@@ -1,5 +1,0 @@
-recursive-include ocean_data_parser/vocabularies *
-include ocean_data_parser/parsers/dfo/odf_source/*config.json 
-recursive-include ocean_data_parser/parsers/dfo/odf_source/references *
-recursive-include ocean_data_parser/parsers/dfo/odf_source/references/geographical_areas *
-include ocean_data_parser/batch/default-batch-config.yaml
