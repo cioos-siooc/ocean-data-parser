@@ -1,0 +1,86 @@
+[tool.poetry]
+name = "ocean-data-parser"
+version = "0.3.0"
+description = "Package used to parse different Ocean Instruments Propriatary format to an xarray dataset."
+repository = "https://github.com/cioos-siooc/ocean-data-parser"
+homepage = "https://cioos.ca"
+documentation = "https://cioos-siooc.github.io/ocean-data-parser"
+authors = ["Jessy Barrette <jessy.barrette@hakai.org>"]
+readme = "README.md"
+packages = [{include = "ocean_data_parser"}]
+keywords = ["oceanography","cioos","parser"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.13"
+xarray = "^2023.9.0"
+tqdm = "^4.66.1"
+netCDF4 = "^1.6.4"
+pynmea2 = "^1.19.0"
+tabulate = "^0.9.0"
+PyYAML = "^6.0.1"
+lxml = "^4.9.3"
+click = "^8.1.7"
+loguru = "^0.7.2"
+sentry-sdk = {extras = ["loguru"], version = "^1.32.0"}
+o2conversion = {git = "https://github.com/HakaiInstitute/python-o2-conversion.git"}
+pytz = "^2023.3.post1"
+numpy = "^1.26.1"
+requests = "^2.31.0"
+xmltodict = "^0.13.0"
+fortranformat = "^2.0.0"
+gsw-xarray = "^0.3.0"
+
+[tool.poetry.group.geo]
+optional = true
+
+
+[tool.poetry.group.geo.dependencies]
+geographiclib = "^2.0"
+shapely = "^2.0.2"
+
+[tool.poetry.group.process]
+optional = true
+
+
+[tool.poetry.group.process.dependencies]
+plotly = "^5.17.0"
+ipywidgets = "^8.1.1"
+ipython = "^8.16.1"
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+mkdocs = "^1.5.3"
+mkdocs-click = "^0.8.1"
+mkdocs-gen-files = "^0.5.0"
+mkdocs-jupyter = "^0.24.6"
+mkdocs-material = "^9.4.6"
+mkdocs-simple-hooks = "^0.1.5"
+mkdocstrings = {extras = ["python"], version = "^0.23.0"}
+mkdocs-section-index = "^0.3.8"
+mike = "^1.1.2"
+tabulate = "^0.9.0"
+pandas = "^2.1.1"
+material-plausible-plugin = "^0.2.0"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.2"
+black = "^23.10.0"
+ioos-qc = "^2.1.0"
+pytest-benchmark = "^4.0.0"
+flake8 = "^6.1.0"
+
+[tool.poetry.scripts]
+odpy = 'ocean_data_parser.cli:main'
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
