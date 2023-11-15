@@ -29,4 +29,3 @@ jobs:
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
       - run: |
           mike deploy test
-s
