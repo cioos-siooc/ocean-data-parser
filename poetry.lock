@@ -555,6 +555,35 @@ files = [
 colorama = ">=0.4"
 
 [[package]]
+name = "gsw"
+version = "3.6.17"
+description = "Gibbs Seawater Oceanographic Package of TEOS-10"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "gsw-3.6.17-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:9eaa6138daf77253c6ed52249fdb964b720d048b883880328bec75d9b1aae867"},
+    {file = "gsw-3.6.17-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:fdbf4c6d4417e23097fb3970b293d22f14317f126577c0bd0da3c5219b16fef8"},
+    {file = "gsw-3.6.17-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:04f8bdf2516e67830ea52b9581cb2fe89a75d92f6a82c5d64b69aeb64e5c7aa9"},
+    {file = "gsw-3.6.17-cp310-cp310-win_amd64.whl", hash = "sha256:1a468bcba0d3d7cff2471e06a803cb44e11302647e4e87243f1b2b27a5bbc943"},
+    {file = "gsw-3.6.17-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:27282d29b3d177d3a587cf744ce6b6e0e305ad420c8bab9c790e2d45bd4787d0"},
+    {file = "gsw-3.6.17-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:4e5826999be3a40969ebf87bb26055a7da0de06f76997d6b168f0c6c86fa06b0"},
+    {file = "gsw-3.6.17-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:faf6ea429cce6f7e3b501d7f6e1526e6a08306c23dfdf8509950d4cf611feef8"},
+    {file = "gsw-3.6.17-cp311-cp311-win_amd64.whl", hash = "sha256:75e66329b41b7fc3ad378659ef3798bb73b65595d8f8456d2edebe29dfce1968"},
+    {file = "gsw-3.6.17-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:da126b58f69ab9d318d59b4c012c717691174064fc72dc91e56cea2ba9657110"},
+    {file = "gsw-3.6.17-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:20ed2b9ceb7f640734f03c62f81bcd2a244f4649583a79dfd4a069221f0987eb"},
+    {file = "gsw-3.6.17-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e95b493485edb55c5723024575289f2739b26f7cceda232264f158191a0726bf"},
+    {file = "gsw-3.6.17-cp38-cp38-win_amd64.whl", hash = "sha256:fdece9cc8abcca238c15050a4172234a376b02e48cd1014ad7f9c04da3b92f86"},
+    {file = "gsw-3.6.17-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:3ffa5e0ff02e4c40fe4f7e0eb58294bfc1b26123cb109931f54397a62ba8db7a"},
+    {file = "gsw-3.6.17-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:2449c90ff30a89620903720d8f3ad9065d876ee723003acd28183630f5495e1c"},
+    {file = "gsw-3.6.17-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e253fc83d8d41db63b89e3c350c1e6bb03bc69b6fdc7f45312e7a3e36704cfda"},
+    {file = "gsw-3.6.17-cp39-cp39-win_amd64.whl", hash = "sha256:e79dbec217f5aadd4a3ea7e68f67dafd4ca9be78f2bc2b79ab5a0ecd87f26e8f"},
+    {file = "gsw-3.6.17.tar.gz", hash = "sha256:e13979e1ba29fd41f63c8a3cbb1c47fe50b602d8ce9357b4008b0c2f6e76c665"},
+]
+
+[package.dependencies]
+numpy = ">=1.21"
+
+[[package]]
 name = "h5netcdf"
 version = "1.3.0"
 description = "netCDF4 via h5py"
@@ -3119,6 +3148,17 @@ parallel = ["dask[complete]"]
 viz = ["matplotlib", "nc-time-axis", "seaborn"]
 
 [[package]]
+name = "xmltodict"
+version = "0.13.0"
+description = "Makes working with XML feel like you are working with JSON"
+optional = false
+python-versions = ">=3.4"
+files = [
+    {file = "xmltodict-0.13.0-py2.py3-none-any.whl", hash = "sha256:aa89e8fd76320154a40d19a0df04a4695fb9dc5ba977cbb68ab3e4eb225e7852"},
+    {file = "xmltodict-0.13.0.tar.gz", hash = "sha256:341595a488e3e01a85a9d8911d8912fd922ede5fecc4dce437eb4b6c8d037e56"},
+]
+
+[[package]]
 name = "zipp"
 version = "3.17.0"
 description = "Backport of pathlib-compatible object wrapper for zip files"
@@ -3136,4 +3176,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.13"
-content-hash = "4f54f3e44264ba7a4f9eda7478ef56493721859217ae278ce8ecf00bf1e8cf2d"
+content-hash = "24c53faeea1d205d88c4fca2c81ce7361fe82e6c6dd6ddece2a064929cbc389d"

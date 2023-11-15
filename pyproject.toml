@@ -29,6 +29,9 @@ sentry-sdk = {extras = ["loguru"], version = "^1.32.0"}
 o2conversion = {git = "https://github.com/HakaiInstitute/python-o2-conversion.git"}
 pytz = "^2023.3.post1"
 numpy = "^1.26.1"
+gsw = "^3.6.17"
+requests = "^2.31.0"
+xmltodict = "^0.13.0"
 
 [tool.poetry.group.geo]
 optional = true
