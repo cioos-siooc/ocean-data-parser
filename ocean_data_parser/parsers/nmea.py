@@ -61,7 +61,7 @@ nmea_dtype_mapping = {
     "heading": float,
     "heading_true": float,
     "heading_magnetic": float,
-    "" "hdg_true": str,
+    "hdg_true": str,
     "wind_angle": float,
     "reference": str,
     "wind_speed": float,
