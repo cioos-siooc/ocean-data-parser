@@ -21,11 +21,6 @@ from ocean_data_parser.parsers import utils
 MODULE_PATH = Path(__file__).parent
 DEFAULT_CONFIG_PATH = MODULE_PATH / "default-batch-config.yaml"
 
-logger_sinks = {
-    "sys.stderr": sys.stderr,
-    "sys.stdout": sys.stdout,
-}
-
 
 def save_new_config(ctx, _, path):
     if not path or ctx.resilient_parsing:
@@ -214,12 +209,6 @@ class BatchConversion:
         }
         config["output"].update(output_kwarg)
         config["registry"].update(registry_kwarg)
-
-        if "logger" in config:
-            for handler in config["logger"]["handlers"]:
-                handler["sink"] = logger_sinks.get(handler["sink"], handler["sink"])
-            logger.info(config["logger"])
-            logger.configure(**config["logger"])
 
         return config
 
