@@ -179,7 +179,11 @@ def _generate_extra_terms(nmea):
             f"{nmea['year']}-{nmea['month']}-{nmea['day']}T{nmea['timestamp']} UTC",
             f"%Y-%m-%dT%H%M%S{'.%f' if len(nmea['timestamp'])>6 else''} %Z",
         )
-    if nmea["sentence_type"] == "RMC" and nmea.get('timestamp') and nmea.get('datestamp'):
+    if (
+        nmea["sentence_type"] == "RMC"
+        and nmea.get("timestamp")
+        and nmea.get("datestamp")
+    ):
         extra[("GPS Time", "gps_datetime")] = datetime.strptime(
             f"{nmea['datestamp']}T{nmea['timestamp']} UTC",
             f"%d%m%yT%H%M%S{'.%f' if len(nmea['timestamp'])>6 else''} %Z",
