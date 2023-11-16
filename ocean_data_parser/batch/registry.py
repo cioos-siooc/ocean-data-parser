@@ -17,7 +17,6 @@ EMPTY_FILE_REGISTRY = pd.DataFrame(
 
 
 REGSITRY_DTYPE = {
-    "source": str,
     "mtime": float,
     "hash": str,
     "error_message": str,
@@ -25,11 +24,22 @@ REGSITRY_DTYPE = {
 }
 
 
+def generate_registry(sources=None, **kwargs):
+    return (
+        pd.DataFrame(
+            data={"source": [Path(source) for source in sources or []], **kwargs},
+            columns=list(REGSITRY_DTYPE.keys()) + ["source"],
+        )
+        .astype(REGSITRY_DTYPE)
+        .set_index("source")
+    )
+
+
 class FileConversionRegistry:
     def __init__(
         self,
         path: str = None,
-        data: pd.DataFrame = EMPTY_FILE_REGISTRY,
+        data: pd.DataFrame = generate_registry(),
         hashtype: str = "sha256",
         block_size: int = 65536,
     ):
@@ -128,16 +138,15 @@ class FileConversionRegistry:
         sources = [source for source in sources if source not in self.data.index]
         if not sources:
             return
-        new_data = pd.DataFrame({"source": sources})
+        new_data = generate_registry(sources)
 
         # Retrieve mtime and hash only if a registry is actually saved
         if self.path:
             logger.info("Get new files mtime")
-            new_data["mtime"] = new_data["source"].progress_apply(self._get_mtime)
-            logger.info("Get new files hash")
-            new_data["hash"] = new_data["source"].progress_apply(self._get_hash)
-
-        new_data = new_data.set_index(["source"])
+            new_data = new_data.assign(
+                mtime=new_data.index.to_series().progress_map(self._get_mtime),
+                hash=new_data.index.to_series().progress_map(self._get_hash),
+            )
 
         self.data = (
             new_data
