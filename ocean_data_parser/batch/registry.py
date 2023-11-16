@@ -16,6 +16,15 @@ EMPTY_FILE_REGISTRY = pd.DataFrame(
 ).set_index("source")
 
 
+REGSITRY_DTYPE = {
+    "source": str,
+    "mtime": float,
+    "hash": str,
+    "error_message": str,
+    "output_path": str,
+}
+
+
 class FileConversionRegistry:
     def __init__(
         self,
@@ -42,9 +51,9 @@ class FileConversionRegistry:
         elif self.path is None or not self.path.exists():
             self.data = pd.DataFrame()
         elif self.path.suffix == ".csv":
-            self.data = pd.read_csv(self.path)
+            self.data = pd.read_csv(self.path, dtype=REGSITRY_DTYPE)
         elif self.path.suffix == ".parquet":
-            self.data = pd.read_parquet(self.path)
+            self.data = pd.read_parquet(self.path).astype(REGSITRY_DTYPE)
         else:
             raise TypeError("Unknown registry type")
 
