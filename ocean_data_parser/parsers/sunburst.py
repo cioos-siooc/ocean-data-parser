@@ -95,23 +95,17 @@ def superCO2(path: str, output: str = None) -> xarray.Dataset:
     df.columns = [_format_variables(var) for var in df.columns]
 
     # Generate time variable from Date and Time columns
-    df["time"] = (
-        pd.to_datetime(
-            (df["Date"] + " " + df["Time"]), format="%Y%m%d %H%M%S", utc=True
-        )
-        .dt.tz_convert(None)
-    )
+    df["time"] = pd.to_datetime(
+        (df["Date"] + " " + df["Time"]), format="%Y%m%d %H%M%S", utc=True
+    ).dt.tz_convert(None)
 
     # Review day of the year variable
-    df["time_doy_utc"] = (
-        pd.to_datetime(
-            df["DOY_UTC"] - 1,
-            unit="D",
-            origin=pd.Timestamp(collected_beginning_date.year, 1, 1),
-            utc=True,
-        )
-        .dt.tz_convert(None)
-    )
+    df["time_doy_utc"] = pd.to_datetime(
+        df["DOY_UTC"] - 1,
+        unit="D",
+        origin=pd.Timestamp(collected_beginning_date.year, 1, 1),
+        utc=True,
+    ).dt.tz_convert(None)
 
     # Compare DOY_UTC vs Date + Time
     dt = (df["time"] - df["time_doy_utc"]).mean().total_seconds()

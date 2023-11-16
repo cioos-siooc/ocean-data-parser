@@ -56,7 +56,7 @@ def load_test_dataset():
     ds = seabird.cnv(TEST_SEABIRD_FILE)
     ds["time"] = (
         ds["timeK"].dims,
-        pd.to_datetime(ds["timeK"], origin="2000-01-01", unit="s")
+        pd.to_datetime(ds["timeK"], origin="2000-01-01", unit="s"),
     )
     ds.process.time = "time"
     ds.process.lat = "latitude"

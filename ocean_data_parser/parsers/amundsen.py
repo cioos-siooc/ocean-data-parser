@@ -109,15 +109,17 @@ def int_format(
                 key, value = line.strip()[1:].split(":", 1)
                 metadata[key.strip()] = value.strip()
             elif line == "% Fluorescence [ug/L]":
-                metadata['Fluo'] = "Fluorescence [ug/L]"
+                metadata["Fluo"] = "Fluorescence [ug/L]"
             elif line == "% Conservative Temperature (TEOS-10) [deg C]":
-                metadata['CONT'] = "Conservative Temperature (TEOS-10) [deg C]"
+                metadata["CONT"] = "Conservative Temperature (TEOS-10) [deg C]"
             elif line == "% In situ density TEOS10 ((s, t, p) - 1000) [kg/m^3]":
-                metadata['D_CT'] = "In situ density TEOS10 ((s, t, p) - 1000) [kg/m^3]"
+                metadata["D_CT"] = "In situ density TEOS10 ((s, t, p) - 1000) [kg/m^3]"
             elif line == "% Potential density TEOS10 ((s, t, 0) - 1000) [kg/m^3]":
-                metadata['D0CT'] = "Potential density TEOS10 ((s, t, 0) - 1000) [kg/m^3]"
+                metadata[
+                    "D0CT"
+                ] = "Potential density TEOS10 ((s, t, 0) - 1000) [kg/m^3]"
             elif line == "% Potential density TEOS10 (s, t, 0) [kg/m^3]":
-                metadata['D0CT'] = "Potential density TEOS10 (s, t, 0) [kg/m^3]"
+                metadata["D0CT"] = "Potential density TEOS10 (s, t, 0) [kg/m^3]"
             elif re.match(r"% .* \[.+\]", line):
                 logger.warning(
                     "Unknown variable name will be saved to unknown_variables_information: %s",

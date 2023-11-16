@@ -38,7 +38,7 @@ def load_cnv(file: str):
     ds = seabird.cnv(file)
     ds["time"] = (
         ds["timeK"].dims,
-        pd.to_datetime(ds["timeK"], origin="2000-01-01", unit="s")
+        pd.to_datetime(ds["timeK"], origin="2000-01-01", unit="s"),
     )
     return ds.swap_dims({"index": "time"}).drop("index")
 
