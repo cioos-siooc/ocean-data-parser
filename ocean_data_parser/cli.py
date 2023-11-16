@@ -90,13 +90,13 @@ classic_logger = logging.getLogger()
     "--log-file-rotation",
     type=str,
     help="Rotate log file at a given interval. Given value must be compatible with pandas.TimeDelta",
-    default=False,
+    default=None,
 )
 @click.option(
     "--log-file-retention",
     type=str,
     help="Delete log file after a given time period. Given value must be compatible with pandas.TimeDelta",
-    default=False,
+    default=None,
 )
 @click.option(
     "--show-arguments",
