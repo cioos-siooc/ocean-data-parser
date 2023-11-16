@@ -209,6 +209,7 @@ class BatchConversion:
         }
         config["output"].update(output_kwarg)
         config["registry"].update(registry_kwarg)
+
         return config
 
     def get_excluded_files(self) -> list:

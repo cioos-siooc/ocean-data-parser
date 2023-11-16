@@ -87,13 +87,33 @@ classic_logger = logging.getLogger()
     envvar="ODPY_LOG_FILE_LEVEL",
 )
 @click.option(
+    "--log-file-rotation",
+    type=str,
+    help="Rotate log file at a given interval. Given value must be compatible with pandas.TimeDelta",
+    default=None,
+)
+@click.option(
+    "--log-file-retention",
+    type=str,
+    help="Delete log file after a given time period. Given value must be compatible with pandas.TimeDelta",
+    default=None,
+)
+@click.option(
     "--show-arguments",
     is_flag=True,
     default=False,
     help="Print present argument values",
     hidden=True,
 )
-def main(verbose, log_level, log_file, log_file_level, show_arguments):
+def main(
+    verbose,
+    log_level,
+    log_file,
+    log_file_level,
+    log_file_rotation,
+    log_file_retention,
+    show_arguments,
+):
     """Ocean Data Parser command line main interface."""
     log_format = VERBOSE_LOG_FORMAT if verbose else LOG_FORMAT
     logger.add(
@@ -102,7 +122,13 @@ def main(verbose, log_level, log_file, log_file_level, show_arguments):
         format=VERBOSE_LOG_FORMAT if verbose else LOG_FORMAT,
     )
     if log_file:
-        logger.add(log_file, level=log_file_level, format=log_format)
+        logger.add(
+            log_file,
+            level=log_file_level,
+            format=log_format,
+            rotation=log_file_rotation,
+            retention=log_file_retention,
+        )
 
     logger.info("ocean-data-parser[{}]: log-level={}", __version__, log_level)
     if show_arguments:
