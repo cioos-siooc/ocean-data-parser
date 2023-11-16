@@ -380,7 +380,7 @@ class TestBatchConversion:
         (
             "tests/parsers_test_files/dfo/odf/bio/**/*.nc",
             "tests/parsers_test_files/dfo/odf/bio/CTD/*.nc",
-            "**/*.nc",
+            "tests/**/*.nc",
         ),
     )
     def test_batch_exclude_path(self, exclude):
