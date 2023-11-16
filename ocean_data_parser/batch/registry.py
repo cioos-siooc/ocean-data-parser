@@ -136,11 +136,16 @@ class FileConversionRegistry:
             new_data["mtime"] = new_data["source"].progress_apply(self._get_mtime)
             logger.info("Get new files hash")
             new_data["hash"] = new_data["source"].progress_apply(self._get_hash)
+
+        new_data = new_data.set_index(["source"])
+
         self.data = (
-            pd.concat(
+            new_data
+            if self.data.empty
+            else pd.concat(
                 [
                     self.data,
-                    new_data.set_index(["source"]),
+                    new_data,
                 ],
             )
             .groupby(level=0)

@@ -21,6 +21,8 @@ for output_path in TEST_REGISTRY.data["output_path"].dropna():
 
 MTIME_PLACEHOLDER = 0.0
 HASH_PLACEHOLDER = "0"
+
+
 class FileRegistryTests(unittest.TestCase):
     def _get_test_registry(self, update=True):
         registry = FileConversionRegistry(path=TEST_REGISTRY_PATH)
@@ -119,8 +121,12 @@ class FileRegistryTests(unittest.TestCase):
         file_registry.data["mtime"] = MTIME_PLACEHOLDER
         file_registry.data["hash"] = HASH_PLACEHOLDER
         file_registry.load()
-        assert (file_registry.data["mtime"] == MTIME_PLACEHOLDER).all(), "mtime was updated with load()"
-        assert (file_registry.data["hash"] == HASH_PLACEHOLDER).all(), "hash was updated with load()"
+        assert (
+            file_registry.data["mtime"] == MTIME_PLACEHOLDER
+        ).all(), "mtime was updated with load()"
+        assert (
+            file_registry.data["hash"] == HASH_PLACEHOLDER
+        ).all(), "hash was updated with load()"
         file_registry.load(overwrite=True)
         assert (
             file_registry.data["mtime"] != MTIME_PLACEHOLDER
