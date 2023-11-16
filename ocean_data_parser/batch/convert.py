@@ -207,11 +207,6 @@ class BatchConversion:
             for key in list(kwargs.keys())
             if key.startswith("registry_")
         }
-        cli_log_file = {
-            "sink" if input == "log_file" else input[9:]: value
-            for input, value in kwargs.items()
-            if input.startswith("log_file") and value
-        }
         config = {
             **load_config(DEFAULT_CONFIG_PATH),
             **(load_config(config) if isinstance(config, str) else config or {}),
