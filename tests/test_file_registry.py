@@ -133,7 +133,7 @@ class FileRegistryTests(unittest.TestCase):
 
         # Replace registry parameters
         file_registry.data["mtime"] = 0
-        file_registry.data["hash"] = 0
+        file_registry.data["hash"] = "0"
         assert (
             file_registry != self._get_test_registry()
         ), "local test registry wasn't modify"
@@ -150,7 +150,7 @@ class FileRegistryTests(unittest.TestCase):
         file_registry = self._get_test_registry()
         # Replace registry parameters
         file_registry.data["mtime"] = 0
-        file_registry.data["hash"] = 0
+        file_registry.data["hash"] = "0"
         file_registry.update([file_registry.data.index[0]])
         assert (
             file_registry.data.iloc[0]["mtime"] != 0
