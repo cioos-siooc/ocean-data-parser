@@ -103,7 +103,7 @@ def import_parser(parser: str):
     return getattr(mod, filetype)
 
 
-def file(path: str, parser: str = None, **kwargs) -> Dataset:
+def file(path: str, parser: str = None, **kwargs: str | int | float) -> Dataset:
     """Load compatible file format as an xarray dataset.
 
     ```python
