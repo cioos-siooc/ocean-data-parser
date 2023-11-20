@@ -1,7 +1,6 @@
 import copy
 import hashlib
 import logging
-import re
 from pathlib import Path
 from typing import Union
 
@@ -16,11 +15,26 @@ EMPTY_FILE_REGISTRY = pd.DataFrame(
 ).set_index("source")
 
 
+REGISTRY_DTYPE = {
+    "mtime": float,
+    "hash": str,
+    "error_message": str,
+    "output_path": str,
+}
+
+
+def generate_registry(sources=None):
+    return pd.DataFrame(
+        data={"source": sources},
+        columns=list(REGISTRY_DTYPE.keys()) + ["source"],
+    ).set_index("source")
+
+
 class FileConversionRegistry:
     def __init__(
         self,
         path: str = None,
-        data: pd.DataFrame = EMPTY_FILE_REGISTRY,
+        data: pd.DataFrame = generate_registry(),
         hashtype: str = "sha256",
         block_size: int = 65536,
     ):
@@ -34,22 +48,26 @@ class FileConversionRegistry:
 
     def load(self, overwrite=False):
         """Load file registry if available otherwise return an empty dataframe"""
+
+        def _as_path(path):
+            return Path(path) if pd.notna(path) else path
+
         if not self.data.empty and not overwrite:
             logger.warning(
                 "Registry already contains data and won't reload from: %s", self.data
             )
             return
         elif self.path is None or not self.path.exists():
-            self.data = pd.DataFrame()
+            self.data = generate_registry()
         elif self.path.suffix == ".csv":
-            self.data = pd.read_csv(self.path)
+            self.data = pd.read_csv(self.path, index_col="source", dtype=REGISTRY_DTYPE)
         elif self.path.suffix == ".parquet":
             self.data = pd.read_parquet(self.path)
         else:
             raise TypeError("Unknown registry type")
 
-        if "source" in self.data:
-            self.data = self.data.set_index(["source"])
+        self.data.index = self.data.index.map(Path)
+        self.data["output_path"] = self.data["output_path"].apply(_as_path)
         return self
 
     def save(self):
@@ -119,19 +137,23 @@ class FileConversionRegistry:
         sources = [source for source in sources if source not in self.data.index]
         if not sources:
             return
-        new_data = pd.DataFrame({"source": sources})
+        new_data = generate_registry(sources)
 
         # Retrieve mtime and hash only if a registry is actually saved
         if self.path:
             logger.info("Get new files mtime")
-            new_data["mtime"] = new_data["source"].progress_apply(self._get_mtime)
-            logger.info("Get new files hash")
-            new_data["hash"] = new_data["source"].progress_apply(self._get_hash)
+            new_data = new_data.assign(
+                mtime=new_data.index.map(self._get_mtime),
+                hash=new_data.index.map(self._get_hash),
+            )
+
         self.data = (
-            pd.concat(
+            new_data
+            if self.data.empty
+            else pd.concat(
                 [
                     self.data,
-                    new_data.set_index(["source"]),
+                    new_data,
                 ],
             )
             .groupby(level=0)

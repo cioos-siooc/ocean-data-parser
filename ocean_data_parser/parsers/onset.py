@@ -212,7 +212,7 @@ def csv(
         usecols=[id for id, name in enumerate(column_names)],
         **read_csv_kwargs,
     )
-    df[header["time_variables"]] = df[header["time_variables"]].applymap(
+    df[header["time_variables"]] = df[header["time_variables"]].map(
         lambda x: _parse_onset_time(x, header["timezone"])
     )
 

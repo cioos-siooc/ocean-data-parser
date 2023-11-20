@@ -61,7 +61,7 @@ nmea_dtype_mapping = {
     "heading": float,
     "heading_true": float,
     "heading_magnetic": float,
-    "" "hdg_true": str,
+    "hdg_true": str,
     "wind_angle": float,
     "reference": str,
     "wind_speed": float,
@@ -301,9 +301,7 @@ def nmea_0183(
     for col in df:
         if nmea_dtype_mapping.get(col) != datetime:
             continue
-        df[col] = (
-            pd.to_datetime(df[col], utc=True).dt.tz_convert(None).dt.to_pydatetime()
-        )
+        df[col] = pd.to_datetime(df[col], utc=True).dt.tz_convert(None)
 
     df = df.replace({np.nan: None, "": None, "None": None})
 
