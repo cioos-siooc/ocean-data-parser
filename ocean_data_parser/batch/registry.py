@@ -1,7 +1,6 @@
 import copy
 import hashlib
 import logging
-import re
 from pathlib import Path
 from typing import Union
 
@@ -16,7 +15,7 @@ EMPTY_FILE_REGISTRY = pd.DataFrame(
 ).set_index("source")
 
 
-REGSITRY_DTYPE = {
+REGISTRY_DTYPE = {
     "mtime": float,
     "hash": str,
     "error_message": str,
@@ -24,15 +23,11 @@ REGSITRY_DTYPE = {
 }
 
 
-def generate_registry(sources=None, **kwargs):
-    return (
-        pd.DataFrame(
-            data={"source": [Path(source) for source in sources or []], **kwargs},
-            columns=list(REGSITRY_DTYPE.keys()) + ["source"],
-        )
-        .astype(REGSITRY_DTYPE)
-        .set_index("source")
-    )
+def generate_registry(sources=None):
+    return pd.DataFrame(
+        data={"source": sources},
+        columns=list(REGISTRY_DTYPE.keys()) + ["source"],
+    ).set_index("source")
 
 
 class FileConversionRegistry:
@@ -53,22 +48,26 @@ class FileConversionRegistry:
 
     def load(self, overwrite=False):
         """Load file registry if available otherwise return an empty dataframe"""
+
+        def _as_path(path):
+            return Path(path) if pd.notna(path) else path
+
         if not self.data.empty and not overwrite:
             logger.warning(
                 "Registry already contains data and won't reload from: %s", self.data
             )
             return
         elif self.path is None or not self.path.exists():
-            self.data = pd.DataFrame()
+            self.data = generate_registry()
         elif self.path.suffix == ".csv":
-            self.data = pd.read_csv(self.path, dtype=REGSITRY_DTYPE)
+            self.data = pd.read_csv(self.path, index_col="source", dtype=REGISTRY_DTYPE)
         elif self.path.suffix == ".parquet":
-            self.data = pd.read_parquet(self.path).astype(REGSITRY_DTYPE)
+            self.data = pd.read_parquet(self.path)
         else:
             raise TypeError("Unknown registry type")
 
-        if "source" in self.data:
-            self.data = self.data.set_index(["source"])
+        self.data.index = self.data.index.map(Path)
+        self.data["output_path"] = self.data["output_path"].apply(_as_path)
         return self
 
     def save(self):
@@ -144,8 +143,8 @@ class FileConversionRegistry:
         if self.path:
             logger.info("Get new files mtime")
             new_data = new_data.assign(
-                mtime=new_data.index.to_series().progress_map(self._get_mtime),
-                hash=new_data.index.to_series().progress_map(self._get_hash),
+                mtime=new_data.index.map(self._get_mtime),
+                hash=new_data.index.map(self._get_hash),
             )
 
         self.data = (
