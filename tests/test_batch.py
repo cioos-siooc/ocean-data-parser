@@ -198,16 +198,15 @@ class TestBatchCLI:
         ), f"Unexpected output {result.output=}"
 
     def test_failed_cli_batch_conversion_with_ignore_errors(self, tmp_path):
-        test_file_path = str(tmp_path / "failed_cli_test_file.cnv")
+        test_file_path = tmp_path / "failed_cli_test_file.cnv"
         config = _get_config(
             cwd=tmp_path,
-            input_path=test_file_path,
+            input_path=str(test_file_path),
             parser="seabird.cnv",
             overwrite=True,
             multiprocessing=1,
             errors="ignore",
         )
-        config["registry"]["path"] = str(tmp_path / "registry.csv")
 
         config_path = _save_config(tmp_path, config)
         assert config_path.exists()
