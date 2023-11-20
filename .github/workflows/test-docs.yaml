@@ -28,4 +28,4 @@ jobs:
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
       - run: |
-          poetry run mike deploy test
+          poetry run mkdocs build -s -d test
