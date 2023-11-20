@@ -45,3 +45,4 @@ docs/user_guide/vocabularies/*.md
 docs/user_guide/parsers/parser-list.md
 
 site/**
+.python-version
