@@ -97,7 +97,9 @@ def get_dtype_from_ios_name(ios_name):
         return float
 
 
-ODF_SHELL_HEADER_SECTIONS = (
+IOS_SHELL_HEADER_SECTIONS = (
+    "FILE",
+    "LOCATION",
     "COMMENTS",
     "REMARK",
     "ADMINISTRATION",
@@ -179,7 +181,7 @@ class IosFile(object):
         unparsed_sections = [
             section
             for section in sections_available
-            if section not in ODF_SHELL_HEADER_SECTIONS
+            if section not in IOS_SHELL_HEADER_SECTIONS
         ]
         if unparsed_sections:
             logger.warning(
