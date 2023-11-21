@@ -5,6 +5,7 @@ import logging
 import re
 from importlib import import_module
 from pathlib import Path
+from typing import Union
 
 from xarray import Dataset
 
@@ -103,7 +104,7 @@ def import_parser(parser: str):
     return getattr(mod, filetype)
 
 
-def file(path: str, parser: str = None, **kwargs: str | int | float) -> Dataset:
+def file(path: str, parser: str = None, **kwargs: Union[str, int, float]) -> Dataset:
     """Load compatible file format as an xarray dataset.
 
     ```python
