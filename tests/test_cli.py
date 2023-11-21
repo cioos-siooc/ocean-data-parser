@@ -31,6 +31,16 @@ def test_odpy_main_arguments(args, expected_output):
 
 
 @pytest.mark.parametrize(
+    "args,expected_output",
+    (("--unknown", "Error: No such option"), ("-1", "Error: No such option")),
+)
+def test_odpy_main_bad_arguments(args, expected_output):
+    results = run_command(cli.main, args)
+    assert results.exit_code == 2
+    assert expected_output in results.output
+
+
+@pytest.mark.parametrize(
     "env,expected_output",
     (
         ({"ODPY_LOG_LEVEL": "WARNING"}, "log_level=WARNING"),
