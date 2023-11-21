@@ -3,7 +3,6 @@ import os
 from typing import Union
 
 import pandas as pd
-from geographiclib.geodesic import Geodesic
 
 
 def read_geojson(
@@ -77,23 +76,34 @@ def get_nearest_station(
     longitude: float,
     stations: Union[list[tuple[str, float, float]], pd.DataFrame],
     max_distance_from_station_km: float = None,
-    geod: Geodesic = None,
+    geod: str = "WGS84",
 ) -> str:
     """Get the nearest station from a list of reference stations
 
     Args:
-        latitude (float): [description]
-        longigude (float): [description]
-        stations Union[list, pd.DataFrame]: List of reference stations [(station, latitude, longitude)] or pandas DataFrame
-            if a dataframe is passed, the expected colums should be respectively called (station, latitude,longitude)
-        max_distance_from_station_km (float, optional): Max distance [km] from station to be matched.
-        geod (Geodesic, optional): [description]. Defaults to None.
+        latitude (float): target latitude
+        longigude (float): target longitude
+        stations Union[list, pd.DataFrame]: List of reference stations
+            [(station, latitude, longitude)] or pandas DataFrame
+            if a dataframe is passed, the expected colums should be
+            respectively called (station, latitude,longitude)
+        max_distance_from_station_km (float, optional): Max distance in
+            kilometer from station to be matched.
+        geod (Geodesic, optional): geographicLib Geodesic model. Defaults to WGS84.
 
     Returns:
         nearest_station (str): Nearest station to the given latitude and longitude
     """
     if geod is None:
-        geod = Geodesic.WGS84  # define the WGS84 ellipsoid
+        try:
+            from geographiclib.geodesic import Geodesic
+
+            geod = getattr(Geodesic, geod)  # define the WGS84 ellipsoid
+        except ImportError:
+            raise RuntimeError(
+                "geographiclib is necessary to run get_nearest_station. "
+                "Install geographiclib with `pip install geographicLib`"
+            )
 
     if isinstance(stations, pd.DataFrame):
         stations = stations[["station", "latitude", "longitude"]].values
