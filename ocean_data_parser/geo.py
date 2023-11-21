@@ -25,7 +25,8 @@ def read_geojson(
         from shapely.geometry import shape
     except ImportError:
         raise RuntimeError(
-            "Shapely is necessary to read geojson. Install shapely with `pip install shapely`"
+            "Shapely is necessary to read geojson. "
+            "Install shapely with `pip install shapely`"
         )
 
     if not os.path.exists(path):
@@ -52,13 +53,15 @@ def get_geo_code(position: list, geographical_areas_collections: list) -> str:
         position (float,float): [description]
         collections (list): [description]
     Returns:
-        geographical_areas list (str): comma separated list of matching geographical areas
+        geographical_areas list (str): comma separated list of
+            matching geographical areas
     """
     try:
         from shapely.geometry import Point, Polygon
     except ImportError:
         raise RuntimeError(
-            "Shapely is necessary to retrieve geograpical areas. Install shapely with `pip install shapely`"
+            "Shapely is necessary to retrieve geograpical areas. "
+            "Install shapely with `pip install shapely`"
         )
     matched_features = [
         name.replace(" ", "-")
