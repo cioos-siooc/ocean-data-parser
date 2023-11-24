@@ -84,3 +84,6 @@ odpy = 'ocean_data_parser.cli:main'
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black" 
