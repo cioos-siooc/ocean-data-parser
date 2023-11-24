@@ -97,7 +97,7 @@ def get_dtype_from_ios_name(ios_name):
         return float
 
 
-IOS_SHELL_HEADER_SECTIONS = (
+IOS_SHELL_HEADER_SECTIONS = {
     "FILE",
     "LOCATION",
     "COMMENTS",
@@ -107,7 +107,8 @@ IOS_SHELL_HEADER_SECTIONS = (
     "HISTORY",
     "DEPLOYMENT",
     "RECOVERY",
-)
+    "CALIBRATION",
+}
 
 
 class IosFile(object):
@@ -140,6 +141,7 @@ class IosFile(object):
         self.data = None
         self.deployment = None
         self.recovery = None
+        self.calibration = None
         self.obs_time = None
         self.vocabulary_attributes = None
         self.history = None
@@ -159,7 +161,7 @@ class IosFile(object):
         self.status = 1
 
     def import_data(self):
-        sections_available = self.get_list_of_sections()
+        sections_available = set(self.get_list_of_sections())
         self.start_dateobj, self.start_date = self.get_date(opt="start")
         self.end_dateobj, self.end_date = (
             self.get_date(opt="end") if "END TIME" in self.file else (None, None)
@@ -177,12 +179,10 @@ class IosFile(object):
             self.deployment = self.get_section("DEPLOYMENT")
         if "RECOVERY" in sections_available:
             self.recovery = self.get_section("RECOVERY")
+        if "CALIBRATION" in sections_available:
+            self.calibration = self.get_section("CALIBRATION")
 
-        unparsed_sections = [
-            section
-            for section in sections_available
-            if section not in IOS_SHELL_HEADER_SECTIONS
-        ]
+        unparsed_sections = sections_available - IOS_SHELL_HEADER_SECTIONS
         if unparsed_sections:
             logger.warning(
                 "Unknown sections: %s",
@@ -932,6 +932,7 @@ class IosFile(object):
             **_format_attributes("location"),
             **_format_attributes("deployment", "deployment_"),
             **_format_attributes("recovery", "recovery_"),
+            "calibration": json.dumps(self.calibration) if self.calibration else None,
             "comments": str(self.comments)
             if self.comments
             else None,  # TODO missing file_remarks
