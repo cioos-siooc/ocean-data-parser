@@ -141,3 +141,6 @@ def main(
 
 main.add_command(convert)
 main.add_command(inspect_variables)
+
+if __name__ == "__main__":
+    main()
