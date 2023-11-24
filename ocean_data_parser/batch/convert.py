@@ -222,7 +222,7 @@ class BatchConversion:
     def get_source_files(self) -> list:
         excluded_files = self.get_excluded_files()
         return [
-            file
+            Path(file)
             for file in glob(self.config["input_path"], recursive=True)
             if file not in excluded_files
         ]
@@ -236,7 +236,7 @@ class BatchConversion:
     def _convert(self, files: list) -> list:
         # Load parser and generate inputs to conversion scripts
         parser = self._get_parser()
-        inputs = ((file, parser, self.config) for file in files)
+        inputs = ((str(file), parser, self.config) for file in files)
         tqdm_parameters = dict(unit="file", total=len(files))
 
         # single pool processing
