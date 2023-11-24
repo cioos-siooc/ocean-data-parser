@@ -94,6 +94,8 @@ def get_parser_list(ctx, _, value):
 @click.option(
     "--overwrite",
     type=bool,
+    is_flag=True,
+    default=False,
     help="Overwrite already converted files when source file is changed.",
 )
 @click.option(
@@ -166,13 +168,6 @@ def convert(**kwargs):
         if kwargs["show_arguments"] == "stop":
             return
     kwargs.pop("show_arguments", None)
-
-    kwargs = {
-        key: None if value == "None" else value
-        for key, value in kwargs.items()
-        if value
-    }
-
     BatchConversion(**kwargs).run()
 
 
@@ -269,7 +264,9 @@ class BatchConversion:
             sys.exit(error_message)
 
         self.registry.add(files)
-        files = self.registry.get_modified_source_files()
+        files = self.registry.get_modified_source_files(
+            overwrite=self.config["overwrite"]
+        )
         if not files:
             logger.info("No file to parse. Conversion completed")
             return self.registry
@@ -285,6 +282,7 @@ class BatchConversion:
             .set_index("sources")
             .replace({"": None})
         )
+        conversion_log.index = conversion_log.index.map(Path)
         self.registry.update_fields(files, dataframe=conversion_log)
         self.registry.save()
         self.registry.summarize()
