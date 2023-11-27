@@ -199,10 +199,10 @@ class TestBatchCLI:
             "Error: Got unexpected extra argument" in result.output
         ), f"Unexpected output {result.output=}"
 
-    def test_failed_cli_batch_conversion_with_ignore_errors(self, tmpdir):
-        test_file_path = tmpdir / "failed_cli_test_file.cnv"
+    def test_failed_cli_batch_conversion_with_ignore_errors(self, tmp_path):
+        test_file_path = tmp_path / "failed_cli_test_file.cnv"
         config = _get_config(
-            cwd=tmpdir,
+            cwd= tmp_path,
             input_path=str(test_file_path),
             parser="seabird.cnv",
             overwrite=True,
@@ -210,7 +210,7 @@ class TestBatchCLI:
             errors="ignore",
         )
 
-        config_path = _save_config(tmpdir, config)
+        config_path = _save_config(tmp_path, config)
         assert config_path.exists()
 
         # Save temp bad data file
@@ -227,11 +227,11 @@ class TestBatchCLI:
             registry.data["error_message"][test_file_path]
         )
 
-    def test_failed_cli_batch_conversion_with_raise_errors(self, tmpdir):
-        test_file_path = str(tmpdir / "failed_cli_test_file.cnv")
+    def test_failed_cli_batch_conversion_with_raise_errors(self, tmp_path):
+        test_file_path = tmp_path / "failed_cli_test_file.cnv"
         config = _get_config(
-            cwd=tmpdir,
-            input_path=test_file_path,
+            cwd=tmp_path,
+            input_path=str(test_file_path),
             parser="seabird.cnv",
             overwrite=True,
             multiprocessing=1,
@@ -239,7 +239,7 @@ class TestBatchCLI:
         )
         config["registry"]["path"] = "registry.csv"
 
-        config_path = _save_config(tmpdir, config)
+        config_path = _save_config(tmp_path, config)
         assert config_path.exists()
 
         # Save temp bad data file
