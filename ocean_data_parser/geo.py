@@ -94,16 +94,15 @@ def get_nearest_station(
     Returns:
         nearest_station (str): Nearest station to the given latitude and longitude
     """
-    if geod is None:
-        try:
-            from geographiclib.geodesic import Geodesic
+    try:
+        from geographiclib.geodesic import Geodesic
 
-            geod = getattr(Geodesic, geod)  # define the WGS84 ellipsoid
-        except ImportError:
-            raise RuntimeError(
-                "geographiclib is necessary to run get_nearest_station. "
-                "Install geographiclib with `pip install geographicLib`"
-            )
+        geod = getattr(Geodesic, geod)  # define the WGS84 ellipsoid
+    except ImportError:
+        raise RuntimeError(
+            "geographiclib is necessary to run get_nearest_station. "
+            "Install geographiclib with `pip install geographicLib`"
+        )
 
     if isinstance(stations, pd.DataFrame):
         stations = stations[["station", "latitude", "longitude"]].values
