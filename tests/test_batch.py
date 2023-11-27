@@ -41,7 +41,9 @@ class TestConfigLoad:
 
 
 def _get_config(
-    input_path="tests/parsers_test_files/onset/**/*.csv", cwd=None, **kwargs
+    input_path: str = "tests/parsers_test_files/onset/**/*.csv",
+    cwd: Path = None,
+    **kwargs,
 ):
     """Generate a batch configuration file"""
     config = {
@@ -72,8 +74,8 @@ def _run_batch_process(config):
 
 class TestBatchMode:
     @pytest.mark.parametrize("multiprocessing", (1, 2, None))
-    def test_batch_conversion_multiprocessing(self, tmp_path, multiprocessing):
-        config = _get_config(cwd=tmp_path, multiprocessing=multiprocessing)
+    def test_batch_conversion_multiprocessing(self, tmpdir, multiprocessing):
+        config = _get_config(cwd=tmpdir, multiprocessing=multiprocessing)
         _run_batch_process(config)
 
     @pytest.mark.parametrize(
@@ -107,10 +109,10 @@ class TestBatchMode:
         assert batch.config
         assert batch.registry
 
-    def test_failed_batch_conversion(self, tmp_path):
-        test_file_path = str(tmp_path / "failed_cli_test_file.cnv")
+    def test_failed_batch_conversion(self, tmpdir):
+        test_file_path = str(tmpdir / "failed_cli_test_file.cnv")
         config = _get_config(
-            cwd=tmp_path,
+            cwd=tmpdir,
             input_path=test_file_path,
             parser="seabird.cnv",
             overwrite=True,
@@ -120,7 +122,7 @@ class TestBatchMode:
 
         with open(test_file_path, "w") as file_handle:
             file_handle.write("test file")
-
+        test_file_path = Path(test_file_path)
         registry = BatchConversion(config=config).run()
         assert not registry.data.empty
         assert test_file_path in registry.data.index
@@ -140,9 +142,9 @@ class TestBatchCLI:
         with runner.isolated_filesystem(isolated_directory):
             return runner.invoke(convert, args)
 
-    def test_batch_cli_conversion_onset_parser(self, tmp_path):
-        config = _get_config(cwd=tmp_path)
-        config_path = _save_config(tmp_path, config)
+    def test_batch_cli_conversion_onset_parser(self, tmpdir):
+        config = _get_config(cwd=tmpdir)
+        config_path = _save_config(tmpdir, config)
         result = self._run_cli_batch_process(
             f"--config={config_path}",
         )
@@ -152,9 +154,9 @@ class TestBatchCLI:
             or "Run parallel batch conversion" in result.output
         )
 
-    def test_batch_cli_conversion_onset_parser_with_extra_inputs(self, tmp_path):
-        config = _get_config(cwd=tmp_path)
-        config_path = _save_config(tmp_path, config)
+    def test_batch_cli_conversion_onset_parser_with_extra_inputs(self, tmpdir):
+        config = _get_config(cwd=tmpdir)
+        config_path = _save_config(tmpdir, config)
         result = self._run_cli_batch_process(
             "-i",
             "./**/*.csv",
@@ -168,8 +170,8 @@ class TestBatchCLI:
             or "Run parallel batch conversion" in result.output
         )
 
-    def test_batch_cli_new_config_creation_output(self, tmp_path: Path):
-        new_config_test_file = tmp_path / "test_config_copy.yaml"
+    def test_batch_cli_new_config_creation_output(self, tmpdir: Path):
+        new_config_test_file = tmpdir / "test_config_copy.yaml"
         result = self._run_cli_batch_process("--new-config", str(new_config_test_file))
         assert (
             result.exit_code == 0
@@ -177,10 +179,10 @@ class TestBatchCLI:
         assert new_config_test_file.exists()
 
     def test_batch_cli_new_config_failed_creation_already_existing_file(
-        self, tmp_path: Path
+        self, tmpdir: Path
     ):
-        new_config_test_file = tmp_path / "test_config_copy.yaml"
-        new_config_test_file.write_text("test")
+        new_config_test_file = tmpdir / "test_config_copy.yaml"
+        new_config_test_file.write_text("test", encoding="UTF-8")
         assert new_config_test_file.exists()
         result = self._run_cli_batch_process("--new-config", new_config_test_file)
         assert result.exit_code == 1, result.output
@@ -200,7 +202,7 @@ class TestBatchCLI:
     def test_failed_cli_batch_conversion_with_ignore_errors(self, tmp_path):
         test_file_path = tmp_path / "failed_cli_test_file.cnv"
         config = _get_config(
-            cwd=tmp_path,
+            cwd= tmp_path,
             input_path=str(test_file_path),
             parser="seabird.cnv",
             overwrite=True,
@@ -226,10 +228,10 @@ class TestBatchCLI:
         )
 
     def test_failed_cli_batch_conversion_with_raise_errors(self, tmp_path):
-        test_file_path = str(tmp_path / "failed_cli_test_file.cnv")
+        test_file_path = tmp_path / "failed_cli_test_file.cnv"
         config = _get_config(
             cwd=tmp_path,
-            input_path=test_file_path,
+            input_path=str(test_file_path),
             parser="seabird.cnv",
             overwrite=True,
             multiprocessing=1,
@@ -372,7 +374,7 @@ class TestBatchConversion:
         source_files = batch.get_source_files()
         assert source_files
         assert len(source_files) == len(list(glob(input_path)))
-        assert set(source_files) == set(str(file) for file in glob(input_path))
+        assert set(source_files) == set(Path(file) for file in glob(input_path))
 
     @pytest.mark.parametrize(
         "exclude",
@@ -392,7 +394,8 @@ class TestBatchConversion:
 
         source_files = batch.get_source_files()
         assert source_files
-        assert all(file.endswith("ODF") for file in source_files)
+        assert all(file.suffix == ".ODF" for file in source_files)
         assert set(source_files) == {
-            str(file) for file in glob("tests/parsers_test_files/dfo/odf/bio/CTD/*.ODF")
+            Path(file)
+            for file in glob("tests/parsers_test_files/dfo/odf/bio/CTD/*.ODF")
         }
