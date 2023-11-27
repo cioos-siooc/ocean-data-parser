@@ -105,6 +105,3 @@ def load_config(config_path: str = None, encoding="UTF-8"):
             )
 
     return config
-
-
-# config = load_config(DEFAULT_CONFIG_PATH)

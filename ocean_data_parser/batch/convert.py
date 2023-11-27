@@ -94,6 +94,8 @@ def get_parser_list(ctx, _, value):
 @click.option(
     "--overwrite",
     type=bool,
+    is_flag=True,
+    default=False,
     help="Overwrite already converted files when source file is changed.",
 )
 @click.option(
@@ -165,14 +167,8 @@ def convert(**kwargs):
         click.echo("\n".join([f"{key}={value}" for key, value in kwargs.items()]))
         if kwargs["show_arguments"] == "stop":
             return
-    kwargs.pop("show_arguments", None)
-
-    kwargs = {
-        key: None if value == "None" else value
-        for key, value in kwargs.items()
-        if value
-    }
-
+    kwargs.pop("show_arguments")
+    kwargs.pop("new_config")
     BatchConversion(**kwargs).run()
 
 
@@ -191,6 +187,10 @@ class BatchConversion:
         Returns:
             dict: combined configuration
         """
+        if config:
+            logger.info("Load configuration file and ignore other inputs")
+            return load_config(config) if isinstance(config, str) else config or {}
+
         logger.info("Load configuration={}, kwargs={}", config, kwargs)
         output_kwarg = {
             key[7:]: kwargs.pop(key)
@@ -204,7 +204,6 @@ class BatchConversion:
         }
         config = {
             **load_config(DEFAULT_CONFIG_PATH),
-            **(load_config(config) if isinstance(config, str) else config or {}),
             **kwargs,
         }
         config["output"].update(output_kwarg)
@@ -222,7 +221,7 @@ class BatchConversion:
     def get_source_files(self) -> list:
         excluded_files = self.get_excluded_files()
         return [
-            file
+            Path(file)
             for file in glob(self.config["input_path"], recursive=True)
             if file not in excluded_files
         ]
@@ -236,7 +235,7 @@ class BatchConversion:
     def _convert(self, files: list) -> list:
         # Load parser and generate inputs to conversion scripts
         parser = self._get_parser()
-        inputs = ((file, parser, self.config) for file in files)
+        inputs = ((str(file), parser, self.config) for file in files)
         tqdm_parameters = dict(unit="file", total=len(files))
 
         # single pool processing
@@ -269,7 +268,9 @@ class BatchConversion:
             sys.exit(error_message)
 
         self.registry.add(files)
-        files = self.registry.get_modified_source_files()
+        files = self.registry.get_modified_source_files(
+            overwrite=self.config["overwrite"]
+        )
         if not files:
             logger.info("No file to parse. Conversion completed")
             return self.registry
@@ -285,6 +286,7 @@ class BatchConversion:
             .set_index("sources")
             .replace({"": None})
         )
+        conversion_log.index = conversion_log.index.map(Path)
         self.registry.update_fields(files, dataframe=conversion_log)
         self.registry.save()
         self.registry.summarize()
