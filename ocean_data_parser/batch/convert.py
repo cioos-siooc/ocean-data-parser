@@ -167,7 +167,8 @@ def convert(**kwargs):
         click.echo("\n".join([f"{key}={value}" for key, value in kwargs.items()]))
         if kwargs["show_arguments"] == "stop":
             return
-    kwargs.pop("show_arguments", None)
+    kwargs.pop("show_arguments")
+    kwargs.pop("new_config")
     BatchConversion(**kwargs).run()
 
 
@@ -186,6 +187,10 @@ class BatchConversion:
         Returns:
             dict: combined configuration
         """
+        if config:
+            logger.info("Load configuration file and ignore other inputs")
+            return load_config(config) if isinstance(config, str) else config or {}
+
         logger.info("Load configuration={}, kwargs={}", config, kwargs)
         output_kwarg = {
             key[7:]: kwargs.pop(key)
@@ -199,7 +204,6 @@ class BatchConversion:
         }
         config = {
             **load_config(DEFAULT_CONFIG_PATH),
-            **(load_config(config) if isinstance(config, str) else config or {}),
             **kwargs,
         }
         config["output"].update(output_kwarg)
