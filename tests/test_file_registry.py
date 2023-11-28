@@ -1,8 +1,8 @@
-import unittest
 from pathlib import Path
 from time import sleep
 
 import pandas as pd
+import pytest
 from utils import compare_text_files
 
 from ocean_data_parser.batch.convert import FileConversionRegistry
@@ -23,7 +23,7 @@ MTIME_PLACEHOLDER = 0.0
 HASH_PLACEHOLDER = "0"
 
 
-class FileRegistryTests(unittest.TestCase):
+class TestFileRegistry:
     def _get_test_registry(self, update=True):
         registry = FileConversionRegistry(path=TEST_REGISTRY_PATH)
         if update:
@@ -292,10 +292,10 @@ class FileRegistryTests(unittest.TestCase):
         assert not changed_files.any()
         assert file_registry.get_modified_source_files() == []
 
-    def test_get_sources_with_modified_hash(self):
+    def test_get_sources_with_modified_hash(self, tmp_path):
         file_registry = self._get_test_registry()
         TEST_SAVE_PATH = self.make_test_file(
-            Path("temp/test_get_sources_with_modified_hash.csv")
+            tmp_path / "test_get_sources_with_modified_hash.csv"
         )
         file_registry.add([TEST_SAVE_PATH])
         self.make_test_file(TEST_SAVE_PATH, " this is more content", mode="a")
@@ -307,7 +307,7 @@ class FileRegistryTests(unittest.TestCase):
     def update_test_file(
         self,
         file_registry,
-        test_file_path: Path = Path("temp/test_file.csv"),
+        test_file_path: Path = Path("temp") / "test_file.csv",
         dt: int = 4,
     ):
         test_file = self.make_test_file(test_file_path)

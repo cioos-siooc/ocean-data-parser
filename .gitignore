@@ -11,9 +11,6 @@ dist/
 /pycurrents
 .DS_Store
 
-.vscode/launch.json
-
-.vscode/settings.json
 /**/local_tests/*
 /tests/**/*_test.nc
 pdc-amundsen-conversion.log
