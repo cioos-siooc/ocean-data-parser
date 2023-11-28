@@ -398,7 +398,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
         )
 
     # Processing
-    for pipe in config["xarray_pipe"]:
+    for pipe in config.get("xarray_pipe",[]):
         ds = ds.pipe(*pipe)
         # TODO add to history
 
