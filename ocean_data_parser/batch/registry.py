@@ -288,6 +288,6 @@ class FileConversionRegistry:
         )
         errors.columns = (" ".join(col) for col in errors.columns)
         if not errors.empty:
-            logger.info("The following errors were captured:\n%s", errors)
+            logger.error("The following errors were captured:\n%s", errors)
             if output:
                 errors.to_csv(output)
