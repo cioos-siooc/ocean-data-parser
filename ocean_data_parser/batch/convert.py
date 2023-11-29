@@ -289,7 +289,7 @@ class BatchConversion:
         conversion_log.index = conversion_log.index.map(Path)
         self.registry.update_fields(files, dataframe=conversion_log)
         self.registry.save()
-        self.registry.summarize()
+        self.registry.summarize(sources=files)
         logger.info("Conversion completed")
         return self.registry
 
@@ -373,7 +373,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
             "source": file,
         }
     )
-    for var, attrs in config.get("variable_attributes").items():
+    for var, attrs in config.get("variable_attributes",{}).items():
         if var in ds:
             ds[var].attrs.update(attrs)
 
