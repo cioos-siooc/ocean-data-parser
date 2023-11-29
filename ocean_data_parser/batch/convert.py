@@ -386,7 +386,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
             (ds["longitude"], ds["latitude"]), config["geographical_areas"]["regions"]
         )
     if (
-        config.get("reference_stations").get("path")
+        config.get("reference_stations",{}).get("path")
         and "latitude" in ds
         and "longitude" in ds
     ):
