@@ -1,6 +1,5 @@
-# File input
-input_path: "" # file or glob expression
-exclude: null # glob expression of files to exclude
+name: Batch Conversion Name
+input_path: ""  # file or glob expression
 parser: null
 overwrite: False
 multiprocessing: 1 # n processes to run [int] or null for all
