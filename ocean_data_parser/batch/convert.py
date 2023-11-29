@@ -373,7 +373,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
             "source": file,
         }
     )
-    for var, attrs in config.get("variable_attributes",{}).items():
+    for var, attrs in config.get("variable_attributes", {}).items():
         if var in ds:
             ds[var].attrs.update(attrs)
 
@@ -386,7 +386,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
             (ds["longitude"], ds["latitude"]), config["geographical_areas"]["regions"]
         )
     if (
-        config.get("reference_stations",{}).get("path")
+        config.get("reference_stations", {}).get("path")
         and "latitude" in ds
         and "longitude" in ds
     ):
@@ -398,7 +398,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
         )
 
     # Processing
-    for pipe in config.get("xarray_pipe",[]):
+    for pipe in config.get("xarray_pipe", []):
         ds = ds.pipe(*pipe)
         # TODO add to history
 

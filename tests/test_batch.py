@@ -202,7 +202,7 @@ class TestBatchCLI:
     def test_failed_cli_batch_conversion_with_ignore_errors(self, tmp_path):
         test_file_path = tmp_path / "failed_cli_test_file.cnv"
         config = _get_config(
-            cwd= tmp_path,
+            cwd=tmp_path,
             input_path=str(test_file_path),
             parser="seabird.cnv",
             overwrite=True,
