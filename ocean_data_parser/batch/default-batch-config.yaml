@@ -1,12 +1,14 @@
-# File input
-input_path: "" # file or glob expression
-exclude: null # glob expression of files to exclude
+---
+
+name: Batch Conversion Name
+input_path: ""  # file or glob expression
+exclude: null  # glob expression of files to exclude
 parser: null
-overwrite: False
-multiprocessing: 1 # n processes to run [int] or null for all
-errors: "ignore" # raise|ignore
+overwrite: false
+multiprocessing: 1  # n processes to run [int] or null for all
+errors: "ignore"  # raise|ignore
 registry:
-  path: null # file_registry(.csv | .parquet)
+  path: null  # file_registry(.csv | .parquet)
 
 sentry:
   dsn: https://cd67597c647c4767adf0b3acf5d3f6a6@o56764.ingest.sentry.io/4505529390137344
@@ -17,12 +19,12 @@ sentry:
 # Attributes and Metadata
 variable_attributes: {}
 global_attributes: {}
-file_specific_attributes_path: null # Path to csv file with one column called "file"
+file_specific_attributes_path: null  # Path to csv file with one column called "file"
 global_attribute_mapping:
-  path: null # Path to csv file (accept glob parameter for multiple files)
-  mapping: null # mapping dataframe
-  by: [] # global attributes list
-  log_level: WARNING # [null, WARNING,ERROR] level log when no mapping exist
+  path: null  # Path to csv file (accept glob parameter for multiple files)
+  mapping: null  # mapping dataframe
+  by: []  # global attributes list
+  log_level: WARNING  # [null, WARNING,ERROR] level log when no mapping exist
 
 # Geospatial References
 reference_stations:
