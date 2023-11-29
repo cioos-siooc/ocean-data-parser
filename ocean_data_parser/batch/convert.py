@@ -260,7 +260,11 @@ class BatchConversion:
 
     def run(self):
         """Run Batch conversion"""
-        logger.info("Run ocean-data-parser[{}] convert {}", __version__, self.config.get("name",""))
+        logger.info(
+            "Run ocean-data-parser[{}] convert {}",
+            __version__,
+            self.config.get("name", ""),
+        )
         files = self.get_source_files()
         if not files:
             error_message = f"ERROR No files detected with {self.config['input_path']}"
@@ -373,7 +377,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
             "source": file,
         }
     )
-    for var, attrs in config.get("variable_attributes",{}).items():
+    for var, attrs in config.get("variable_attributes", {}).items():
         if var in ds:
             ds[var].attrs.update(attrs)
 
@@ -386,7 +390,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
             (ds["longitude"], ds["latitude"]), config["geographical_areas"]["regions"]
         )
     if (
-        config.get("reference_stations",{}).get("path")
+        config.get("reference_stations", {}).get("path")
         and "latitude" in ds
         and "longitude" in ds
     ):
@@ -398,7 +402,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
         )
 
     # Processing
-    for pipe in config.get("xarray_pipe",[]):
+    for pipe in config.get("xarray_pipe", []):
         ds = ds.pipe(*pipe)
         # TODO add to history
 
