@@ -16,6 +16,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
+from ocean_data_parser.parsers import seabird
 from ocean_data_parser.parsers.utils import standardize_dataset
 from ocean_data_parser.vocabularies.load import (
     dfo_nafc_p_file_vocabulary,
@@ -419,5 +420,70 @@ def pfile(
 
     # standardize
     ds = standardize_dataset(ds)
+
+    return ds
+
+
+def pcnv(path: Path, map_to_pfile_attributes: bool = True):
+    """read NAFC pcnv file format which is a seabird cnv format
+    with NAFC specific inputs within the manual section
+
+    Args:
+        path (Path): File input path
+        map_to_pfile_attributes (bool, optional): Rename attributes
+            to match pfile parser output. Defaults to True.
+    """
+
+    def _parse_lat_lon(latlon: str) -> float:
+        """Parse latitude and longitude string to float"""
+        deg, min, dir = latlon.split(" ")
+        return (-1 if dir in ("S", "W") else 1) * (int(deg) + float(min) / 60)
+
+    ds = seabird.cnv(path)
+    if not map_to_pfile_attributes:
+        return ds
+
+    # Map global attributes
+    ship_trip_seq_station = re.search(
+        r"(?P<ship_code>\w{3})(?P<trip>\d{3})_(?P<seq>\d{4})_(?P<stn>\d{3})",
+        ds.attrs.get("VESSEL/TRIP/SEQ STN", ""),
+    )
+    if not ship_trip_seq_station:
+        logger.error(
+            "Unable to parse ship_trip_seq_station from VESEL/TRIP/SEQ STN= {}",
+            ds.attrs.get("VESEL/TRIP/SEQ STN", ""),
+        )
+    attrs = {
+        "ship_code": ship_trip_seq_station["ship_code"],
+        "trip": _int(ship_trip_seq_station["trip"]),
+        "seq": _int(ship_trip_seq_station["seq"]),
+        "station": _int(ship_trip_seq_station["stn"]),
+        "time": pd.to_datetime(ds.attrs.pop("DATE/TIME", None), utc=True),
+        "latitude": _parse_lat_lon(ds.attrs.pop("LATITUDE", None)),
+        "longitude": _parse_lat_lon(ds.attrs.pop("LONGITUDE", None)),
+        "sounder_depth": ds.attrs.pop("SOUND DEPTH (M)", None),
+        "instrument": ds.attrs.pop("PROBE TYPE", None),
+        "xbt_number": _int(ds.attrs.pop("XBT NUMBER", None)),
+        "format": ds.attrs.pop("FORMAT", None),
+        "commment": ds.attrs.pop("COMMENTS", None),
+        "trip_tag": ds.attrs.pop("TRIP TAG", None),
+    }
+
+    # exlude attributes that are instrument specific if not related
+    if "XBT" not in attrs["instrument"]:
+        attrs.pop("xbt_number", None)
+
+    for attr, value in attrs.items():
+        if not value:
+            logger.warning("Missing attribute=%s", attr)
+    ds.attrs.update(attrs)
+
+    # Rename Variables to BODC standard
+    bodc_variables_mapping = {
+        variable: ds[variable].attrs["sdn_parameter_urn"].split("::")[1]
+        for variable in ds.variables
+        if "sdn_parameter_urn" in ds[variable].attrs
+    }
+    ds = ds.rename(bodc_variables_mapping)
 
     return ds

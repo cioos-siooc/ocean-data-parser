@@ -383,8 +383,26 @@ class TestODFMLIParser:
         review_parsed_dataset(ds, path, caplog)
 
 
+class TestDFO_NAFC_PcnvFiles:
+    @pytest.mark.parametrize(
+        "path",
+        [
+            file
+            for file in glob(
+                "tests/parsers_test_files/dfo/nafc/pcnv/ctd/*.pcnv",
+                recursive=True,
+            )
+            if not file.endswith(".nc")
+        ],
+    )
+    def test_dfo_nafc_ctd_pcnv(self, path, caplog):
+        """Test DFO NAFC Pcnv Parser"""
+        ds = dfo.nafc.pcnv(path)
+        review_parsed_dataset(ds, path, caplog)
+
+
 # pylint: disable=W0212
-class TestDFOpFiles:
+class TestDFO_NAFC_pFiles:
     @pytest.mark.parametrize(
         "path",
         [
