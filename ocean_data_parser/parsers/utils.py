@@ -64,6 +64,8 @@ def standardize_attributes(attrs) -> dict:
         if isinstance(value, dict):
             return json.dumps(value)
         elif isinstance(value, (list, tuple)):
+            if not value:
+                return
             if all(
                 isinstance(item, type(value[0])) for item in value
             ) and not isinstance(value[0], str):
