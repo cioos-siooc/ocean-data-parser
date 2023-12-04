@@ -84,6 +84,7 @@ def get_parser_list(ctx, _, value):
 )
 @click.option(
     "--parser",
+    "-p",
     type=str,
     help=(
         "Parser used to parse the data. Default to auto detectection."
@@ -122,6 +123,7 @@ def get_parser_list(ctx, _, value):
 )
 @click.option(
     "--output-path",
+    "-o",
     type=click.Path(),
     help="Output directory where to save converted files.",
 )
