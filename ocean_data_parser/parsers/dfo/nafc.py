@@ -6,7 +6,6 @@ North Atlantic Fisheries Centre
 
 """
 
-import logging
 import re
 from pathlib import Path
 from typing import Union
@@ -15,6 +14,7 @@ import gsw
 import numpy as np
 import pandas as pd
 import xarray as xr
+from loguru import logger
 
 from ocean_data_parser.parsers import seabird
 from ocean_data_parser.parsers.utils import standardize_dataset
@@ -23,7 +23,6 @@ from ocean_data_parser.vocabularies.load import (
     dfo_platforms,
 )
 
-logger = logging.getLogger(__name__)
 MODULE_PATH = Path(__file__).parent
 p_file_vocabulary = dfo_nafc_p_file_vocabulary()
 p_file_shipcode = dfo_platforms()
@@ -36,7 +35,7 @@ global_attributes = {
 
 def _int(value: str, null_values=None) -> int:
     """Attemp to convert string to int, return None if empty or failed"""
-    if not value.strip():
+    if not value or not value.strip():
         return
     try:
         value = int(value)
@@ -44,12 +43,12 @@ def _int(value: str, null_values=None) -> int:
             return None
         return value
     except TypeError:
-        logger.error("Failed to convert string=%s to int", value)
+        logger.error("Failed to convert string={} to int", value)
 
 
 def _float(value: str, null_values=None) -> float:
     """Attemp to convert string to float, return None if empty or failed"""
-    if not value.strip():
+    if not value or not value.strip():
         return
     try:
         value = float(value)
@@ -57,7 +56,7 @@ def _float(value: str, null_values=None) -> float:
             return None
         return value
     except TypeError:
-        logger.error("Failed to convert string=%s to float", value)
+        logger.error("Failed to convert string={} to float", value)
 
 
 def _get_dtype(var: str):
@@ -70,7 +69,7 @@ def soft_catch_errors(function):
             value = function(*args, **kwargs)
             return value
         except ValueError:
-            logger.error("Failed to parse %s", function.__name__, exc_info=True)
+            logger.error("Failed to parse {}", function.__name__, exc_info=True)
             return {}
 
     return wrap
@@ -197,7 +196,7 @@ def _get_ship_code_metadata(shipcode: Union[int, str]) -> dict:
             .iloc[0]
             .to_dict()
         )
-    logger.warning("Unknown p-file shipcode=%s", shipcode)
+    logger.warning("Unknown p-file shipcode={}", shipcode)
     return {}
 
 
@@ -277,7 +276,7 @@ def pfile(
             f"accepted_instruments in '{ds.attrs.get('instrument','')}' )"
         )
         if matching_vocabulary.empty:
-            logger.warning("No vocabulary is available for variable=%s", variable)
+            logger.warning("No vocabulary is available for variable={}", variable)
             return []
         return matching_vocabulary.to_dict(orient="records")
 
@@ -361,7 +360,7 @@ def pfile(
         ds[var].attrs.update(variables_span.get(var, {}))
         variable_attributes = _get_variable_vocabulary(var)
         if not variable_attributes:
-            logger.warning("Missing vocabulary for p-file variable=%s", var)
+            logger.warning("Missing vocabulary for p-file variable={}", var)
             continue
         ds[var].attrs.update(variable_attributes[0])
         for extra in variable_attributes[1:]:
@@ -392,7 +391,7 @@ def pfile(
                 logger.warning(
                     (
                         "Extra variable is already in dataset and will be ignored. "
-                        "name=%s, attrs=%s is already in dataset and will be ignored"
+                        "name={}, attrs={} is already in dataset and will be ignored"
                     ),
                     var,
                     attrs,
@@ -434,10 +433,21 @@ def pcnv(path: Path, map_to_pfile_attributes: bool = True):
             to match pfile parser output. Defaults to True.
     """
 
+    @logger.catch
     def _parse_lat_lon(latlon: str) -> float:
         """Parse latitude and longitude string to float"""
+        if not latlon:
+            logger.error("No latitude or longitude provided")
+            return
         deg, min, dir = latlon.split(" ")
         return (-1 if dir in ("S", "W") else 1) * (int(deg) + float(min) / 60)
+
+    def _pop_attribute_from(names: list):
+        """Pop attribute from dataset"""
+        for name in names:
+            if name in ds.attrs:
+                return ds.attrs.pop(name)
+        logger.error("No matching attribute found in {}", names)
 
     ds = seabird.cnv(path)
     if not map_to_pfile_attributes:
@@ -446,7 +456,7 @@ def pcnv(path: Path, map_to_pfile_attributes: bool = True):
     # Map global attributes
     ship_trip_seq_station = re.search(
         r"(?P<ship_code>\w{3})(?P<trip>\d{3})_(?P<seq>\d{4})_(?P<stn>\d{3})",
-        ds.attrs.get("VESSEL/TRIP/SEQ STN", ""),
+        ds.attrs.pop("VESSEL/TRIP/SEQ STN", ""),
     )
     if not ship_trip_seq_station:
         logger.error(
@@ -458,24 +468,37 @@ def pcnv(path: Path, map_to_pfile_attributes: bool = True):
         "trip": _int(ship_trip_seq_station["trip"]),
         "seq": _int(ship_trip_seq_station["seq"]),
         "station": _int(ship_trip_seq_station["stn"]),
-        "time": pd.to_datetime(ds.attrs.pop("DATE/TIME", None), utc=True),
-        "latitude": _parse_lat_lon(ds.attrs.pop("LATITUDE", None)),
-        "longitude": _parse_lat_lon(ds.attrs.pop("LONGITUDE", None)),
-        "sounder_depth": ds.attrs.pop("SOUND DEPTH (M)", None),
+        "time": pd.to_datetime(ds.attrs.pop("DATE/TIME"), utc=True),
+        "latitude": _parse_lat_lon(
+            _pop_attribute_from(["LATITUDE", "LATITUDE XX XX.XX"])
+        ),
+        "longitude": _parse_lat_lon(
+            _pop_attribute_from(
+                ["LONGITUDE", "LONGITUDE XX XX.XX", "LONGITUDE XX XX.XX W"]
+            )
+        ),
+        "sounder_depth": ds.attrs.pop("SOUNDING DEPTH (M)", None),
         "instrument": ds.attrs.pop("PROBE TYPE", None),
         "xbt_number": _int(ds.attrs.pop("XBT NUMBER", None)),
         "format": ds.attrs.pop("FORMAT", None),
-        "commment": ds.attrs.pop("COMMENTS", None),
+        "commment": _pop_attribute_from(["COMMENTS", "COMMENTS (14 CHAR)"]),
         "trip_tag": ds.attrs.pop("TRIP TAG", None),
+        "vnet": ds.attrs.pop("VNET", None),
+        "do2": ds.attrs.pop("DO2", None),
+        "bottles": _int(ds.attrs.pop("BOTTLES", None)),
+        "ctd_number": _int(ds.attrs.pop("CTD NUMBER", None)),
     }
 
     # exlude attributes that are instrument specific if not related
-    if "XBT" not in attrs["instrument"]:
-        attrs.pop("xbt_number", None)
-
     for attr, value in attrs.items():
-        if not value:
-            logger.warning("Missing attribute=%s", attr)
+        if not value and attr not in (
+            "xbt_number",
+            "ctd_number",
+            "bottles",
+            "do2",
+            "vnet",
+        ):
+            logger.warning("Missing attribute={}", attr)
     ds.attrs.update(attrs)
 
     # Rename Variables to BODC standard
