@@ -557,7 +557,7 @@
         "long_name": "Density 2 [sigma-t]",
         "units": "kg/m^3",
         "standard_name": "sea_water_sigma_t",
-        "sdn_parameter_urn": "SDN:P01::SIGTEQST",
+        "sdn_parameter_urn": "SDN:P01::SIGTEQST2",
         "sdn_parameter_name": "Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm",
         "sdn_uom_urn": "SDN:P06::UKMC",
         "sdn_uom_name": "Kilograms per cubic metre",
