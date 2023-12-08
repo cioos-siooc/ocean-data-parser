@@ -5,10 +5,10 @@ North Atlantic Fisheries Centre
 
 
 """
-
 import re
 from pathlib import Path
 from typing import Union
+import inspect
 
 import gsw
 import numpy as np
@@ -33,49 +33,52 @@ global_attributes = {
 }
 
 
+def _traceback_error_line():
+    current_frame = inspect.currentframe()
+    previous_frame = current_frame.f_back.f_back
+    line_number = previous_frame.f_lineno
+    cmd_line = Path(__file__).read_text().split("\n")[line_number - 1].strip()
+    return f"<{previous_frame.f_code.co_name} line {line_number}>: {cmd_line}"
+
+
 def _int(value: str, null_values=None) -> int:
     """Attemp to convert string to int, return None if empty or failed"""
-    if not value or not value.strip():
+    if not value or not value.strip() or value in (null_values or []):
         return
     try:
         value = int(value)
         if null_values and value in null_values:
-            return None
+            return
         return value
-    except TypeError:
-        logger.error("Failed to convert string={} to int", value)
+    except ValueError:
+        if value in ("0.", ".0"):
+            return 0
+        logger.error(
+            "Failed to convert: {} => int('{}')",
+            _traceback_error_line(),
+            value,
+        )
 
 
 def _float(value: str, null_values=None) -> float:
     """Attemp to convert string to float, return None if empty or failed"""
-    if not value or not value.strip():
+    if not value or not value.strip() or value in (null_values or []):
         return
     try:
         value = float(value)
-        if null_values and value in null_values:
-            return None
-        return value
-    except TypeError:
-        logger.error("Failed to convert string={} to float", value)
+        return None if null_values and value in null_values else value
+    except ValueError:
+        logger.error(
+            "Failed to convert: {} => float('{}')",
+            _traceback_error_line(),
+            value,
+        )
 
 
 def _get_dtype(var: str):
     return int if var == "scan" else float
 
 
-def soft_catch_errors(function):
-    def wrap(*args, **kwargs):
-        try:
-            value = function(*args, **kwargs)
-            return value
-        except ValueError:
-            logger.error("Failed to parse {}", function.__name__, exc_info=True)
-            return {}
-
-    return wrap
-
-
-@soft_catch_errors
 def _parse_pfile_header_line1(line: str) -> dict:
     """Parse first row of the p file format which contains location and instrument information."""
     return dict(
@@ -85,20 +88,16 @@ def _parse_pfile_header_line1(line: str) -> dict:
         latitude=_float(line[9:12]) + float(line[13:18]) / 60,
         longitude=_float(line[19:23]) + float(line[24:29]) / 60,
         time=pd.to_datetime(line[30:46], format="%Y-%m-%d %H:%M", utc=True),
-        sounder_depth=_int(line[47:51])
-        if line[47:51] not in ("9999", "0000")
-        else None,  # water depth in meters 9999 or 0000 = not known
-        instrument=line[
-            52:57
-        ],  # Sxxxxx is a seabird ctd XBTxx is an XBT for an XBT, A&C= Sippican probe, A&B mk9, B&D= Spartan probe, C&D mk12"
+        sounder_depth=_int(line[47:51], ("9999", "0000")),  # water depth in meters
+        instrument=line[52:57],  # see note below
         set_number=_int(line[58:61]),  # usually same as stn
         cast_type=line[62],  # V vertical profile T for tow
         comment=line[62:78],
         card_1_id=line[79],
     )
+    # instrument = # Sxxxxx is a seabird ctd XBTxx is an XBT for an XBT, A&C= Sippican probe, A&B mk9, B&D= Spartan probe, C&D mk12
 
 
-@soft_catch_errors
 def _parse_pfile_header_line2(line: str) -> dict:
     return dict(
         ship_code=line[:2],
@@ -129,9 +128,11 @@ def _parse_pfile_header_line2(line: str) -> dict:
     )
 
 
-@soft_catch_errors
 def _parse_pfile_header_line3(line: str) -> dict:
     """Parse P file 3 metadata line which present environment metadata"""
+    if not line or not line.strip() or len(line) < 79:
+        logger.warning("Missing pfile header line 3")
+        return {}
     return dict(
         ship_code=line[:2],
         trip=_int(line[2:5]),
@@ -150,7 +151,7 @@ def _parse_pfile_header_line3(line: str) -> dict:
             line[33:38], [-99.0, 99.9, -99.9, 999.9]
         ),  # f5.1,tem= p °C
         waves_period=_int(line[39:41]),  # i2,
-        waves_height=_int(line[42:44]),  # i2,
+        waves_height=_float(line[42:44]),  # i2,
         swell_dir=_int(line[45:47]) * 10 if line[45:47].strip() else None,  # i2,
         swell_period=_int(line[48:50]),  # i2,
         swell_height=_float(line[51:53]),  # i2,
@@ -263,7 +264,7 @@ def pfile(
     def _check_ship_trip_stn():
         """Review if the ship,trip,stn string is the same
         accorss the 3 metadata rows"""
-        ship_trip_stn = [line[:9] for line in metadata_lines[1:]]
+        ship_trip_stn = [line[:9] for line in metadata_lines[1:] if line.strip()]
         assert (
             len(set(ship_trip_stn)) == 1
         ), f"Ship,trip,station isn't consistent: {set(ship_trip_stn)}"
@@ -336,9 +337,9 @@ def pfile(
         {
             "id": metadata_lines[1][:8],
             **global_attributes,
-            **_parse_pfile_header_line1(metadata_lines[1]),
-            **_parse_pfile_header_line2(metadata_lines[2]),
-            **_parse_pfile_header_line3(metadata_lines[3]),
+            **(_parse_pfile_header_line1(metadata_lines[1]) or {}),
+            **(_parse_pfile_header_line2(metadata_lines[2]) or {}),
+            **(_parse_pfile_header_line3(metadata_lines[3]) or {}),
             "history": header.get("HISTORY"),
         }
     )
