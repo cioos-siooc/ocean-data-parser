@@ -22,6 +22,7 @@ from ocean_data_parser.vocabularies.load import (
     dfo_nafc_p_file_vocabulary,
     dfo_platforms,
 )
+from ocean_data_parser.parsers.utils import standardize_dataset
 
 MODULE_PATH = Path(__file__).parent
 p_file_vocabulary = dfo_nafc_p_file_vocabulary()
@@ -534,7 +535,7 @@ def pcnv(path: Path, map_to_pfile_attributes: bool = True, rename_variables: boo
         
         if rename_variables and variable_attributes[-1].get("variable_name"):
             variables_new_name[variable] = variable_attributes[-1].pop("variable_name")
-            
+
         ds[variable].attrs.update(variable_attributes[-1])
         if not generate_extra_variables:
             continue
@@ -547,4 +548,7 @@ def pcnv(path: Path, map_to_pfile_attributes: bool = True, rename_variables: boo
     if rename_variables:
         logger.info("Rename variables to NAFC standard: {}", variables_new_name)
         ds = ds.rename(variables_new_name)
+    
+    ds = standardize_dataset(ds)
+
     return ds
