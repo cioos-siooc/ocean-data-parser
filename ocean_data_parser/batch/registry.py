@@ -142,9 +142,12 @@ class FileConversionRegistry:
         # Retrieve mtime and hash only if a registry is actually saved
         if self.path:
             logger.info("Get new files mtime")
+            mtimes = new_data.index.to_series().progress_apply(self._get_mtime)
+            logger.info("Get new files hashes")
+            hashes = new_data.index.to_series().progress_apply(self._get_hash)
             new_data = new_data.assign(
-                mtime=new_data.index.map(self._get_mtime),
-                hash=new_data.index.map(self._get_hash),
+                mtime=mtimes,
+                hash=hashes,
             )
 
         self.data = (
