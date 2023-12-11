@@ -33,5 +33,4 @@ time,,,,time,Time,,,,,,,,,,time,coordinate
 latitude,,,,latitude,Latitude,degrees_north,SDN:P06::DEGN,Degrees north,,,,,,,latitude,coordinate
 longitude,,,,longitude,Longitude,degrees_east,SDN:P06::DEGN,Degrees east,,,,,,,longitude,coordinate
 index,,,,index,index,,,,,,,,,,,auxiliaryInformation
-scan,,,,scan,scan,,,,,,,,,,,auxiliaryInformation
 flag,,,,flag,Flag,,,,,,,,,,,qualityInformation
