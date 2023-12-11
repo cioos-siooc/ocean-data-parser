@@ -90,7 +90,7 @@ def _parse_pfile_header_line1(line: str) -> dict:
         time=pd.to_datetime(line[30:46], format="%Y-%m-%d %H:%M", utc=True),
         sounder_depth=_int(line[47:51], ("9999", "0000")),  # water depth in meters
         instrument=line[52:57],  # see note below
-        set_number=_int(line[58:61]),  # usually same as stn
+        set_number=_int(line[58:61],('SET')),  # usually same as stn
         cast_type=line[62],  # V vertical profile T for tow
         comment=line[62:78],
         card_1_id=line[79],
