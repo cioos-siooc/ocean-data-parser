@@ -265,9 +265,12 @@ def pfile(
         """Review if the ship,trip,stn string is the same
         accorss the 3 metadata rows"""
         ship_trip_stn = [line[:9] for line in metadata_lines[1:] if line.strip()]
-        assert (
-            len(set(ship_trip_stn)) == 1
-        ), f"Ship,trip,station isn't consistent: {set(ship_trip_stn)}"
+        if len(set(ship_trip_stn)) != 1:
+            logger.error(
+                "Ship,trip,station isn't consistent: {}. "
+                "Only the first line is considered.",
+                set(ship_trip_stn)
+            )
 
     def _get_variable_vocabulary(variable: str) -> dict:
         """Retrieve variable vocabulary"""
