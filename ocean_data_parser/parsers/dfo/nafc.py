@@ -100,9 +100,9 @@ def _parse_pfile_header_line1(line: str) -> dict:
 
 def _parse_pfile_header_line2(line: str) -> dict:
     return dict(
-        ship_code=line[:2],
-        trip=_int(line[2:5]),
-        station=_int(line[5:8]),
+        # ship_code=line[:2],
+        # trip=_int(line[2:5]),
+        # station=_int(line[5:8]),
         scan_count=_int(line[9:15]),  # number of scan lines in file
         sampling_rate=_float(line[16:21]),  # 00.00 for unknown
         file_type=line[22],  # A for ASCII B for binary data
@@ -134,9 +134,9 @@ def _parse_pfile_header_line3(line: str) -> dict:
         logger.warning("Missing pfile header line 3")
         return {}
     return dict(
-        ship_code=line[:2],
-        trip=_int(line[2:5]),
-        station=_int(line[5:8]),
+        # ship_code=line[:2],
+        # trip=_int(line[2:5]),
+        # station=_int(line[5:8]),
         cloud=_int(line[9]),  # i1,
         wind_dir=_int(line[11:13]) * 10
         if line[11:13].strip() and line[11:13] != "99"
