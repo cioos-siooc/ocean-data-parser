@@ -542,11 +542,11 @@ def pcnv(path: Path, map_to_pfile_attributes: bool = True, rename_variables: boo
 
         for extra in variable_attributes[0:-1]:
             new_var = extra.pop("variable_name", variable)
-            logger.info("Generate extra variable={}", new_var)
+            logger.debug("Generate extra variable={}", new_var)
             ds[new_var] = (ds[variable].dims, ds[variable].data, extra)
     
     if rename_variables:
-        logger.info("Rename variables to NAFC standard: {}", variables_new_name)
+        logger.debug("Rename variables to NAFC standard: {}", variables_new_name)
         ds = ds.rename(variables_new_name)
     
     ds = standardize_dataset(ds)
