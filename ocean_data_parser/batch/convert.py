@@ -262,7 +262,11 @@ class BatchConversion:
 
     def run(self):
         """Run Batch conversion"""
-        logger.info("Run ocean-data-parser[{}] batch conversion", __version__)
+        logger.info(
+            "Run ocean-data-parser[{}] convert {}",
+            __version__,
+            self.config.get("name", ""),
+        )
         files = self.get_source_files()
         if not files:
             error_message = f"ERROR No files detected with {self.config['input_path']}"
