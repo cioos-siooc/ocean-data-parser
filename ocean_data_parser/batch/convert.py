@@ -10,6 +10,7 @@ import pandas as pd
 from loguru import logger
 from tqdm import tqdm
 from xarray import Dataset
+import timeout_decorator
 
 from ocean_data_parser import PARSERS, geo, process, read
 from ocean_data_parser._version import __version__
@@ -322,7 +323,7 @@ def _convert_file(args):
         errors.close()
         return output
 
-
+timeout_decorator.timeout(5*60, use_signals=False)  # 5min
 def convert_file(file: str, parser: str, config: dict) -> str:
     """Parse file with given parser and configuration
 
