@@ -22,8 +22,6 @@ SBE_TIME_FORMAT = "%b %d %Y %H:%M:%S"  # Jun 23 2016 13:51:30
 var_dtypes = {
     "date": str,
     "bottle": str,
-    "Flag": int,
-    "flag": int,
     "stats": str,
     "scan": int,
 }
