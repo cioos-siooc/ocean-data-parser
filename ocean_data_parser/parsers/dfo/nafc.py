@@ -454,12 +454,9 @@ def pcnv(path: Path, map_to_pfile_attributes: bool = True, rename_variables: boo
         logger.error("No matching attribute found in {}", names)
 
     def get_vocabulary(**kwargs):
-        vocab = p_file_vocabulary.query(
+        return p_file_vocabulary.query(
             " and ".join(f"{key} == '{value}'" for key, value in kwargs.items())
         ).to_dict(orient="records")
-        if vocab:
-            return vocab
-        logger.error("No vocabulary found for {}", kwargs)
 
 
     ds = seabird.cnv(path)
@@ -535,8 +532,9 @@ def pcnv(path: Path, map_to_pfile_attributes: bool = True, rename_variables: boo
             logger.warning("Missing vocabulary for variable={}", variable)
             continue
         
-        if rename_variables:
+        if rename_variables and variable_attributes[-1].get("variable_name"):
             variables_new_name[variable] = variable_attributes[-1].pop("variable_name")
+            
         ds[variable].attrs.update(variable_attributes[-1])
         if not generate_extra_variables:
             continue
