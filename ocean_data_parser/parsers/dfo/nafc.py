@@ -367,6 +367,7 @@ def pfile(
         if not variable_attributes:
             logger.warning("Missing vocabulary for p-file variable={}", var)
             continue
+        
         ds[var].attrs.update(variable_attributes[0])
         for extra in variable_attributes[1:]:
             extra_vocabulary_variables += [
@@ -398,7 +399,7 @@ def pfile(
                         "Extra variable is already in dataset and will be ignored. "
                         "name={}, attrs={} is already in dataset and will be ignored"
                     ),
-                    var,
+                    var.name,
                     attrs,
                 )
             apply_func = attrs.pop("apply_func", None)
