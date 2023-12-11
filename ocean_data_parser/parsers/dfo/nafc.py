@@ -276,7 +276,7 @@ def pfile(
     def _get_variable_vocabulary(variable: str) -> dict:
         """Retrieve variable vocabulary"""
         matching_vocabulary = p_file_vocabulary.query(
-            f"legacy_p_code == '{variable}' and "
+            f"legacy_p_code == '{variable.lower()}' and "
             f"(accepted_instruments.isna() or "
             f"accepted_instruments in '{ds.attrs.get('instrument','')}' )"
         )
@@ -365,9 +365,8 @@ def pfile(
         ds[var].attrs.update(variables_span.get(var, {}))
         variable_attributes = _get_variable_vocabulary(var)
         if not variable_attributes:
-            logger.warning("Missing vocabulary for p-file variable={}", var)
             continue
-        
+
         ds[var].attrs.update(variable_attributes[0])
         for extra in variable_attributes[1:]:
             extra_vocabulary_variables += [
