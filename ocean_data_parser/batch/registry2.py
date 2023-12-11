@@ -358,7 +358,7 @@ class Registry:
         files: pd.DataFrame = None,
     ):
         """Update the registry"""
-        self.data.update(modified_files)
+        self.data.update(files)
 
     def sync_registry(self):
         """Sync the registry with the source"""
