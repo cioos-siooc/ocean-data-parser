@@ -177,7 +177,7 @@ def convert(**kwargs):
 class BatchConversion:
     def __init__(self, config=None, **kwargs):
         self.config = self._get_config(config, **kwargs)
-        self.registry = FileConversionRegistry(**self.config["registry"])
+        self.registry = FileConversionRegistry(**self.config.get("registry",{}))
 
     @staticmethod
     def _get_config(config: dict = None, **kwargs) -> dict:
