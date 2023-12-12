@@ -5,10 +5,10 @@ North Atlantic Fisheries Centre
 
 
 """
+import inspect
 import re
 from pathlib import Path
 from typing import Union
-import inspect
 
 import gsw
 import numpy as np
@@ -22,7 +22,6 @@ from ocean_data_parser.vocabularies.load import (
     dfo_nafc_p_file_vocabulary,
     dfo_platforms,
 )
-from ocean_data_parser.parsers.utils import standardize_dataset
 
 MODULE_PATH = Path(__file__).parent
 p_file_vocabulary = dfo_nafc_p_file_vocabulary()
@@ -270,7 +269,7 @@ def pfile(
             logger.error(
                 "Ship,trip,station isn't consistent: {}. "
                 "Only the first line is considered.",
-                set(ship_trip_stn)
+                set(ship_trip_stn),
             )
 
     def _get_variable_vocabulary(variable: str) -> dict:
@@ -428,7 +427,12 @@ def pfile(
     return ds
 
 
-def pcnv(path: Path, map_to_pfile_attributes: bool = True, rename_variables: bool = True, generate_extra_variables: bool = True) -> xr.Dataset:
+def pcnv(
+    path: Path,
+    map_to_pfile_attributes: bool = True,
+    rename_variables: bool = True,
+    generate_extra_variables: bool = True,
+) -> xr.Dataset:
     """read NAFC pcnv file format which is a seabird cnv format
     with NAFC specific inputs within the manual section
 
@@ -437,7 +441,7 @@ def pcnv(path: Path, map_to_pfile_attributes: bool = True, rename_variables: boo
         map_to_pfile_attributes (bool, optional): Rename attributes
             to match pfile parser output. Defaults to True.
     """
-    
+
     @logger.catch
     def _parse_lat_lon(latlon: str) -> float:
         """Parse latitude and longitude string to float"""
@@ -458,7 +462,6 @@ def pcnv(path: Path, map_to_pfile_attributes: bool = True, rename_variables: boo
         return p_file_vocabulary.query(
             " and ".join(f"{key} == '{value}'" for key, value in kwargs.items())
         ).to_dict(orient="records")
-
 
     ds = seabird.cnv(path)
     if not map_to_pfile_attributes:
@@ -511,7 +514,7 @@ def pcnv(path: Path, map_to_pfile_attributes: bool = True, rename_variables: boo
         ):
             logger.warning("Missing attribute={}", attr)
     ds.attrs.update(attrs)
-    
+
     # Move coordinates to variables
     coords = ["time", "latitude", "longitude"]
     p_file_vocabulary
@@ -520,7 +523,6 @@ def pcnv(path: Path, map_to_pfile_attributes: bool = True, rename_variables: boo
             ds[coord] = ds.attrs[coord]
             ds[coord].attrs = get_vocabulary(variable_name=coord)[0]
 
-
     ds = ds.set_coords([coord for coord in coords if coord in ds])
 
     # Map variable attributes to pfile vocabulary via long_name
@@ -528,11 +530,13 @@ def pcnv(path: Path, map_to_pfile_attributes: bool = True, rename_variables: boo
     for variable in ds.variables:
         if variable in coords:
             continue
-        variable_attributes = get_vocabulary(long_name=ds[variable].attrs.get("long_name",variable))
+        variable_attributes = get_vocabulary(
+            long_name=ds[variable].attrs.get("long_name", variable)
+        )
         if not variable_attributes:
             logger.warning("Missing vocabulary for variable={}", variable)
             continue
-        
+
         if rename_variables and variable_attributes[-1].get("variable_name"):
             variables_new_name[variable] = variable_attributes[-1].pop("variable_name")
 
@@ -544,11 +548,11 @@ def pcnv(path: Path, map_to_pfile_attributes: bool = True, rename_variables: boo
             new_var = extra.pop("variable_name", variable)
             logger.debug("Generate extra variable={}", new_var)
             ds[new_var] = (ds[variable].dims, ds[variable].data, extra)
-    
+
     if rename_variables:
         logger.debug("Rename variables to NAFC standard: {}", variables_new_name)
         ds = ds.rename(variables_new_name)
-    
+
     ds = standardize_dataset(ds)
 
     return ds

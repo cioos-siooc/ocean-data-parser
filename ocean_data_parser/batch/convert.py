@@ -7,10 +7,10 @@ from pathlib import Path
 
 import click
 import pandas as pd
+import timeout_decorator
 from loguru import logger
 from tqdm import tqdm
 from xarray import Dataset
-import timeout_decorator
 
 from ocean_data_parser import PARSERS, geo, process, read
 from ocean_data_parser._version import __version__
@@ -178,7 +178,7 @@ def convert(**kwargs):
 class BatchConversion:
     def __init__(self, config=None, **kwargs):
         self.config = self._get_config(config, **kwargs)
-        self.registry = FileConversionRegistry(**self.config.get("registry",{}))
+        self.registry = FileConversionRegistry(**self.config.get("registry", {}))
 
     @staticmethod
     def _get_config(config: dict = None, **kwargs) -> dict:

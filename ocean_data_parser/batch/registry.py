@@ -5,8 +5,8 @@ from pathlib import Path
 from typing import Union
 
 import pandas as pd
-from tqdm import tqdm
 import timeout_decorator
+from tqdm import tqdm
 
 tqdm.pandas()
 logger = logging.getLogger(__name__)
