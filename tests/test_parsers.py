@@ -1,9 +1,9 @@
-import logging
 from glob import glob
 
 import pandas as pd
 import pytest
 import xarray as xr
+from loguru import logger
 
 from ocean_data_parser.parsers import (
     amundsen,
@@ -21,9 +21,6 @@ from ocean_data_parser.parsers import (
 from ocean_data_parser.parsers.dfo.odf_source.attributes import _review_station
 from ocean_data_parser.parsers.dfo.odf_source.parser import _convert_odf_time
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger()
-
 
 def review_parsed_dataset(ds, source, caplog=None, max_log_levelno=30):
     assert isinstance(ds, xr.Dataset)
@@ -33,7 +30,14 @@ def review_parsed_dataset(ds, source, caplog=None, max_log_levelno=30):
         for record in caplog.records:
             assert record.levelno <= max_log_levelno, str(record) % record.args
 
-    ds.to_netcdf(source + "_test.nc")
+    ds.to_netcdf(source + "_test.nc", format="NETCDF4")
+
+
+@pytest.fixture
+def caplog(caplog):
+    handler_id = logger.add(caplog.handler, format="{message}")
+    yield caplog
+    logger.remove(handler_id)
 
 
 class TestPMEParsers:
@@ -475,8 +479,8 @@ class TestDFO_NAFC_pFiles:
             "56001001 7 08 0a    0999.1 003.8       08 01 18 10 01                          8"
         )
         assert isinstance(response, dict)
-        assert not response
-        assert f"Failed to parse {line_parser}" in caplog.text
+        assert response
+        assert f"Failed to convert: <{line_parser}" in caplog.text
 
 
 class TestDfoIosShell:
