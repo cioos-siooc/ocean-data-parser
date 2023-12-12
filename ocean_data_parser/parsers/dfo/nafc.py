@@ -497,6 +497,7 @@ def pcnv(
         )
     attrs = {
         "ship_code": ship_trip_seq_station["ship_code"],
+        **_get_ship_code_metadata(ship_trip_seq_station["ship_code"]),
         "trip": _int(ship_trip_seq_station["trip"]),
         "seq": _int(ship_trip_seq_station["seq"]),
         "station": _int(ship_trip_seq_station["stn"]),
