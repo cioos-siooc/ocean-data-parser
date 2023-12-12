@@ -56,7 +56,7 @@ def standardize_attributes(attrs) -> dict:
     """
 
     def _consider_attribute(value):
-        if value is pd.NA:
+        if value is pd.NA or value is None:
             return False
         return isinstance(value, (dict, tuple, list, np.ndarray)) or (
             (pd.notnull(value) or value in (0, 0.0)) and value != ""
