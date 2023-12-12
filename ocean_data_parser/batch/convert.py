@@ -323,7 +323,8 @@ def _convert_file(args):
         errors.close()
         return output
 
-timeout_decorator.timeout(5*60, use_signals=False)  # 5min
+
+@timeout_decorator.timeout(5 * 60, use_signals=False)  # 5min
 def convert_file(file: str, parser: str, config: dict) -> str:
     """Parse file with given parser and configuration
 
