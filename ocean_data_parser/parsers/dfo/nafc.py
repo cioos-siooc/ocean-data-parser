@@ -41,7 +41,7 @@ def _traceback_error_line():
     return f"<{previous_frame.f_code.co_name} line {line_number}>: {cmd_line}"
 
 
-def _int(value: str, null_values=None) -> int:
+def _int(value: str, null_values=None, level="WARNING") -> int:
     """Attemp to convert string to int, return None if empty or failed"""
     if not value or not value.strip() or value in (null_values or []):
         return
@@ -53,14 +53,16 @@ def _int(value: str, null_values=None) -> int:
     except ValueError:
         if value in ("0.", ".0"):
             return 0
-        logger.error(
+        logger.log(
+            level,
             "Failed to convert: {} => int('{}')",
             _traceback_error_line(),
             value,
         )
+        return pd.NA
 
 
-def _float(value: str, null_values=None) -> float:
+def _float(value: str, null_values=None, level="WARNING") -> float:
     """Attemp to convert string to float, return None if empty or failed"""
     if not value or not value.strip() or value in (null_values or []):
         return
@@ -68,11 +70,25 @@ def _float(value: str, null_values=None) -> float:
         value = float(value)
         return None if null_values and value in null_values else value
     except ValueError:
-        logger.error(
+        logger.log(
+            level,
             "Failed to convert: {} => float('{}')",
             _traceback_error_line(),
             value,
         )
+        return pd.NA
+
+
+def to_datetime(value: str) -> pd.Timestamp:
+    try:
+        return pd.to_datetime(value, format="%Y-%m-%d %H:%M", utc=True)
+    except (pd.errors.ParserError, ValueError):
+        logger.error(
+            "Failed to convert: {} => pd.to_datetime('{}', format='%Y-%m-%d %H:%M', utc=True)",
+            _traceback_error_line(),
+            value,
+        )
+        return pd.NaT
 
 
 def _get_dtype(var: str):
@@ -83,14 +99,16 @@ def _parse_pfile_header_line1(line: str) -> dict:
     """Parse first row of the p file format which contains location and instrument information."""
     return dict(
         ship_code=line[:2],
-        trip=_int(line[2:5]),
-        station=_int(line[5:8]),
-        latitude=_float(line[9:12]) + float(line[13:18]) / 60,
-        longitude=_float(line[19:23]) + float(line[24:29]) / 60,
-        time=pd.to_datetime(line[30:46], format="%Y-%m-%d %H:%M", utc=True),
+        trip=_int(line[2:5], level="ERROR"),
+        station=_int(line[5:8], level="ERROR"),
+        latitude=_float(line[9:12], level="ERROR")
+        + _float(line[13:18], level="ERROR") / 60,
+        longitude=_float(line[19:23], level="ERROR")
+        + _float(line[24:29], level="ERROR") / 60,
+        time=to_datetime(line[30:46]),
         sounder_depth=_int(line[47:51], ("9999", "0000")),  # water depth in meters
         instrument=line[52:57],  # see note below
-        set_number=_int(line[58:61],('SET',)),  # usually same as stn
+        set_number=_int(line[58:61], ("SET",)),  # usually same as stn
         cast_type=line[62],  # V vertical profile T for tow
         comment=line[62:78],
         card_1_id=line[79],
