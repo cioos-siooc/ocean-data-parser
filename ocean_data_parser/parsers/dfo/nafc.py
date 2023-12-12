@@ -565,6 +565,8 @@ def pcnv(
 
         for extra in variable_attributes[0:-1]:
             new_var = extra.pop("variable_name", variable)
+            if new_var=='depth' and "depSM" in ds.variables:
+                continue
             logger.debug("Generate extra variable={}", new_var)
             ds[new_var] = (ds[variable].dims, ds[variable].data, extra)
 
