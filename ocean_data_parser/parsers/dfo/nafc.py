@@ -514,7 +514,7 @@ def pcnv(
         "dfo_nafc_platform_name": ship_trip_seq_station["dfo_nafc_platform_name"],
         **_get_platform_by_nafc_platform_name(ship_trip_seq_station["dfo_nafc_platform_name"]),
         "trip": _int(ship_trip_seq_station["trip"]),
-        "seq": _int(ship_trip_seq_station["seq"]),
+        "year": _int(ship_trip_seq_station["year"]),
         "station": _int(ship_trip_seq_station["stn"]),
         "time": pd.to_datetime(ds.attrs.pop("DATE/TIME"), utc=True),
         "latitude": _parse_lat_lon(
