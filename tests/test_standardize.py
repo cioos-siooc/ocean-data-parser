@@ -1,6 +1,7 @@
-from ocean_data_parser.parsers import utils
-import pytest
 import pandas as pd
+import pytest
+
+from ocean_data_parser.parsers import utils
 
 
 @pytest.mark.parametrize(
