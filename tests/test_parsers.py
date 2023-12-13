@@ -438,13 +438,13 @@ class TestDFO_NAFC_pFiles:
 
     def test_dfo_nafc_platform_name_mapping(self):
         """Test nafc platform name mapping"""
-        response = dfo.nafc._get_platform_by_nafc_platform_name('cab')
+        response = dfo.nafc._get_platform_by_nafc_platform_name("cab")
         assert isinstance(response, dict)
         assert response["platform_name"] == "John Cabot"
 
     def test_dfo_nafc_platform_name_unknown_mapping(self, caplog):
         """Test unknown ship name mapping"""
-        response = dfo.nafc._get_platform_by_nafc_platform_name('unk')
+        response = dfo.nafc._get_platform_by_nafc_platform_name("unk")
         assert isinstance(response, dict)
         assert "platform_name" not in response
         assert "Unknown dfo_nafc_platform_name=unk" in caplog.text

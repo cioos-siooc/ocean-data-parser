@@ -210,7 +210,9 @@ def _parse_channel_stats(lines: list) -> dict:
 
 
 def _get_platform_by_nafc_platform_code(platform_code: Union[int, str]) -> dict:
-    platform_code = f"{platform_code:02g}" if isinstance(platform_code, int) else platform_code
+    platform_code = (
+        f"{platform_code:02g}" if isinstance(platform_code, int) else platform_code
+    )
     if p_file_shipcode["dfo_nafc_platform_code"].str.match(platform_code).any():
         return (
             p_file_shipcode.query(f"dfo_nafc_platform_code == '{platform_code}'")
@@ -220,8 +222,9 @@ def _get_platform_by_nafc_platform_code(platform_code: Union[int, str]) -> dict:
     logger.warning("Unknown dfo_nafc_platform_code={}", platform_code)
     return {}
 
+
 def _get_platform_by_nafc_platform_name(platform_name: str) -> dict:
-    if  platform_name in p_file_shipcode["dfo_nafc_platform_name"].tolist():
+    if platform_name in p_file_shipcode["dfo_nafc_platform_name"].tolist():
         return (
             p_file_shipcode.query(f"dfo_nafc_platform_name == '{platform_name}'")
             .iloc[0]
@@ -463,14 +466,14 @@ def pcnv(
     generate_extra_variables: bool = True,
 ) -> xr.Dataset:
     """DFO NAFC pcnv file format parser
-    The pcnv format  essentially a seabird cnv file format 
+    The pcnv format  essentially a seabird cnv file format
     with NAFC specific inputs within the manual section
 
     Args:
         path (Path): pcvn file path
-        rename_variables (bool, optional): Rename variables to 
+        rename_variables (bool, optional): Rename variables to
             DFO BODC names. Defaults to True.
-        generate_extra_variables (bool, optional): Generate extra 
+        generate_extra_variables (bool, optional): Generate extra
             vocabulary variables. Defaults to True.
 
     Returns:
@@ -512,7 +515,9 @@ def pcnv(
         )
     attrs = {
         "dfo_nafc_platform_name": ship_trip_seq_station["dfo_nafc_platform_name"],
-        **_get_platform_by_nafc_platform_name(ship_trip_seq_station["dfo_nafc_platform_name"]),
+        **_get_platform_by_nafc_platform_name(
+            ship_trip_seq_station["dfo_nafc_platform_name"]
+        ),
         "trip": _int(ship_trip_seq_station["trip"]),
         "year": _int(ship_trip_seq_station["year"]),
         "station": _int(ship_trip_seq_station["stn"]),
