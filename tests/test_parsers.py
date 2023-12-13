@@ -423,17 +423,31 @@ class TestDFO_NAFC_pFiles:
         ds = dfo.nafc.pfile(path)
         review_parsed_dataset(ds, path, caplog)
 
-    def test_ship_code_mapping(self):
+    def test_dfo_nafc_platform_code_mapping(self):
         """Test ship code mapping"""
-        response = dfo.nafc._get_ship_code_metadata(55)
+        response = dfo.nafc._get_platform_by_nafc_platform_code(55)
         assert isinstance(response, dict)
         assert response["platform_name"] == "Discovery"
 
-    def test_unknown_ship_code_mapping(self):
+    def test_dfo_nafc_platform_code_unknown_mapping(self, caplog):
         """Test unknown ship code mapping"""
-        response = dfo.nafc._get_ship_code_metadata(9999)
+        response = dfo.nafc._get_platform_by_nafc_platform_code(9999)
         assert isinstance(response, dict)
         assert "platform_name" not in response
+        assert "Unknown dfo_nafc_platform_code=9999" in caplog.text
+
+    def test_dfo_nafc_platform_name_mapping(self):
+        """Test nafc platform name mapping"""
+        response = dfo.nafc._get_platform_by_nafc_platform_name('cab')
+        assert isinstance(response, dict)
+        assert response["platform_name"] == "John Cabot"
+
+    def test_dfo_nafc_platform_name_unknown_mapping(self, caplog):
+        """Test unknown ship name mapping"""
+        response = dfo.nafc._get_platform_by_nafc_platform_name('unk')
+        assert isinstance(response, dict)
+        assert "platform_name" not in response
+        assert "Unknown dfo_nafc_platform_name=unk" in caplog.text
 
     @pytest.mark.parametrize(
         "line",

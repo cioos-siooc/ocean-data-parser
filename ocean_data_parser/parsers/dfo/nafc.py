@@ -108,7 +108,9 @@ def _parse_pfile_header_line1(line: str) -> dict:
         time=to_datetime(line[30:46]),
         sounder_depth=_int(line[47:51], ("9999", "0000")),  # water depth in meters
         instrument=line[52:57],  # see note below
-        set_number=_int(line[58:61], ("SET",)),  # usually same as stn
+        set_number=_int(
+            line[58:61], ("SET", "xxx", "set", "XXX", "ctd", "xbt", "Stn")
+        ),  # usually same as stn
         cast_type=line[62],  # V vertical profile T for tow
         comment=line[62:78],
         card_1_id=line[79],
@@ -207,15 +209,25 @@ def _parse_channel_stats(lines: list) -> dict:
     return {item["name"]: {"actual_range": _get_range(item)} for item in spans}
 
 
-def _get_ship_code_metadata(shipcode: Union[int, str]) -> dict:
-    shipcode = f"{shipcode:02g}" if isinstance(shipcode, int) else shipcode
-    if p_file_shipcode["dfo_newfoundland_ship_code"].str.match(shipcode).any():
+def _get_platform_by_nafc_platform_code(platform_code: Union[int, str]) -> dict:
+    platform_code = f"{platform_code:02g}" if isinstance(platform_code, int) else platform_code
+    if p_file_shipcode["dfo_nafc_platform_code"].str.match(platform_code).any():
         return (
-            p_file_shipcode.query(f"dfo_newfoundland_ship_code == '{shipcode}'")
+            p_file_shipcode.query(f"dfo_nafc_platform_code == '{platform_code}'")
             .iloc[0]
             .to_dict()
         )
-    logger.warning("Unknown p-file shipcode={}", shipcode)
+    logger.warning("Unknown dfo_nafc_platform_code={}", platform_code)
+    return {}
+
+def _get_platform_by_nafc_platform_name(platform_name: str) -> dict:
+    if  platform_name in p_file_shipcode["dfo_nafc_platform_name"].tolist():
+        return (
+            p_file_shipcode.query(f"dfo_nafc_platform_name == '{platform_name}'")
+            .iloc[0]
+            .to_dict()
+        )
+    logger.warning("Unknown dfo_nafc_platform_name={}", platform_name)
     return {}
 
 
@@ -366,7 +378,7 @@ def pfile(
     )
     ds.attrs["original_header"] = "\n".join(original_header)
     ds.attrs["history"] = _pfile_history_to_cf(header.get("HISTORY"))
-    ds.attrs.update(_get_ship_code_metadata(ds.attrs.get("ship_code", {})))
+    ds.attrs.update(_get_platform_by_nafc_platform_code(ds.attrs.get("ship_code", {})))
 
     # Move coordinates to variables:
     coords = ["time", "latitude", "longitude"]
@@ -487,7 +499,7 @@ def pcnv(
 
     # Map global attributes
     ship_trip_seq_station = re.search(
-        r"(?P<ship_code>\w{3})(?P<trip>\d{3})_(?P<seq>\d{4})_(?P<stn>\d{3})",
+        r"(?P<dfo_nafc_platform_name>\w{3})(?P<trip>\d{3})_(?P<year>\d{4})_(?P<stn>\d{3})",
         ds.attrs.pop("VESSEL/TRIP/SEQ STN", ""),
     )
     if not ship_trip_seq_station:
@@ -496,8 +508,8 @@ def pcnv(
             ds.attrs.get("VESEL/TRIP/SEQ STN", ""),
         )
     attrs = {
-        "ship_code": ship_trip_seq_station["ship_code"],
-        **_get_ship_code_metadata(ship_trip_seq_station["ship_code"]),
+        "dfo_nafc_platform_name": ship_trip_seq_station["dfo_nafc_platform_name"],
+        **_get_platform_by_nafc_platform_name(ship_trip_seq_station["dfo_nafc_platform_name"]),
         "trip": _int(ship_trip_seq_station["trip"]),
         "seq": _int(ship_trip_seq_station["seq"]),
         "station": _int(ship_trip_seq_station["stn"]),
@@ -565,7 +577,7 @@ def pcnv(
 
         for extra in variable_attributes[0:-1]:
             new_var = extra.pop("variable_name", variable)
-            if new_var=='depth' and "depSM" in ds.variables:
+            if new_var == "depth" and "depSM" in ds.variables:
                 continue
             logger.debug("Generate extra variable={}", new_var)
             ds[new_var] = (ds[variable].dims, ds[variable].data, extra)
