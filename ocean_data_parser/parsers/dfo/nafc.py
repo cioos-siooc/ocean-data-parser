@@ -542,7 +542,7 @@ def pcnv(
         "ctd_number": _int(ds.attrs.pop("CTD NUMBER", None)),
     }
 
-    # exlude attributes that are instrument specific if not related
+    # review missing attributes and ignore optional ones
     for attr, value in attrs.items():
         if not value and attr not in (
             "xbt_number",
@@ -550,6 +550,7 @@ def pcnv(
             "bottles",
             "do2",
             "vnet",
+            "comment",
         ):
             logger.warning("Missing attribute={}", attr)
     ds.attrs.update(attrs)
