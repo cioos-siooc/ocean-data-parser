@@ -459,17 +459,22 @@ def pfile(
 
 def pcnv(
     path: Path,
-    map_to_pfile_attributes: bool = True,
     rename_variables: bool = True,
     generate_extra_variables: bool = True,
 ) -> xr.Dataset:
-    """read NAFC pcnv file format which is a seabird cnv format
+    """DFO NAFC pcnv file format parser
+    The pcnv format  essentially a seabird cnv file format 
     with NAFC specific inputs within the manual section
 
     Args:
-        path (Path): File input path
-        map_to_pfile_attributes (bool, optional): Rename attributes
-            to match pfile parser output. Defaults to True.
+        path (Path): pcvn file path
+        rename_variables (bool, optional): Rename variables to 
+            DFO BODC names. Defaults to True.
+        generate_extra_variables (bool, optional): Generate extra 
+            vocabulary variables. Defaults to True.
+
+    Returns:
+        xr.Dataset: parsed dataset
     """
 
     @logger.catch
@@ -494,8 +499,6 @@ def pcnv(
         ).to_dict(orient="records")
 
     ds = seabird.cnv(path)
-    if not map_to_pfile_attributes:
-        return ds
 
     # Map global attributes
     ship_trip_seq_station = re.search(
