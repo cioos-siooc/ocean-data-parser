@@ -100,6 +100,8 @@ def compare_test_to_reference_netcdf(
     # Drop some expected differences
     # Add placeholders to specific fields in attributes
     ignore_from_attr(
+        "dfo_nafc_platform_code",
+        "dfo_nafc_platform_name",
         "history",
         r"cioos_data_trasform.odf_transform V \d+\.\d+\.\d+|"
         r"ocean_data_parser V \d+\.\d+\.\d+",
