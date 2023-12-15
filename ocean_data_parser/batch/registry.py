@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Union
 
 import pandas as pd
+import timeout_decorator
 from tqdm import tqdm
 
 tqdm.pandas()
@@ -88,6 +89,7 @@ class FileConversionRegistry:
     def deepcopy(self):
         return copy.deepcopy(self)
 
+    @timeout_decorator.timeout(20, use_signals=False)
     def _get_hash(self, file: Union[str, Path]) -> str:
         """Retriveve file hash
 
@@ -142,9 +144,12 @@ class FileConversionRegistry:
         # Retrieve mtime and hash only if a registry is actually saved
         if self.path:
             logger.info("Get new files mtime")
+            mtimes = new_data.index.to_series().progress_apply(self._get_mtime)
+            logger.info("Get new files hashes")
+            hashes = new_data.index.to_series().progress_apply(self._get_hash)
             new_data = new_data.assign(
-                mtime=new_data.index.map(self._get_mtime),
-                hash=new_data.index.map(self._get_hash),
+                mtime=mtimes,
+                hash=hashes,
             )
 
         self.data = (

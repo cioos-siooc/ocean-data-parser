@@ -22,8 +22,6 @@ SBE_TIME_FORMAT = "%b %d %Y %H:%M:%S"  # Jun 23 2016 13:51:30
 var_dtypes = {
     "date": str,
     "bottle": str,
-    "Flag": int,
-    "flag": int,
     "stats": str,
     "scan": int,
 }
@@ -179,7 +177,7 @@ def _parse_seabird_file_header(f):
     """Parsed seabird file headers"""
 
     def unknown_line(line):
-        if line in ("* S>\n"):
+        if line in ("* S>\n", "* GetHD\n", "* GetSD\n"):
             return
         header["history"] += [re.sub(r"\*\s|\n", "", line)]
         if line.startswith(("* advance", "* delete")) or "added to scan" in line:
@@ -191,8 +189,13 @@ def _parse_seabird_file_header(f):
 
     def read_comments(line):
         if re.match(r"\*\* .*(\:|\=).*", line):
-            result = re.match(r"\*\* (?P<key>.*)(\:|\=)(?P<value>.*)", line)
-            header[result["key"].strip()] = result["value"].strip()
+            result = re.match(r"\*\* (?P<key>[^:=]*)(\:|\=)(?P<value>.*)", line)
+            key, _, value = result.groups()
+            if key.strip() in header:
+                # append string to existing key on a new line
+                header[key.strip()] += "\n" + value.strip()
+            else:
+                header[key.strip()] = value.strip()
         else:
             header["comments"] += [line[2:]]
 
@@ -207,10 +210,19 @@ def _parse_seabird_file_header(f):
             header["instrument_type"] += "".join(
                 [item for item in instrument_type if item]
             )
+        elif re.match(r"\* Turo XBT Data File:", line):
+            header["instrument_type"] += "Turo XBT"
         elif re.match(r"\* Software version .*", line, re.IGNORECASE):
             header["software_version"] = re.search(
                 r"\* Software version (.*)", line, re.IGNORECASE
             )[1]
+        elif re.match(r"\* (advance [^0-9]+)([\d\.]+ seconds)", line):
+            key, value = re.match(
+                r"\* (advance [^0-9]+)([\d\.]+ seconds)", line
+            ).groups()
+            header[key.strip().replace("_", " ")] = value
+        elif re.match(r"\* autorun .*", line):
+            header["autorun"] = line[2:].strip()
         else:
             unknown_line(line)
 
@@ -234,14 +246,28 @@ def _parse_seabird_file_header(f):
         elif " = " in line:
             attr, value = line[2:].split("=", 1)
             header[standardize_attribute(attr)] = value.strip()
+        elif line.endswith("=\n"):
+            header[standardize_attribute(line[2:-3])] = None
+        elif ": " in line:
+            attr, value = line[2:].split(": ", 1)
+            header[standardize_attribute(attr)] = value.strip()
         else:
             unknown_line(line)
+
+    def parse_xml(xml_section):
+        """Parse XML section"""
+        try:
+            return xmltodict.parse(f"<temp>{xml_section}</temp>")["temp"]
+        except ExpatError:
+            logger.error("Failed to parsed Sea-Bird XML", exc_info=True)
+            return {}
 
     line = "*"
     header = {}
     header["variables"] = {}
     header["instrument_type"] = ""
     header["history"] = []
+    header["comments"] = []
     read_next_line = True
     while "*END*" not in line and line.startswith(("*", "#")):
         if read_next_line:
@@ -268,9 +294,22 @@ def _parse_seabird_file_header(f):
                 or line.startswith("** ")
                 or line.startswith("* cast")
                 or re.search(r"\>\s*$", line)
+                or (
+                    line.startswith("* Get")
+                    and line[5:].strip() in ("HD", "SD", "CD", "CC", "EC")
+                )
             ):
                 if "**" in line:
                     read_comments(line)
+                if line.startswith("* Get") and line[5:].strip() in (
+                    "HD",
+                    "SD",
+                    "CD",
+                    "CC",
+                    "EC",
+                ):
+                    line = f.readline()
+                    continue
                 xml_section += line[1:]
                 line = f.readline()
             read_next_line = False
@@ -279,7 +318,7 @@ def _parse_seabird_file_header(f):
                 section_name = "data_xml"
             elif first_character == "#":
                 section_name = "instrument_xml"
-            xml_dictionary = xmltodict.parse(f"<temp>{xml_section}</temp>")["temp"]
+            xml_dictionary = parse_xml(xml_section)
             if section_name in header:
                 header[section_name].update(xml_dictionary)
             else:

@@ -5,8 +5,7 @@ North Atlantic Fisheries Centre
 
 
 """
-
-import logging
+import inspect
 import re
 from pathlib import Path
 from typing import Union
@@ -15,14 +14,15 @@ import gsw
 import numpy as np
 import pandas as pd
 import xarray as xr
+from loguru import logger
 
+from ocean_data_parser.parsers import seabird
 from ocean_data_parser.parsers.utils import standardize_dataset
 from ocean_data_parser.vocabularies.load import (
     dfo_nafc_p_file_vocabulary,
     dfo_platforms,
 )
 
-logger = logging.getLogger(__name__)
 MODULE_PATH = Path(__file__).parent
 p_file_vocabulary = dfo_nafc_p_file_vocabulary()
 p_file_shipcode = dfo_platforms()
@@ -33,77 +33,96 @@ global_attributes = {
 }
 
 
-def _int(value: str, null_values=None) -> int:
+def _traceback_error_line():
+    current_frame = inspect.currentframe()
+    previous_frame = current_frame.f_back.f_back
+    line_number = previous_frame.f_lineno
+    cmd_line = Path(__file__).read_text().split("\n")[line_number - 1].strip()
+    return f"<{previous_frame.f_code.co_name} line {line_number}>: {cmd_line}"
+
+
+def _int(value: str, null_values=None, level="WARNING") -> int:
     """Attemp to convert string to int, return None if empty or failed"""
-    if not value.strip():
+    if not value or not value.strip() or value in (null_values or []):
         return
     try:
         value = int(value)
         if null_values and value in null_values:
-            return None
+            return
         return value
-    except TypeError:
-        logger.error("Failed to convert string=%s to int", value)
+    except ValueError:
+        if value in ("0.", ".0"):
+            return 0
+        logger.log(
+            level,
+            "Failed to convert: {} => int('{}')",
+            _traceback_error_line(),
+            value,
+        )
+        return pd.NA
 
 
-def _float(value: str, null_values=None) -> float:
+def _float(value: str, null_values=None, level="WARNING") -> float:
     """Attemp to convert string to float, return None if empty or failed"""
-    if not value.strip():
+    if not value or not value.strip() or value in (null_values or []):
         return
     try:
         value = float(value)
-        if null_values and value in null_values:
-            return None
-        return value
-    except TypeError:
-        logger.error("Failed to convert string=%s to float", value)
+        return None if null_values and value in null_values else value
+    except ValueError:
+        logger.log(
+            level,
+            "Failed to convert: {} => float('{}')",
+            _traceback_error_line(),
+            value,
+        )
+        return pd.NA
+
+
+def to_datetime(value: str) -> pd.Timestamp:
+    try:
+        return pd.to_datetime(value, format="%Y-%m-%d %H:%M", utc=True)
+    except (pd.errors.ParserError, ValueError):
+        logger.error(
+            "Failed to convert: {} => pd.to_datetime('{}', format='%Y-%m-%d %H:%M', utc=True)",
+            _traceback_error_line(),
+            value,
+        )
+        return pd.NaT
 
 
 def _get_dtype(var: str):
     return int if var == "scan" else float
 
 
-def soft_catch_errors(function):
-    def wrap(*args, **kwargs):
-        try:
-            value = function(*args, **kwargs)
-            return value
-        except ValueError:
-            logger.error("Failed to parse %s", function.__name__, exc_info=True)
-            return {}
-
-    return wrap
-
-
-@soft_catch_errors
 def _parse_pfile_header_line1(line: str) -> dict:
     """Parse first row of the p file format which contains location and instrument information."""
     return dict(
         ship_code=line[:2],
-        trip=_int(line[2:5]),
-        station=_int(line[5:8]),
-        latitude=_float(line[9:12]) + float(line[13:18]) / 60,
-        longitude=_float(line[19:23]) + float(line[24:29]) / 60,
-        time=pd.to_datetime(line[30:46], format="%Y-%m-%d %H:%M", utc=True),
-        sounder_depth=_int(line[47:51])
-        if line[47:51] not in ("9999", "0000")
-        else None,  # water depth in meters 9999 or 0000 = not known
-        instrument=line[
-            52:57
-        ],  # Sxxxxx is a seabird ctd XBTxx is an XBT for an XBT, A&C= Sippican probe, A&B mk9, B&D= Spartan probe, C&D mk12"
-        set_number=_int(line[58:61]),  # usually same as stn
+        trip=_int(line[2:5], level="ERROR"),
+        station=_int(line[5:8], level="ERROR"),
+        latitude=_float(line[9:12], level="ERROR")
+        + _float(line[13:18], level="ERROR") / 60,
+        longitude=_float(line[19:23], level="ERROR")
+        + _float(line[24:29], level="ERROR") / 60,
+        time=to_datetime(line[30:46]),
+        sounder_depth=_int(line[47:51], ("9999", "0000")),  # water depth in meters
+        instrument=line[52:57],  # see note below
+        set_number=_int(
+            line[58:61], ("SET", "xxx", "set", "XXX", "ctd", "xbt", "Stn")
+        ),  # usually same as stn
         cast_type=line[62],  # V vertical profile T for tow
         comment=line[62:78],
         card_1_id=line[79],
     )
+    # instrument = # Sxxxxx is a seabird ctd XBTxx is an XBT for an XBT, A&C= Sippican probe, A&B mk9, B&D= Spartan probe, C&D mk12
 
 
-@soft_catch_errors
 def _parse_pfile_header_line2(line: str) -> dict:
     return dict(
-        ship_code=line[:2],
-        trip=_int(line[2:5]),
-        station=_int(line[5:8]),
+        # ship_code=line[:2],
+        # trip=_int(line[2:5]),
+        # station=_int(line[5:8]),
         scan_count=_int(line[9:15]),  # number of scan lines in file
         sampling_rate=_float(line[16:21]),  # 00.00 for unknown
         file_type=line[22],  # A for ASCII B for binary data
@@ -129,13 +148,15 @@ def _parse_pfile_header_line2(line: str) -> dict:
     )
 
 
-@soft_catch_errors
 def _parse_pfile_header_line3(line: str) -> dict:
     """Parse P file 3 metadata line which present environment metadata"""
+    if not line or not line.strip() or len(line) < 79:
+        logger.warning("Missing pfile header line 3")
+        return {}
     return dict(
-        ship_code=line[:2],
-        trip=_int(line[2:5]),
-        station=_int(line[5:8]),
+        # ship_code=line[:2],
+        # trip=_int(line[2:5]),
+        # station=_int(line[5:8]),
         cloud=_int(line[9]),  # i1,
         wind_dir=_int(line[11:13]) * 10
         if line[11:13].strip() and line[11:13] != "99"
@@ -150,7 +171,7 @@ def _parse_pfile_header_line3(line: str) -> dict:
             line[33:38], [-99.0, 99.9, -99.9, 999.9]
         ),  # f5.1,tem= p °C
         waves_period=_int(line[39:41]),  # i2,
-        waves_height=_int(line[42:44]),  # i2,
+        waves_height=_float(line[42:44]),  # i2,
         swell_dir=_int(line[45:47]) * 10 if line[45:47].strip() else None,  # i2,
         swell_period=_int(line[48:50]),  # i2,
         swell_height=_float(line[51:53]),  # i2,
@@ -188,15 +209,28 @@ def _parse_channel_stats(lines: list) -> dict:
     return {item["name"]: {"actual_range": _get_range(item)} for item in spans}
 
 
-def _get_ship_code_metadata(shipcode: Union[int, str]) -> dict:
-    shipcode = f"{shipcode:02g}" if isinstance(shipcode, int) else shipcode
-    if p_file_shipcode["dfo_newfoundland_ship_code"].str.match(shipcode).any():
+def _get_platform_by_nafc_platform_code(platform_code: Union[int, str]) -> dict:
+    platform_code = (
+        f"{platform_code:02g}" if isinstance(platform_code, int) else platform_code
+    )
+    if p_file_shipcode["dfo_nafc_platform_code"].str.match(platform_code).any():
         return (
-            p_file_shipcode.query(f"dfo_newfoundland_ship_code == '{shipcode}'")
+            p_file_shipcode.query(f"dfo_nafc_platform_code == '{platform_code}'")
             .iloc[0]
             .to_dict()
         )
-    logger.warning("Unknown p-file shipcode=%s", shipcode)
+    logger.warning("Unknown dfo_nafc_platform_code={}", platform_code)
+    return {}
+
+
+def _get_platform_by_nafc_platform_name(platform_name: str) -> dict:
+    if platform_name in p_file_shipcode["dfo_nafc_platform_name"].tolist():
+        return (
+            p_file_shipcode.query(f"dfo_nafc_platform_name == '{platform_name}'")
+            .iloc[0]
+            .to_dict()
+        )
+    logger.warning("Unknown dfo_nafc_platform_name={}", platform_name)
     return {}
 
 
@@ -263,20 +297,23 @@ def pfile(
     def _check_ship_trip_stn():
         """Review if the ship,trip,stn string is the same
         accorss the 3 metadata rows"""
-        ship_trip_stn = [line[:9] for line in metadata_lines[1:]]
-        assert (
-            len(set(ship_trip_stn)) == 1
-        ), f"Ship,trip,station isn't consistent: {set(ship_trip_stn)}"
+        ship_trip_stn = [line[:9] for line in metadata_lines[1:] if line.strip()]
+        if len(set(ship_trip_stn)) != 1:
+            logger.error(
+                "Ship,trip,station isn't consistent: {}. "
+                "Only the first line is considered.",
+                set(ship_trip_stn),
+            )
 
     def _get_variable_vocabulary(variable: str) -> dict:
         """Retrieve variable vocabulary"""
         matching_vocabulary = p_file_vocabulary.query(
-            f"legacy_p_code == '{variable}' and "
+            f"legacy_p_code == '{variable.lower()}' and "
             f"(accepted_instruments.isna() or "
             f"accepted_instruments in '{ds.attrs.get('instrument','')}' )"
         )
         if matching_vocabulary.empty:
-            logger.warning("No vocabulary is available for variable=%s", variable)
+            logger.warning("No vocabulary is available for variable={}", variable)
             return []
         return matching_vocabulary.to_dict(orient="records")
 
@@ -336,15 +373,15 @@ def pfile(
         {
             "id": metadata_lines[1][:8],
             **global_attributes,
-            **_parse_pfile_header_line1(metadata_lines[1]),
-            **_parse_pfile_header_line2(metadata_lines[2]),
-            **_parse_pfile_header_line3(metadata_lines[3]),
+            **(_parse_pfile_header_line1(metadata_lines[1]) or {}),
+            **(_parse_pfile_header_line2(metadata_lines[2]) or {}),
+            **(_parse_pfile_header_line3(metadata_lines[3]) or {}),
             "history": header.get("HISTORY"),
         }
     )
     ds.attrs["original_header"] = "\n".join(original_header)
     ds.attrs["history"] = _pfile_history_to_cf(header.get("HISTORY"))
-    ds.attrs.update(_get_ship_code_metadata(ds.attrs.get("ship_code", {})))
+    ds.attrs.update(_get_platform_by_nafc_platform_code(ds.attrs.get("ship_code", {})))
 
     # Move coordinates to variables:
     coords = ["time", "latitude", "longitude"]
@@ -360,8 +397,8 @@ def pfile(
         ds[var].attrs.update(variables_span.get(var, {}))
         variable_attributes = _get_variable_vocabulary(var)
         if not variable_attributes:
-            logger.warning("Missing vocabulary for p-file variable=%s", var)
             continue
+
         ds[var].attrs.update(variable_attributes[0])
         for extra in variable_attributes[1:]:
             extra_vocabulary_variables += [
@@ -391,9 +428,9 @@ def pfile(
                 logger.warning(
                     (
                         "Extra variable is already in dataset and will be ignored. "
-                        "name=%s, attrs=%s is already in dataset and will be ignored"
+                        "name={}, attrs={} is already in dataset and will be ignored"
                     ),
-                    var,
+                    var.name,
                     attrs,
                 )
             apply_func = attrs.pop("apply_func", None)
@@ -418,6 +455,146 @@ def pfile(
             ds[name] = (var.dims, new_data.data, {**var.attrs, **attrs})
 
     # standardize
+    ds = standardize_dataset(ds)
+
+    return ds
+
+
+def pcnv(
+    path: Path,
+    rename_variables: bool = True,
+    generate_extra_variables: bool = True,
+) -> xr.Dataset:
+    """DFO NAFC pcnv file format parser
+    The pcnv format  essentially a seabird cnv file format
+    with NAFC specific inputs within the manual section
+
+    Args:
+        path (Path): pcvn file path
+        rename_variables (bool, optional): Rename variables to
+            DFO BODC names. Defaults to True.
+        generate_extra_variables (bool, optional): Generate extra
+            vocabulary variables. Defaults to True.
+
+    Returns:
+        xr.Dataset: parsed dataset
+    """
+
+    @logger.catch
+    def _parse_lat_lon(latlon: str) -> float:
+        """Parse latitude and longitude string to float"""
+        if not latlon:
+            logger.error("No latitude or longitude provided")
+            return
+        deg, min, dir = latlon.split(" ")
+        return (-1 if dir in ("S", "W") else 1) * (int(deg) + float(min) / 60)
+
+    def _pop_attribute_from(names: list):
+        """Pop attribute from dataset"""
+        for name in names:
+            if name in ds.attrs:
+                return ds.attrs.pop(name)
+        logger.error("No matching attribute found in {}", names)
+
+    def get_vocabulary(**kwargs):
+        return p_file_vocabulary.query(
+            " and ".join(f"{key} == '{value}'" for key, value in kwargs.items())
+        ).to_dict(orient="records")
+
+    ds = seabird.cnv(path)
+
+    # Map global attributes
+    ship_trip_seq_station = re.search(
+        r"(?P<dfo_nafc_platform_name>\w{3})(?P<trip>\d{3})_(?P<year>\d{4})_(?P<stn>\d{3})",
+        ds.attrs.pop("VESSEL/TRIP/SEQ STN", ""),
+    )
+    if not ship_trip_seq_station:
+        logger.error(
+            "Unable to parse ship_trip_seq_station from VESEL/TRIP/SEQ STN= {}",
+            ds.attrs.get("VESEL/TRIP/SEQ STN", ""),
+        )
+    attrs = {
+        "dfo_nafc_platform_name": ship_trip_seq_station["dfo_nafc_platform_name"],
+        **_get_platform_by_nafc_platform_name(
+            ship_trip_seq_station["dfo_nafc_platform_name"]
+        ),
+        "trip": _int(ship_trip_seq_station["trip"]),
+        "year": _int(ship_trip_seq_station["year"]),
+        "station": _int(ship_trip_seq_station["stn"]),
+        "time": pd.to_datetime(ds.attrs.pop("DATE/TIME"), utc=True),
+        "latitude": _parse_lat_lon(
+            _pop_attribute_from(["LATITUDE", "LATITUDE XX XX.XX"])
+        ),
+        "longitude": _parse_lat_lon(
+            _pop_attribute_from(
+                ["LONGITUDE", "LONGITUDE XX XX.XX", "LONGITUDE XX XX.XX W"]
+            )
+        ),
+        "sounder_depth": ds.attrs.pop("SOUNDING DEPTH (M)", None),
+        "instrument": ds.attrs.pop("PROBE TYPE", None),
+        "xbt_number": _int(ds.attrs.pop("XBT NUMBER", None)),
+        "format": ds.attrs.pop("FORMAT", None),
+        "commment": _pop_attribute_from(["COMMENTS", "COMMENTS (14 CHAR)"]),
+        "trip_tag": ds.attrs.pop("TRIP TAG", None),
+        "vnet": ds.attrs.pop("VNET", None),
+        "do2": ds.attrs.pop("DO2", None),
+        "bottles": _int(ds.attrs.pop("BOTTLES", None)),
+        "ctd_number": _int(ds.attrs.pop("CTD NUMBER", None)),
+    }
+
+    # review missing attributes and ignore optional ones
+    for attr, value in attrs.items():
+        if not value and attr not in (
+            "xbt_number",
+            "ctd_number",
+            "bottles",
+            "do2",
+            "vnet",
+            "comment",
+        ):
+            logger.warning("Missing attribute={}", attr)
+    ds.attrs.update(attrs)
+
+    # Move coordinates to variables
+    coords = ["time", "latitude", "longitude"]
+    p_file_vocabulary
+    for coord in coords:
+        if coord in ds.attrs:
+            ds[coord] = ds.attrs[coord]
+            ds[coord].attrs = get_vocabulary(variable_name=coord)[0]
+
+    ds = ds.set_coords([coord for coord in coords if coord in ds])
+
+    # Map variable attributes to pfile vocabulary via long_name
+    variables_new_name = {}
+    for variable in ds.variables:
+        if variable in coords:
+            continue
+        variable_attributes = get_vocabulary(
+            long_name=ds[variable].attrs.get("long_name", variable)
+        )
+        if not variable_attributes:
+            logger.warning("Missing vocabulary for variable={}", variable)
+            continue
+
+        if rename_variables and variable_attributes[-1].get("variable_name"):
+            variables_new_name[variable] = variable_attributes[-1].pop("variable_name")
+
+        ds[variable].attrs.update(variable_attributes[-1])
+        if not generate_extra_variables:
+            continue
+
+        for extra in variable_attributes[0:-1]:
+            new_var = extra.pop("variable_name", variable)
+            if new_var == "depth" and "depSM" in ds.variables:
+                continue
+            logger.debug("Generate extra variable={}", new_var)
+            ds[new_var] = (ds[variable].dims, ds[variable].data, extra)
+
+    if rename_variables:
+        logger.debug("Rename variables to NAFC standard: {}", variables_new_name)
+        ds = ds.rename(variables_new_name)
+
     ds = standardize_dataset(ds)
 
     return ds

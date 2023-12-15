@@ -56,6 +56,8 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
         parser = "amundsen.int_format"
     elif "*IOS HEADER VERSION" in header:
         parser = "dfo.ios.shell"
+    elif ext == "pcnv":
+        parser = "dfo.nafc.pcnv"
     elif ext[0] == "p" and "NAFC_Y2K_HEADER" in header:
         parser = "dfo.nafc.pfile"
     elif ext == "ODF" and re.search(r"COUNTRY_INSTITUTE_CODE\s*=\s*1810", header):
