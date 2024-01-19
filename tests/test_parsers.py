@@ -501,9 +501,9 @@ class TestDFO_NAFC_pFiles:
         [
             (47, 15, 47.25),
             (-47, 15, -47.25),
-        ]
+        ],
     )
-    def test_p_file_ll_parser(self,deg,min, expected_result):
+    def test_p_file_ll_parser(self, deg, min, expected_result):
         result = dfo.nafc._parse_ll(deg, min)
         assert result == expected_result
 
