@@ -94,17 +94,26 @@ def to_datetime(value: str) -> pd.Timestamp:
 def _get_dtype(var: str):
     return int if var == "scan" else float
 
+def _parse_ll(deg: float, min: float) -> float:
+    """Combine deg and min values from latitude and longitude to decimal degrees"""
+    if not deg:
+        return
+    dir = -1 if deg < 0 else 1
+    return deg + (dir * min / 60)
 
 def _parse_pfile_header_line1(line: str) -> dict:
     """Parse first row of the p file format which contains location and instrument information."""
+
     return dict(
         ship_code=line[:2],
         trip=_int(line[2:5], level="ERROR"),
         station=_int(line[5:8], level="ERROR"),
-        latitude=_float(line[9:12], level="ERROR")
-        + _float(line[13:18], level="ERROR") / 60,
-        longitude=_float(line[19:23], level="ERROR")
-        + _float(line[24:29], level="ERROR") / 60,
+        latitude=_parse_ll(
+            _float(line[9:12], level="ERROR"), _float(line[13:18], level="ERROR")
+        ),
+        longitude=_parse_ll(
+            _float(line[19:23], level="ERROR"), _float(line[24:29], level="ERROR")
+        ),
         time=to_datetime(line[30:46]),
         sounder_depth=_int(line[47:51], ("9999", "0000")),  # water depth in meters
         instrument=line[52:57],  # see note below
