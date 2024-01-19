@@ -97,7 +97,7 @@ def _get_dtype(var: str):
 
 def _parse_ll(deg: float, min: float) -> float:
     """Combine deg and min values from latitude and longitude to decimal degrees"""
-    if not deg:
+    if not deg or not min:
         return
     dir = -1 if deg < 0 else 1
     return deg + (dir * min / 60)
