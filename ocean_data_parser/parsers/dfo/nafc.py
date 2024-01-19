@@ -94,12 +94,14 @@ def to_datetime(value: str) -> pd.Timestamp:
 def _get_dtype(var: str):
     return int if var == "scan" else float
 
+
 def _parse_ll(deg: float, min: float) -> float:
     """Combine deg and min values from latitude and longitude to decimal degrees"""
     if not deg:
         return
     dir = -1 if deg < 0 else 1
     return deg + (dir * min / 60)
+
 
 def _parse_pfile_header_line1(line: str) -> dict:
     """Parse first row of the p file format which contains location and instrument information."""
@@ -473,6 +475,7 @@ def pcnv(
     path: Path,
     rename_variables: bool = True,
     generate_extra_variables: bool = True,
+    global_attributes: dict = None,
 ) -> xr.Dataset:
     """DFO NAFC pcnv file format parser
     The pcnv format  essentially a seabird cnv file format
@@ -484,6 +487,7 @@ def pcnv(
             DFO BODC names. Defaults to True.
         generate_extra_variables (bool, optional): Generate extra
             vocabulary variables. Defaults to True.
+        global_attributes (dict, optional): Global attributes to add to the dataset.
 
     Returns:
         xr.Dataset: parsed dataset
@@ -541,14 +545,15 @@ def pcnv(
         ),
         "sounder_depth": ds.attrs.pop("SOUNDING DEPTH (M)", None),
         "instrument": ds.attrs.pop("PROBE TYPE", None),
-        "xbt_number": _int(ds.attrs.pop("XBT NUMBER", None)),
+        "set_number": _int(ds.attrs.pop("XBT NUMBER", None))
+        or _int(ds.attrs.pop("CTD NUMBER", None)),
         "format": ds.attrs.pop("FORMAT", None),
         "commment": _pop_attribute_from(["COMMENTS", "COMMENTS (14 CHAR)"]),
         "trip_tag": ds.attrs.pop("TRIP TAG", None),
         "vnet": ds.attrs.pop("VNET", None),
         "do2": ds.attrs.pop("DO2", None),
         "bottles": _int(ds.attrs.pop("BOTTLES", None)),
-        "ctd_number": _int(ds.attrs.pop("CTD NUMBER", None)),
+        **(global_attributes or {}),
     }
 
     # review missing attributes and ignore optional ones
