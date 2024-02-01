@@ -506,11 +506,11 @@ class TestDFO_NAFC_pFiles:
     def test_p_file_ll_parser(self, deg, min, expected_result):
         result = dfo.nafc._parse_ll(deg, min)
         assert result == expected_result
-                
+
     @pytest.mark.parametrize(
         "deg,min,expected_result",
         [
-            (47, None,None),
+            (47, None, None),
             (None, 15, None),
             (None, None, None),
         ],
