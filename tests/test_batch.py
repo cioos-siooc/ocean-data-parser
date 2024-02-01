@@ -14,6 +14,7 @@ from ocean_data_parser.batch.convert import (
     load_config,
 )
 from ocean_data_parser.batch.utils import generate_output_path
+from ocean_data_parser.read import file
 
 MODULE_PATH = Path(__file__).parent
 TEST_REGISTRY_PATH = Path("tests/test_file_registry.csv")
@@ -399,3 +400,90 @@ class TestBatchConversion:
             Path(file)
             for file in glob("tests/parsers_test_files/dfo/odf/bio/CTD/*.ODF")
         }
+
+
+class TestGenerateOutputPath:
+    @staticmethod
+    @pytest.fixture
+    def ds_path():
+        return "tests/parsers_test_files/pme/minidot/2022-03-01 233900Z.txt"
+
+    @staticmethod
+    @pytest.fixture
+    def ds(ds_path):
+        ds = file(ds_path)
+        ds.attrs["source"] = ds_path
+        return ds
+
+    def test_output(self, ds, ds_path):
+        path = generate_output_path(ds)
+        assert isinstance(path, Path)
+        assert str(path) == ds_path + ".nc"
+
+    def test_output_with_file_name(self, ds, ds_path):
+        path = generate_output_path(ds, path=Path(ds_path).parent, file_name="test")
+        assert path == Path(ds_path).parent / "test.nc"
+
+    def test_output_with_file_name_and_path(self, ds):
+        path = generate_output_path(ds, file_name="test", path="tests")
+        assert str(path) == "tests/test.nc"
+
+    def test_output_with_file_name_and_path_and_suffix(self, ds):
+        path = generate_output_path(
+            ds, file_name="test", path="tests", file_suffix="_suffix"
+        )
+        assert str(path) == "tests/test_suffix.nc"
+
+    def test_output_with_file_name_and_path_and_prefix(self, ds):
+        path = generate_output_path(
+            ds, file_name="test", path="tests", file_preffix="prefix_"
+        )
+        assert str(path) == "tests/prefix_test.nc"
+
+    def test_output_with_file_name_and_path_and_suffix_and_preffix(self, ds):
+        path = generate_output_path(
+            ds,
+            file_name="test",
+            path="tests",
+            file_suffix="_suffix",
+            file_preffix="preffix_",
+        )
+        assert str(path) == "tests/preffix_test_suffix.nc"
+
+    def test_output_with_file_name_and_path_and_suffix_and_preffix_and_output_format(
+        self, ds
+    ):
+        path = generate_output_path(
+            ds,
+            file_name="test",
+            path="tests",
+            file_suffix="_suffix",
+            file_preffix="preffix_",
+            output_format=".csv",
+        )
+        assert str(path) == "tests/preffix_test_suffix.csv"
+
+    def test_output_with_global(self, ds):
+        ds.attrs["test_attr"] = "test_value"
+        path = generate_output_path(ds, path=".", file_name="test_{test_attr}")
+        assert str(path) == "test_test_value.nc"
+
+    def test_output_with_time_min(self, ds):
+        path = generate_output_path(ds, path=".", file_name="{time_min.year}/test")
+        assert str(path) == "2022/test.nc"
+
+    def test_output_with_time_max_year(self, ds):
+        path = generate_output_path(ds, path=".", file_name="{time_max.year}/test")
+        assert str(path) == "2022/test.nc"
+
+    def test_output_with_time_min_year(self, ds):
+        path = generate_output_path(ds, path=".", file_name="{time_min.year}/test")
+        assert str(path) == "2022/test.nc"
+
+    def test_output_with_time_max_date_format(self, ds):
+        path = generate_output_path(ds, path=".", file_name="{time_max:%Y-%m-%d}/test")
+        assert str(path) == "2022-03-02/test.nc"
+
+    def test_output_with_file_stem(self, ds, ds_path):
+        path = generate_output_path(ds, path=".", file_name="{source_stem}_2")
+        assert str(path) == Path(ds_path).stem + "_2.nc"

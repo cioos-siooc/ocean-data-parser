@@ -27,7 +27,7 @@ def generate_output_path(
             attributes accoding to the convention:
               - source_path: pathlib.Path of original parsed file filename
               - source_stem: original parsed file filename without the extension
-              - global attributes: `{global_asttribute}`
+              - global attributes: `{global_attribute}`
               - variable attributes: `{variable_[variable]_[attribute]}`
             ex: ".\\{program}\\{project}\\{source_stem}.nc"
         defaults (dict, optional): Placeholder for any global
@@ -78,6 +78,7 @@ def generate_output_path(
             if "time" in ds
             else {}
         ),
+        "pd": pd,
     }
 
     # Generate path and file name
