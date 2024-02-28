@@ -95,25 +95,17 @@ def superCO2(path: str, output: str = None) -> xarray.Dataset:
     df.columns = [_format_variables(var) for var in df.columns]
 
     # Generate time variable from Date and Time columns
-    df["time"] = (
-        pd.to_datetime(
-            (df["Date"] + " " + df["Time"]), format="%Y%m%d %H%M%S", utc=True
-        )
-        .dt.tz_convert(None)
-        .dt.to_pydatetime()
-    )
+    df["time"] = pd.to_datetime(
+        (df["Date"] + " " + df["Time"]), format="%Y%m%d %H%M%S", utc=True
+    ).dt.tz_convert(None)
 
     # Review day of the year variable
-    df["time_doy_utc"] = (
-        pd.to_datetime(
-            df["DOY_UTC"] - 1,
-            unit="D",
-            origin=pd.Timestamp(collected_beginning_date.year, 1, 1),
-            utc=True,
-        )
-        .dt.tz_convert(None)
-        .dt.to_pydatetime()
-    )
+    df["time_doy_utc"] = pd.to_datetime(
+        df["DOY_UTC"] - 1,
+        unit="D",
+        origin=pd.Timestamp(collected_beginning_date.year, 1, 1),
+        utc=True,
+    ).dt.tz_convert(None)
 
     # Compare DOY_UTC vs Date + Time
     dt = (df["time"] - df["time_doy_utc"]).mean().total_seconds()
@@ -176,7 +168,7 @@ def superCO2_notes(path: str) -> xarray.Dataset:
                 notes += [{**note_ensemble, **dict(zip(columns, data))}]
     # Convert notes to a dataframe
     df = pd.DataFrame.from_dict(notes)
-    df["time"] = pd.to_datetime(df["time"]).dt.to_pydatetime()
+    df["time"] = pd.to_datetime(df["time"])
     df = df.astype(dtype=notes_dtype_mapping, errors="ignore")
 
     ds = df.to_xarray()

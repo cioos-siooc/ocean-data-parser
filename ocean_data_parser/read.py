@@ -5,6 +5,7 @@ import logging
 import re
 from importlib import import_module
 from pathlib import Path
+from typing import Union
 
 from xarray import Dataset
 
@@ -55,6 +56,8 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
         parser = "amundsen.int_format"
     elif "*IOS HEADER VERSION" in header:
         parser = "dfo.ios.shell"
+    elif ext == "pcnv":
+        parser = "dfo.nafc.pcnv"
     elif ext[0] == "p" and "NAFC_Y2K_HEADER" in header:
         parser = "dfo.nafc.pfile"
     elif ext == "ODF" and re.search(r"COUNTRY_INSTITUTE_CODE\s*=\s*1810", header):
@@ -103,7 +106,7 @@ def import_parser(parser: str):
     return getattr(mod, filetype)
 
 
-def file(path: str, parser: str = None, **kwargs) -> Dataset:
+def file(path: str, parser: str = None, **kwargs: Union[str, int, float]) -> Dataset:
     """Load compatible file format as an xarray dataset.
 
     ```python

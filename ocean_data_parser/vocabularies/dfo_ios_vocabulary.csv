@@ -123,9 +123,9 @@ ctd,conductivity,s\/m|S\/m,,,Conductivity,sea_water_electrical_conductivity,S/m,
 ,event_number,None,,,Event Number,,,,,,,,
 ,event_number,,,,,,,,,,,,
 drf,flag:at_sea,None,,,Flag at Sea,,,,,,,,
-tob,flow_rate,L/min,,,Flow Rate,,L/min,,,,,,flow_rate
-tob,flow_rate,None,,,Flow Rate,,L/min,,,,,,flow_rate
-tob,flow_rate_fl,L/min,,,Flow Rate FL,,L/min,,,,,,flow_rate_fl
+tob,flow_rate,L/min,,,Flow rate through instrument,,L/min,,SDN:P01::INFLTF01,Flow rate through instrument,SDN:P06::ULPM,Litres per minute,INFLTF01
+tob,flow_rate,None,,,Flow rate through instrument,,L/min,,SDN:P01::INFLTF01,Flow rate through instrument,SDN:P06::ULPM,Litres per minute,INFLTF01
+tob,flow_rate_fl,L/min,,,Flow rate through instrument,,L/min,,SDN:P01::INFLTF01,Flow rate through instrument,SDN:P06::ULPM,Litres per minute,INFLTF01
 ,fluorescence,mg\/m\^3|ug\/L,,,,mass_concentration_of_chlorophyll_a_in_sea_water,mg/m^3,,SDN:P01::CPHLPR01,Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate >unknown phase] by in-situ chlorophyll fluorometer,,,CPHLPR01
 ,fluorescence,volts,,,Sea Water Fluorescence,,Volts,,,,,,
 ,fluorescence:calibrated,mg\/m\^3,,,Sea Water Calibrated Fluorescence,mass_concentration_of_chlorophyll_a_in_sea_water,mg/m^3,,SDN:P01::CPHLPS01,Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate >unknown phase] by in-situ chlorophyll fluorometer and calibration against sample data,,,CPHLPS01
@@ -388,8 +388,8 @@ ane,temperature:heat_index,deg c \(ITS\-90\)|deg C \(ITS9|deg C \(ITS-90\)|deg C
 ane,temperature:heat_index:inside,deg C,,,Temperature Heat Index Inside,,degrees_celsius,,,,,,
 ane,temperature:heat_index:inside,deg c \(ITS\-90\)|deg C \(ITS9|deg C \(ITS-90\)|deg C \(ITS90\),,,Temperature Heat Index Inside,,degrees_celsius (ITS-90),,,,,,
 ,temperature:high_res,deg C,,,Sea Water Temperature High Res,,degrees_celsius,,,,,,
-tob,temperature:intake,deg C \(ITS90\),,,Temperature Intake,,degrees_celsius (ITS-90),,,,,,
-tob,temperature:lab,deg C \(ITS90\),,,Temperature Lab,,degrees_celsius (ITS-90),,,,,,
+tob,temperature:intake,deg C \(ITS90\),,,Temperature of the water body by in-situ thermistor,sea_water_temperature,degrees_celsius (ITS-90),,SDN:P01::TEMPTC01,Temperature of the water body by in-situ thermistor,SDN:P06::UPAA,Degrees Celsius,TEMPTC01
+tob,temperature:lab,deg C \(ITS90\),,,Temperature of the water body by thermosalinograph,sea_water_temperature,degrees_celsius (ITS-90),,SDN:P01::TEMPSZ01,Temperature of the water body by thermosalinograph,SDN:P06::UPAA,Degrees Celsius,TEMPSZ01
 ,temperature:low_res,deg C \(IPTS68\),,,Sea Water Temperature Low Res,,degrees_celsius (IPTS-68),,,,,,
 ,temperature:oxygen,DEG C,,,Temperature Oxygen,temperature_of_sensor_for_oxygen_in_sea_water,degrees_celsius,,SDN:P01::OXYTAAOP,Temperature of oxygen determination by optode,,,OXYTAAOP
 ,temperature:primary,deg C (IPTS68),,lambda x: gsw.t90_from_t68(x),Temperature,sea_water_temperature,degrees_celsius (ITS-90),,SDN:P01::TEMPS901,Temperature (ITS-90) of the water body by CTD or STD,,,TEMPS901

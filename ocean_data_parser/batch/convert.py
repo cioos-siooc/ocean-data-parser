@@ -7,6 +7,7 @@ from pathlib import Path
 
 import click
 import pandas as pd
+import timeout_decorator
 from loguru import logger
 from tqdm import tqdm
 from xarray import Dataset
@@ -84,6 +85,7 @@ def get_parser_list(ctx, _, value):
 )
 @click.option(
     "--parser",
+    "-p",
     type=str,
     help=(
         "Parser used to parse the data. Default to auto detectection."
@@ -94,6 +96,8 @@ def get_parser_list(ctx, _, value):
 @click.option(
     "--overwrite",
     type=bool,
+    is_flag=True,
+    default=False,
     help="Overwrite already converted files when source file is changed.",
 )
 @click.option(
@@ -120,6 +124,7 @@ def get_parser_list(ctx, _, value):
 )
 @click.option(
     "--output-path",
+    "-o",
     type=click.Path(),
     help="Output directory where to save converted files.",
 )
@@ -165,21 +170,15 @@ def convert(**kwargs):
         click.echo("\n".join([f"{key}={value}" for key, value in kwargs.items()]))
         if kwargs["show_arguments"] == "stop":
             return
-    kwargs.pop("show_arguments", None)
-
-    kwargs = {
-        key: None if value == "None" else value
-        for key, value in kwargs.items()
-        if value
-    }
-
+    kwargs.pop("show_arguments")
+    kwargs.pop("new_config")
     BatchConversion(**kwargs).run()
 
 
 class BatchConversion:
     def __init__(self, config=None, **kwargs):
         self.config = self._get_config(config, **kwargs)
-        self.registry = FileConversionRegistry(**self.config["registry"])
+        self.registry = FileConversionRegistry(**self.config.get("registry", {}))
 
     @staticmethod
     def _get_config(config: dict = None, **kwargs) -> dict:
@@ -191,6 +190,10 @@ class BatchConversion:
         Returns:
             dict: combined configuration
         """
+        if config:
+            logger.info("Load configuration file and ignore other inputs")
+            return load_config(config) if isinstance(config, str) else config or {}
+
         logger.info("Load configuration={}, kwargs={}", config, kwargs)
         output_kwarg = {
             key[7:]: kwargs.pop(key)
@@ -204,11 +207,11 @@ class BatchConversion:
         }
         config = {
             **load_config(DEFAULT_CONFIG_PATH),
-            **(load_config(config) if isinstance(config, str) else config or {}),
             **kwargs,
         }
         config["output"].update(output_kwarg)
         config["registry"].update(registry_kwarg)
+
         return config
 
     def get_excluded_files(self) -> list:
@@ -221,7 +224,7 @@ class BatchConversion:
     def get_source_files(self) -> list:
         excluded_files = self.get_excluded_files()
         return [
-            file
+            Path(file)
             for file in glob(self.config["input_path"], recursive=True)
             if file not in excluded_files
         ]
@@ -235,7 +238,7 @@ class BatchConversion:
     def _convert(self, files: list) -> list:
         # Load parser and generate inputs to conversion scripts
         parser = self._get_parser()
-        inputs = ((file, parser, self.config) for file in files)
+        inputs = ((str(file), parser, self.config) for file in files)
         tqdm_parameters = dict(unit="file", total=len(files))
 
         # single pool processing
@@ -260,7 +263,11 @@ class BatchConversion:
 
     def run(self):
         """Run Batch conversion"""
-        logger.info("Run ocean-data-parser[{}] batch conversion", __version__)
+        logger.info(
+            "Run ocean-data-parser[{}] convert {}",
+            __version__,
+            self.config.get("name", ""),
+        )
         files = self.get_source_files()
         if not files:
             error_message = f"ERROR No files detected with {self.config['input_path']}"
@@ -268,7 +275,9 @@ class BatchConversion:
             sys.exit(error_message)
 
         self.registry.add(files)
-        files = self.registry.get_modified_source_files()
+        files = self.registry.get_modified_source_files(
+            overwrite=self.config["overwrite"]
+        )
         if not files:
             logger.info("No file to parse. Conversion completed")
             return self.registry
@@ -284,9 +293,10 @@ class BatchConversion:
             .set_index("sources")
             .replace({"": None})
         )
+        conversion_log.index = conversion_log.index.map(Path)
         self.registry.update_fields(files, dataframe=conversion_log)
         self.registry.save()
-        self.registry.summarize()
+        self.registry.summarize(sources=files)
         logger.info("Conversion completed")
         return self.registry
 
@@ -370,7 +380,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
             "source": file,
         }
     )
-    for var, attrs in config.get("variable_attributes").items():
+    for var, attrs in config.get("variable_attributes", {}).items():
         if var in ds:
             ds[var].attrs.update(attrs)
 
@@ -383,7 +393,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
             (ds["longitude"], ds["latitude"]), config["geographical_areas"]["regions"]
         )
     if (
-        config.get("reference_stations").get("path")
+        config.get("reference_stations", {}).get("path")
         and "latitude" in ds
         and "longitude" in ds
     ):
@@ -395,7 +405,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
         )
 
     # Processing
-    for pipe in config["xarray_pipe"]:
+    for pipe in config.get("xarray_pipe", []):
         ds = ds.pipe(*pipe)
         # TODO add to history
 

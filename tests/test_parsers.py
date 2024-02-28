@@ -1,10 +1,9 @@
-import logging
-import unittest
 from glob import glob
 
 import pandas as pd
 import pytest
 import xarray as xr
+from loguru import logger
 
 from ocean_data_parser.parsers import (
     amundsen,
@@ -22,59 +21,67 @@ from ocean_data_parser.parsers import (
 from ocean_data_parser.parsers.dfo.odf_source.attributes import _review_station
 from ocean_data_parser.parsers.dfo.odf_source.parser import _convert_odf_time
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger()
 
-
-def review_parsed_dataset(ds, source):
+def review_parsed_dataset(ds, source, caplog=None, max_log_levelno=30):
     assert isinstance(ds, xr.Dataset)
     assert ds.attrs, "dataset do not contains any global attributes"
     assert ds.variables, "Dataset has no variables."
-    ds.to_netcdf(source + "_test.nc")
+    if caplog:
+        for record in caplog.records:
+            assert record.levelno <= max_log_levelno, str(record) % record.args
+
+    ds.to_netcdf(source + "_test.nc", format="NETCDF4")
+
+
+@pytest.fixture
+def caplog(caplog):
+    handler_id = logger.add(caplog.handler, format="{message}")
+    yield caplog
+    logger.remove(handler_id)
 
 
 class TestPMEParsers:
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/pme/**/*.txt", recursive=True)
     )
-    def test_txt_parser(self, path):
+    def test_txt_parser(self, path, caplog):
         ds = pme.minidot_txt(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
 
 class TestSeabirdParsers:
     @pytest.mark.parametrize("path", glob("tests/parsers_test_files/seabird/**/*.btl"))
-    def test_btl_parser(self, path):
+    def test_btl_parser(self, path, caplog):
         ds = seabird.btl(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
     @pytest.mark.parametrize("path", glob("tests/parsers_test_files/seabird/**/*.cnv"))
-    def test_cnv_parser(self, path):
+    def test_cnv_parser(self, path, caplog):
         ds = seabird.cnv(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
 
 class TestVanEssenParsers:
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/van_essen_instruments/ctd_divers/*.MON")
     )
-    def test_mon_parser(self, path):
+    def test_mon_parser(self, path, caplog):
         ds = van_essen_instruments.mon(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
 
 class TestOnsetParser:
     @pytest.mark.parametrize("path", glob("tests/parsers_test_files/onset/**/*.csv"))
-    def test_csv_parser(self, path):
+    def test_csv_parser(self, path, caplog):
         ds = onset.csv(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
 
 class TestRBRParser:
     @pytest.mark.parametrize("path", glob("tests/parsers_test_files/rbr/rtext/*.txt"))
-    def test_reng_parser(self, path):
+    def test_reng_parser(self, path, caplog):
         ds = rbr.rtext(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
 
 class TestSunburstParsers:
@@ -86,16 +93,16 @@ class TestSunburstParsers:
             if "_notes_" not in path
         ],
     )
-    def test_sunburst_pCO2_parser(self, path):
+    def test_sunburst_pCO2_parser(self, path, caplog):
         ds = sunburst.superCO2(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/sunburst/superCO2/*pCO2_notes*.txt")
     )
-    def test_sunburst_pCO2_notes_parser(self, path):
+    def test_sunburst_pCO2_notes_parser(self, path, caplog):
         ds = sunburst.superCO2_notes(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
 
 class TestNMEAParser:
@@ -107,9 +114,9 @@ class TestNMEAParser:
             if not path.endswith(".nc")
         ],
     )
-    def test_all_files_in_nmea(self, path):
+    def test_all_files_in_nmea(self, path, caplog):
         ds = nmea.nmea_0183(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
 
 class TestAmundsenParser:
@@ -123,9 +130,9 @@ class TestAmundsenParser:
             if not path.endswith("info.int")
         ],
     )
-    def test_amundsen_int_parser(self, path):
+    def test_amundsen_int_parser(self, path, caplog):
         ds = amundsen.int_format(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
 
 class TestIOSShellParser:
@@ -300,10 +307,10 @@ class TestODFBIOParser:
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/dfo/odf/bio/**/CTD*.ODF", recursive=True)
     )
-    def test_bio_odf_ctd_parser(self, path):
+    def test_bio_odf_ctd_parser(self, path, caplog):
         """Test DFO BIO ODF Parser"""
         ds = dfo.odf.bio_odf(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
 
 class TestODFMLIParser:
@@ -318,10 +325,10 @@ class TestODFMLIParser:
             )
         ],
     )
-    def test_mli_profile_odf_parser(self, path):
+    def test_mli_profile_odf_parser(self, path, caplog):
         """Test DFO BIO ODF Parser"""
         ds = dfo.odf.mli_odf(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
     @pytest.mark.parametrize(
         "path",
@@ -334,10 +341,10 @@ class TestODFMLIParser:
             )
         ],
     )
-    def test_mli_timeseries_odf_parser(self, path):
+    def test_mli_timeseries_odf_parser(self, path, caplog):
         """Test DFO BIO ODF Parser"""
         ds = dfo.odf.mli_odf(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
     @pytest.mark.parametrize(
         "path",
@@ -350,10 +357,10 @@ class TestODFMLIParser:
             )
         ],
     )
-    def test_mli_trajectory_odf_parser(self, path):
+    def test_mli_trajectory_odf_parser(self, path, caplog):
         """Test DFO BIO ODF Parser"""
         ds = dfo.odf.mli_odf(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
     @pytest.mark.parametrize(
         "path",
@@ -362,10 +369,10 @@ class TestODFMLIParser:
             recursive=True,
         ),
     )
-    def test_mli_madcp_odf_parser(self, path):
+    def test_mli_madcp_odf_parser(self, path, caplog):
         """Test DFO BIO ODF Parser"""
         ds = dfo.odf.mli_odf(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
     @pytest.mark.parametrize(
         "path",
@@ -374,14 +381,32 @@ class TestODFMLIParser:
             recursive=True,
         ),
     )
-    def test_mli_plnkg_odf_parser(self, path):
+    def test_mli_plnkg_odf_parser(self, path, caplog):
         """Test DFO BIO ODF Parser"""
         ds = dfo.odf.mli_odf(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
+
+
+class TestDFO_NAFC_PcnvFiles:
+    @pytest.mark.parametrize(
+        "path",
+        [
+            file
+            for file in glob(
+                "tests/parsers_test_files/dfo/nafc/pcnv/ctd/*.pcnv",
+                recursive=True,
+            )
+            if not file.endswith(".nc")
+        ],
+    )
+    def test_dfo_nafc_ctd_pcnv(self, path, caplog):
+        """Test DFO NAFC Pcnv Parser"""
+        ds = dfo.nafc.pcnv(path)
+        review_parsed_dataset(ds, path, caplog)
 
 
 # pylint: disable=W0212
-class TestDFOpFiles:
+class TestDFO_NAFC_pFiles:
     @pytest.mark.parametrize(
         "path",
         [
@@ -393,22 +418,36 @@ class TestDFOpFiles:
             if not file.endswith(".nc")
         ],
     )
-    def test_dfo_nafc_pfile(self, path):
+    def test_dfo_nafc_pfile(self, path, caplog):
         """Test DFO BIO ODF Parser"""
         ds = dfo.nafc.pfile(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
-    def test_ship_code_mapping(self):
+    def test_dfo_nafc_platform_code_mapping(self):
         """Test ship code mapping"""
-        response = dfo.nafc._get_ship_code_metadata(55)
+        response = dfo.nafc._get_platform_by_nafc_platform_code(55)
         assert isinstance(response, dict)
         assert response["platform_name"] == "Discovery"
 
-    def test_unknown_ship_code_mapping(self):
+    def test_dfo_nafc_platform_code_unknown_mapping(self, caplog):
         """Test unknown ship code mapping"""
-        response = dfo.nafc._get_ship_code_metadata(9999)
+        response = dfo.nafc._get_platform_by_nafc_platform_code(9999)
         assert isinstance(response, dict)
         assert "platform_name" not in response
+        assert "Unknown dfo_nafc_platform_code=9999" in caplog.text
+
+    def test_dfo_nafc_platform_name_mapping(self):
+        """Test nafc platform name mapping"""
+        response = dfo.nafc._get_platform_by_nafc_platform_name("cab")
+        assert isinstance(response, dict)
+        assert response["platform_name"] == "John Cabot"
+
+    def test_dfo_nafc_platform_name_unknown_mapping(self, caplog):
+        """Test unknown ship name mapping"""
+        response = dfo.nafc._get_platform_by_nafc_platform_name("unk")
+        assert isinstance(response, dict)
+        assert "platform_name" not in response
+        assert "Unknown dfo_nafc_platform_name=unk" in caplog.text
 
     @pytest.mark.parametrize(
         "line",
@@ -454,59 +493,94 @@ class TestDFOpFiles:
             "56001001 7 08 0a    0999.1 003.8       08 01 18 10 01                          8"
         )
         assert isinstance(response, dict)
-        assert not response
-        assert f"Failed to parse {line_parser}" in caplog.text
+        assert response
+        assert f"Failed to convert: <{line_parser}" in caplog.text
+
+    @pytest.mark.parametrize(
+        "deg,min,expected_result",
+        [
+            (47, 15, 47.25),
+            (-47, 15, -47.25),
+        ],
+    )
+    def test_p_file_ll_parser(self, deg, min, expected_result):
+        result = dfo.nafc._parse_ll(deg, min)
+        assert result == expected_result
+
+    @pytest.mark.parametrize(
+        "deg,min,expected_result",
+        [
+            (47, None, None),
+            (None, 15, None),
+            (None, None, None),
+        ],
+    )
+    def test_p_file_ll_parser_missing_value(self, deg, min, expected_result):
+        result = dfo.nafc._parse_ll(deg, min)
+        assert result == expected_result
+
+    @pytest.mark.parametrize(
+        "deg,min,expected_result",
+        [
+            (47, None, None),
+            (None, 15, None),
+            (None, None, None),
+        ],
+    )
+    def test_p_file_ll_parser_missing_value(self, deg, min, expected_result):
+        result = dfo.nafc._parse_ll(deg, min)
+        assert result == expected_result
 
 
 class TestDfoIosShell:
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/dfo/ios/shell/cruise/CTD/*.ctd")
     )
-    def test_ios_shell_cruise_ctd_parser(self, path):
+    def test_ios_shell_cruise_ctd_parser(self, path, caplog):
         ds = dfo.ios.shell(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/dfo/ios/shell/cruise/BOT/*.bot")
     )
-    def test_ios_shell_cruise_bot_parser(self, path):
+    def test_ios_shell_cruise_bot_parser(self, path, caplog):
         ds = dfo.ios.shell(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/dfo/ios/shell/cruise/CHE/*.che")
     )
-    def test_ios_shell_cruise_che_parser(self, path):
+    def test_ios_shell_cruise_che_parser(self, path, caplog):
         ds = dfo.ios.shell(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/dfo/ios/shell/cruise/TOB/*.tob")
     )
-    def test_ios_shell_cruise_tob_parser(self, path):
+    def test_ios_shell_cruise_tob_parser(self, path, caplog):
         ds = dfo.ios.shell(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/dfo/ios/shell/mooring/CTD/*.ctd")
     )
-    def test_ios_shell_mooring_ctd_parser(self, path):
+    def test_ios_shell_mooring_ctd_parser(self, path, caplog):
         ds = dfo.ios.shell(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/dfo/ios/shell/mooring/CUR/*.CUR")
     )
-    def test_ios_shell_mooring_cur_parser(self, path):
+    def test_ios_shell_mooring_cur_parser(self, path, caplog):
         ds = dfo.ios.shell(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/dfo/ios/shell/DRF/*.drf")
     )
-    def test_ios_shell_drifter_parser(self, path):
+    def test_ios_shell_drifter_parser(self, path, caplog):
         ds = dfo.ios.shell(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
 
 class TestBlueElectricParse:
@@ -518,22 +592,22 @@ class TestBlueElectricParse:
             if "/log" not in path
         ],
     )
-    def test_blue_electric_csv_parser(self, path):
+    def test_blue_electric_csv_parser(self, path, caplog):
         ds = electricblue.csv(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
     @pytest.mark.parametrize(
         "path", glob("./tests/parsers_test_files/electricblue/log*.csv", recursive=True)
     )
-    def test_blue_electric_log_csv_parser(self, path):
+    def test_blue_electric_log_csv_parser(self, path, caplog):
         ds = electricblue.log_csv(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)
 
 
 class TestStarOddiParsers:
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/star_oddi/**/*.DAT", recursive=True)
     )
-    def test_star_oddi_dat_parser(self, path):
+    def test_star_oddi_dat_parser(self, path, caplog):
         ds = star_oddi.DAT(path)
-        review_parsed_dataset(ds, path)
+        review_parsed_dataset(ds, path, caplog)

@@ -39,14 +39,16 @@
     {
       "long_name": "Mean Temperature (ITS-90)",
       "units": "degC",
-      "standard_name": "sea_water_temperature"
+      "standard_name": "sea_water_temperature",
+      "accepted_units": "degC|degrees C"
     }
   ],
   "Tem_std": [
     {
       "long_name": "Standard Deviation Temperature (ITS-90)",
       "units": "degC",
-      "standard_name": "sea_water_temperature"
+      "standard_name": "sea_water_temperature",
+      "accepted_units": "degC|degrees C"
     }
   ],
   "Sal_mean": [
@@ -75,7 +77,7 @@
   "Temp": [
     {
       "long_name": "Temperature (ITS-90)",
-      "accepted_units": "degC|deg C",
+      "accepted_units": "degC|deg C|degrees C",
       "units": "degC",
       "standard_name": "sea_water_temperature"
     }
@@ -140,14 +142,16 @@
     {
       "long_name": "Air Temperature",
       "units": "degC",
-      "standard_name": "air_temperature"
+      "standard_name": "air_temperature",
+      "accepted_units": "degC|deg C"
     }
   ],
   "Dew point": [
     {
       "long_name": "Dew Point",
       "units": "degC",
-      "standard_name": "dew_point_temperature"
+      "standard_name": "dew_point_temperature",
+      "accepted_units": "degC|deg C"
     }
   ],
   "Pressure": [
@@ -223,7 +227,8 @@
     {
       "long_name": "Conservative Temperature (TEOS-10)",
       "units": "degC",
-      "standard_name": "sea_water_conservative_temperature"
+      "standard_name": "sea_water_conservative_temperature",
+      "accepted_units": "degC|deg C"
     }
   ],
   "Cont": [
@@ -231,7 +236,8 @@
       "long_name": "Conservative Temperature TEOS-10",
       "units": "degC",
       "standard_name": "sea_water_conservative_temperature",
-      "rename": "CONT"
+      "rename": "CONT",
+      "accepted_units": "degC|deg C"
     }
   ],
   "D_CT": [
@@ -241,11 +247,57 @@
       "standard_name": "sea_water_sigma_t"
     }
   ],
+  "D_ct": [
+    {
+      "long_name": "Density TEOS-10 ((S, T, P) - 1000)",
+      "units": "kg/m^3",
+      "standard_name": "sea_water_sigma_t",
+      "rename": "D_CT"
+    }
+  ],
+  "Sigt": [
+    {
+      "long_name": "Sigma-T (Rho(S, T, 0)-1000)",
+      "units": "kg/m^3",
+      "standard_name": "sea_water_sigma_t",
+      "rename": "sigt"
+    }
+  ],
+  "sigt": [
+    {
+      "long_name": "Density TEOS-10 ((S, T, P) - 1000)",
+      "units": "kg/m^3",
+      "standard_name": "sea_water_sigma_t"
+    }
+  ],
   "D0CT": [
     {
       "long_name": "Potential Density TEOS-10 ((S, T, 0) - 1000)",
       "units": "kg/m^3",
       "standard_name": "sea_water_sigma_theta"
+    }
+  ],
+  "D0ct": [
+    {
+      "long_name": "Density TEOS-10 (S, T, 0)",
+      "units": "kg/m^3",
+      "standard_name": "sea_water_sigma_theta",
+      "rename": "D0CT"
+    }
+  ],
+  "sigthe": [
+    {
+      "long_name": "Sigma-Theta (Rho(S, Theta, 0)-1000)",
+      "units": "kg/m^3",
+      "standard_name": "sea_water_sigma_theta"
+    }
+  ],
+  "Sigthe": [
+    {
+      "long_name": "Sigma-Theta (Rho(S, Theta, 0)-1000)",
+      "units": "kg/m^3",
+      "standard_name": "sea_water_sigma_theta",
+      "rename": "sigthe"
     }
   ],
   "Tem-TSG": [
@@ -304,34 +356,14 @@
       "standard_name": "square_of_brunt_vaisala_frequency_in_sea_water"
     }
   ],
-  "Sigt": [
-    {
-      "long_name": "Sigma-T (Rho(S, T, 0)-1000)",
-      "units": "kg/m^3",
-      "standard_name": "sea_water_sigma_t",
-      "rename": "sigt"
-    }
-  ],
-  "sigt": [
-    {
-      "long_name": "Density TEOS-10 ((S, T, P) - 1000)",
-      "units": "kg/m^3",
-      "standard_name": "sea_water_sigma_t"
-    }
-  ],
-  "D_ct": [
-    {
-      "long_name": "Density TEOS-10 ((S, T, P) - 1000)",
-      "units": "kg/m^3",
-      "standard_name": "sea_water_sigma_t"
-    }
-  ],
+
   "Theta": [
     {
       "long_name": "Potential Temperature",
       "units": "degC",
       "standard_name": "sea_water_potential_temperature",
-      "rename": "theta"
+      "rename": "theta",
+      "accepted_units": "degC|deg C"
     }
   ],
   "theta": [
@@ -339,28 +371,6 @@
       "long_name": "Potential Temperature",
       "units": "degC",
       "standard_name": "sea_water_potential_temperature"
-    }
-  ],
-  "sigthe": [
-    {
-      "long_name": "Sigma-Theta (Rho(S, Theta, 0)-1000)",
-      "units": "kg/m^3",
-      "standard_name": "sea_water_sigma_theta"
-    }
-  ],
-  "Sigthe": [
-    {
-      "long_name": "Sigma-Theta (Rho(S, Theta, 0)-1000)",
-      "units": "kg/m^3",
-      "standard_name": "sea_water_sigma_theta",
-      "rename": "sigthe"
-    }
-  ],
-  "D0ct": [
-    {
-      "long_name": "Density TEOS-10 (S, T, 0)",
-      "units": "kg/m^3",
-      "standard_name": "sea_water_sigma_theta"
     }
   ],
   "CDOM": [
@@ -420,7 +430,8 @@
     {
       "long_name": "Freezing Temperature",
       "units": "degC",
-      "standard_name": "freezing_temperature_of_sea_water"
+      "standard_name": "freezing_temperature_of_sea_water",
+      "accepted_units": "degC|deg C"
     }
   ],
   "FreezT-": [

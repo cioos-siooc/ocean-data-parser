@@ -557,7 +557,7 @@
         "long_name": "Density 2 [sigma-t]",
         "units": "kg/m^3",
         "standard_name": "sea_water_sigma_t",
-        "sdn_parameter_urn": "SDN:P01::SIGTEQST",
+        "sdn_parameter_urn": "SDN:P01::SIGTEQST2",
         "sdn_parameter_name": "Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm",
         "sdn_uom_urn": "SDN:P06::UKMC",
         "sdn_uom_name": "Kilograms per cubic metre",
@@ -845,7 +845,7 @@
         "sdn_uom_name": "per metre"
     },
     "wetCDOM": {
-        "long_name": "Fluorescence, Wet Labs Cdom",
+        "long_name": "Fluorescence, Wet Labs CDOM",
         "instrument": "WET Labs CDOM",
         "units": "mg/m^3",
         "bodc_alternative_label": "CDOM_fluor_WETLabs",
@@ -1593,7 +1593,10 @@
         "long_name": "Oxygen Raw, SBE 43, 2",
         "instrument": "SBE 43",
         "units": "V",
-        "comments": "2nd sensor"
+        "comments": "2nd sensor",
+        "sdn_uom_urn": "SDN:P06::UVLT",
+        "sdn_uom_name": "Volts",
+        "definition": "The raw output from a secondary dissolved oxygen sensor such as an SBE43 with output as a voltage related to DO concentration."
     },
     "sbeox1F": {
         "long_name": "Oxygen Raw, SBE 43, 2",
@@ -2130,15 +2133,15 @@
         "instrument": "Satlantic"
     },
     "ph": {
-        "long_name": "Ph"
+        "long_name": "pH"
     },
     "phInt": {
-        "long_name": "Ph Internal, Seafet",
+        "long_name": "pH Internal, Seafet",
         "instrument": "SeaFET",
         "comments": "Satlantic SeaFET pH"
     },
     "phExt": {
-        "long_name": "Ph External, Seafet",
+        "long_name": "pH External, Seafet",
         "instrument": "SeaFET",
         "comments": "Satlantic SeaFET pH"
     },
@@ -2731,6 +2734,11 @@
         "name": "sparPersatPerlog",
         "long_name": "Spar/Logarithmic, Satlantic",
         "instrument": "Satlantic"
+    },
+    "par/sat/log": {
+        "name": "parPersatPerlog",
+        "long_name": "PAR/Logarithmic, Satlantic",
+        "units":"umol photons/m^2/sec"
     },
     "specc": {
         "long_name": "Specific Conductance",

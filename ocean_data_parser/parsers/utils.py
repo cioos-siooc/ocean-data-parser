@@ -40,6 +40,14 @@ def get_history_handler():
     return nc_logger, nc_handler
 
 
+def _consider_attribute(value):
+    if value is pd.NA or value is None:
+        return False
+    if isinstance(value, (dict, tuple, list, np.ndarray)):
+        return len(value) > 0
+    return (pd.notnull(value) or value in (0, 0.0)) and value != ""
+
+
 def standardize_attributes(attrs) -> dict:
     """Standardize attributes with the following steps:
         - datetime, timestamps -> ISO format text string
@@ -55,15 +63,12 @@ def standardize_attributes(attrs) -> dict:
         dict: Standardized dictionary
     """
 
-    def _consider_attribute(value):
-        return isinstance(value, (dict, tuple, list, np.ndarray)) or (
-            (pd.notnull(value) or value in (0, 0.0)) and value != ""
-        )
-
     def _encode_attribute(value):
         if isinstance(value, dict):
             return json.dumps(value)
         elif isinstance(value, (list, tuple)):
+            if not value:
+                return
             if all(
                 isinstance(item, type(value[0])) for item in value
             ) and not isinstance(value[0], str):
