@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import Union
 
 import pandas as pd
-import timeout_decorator
 from tqdm import tqdm
 
 tqdm.pandas()
@@ -89,7 +88,6 @@ class FileConversionRegistry:
     def deepcopy(self):
         return copy.deepcopy(self)
 
-    @timeout_decorator.timeout(20, use_signals=False)
     def _get_hash(self, file: Union[str, Path]) -> str:
         """Retriveve file hash
 
