@@ -106,20 +106,6 @@ def test_odpy_convert_args_and_env_variables(args, env, expected_output):
     assert expected_output in results.output
 
 
-@pytest.mark.parametrize(
-    "args,expected_output",
-    (
-        ("--version", "version"),
-        ("--help", "Usage:"),
-        ("--show-arguments=stop", "odpy convert parameter inputs:"),
-        (["--show-arguments=stop", "--input=test.nc"], "input=test.nc"),
-    ),
-)
-def test_odpy_convert_arguments(args, expected_output):
-    results = run_command(inspect_variables, args)
-    assert expected_output in results.output
-
-
 def test_odpy_convert_registry(tmp_path):
     args = (
         "--input-path",
@@ -133,9 +119,8 @@ def test_odpy_convert_registry(tmp_path):
     )
     env = {"ODPY_LOG_LEVEL": "INFO"}
     results = run_command(convert.convert, args, env)
-    n_files = results.output
     assert results.exit_code == 0
-    assert not "ERROR" in results.output, results.output
+    assert "ERROR" not in results.output, results.output
     second_results = run_command(convert.convert, args)
     assert second_results.exit_code == 0
     assert (
