@@ -60,7 +60,10 @@ global_attributes = {
     "institution": "DFO IOS",
     "ices_edmo_code": 4155,
     "sdn_institution_urn": "SDN:EDMO::4155",
-    "infoUrl": "https://science.gc.ca/site/science/en/educational-resources/marine-and-freshwater-sciences/institute-ocean-sciences",
+    "infoUrl": (
+        "https://science.gc.ca/site/science/en/educational-resources"
+        "/marine-and-freshwater-sciences/institute-ocean-sciences"
+    ),
     "country": "Canada",
     "ioc_country_code": 18,
     "naming_authority": "ca.gc.ios",

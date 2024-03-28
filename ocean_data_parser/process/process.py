@@ -45,7 +45,7 @@ class Processing:
         # Add directory if doesn't exists
         if not name.parent.exists():
             name.parent.mkdir()
-        if overwrite == False and name.exists():
+        if not overwrite and name.exists():
             logger.warning("File already exists and won't be overwritten")
             return
 
