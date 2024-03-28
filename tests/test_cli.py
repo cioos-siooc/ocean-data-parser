@@ -3,9 +3,8 @@ import os
 import pytest
 from click.testing import CliRunner
 
-from ocean_data_parser import __version__, cli
+from ocean_data_parser import cli
 from ocean_data_parser.batch import convert
-from ocean_data_parser.inspect import inspect_variables
 
 
 def run_command(func, args, env=None, isolated_directory=None):

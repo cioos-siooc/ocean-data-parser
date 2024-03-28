@@ -24,7 +24,7 @@ import pandas as pd
 import xarray as xr
 from pytz import timezone
 
-from ocean_data_parser import __version__
+from ocean_data_parser._version import __version__
 from ocean_data_parser.vocabularies.load import dfo_ios_vocabulary
 
 logger = logging.getLogger(__name__)
@@ -883,7 +883,7 @@ class IosFile(object):
                 history += [f"rename variable '{chan}' -> 'Time'"]
                 rename_channels[id] = "Time"
             else:
-                logger.warning(f"Unkown date time channel %s", chan)
+                logger.warning("Unkown date time channel %s", chan)
 
         self.channels["Name"] = rename_channels
 

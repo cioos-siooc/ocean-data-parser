@@ -2,10 +2,10 @@ from pathlib import Path
 from time import sleep
 
 import pandas as pd
-import pytest
-from utils import compare_text_files
 
 from ocean_data_parser.batch.convert import FileConversionRegistry
+
+from .utils import compare_text_files
 
 PACKAGE_PATH = Path(__file__).parent
 TEST_REGISTRY_PATH = Path("tests/test_file_registry.csv")
