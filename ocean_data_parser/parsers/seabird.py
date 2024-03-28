@@ -1,5 +1,6 @@
 """
-This module contains all the different tools used to handle the different [Seabird Scientific](https://www.seabird.com) file formats.
+This module contains all the different tools used to handle
+the different [Seabird Scientific](https://www.seabird.com) file formats.
 
 """
 

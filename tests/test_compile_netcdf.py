@@ -2,9 +2,7 @@ import logging
 import unittest
 from pathlib import Path
 
-from click.testing import CliRunner
-
-from ocean_data_parser.inspect import inspect_variables, variables
+from ocean_data_parser.inspect import variables
 
 PACKAGE_PATH = Path(__file__).parent
 logger = logging.getLogger(__name__)

@@ -161,7 +161,11 @@ def variables(
     default=1,
     flag_value=os.cpu_count(),
     is_flag=False,
-    help=f"Load files in parallele with n processors. If the option is set as a flag, all the processors available (={os.cpu_count()}) will be used.",
+    help=(
+        "Load files in parallele with n processors. "
+        "If the option is set as a flag, "
+        f"all the processors available (={os.cpu_count()}) will be used."
+    ),
     show_default=True,
 )
 @click.option(

@@ -5,7 +5,6 @@
 
 Historically ArcticNet and the Amundsen Siences.
 """
-import json
 import logging
 import re
 

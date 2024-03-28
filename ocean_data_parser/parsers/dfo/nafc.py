@@ -126,7 +126,12 @@ def _parse_pfile_header_line1(line: str) -> dict:
         comment=line[62:78],
         card_1_id=line[79],
     )
-    # instrument = # Sxxxxx is a seabird ctd XBTxx is an XBT for an XBT, A&C= Sippican probe, A&B mk9, B&D= Spartan probe, C&D mk12
+    # instrument = #
+    #   Sxxxxx is a seabird ctd
+    #   XBTxx is an XBT for an XBT,
+    #   A&C= Sippican probe,
+    #   A&B mk9, B&D= Spartan probe,
+    #   C&D mk12
 
 
 def _parse_pfile_header_line2(line: str) -> dict:
