@@ -48,3 +48,5 @@ output:
   file_preffix: ""
   file_suffix: ""
   output_format: .nc
+
+summary: null # Path to save summary file (csv)

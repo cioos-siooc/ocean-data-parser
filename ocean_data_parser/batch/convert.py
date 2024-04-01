@@ -295,7 +295,7 @@ class BatchConversion:
         conversion_log.index = conversion_log.index.map(Path)
         self.registry.update_fields(files, dataframe=conversion_log)
         self.registry.save()
-        self.registry.summarize(sources=files)
+        self.registry.summarize(sources=files, output=self.config.get("summary"))
         logger.info("Conversion completed")
         return self.registry
 
