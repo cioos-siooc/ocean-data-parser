@@ -548,7 +548,7 @@ def pcnv(
             " and ".join(f"{key} == '{value}'" for key, value in kwargs.items())
         ).to_dict(orient="records")
 
-    ds = seabird.cnv(path)
+    ds = seabird.cnv(path,xml_parsing_error_level="WARNING")
 
     # Map global attributes
     ship_trip_seq_station = re.search(
