@@ -24,7 +24,7 @@ import pandas as pd
 import xarray as xr
 from pytz import timezone
 
-from ocean_data_parser import __version__
+from ocean_data_parser._version import __version__
 from ocean_data_parser.vocabularies.load import dfo_ios_vocabulary
 
 logger = logging.getLogger(__name__)
@@ -60,7 +60,10 @@ global_attributes = {
     "institution": "DFO IOS",
     "ices_edmo_code": 4155,
     "sdn_institution_urn": "SDN:EDMO::4155",
-    "infoUrl": "https://science.gc.ca/site/science/en/educational-resources/marine-and-freshwater-sciences/institute-ocean-sciences",
+    "infoUrl": (
+        "https://science.gc.ca/site/science/en/educational-resources"
+        "/marine-and-freshwater-sciences/institute-ocean-sciences"
+    ),
     "country": "Canada",
     "ioc_country_code": 18,
     "naming_authority": "ca.gc.ios",
@@ -883,7 +886,7 @@ class IosFile(object):
                 history += [f"rename variable '{chan}' -> 'Time'"]
                 rename_channels[id] = "Time"
             else:
-                logger.warning(f"Unkown date time channel %s", chan)
+                logger.warning("Unkown date time channel %s", chan)
 
         self.channels["Name"] = rename_channels
 

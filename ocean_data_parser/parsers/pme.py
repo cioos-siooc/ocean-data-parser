@@ -7,7 +7,6 @@
 import logging
 import re
 import warnings
-from datetime import datetime
 from typing import Union
 
 import pandas as pd
@@ -176,7 +175,7 @@ def minidot_txts(paths: Union[list, str]) -> xr.Dataset:
         xr.Dataset: xarray dataset which is compliant with CF-1.6
     """
     # If a single string is givien, assume only one path
-    if type(paths) is str:
+    if isinstance(paths, str):
         paths = [paths]
 
     datasets = []
