@@ -261,7 +261,9 @@ def _pfile_history_to_cf(lines: list) -> str:
     """
 
     # """Convert history to cf format: 2022-02-02T00:00:00Z - ..."""
-
+    if not lines:
+        return ""
+    
     history_timestamp = re.search(
         r"-- HISTORY --> (\w+ \w\w\w\s+\d+ \d{2}:\d{2}:\d{2} \d{4})", lines[0]
     )
