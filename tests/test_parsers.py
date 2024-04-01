@@ -404,6 +404,19 @@ class TestDFO_NAFC_PcnvFiles:
         ds = dfo.nafc.pcnv(path)
         review_parsed_dataset(ds, path, caplog)
 
+    def test_dfo_nafc_ctd_metqa(self):
+        """Test DFO NAFC Load metqa Parser"""
+        path = "tests/batch_tests_files/cab041_2023_metqa_updated.csv"
+        metqa = dfo.nafc._get_metqa_table(path)
+
+        assert isinstance(metqa, pd.DataFrame)
+        assert not metqa.empty
+        assert "station" in metqa.columns
+        assert "latitude" in metqa.columns
+        assert "longitude" in metqa.columns
+        assert metqa["latitude"].dtype == "float64"
+        assert metqa["longitude"].dtype == "float64"
+
 
 # pylint: disable=W0212
 class TestDFO_NAFC_pFiles:

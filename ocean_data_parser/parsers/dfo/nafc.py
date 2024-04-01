@@ -9,6 +9,7 @@ import inspect
 import re
 from pathlib import Path
 from typing import Union
+from functools import cache
 
 import gsw
 import numpy as np
@@ -524,6 +525,26 @@ def pfile(
 
     return ds
 
+@logger.catch
+def _parse_lat_lon(latlon: str) -> float:
+    """Parse latitude and longitude string to float"""
+    if not latlon:
+        logger.error("No latitude or longitude provided")
+        return
+    deg, min, dir = latlon.split(" ")
+    return (-1 if dir in ("S", "W") else 1) * (int(deg) + float(min) / 60)
+
+@logger.catch
+@cache
+def _get_metqa_table(file) -> pd.DataFrame:
+    """Load NAFC metqa table which contains each files assoicated weather data"""
+    df = pd.read_csv(file)
+    df.columns = [col.lower().split('[')[0].replace(' ','_') for col in df.columns]
+
+    df['latitude'] = df['latitude'].apply(lambda x: _parse_lat_lon(x))
+    df['longitude'] = df['longitude'].apply(lambda x: _parse_lat_lon(x))
+    return df
+
 
 @_catch_encoding_error
 def pcnv(
@@ -532,6 +553,7 @@ def pcnv(
     generate_extra_variables: bool = True,
     global_attributes: dict = None,
     encoding_errors: str = "strict",
+    match_metqa_table: bool = False,
 ) -> xr.Dataset:
     """DFO NAFC pcnv file format parser
     The pcnv format  essentially a seabird cnv file format
@@ -544,19 +566,13 @@ def pcnv(
         generate_extra_variables (bool, optional): Generate extra
             vocabulary variables. Defaults to True.
         global_attributes (dict, optional): Global attributes to add to the dataset.
+        match_metqa_table (bool, optional): Match metqa table to the file if 
+            available within same directory. Defaults to True.
 
     Returns:
         xr.Dataset: parsed dataset
     """
 
-    @logger.catch
-    def _parse_lat_lon(latlon: str) -> float:
-        """Parse latitude and longitude string to float"""
-        if not latlon:
-            logger.error("No latitude or longitude provided")
-            return
-        deg, min, dir = latlon.split(" ")
-        return (-1 if dir in ("S", "W") else 1) * (int(deg) + float(min) / 60)
 
     def _pop_attribute_from(names: list):
         """Pop attribute from dataset"""
@@ -613,6 +629,21 @@ def pcnv(
         "bottles": _int(ds.attrs.pop("BOTTLES", None)),
         **(global_attributes or {}),
     }
+
+    # load metqa table attributes
+    file_prefix = f"{attrs['dfo_nafc_platform_name']}{attrs['trip']}_{attrs['year']}"
+    metqa_file = path.parent.glob(f"{file_prefix}_metqa_*.csv")
+    if match_metqa_table and metqa_file:
+        metqa_table = _get_metqa_table(metqa_file)
+        metqa_table = metqa_table.query(f"station == '{file_prefix}_{attrs['station']:03g}'")
+        if not metqa_table.empty:
+            logger.debug("Matched metqa table={}", metqa_file)
+            attrs.update(metqa_table.iloc[0].to_dict())
+        else:
+            logger.warning("No station={} in metqa file={}", file_prefix, metqa_file)
+    elif match_metqa_table and not metqa_file:
+        logger.error("No metqa table file found={}", metqa_file)
+
 
     # review missing attributes and ignore optional ones
     for attr, value in attrs.items():
