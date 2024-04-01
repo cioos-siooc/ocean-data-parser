@@ -189,7 +189,7 @@ def _parse_pfile_header_line3(line: str) -> dict:
         waves_period=_int(line[39:41]),  # i2,
         waves_height=_float(line[42:44]),  # i2,
         swell_dir=_int(line[45:47]) * 10 if line[45:47].strip() else None,  # i2,
-        swell_period=_int(line[48:50]),  # i2,
+        swell_period=_int(line[48:50],null_values=('XX')),  # i2,
         swell_height=_float(line[51:53]),  # i2,
         ice_conc=_int(line[54]),  # i1,
         ice_stage=_int(line[56]),  # i1,
