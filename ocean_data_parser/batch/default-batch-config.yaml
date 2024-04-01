@@ -49,4 +49,4 @@ output:
   file_suffix: ""
   output_format: .nc
 
-summary: null # Path to save summary file (csv)
+summary: null  # Path to save summary file (csv)
