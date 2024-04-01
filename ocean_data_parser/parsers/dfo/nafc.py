@@ -360,6 +360,19 @@ def pfile(
 
         # Define each fields width based on the column names
         names = re.findall(r"\w+", previous_line)
+        if len(names) != len(set(names)):
+            # Rename duplicated names
+            logger.warning("Column names aren't unique: {}", names)
+            duplicated_names = []
+            for index,name in enumerate(names):
+                if names.count(name) > 1:
+                    new_name = f"{name}{names[:index].count(name)}"
+                    logger.warning("Rename {} to {}", name, new_name)
+                    duplicated_names += [new_name]
+                else:
+                    duplicated_names += [name]
+
+            names = duplicated_names
 
         # Read data section
         # TODO confirm that 5+12 character width is constant
@@ -570,6 +583,7 @@ def pcnv(
             "do2",
             "vnet",
             "comment",
+            "comments",
         ):
             logger.warning("Missing attribute={}", attr)
     ds.attrs.update(attrs)
