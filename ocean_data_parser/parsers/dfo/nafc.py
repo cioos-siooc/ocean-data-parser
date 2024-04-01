@@ -32,18 +32,23 @@ global_attributes = {
     "naming_authority": "ca.gc.nafc",
 }
 
+
 def _catch_encoding_error(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
         except UnicodeDecodeError as error:
             if "encoding_errors" in kwargs:
-                logger.warning("Encoding error was detected and will be ignored: {}",error)
+                logger.warning(
+                    "Encoding error was detected and will be ignored: {}", error
+                )
                 kwargs["encoding_errors"] = "replace"
             else:
                 raise error
             return func(*args, **kwargs)
-    return wrapper 
+
+    return wrapper
+
 
 def _traceback_error_line():
     current_frame = inspect.currentframe()
@@ -212,7 +217,7 @@ def _parse_pfile_header_line3(line: str) -> dict:
         air_wet_temp_celsius=_float(
             line[33:38], [-99.0, 99.9, -99.9, 999.9]
         ),  # f5.1,tem= p °C
-        waves_period=_int(line[39:41],null_values=["XX"],match=r"\s+(\d+)\.?"),  # i2,
+        waves_period=_int(line[39:41], null_values=["XX"], match=r"\s+(\d+)\.?"),  # i2,
         waves_height=_float(line[42:44]),  # i2,
         swell_dir=_int(line[45:47]) * 10 if line[45:47].strip() else None,  # i2,
         swell_period=_int(line[48:50], null_values=["XX"]),  # i2,
@@ -305,13 +310,14 @@ def _pfile_history_to_cf(lines: list) -> str:
 
     return "".join([f"{timestamp} - {line}" for line in lines[1:]])
 
+
 @_catch_encoding_error
 def pfile(
     file: str,
     encoding: str = "UTF-8",
     rename_variables: bool = True,
     generate_extra_variables: bool = True,
-    encoding_errors:str = "strict",
+    encoding_errors: str = "strict",
 ) -> xr.Dataset:
     """Parse DFO NAFC oceanography p-file format
 
@@ -518,6 +524,7 @@ def pfile(
 
     return ds
 
+
 @_catch_encoding_error
 def pcnv(
     path: Path,
@@ -563,7 +570,9 @@ def pcnv(
             " and ".join(f"{key} == '{value}'" for key, value in kwargs.items())
         ).to_dict(orient="records")
 
-    ds = seabird.cnv(path,encoding_errors=encoding_errors,xml_parsing_error_level="WARNING")
+    ds = seabird.cnv(
+        path, encoding_errors=encoding_errors, xml_parsing_error_level="WARNING"
+    )
 
     # Map global attributes
     ship_trip_seq_station = re.search(
