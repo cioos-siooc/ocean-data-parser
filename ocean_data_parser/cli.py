@@ -98,6 +98,14 @@ classic_logger = logging.getLogger()
     help="Delete log file after a given time period. Given value must be compatible with pandas.TimeDelta",
     default=None,
 )
+@click.option("--diagnose", is_flag=True, help="Run diagnose on error")
+@click.option("--backtrace", is_flag=True, help="Show stacktrace on error")
+@click.option(
+    "--backtrace-limit",
+    type=int,
+    default=5,
+    help="Limit stacktrace to N lines default=5",
+)
 @click.option(
     "--show-arguments",
     is_flag=True,
@@ -112,6 +120,9 @@ def main(
     log_file_level,
     log_file_rotation,
     log_file_retention,
+    backtrace,
+    backtrace_limit,
+    diagnose,
     show_arguments,
 ):
     """Ocean Data Parser command line main interface."""
@@ -119,8 +130,11 @@ def main(
     logger.add(
         sys.stderr,
         level=log_level,
+        backtrace=backtrace,
+        diagnose=diagnose,
         format=VERBOSE_LOG_FORMAT if verbose else LOG_FORMAT,
     )
+    sys.backtrace_limit = backtrace_limit
     if log_file:
         logger.add(
             log_file,
@@ -128,6 +142,8 @@ def main(
             format=log_format,
             rotation=log_file_rotation,
             retention=log_file_retention,
+            backtrace=backtrace,
+            diagnose=diagnose,
         )
 
     logger.info("ocean-data-parser[{}]: log-level={}", __version__, log_level)
