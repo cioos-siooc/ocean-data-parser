@@ -41,10 +41,22 @@ def _traceback_error_line():
     return f"<{previous_frame.f_code.co_name} line {line_number}>: {cmd_line}"
 
 
-def _int(value: str, null_values=None, level="WARNING") -> int:
+def _int(value: str, null_values=None, level="WARNING",match:str=None) -> int:
     """Attemp to convert string to int, return None if empty or failed"""
     if not value or not value.strip() or value in (null_values or []):
         return
+    if match:
+        new_value = re.match(match,value)
+        if new_value:
+            value = new_value.group(1)
+        else:
+            logger.log(
+                level,
+                "Failed to convert: {} => int('{}')",
+                _traceback_error_line(),
+                value,
+            )
+            return pd.NA
     try:
         value = int(value)
         if null_values and value in null_values:
@@ -120,7 +132,7 @@ def _parse_pfile_header_line1(line: str) -> dict:
         sounder_depth=_int(line[47:51], ("9999", "0000")),  # water depth in meters
         instrument=line[52:57],  # see note below
         set_number=_int(
-            line[58:61], ("SET", "xxx", "set", "XXX", "ctd", "xbt", "Stn")
+            line[58:61], ("SET", "xxx", "set", "XXX", "ctd", "xbt", "Stn"), match=r"(\d+)|[sS](\d+)|[sS][tT](\d+)|\#(\d+)"
         ),  # usually same as stn
         cast_type=line[62],  # V vertical profile T for tow
         comment=line[62:78],
