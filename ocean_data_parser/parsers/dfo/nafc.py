@@ -490,7 +490,7 @@ def pfile(
     if generate_extra_variables:
         for name, var, attrs in extra_vocabulary_variables:
             if name in ds:
-                logger.warning(
+                logger.info(
                     (
                         "Extra variable is already in dataset and will be ignored. "
                         "name={}, attrs={} is already in dataset and will be ignored"
