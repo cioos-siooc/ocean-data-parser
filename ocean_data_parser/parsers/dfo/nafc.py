@@ -41,12 +41,12 @@ def _traceback_error_line():
     return f"<{previous_frame.f_code.co_name} line {line_number}>: {cmd_line}"
 
 
-def _int(value: str, null_values=None, level="WARNING",match:str=None) -> int:
+def _int(value: str, null_values=None, level="WARNING", match: str = None) -> int:
     """Attemp to convert string to int, return None if empty or failed"""
     if not value or not value.strip() or value in (null_values or []):
         return
     if match:
-        new_value = re.match(match,value)
+        new_value = re.match(match, value)
         if new_value:
             value = new_value.group(1)
         else:
@@ -132,7 +132,9 @@ def _parse_pfile_header_line1(line: str) -> dict:
         sounder_depth=_int(line[47:51], ("9999", "0000")),  # water depth in meters
         instrument=line[52:57],  # see note below
         set_number=_int(
-            line[58:61], ("SET", "xxx", "set", "XXX", "ctd", "xbt", "Stn"), match=r"(\d+)|[sS](\d+)|[sS][tT](\d+)|\#(\d+)"
+            line[58:61],
+            ("SET", "xxx", "set", "XXX", "ctd", "xbt", "Stn"),
+            match=r"(\d+)|[sS](\d+)|[sS][tT](\d+)|\#(\d+)",
         ),  # usually same as stn
         cast_type=line[62],  # V vertical profile T for tow
         comment=line[62:78],
@@ -201,7 +203,7 @@ def _parse_pfile_header_line3(line: str) -> dict:
         waves_period=_int(line[39:41]),  # i2,
         waves_height=_float(line[42:44]),  # i2,
         swell_dir=_int(line[45:47]) * 10 if line[45:47].strip() else None,  # i2,
-        swell_period=_int(line[48:50],null_values=('XX')),  # i2,
+        swell_period=_int(line[48:50], null_values=("XX")),  # i2,
         swell_height=_float(line[51:53]),  # i2,
         ice_conc=_int(line[54]),  # i1,
         ice_stage=_int(line[56]),  # i1,
@@ -275,7 +277,7 @@ def _pfile_history_to_cf(lines: list) -> str:
     # """Convert history to cf format: 2022-02-02T00:00:00Z - ..."""
     if not lines:
         return ""
-    
+
     history_timestamp = re.search(
         r"-- HISTORY --> (\w+ \w\w\w\s+\d+ \d{2}:\d{2}:\d{2} \d{4})", lines[0]
     )
@@ -378,7 +380,7 @@ def pfile(
             # Rename duplicated names
             logger.warning("Column names aren't unique: {}", names)
             duplicated_names = []
-            for index,name in enumerate(names):
+            for index, name in enumerate(names):
                 if names.count(name) > 1:
                     new_name = f"{name}{names[:index].count(name)}"
                     logger.warning("Rename {} to {}", name, new_name)

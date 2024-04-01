@@ -173,6 +173,7 @@ def cli(**kwargs):
     kwargs.pop("new_config")
     convert(**kwargs)
 
+
 def convert(**kwargs):
     """Run ocean-data-parser conversion on given files."""
     BatchConversion(**kwargs).run()
