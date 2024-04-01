@@ -8,7 +8,7 @@ import click
 from loguru import logger
 
 from ocean_data_parser._version import __version__
-from ocean_data_parser.batch.convert import convert as convert
+from ocean_data_parser.batch.convert import cli as convert
 from ocean_data_parser.inspect import inspect_variables as inspect_variables
 
 LOG_LEVELS = ["TRACE", "DEBUG", "INFO", "WARNING", "ERROR"]
