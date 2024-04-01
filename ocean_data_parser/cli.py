@@ -8,7 +8,7 @@ import click
 from loguru import logger
 
 from ocean_data_parser._version import __version__
-from ocean_data_parser.batch.convert import cli as convert
+from ocean_data_parser.batch import convert
 from ocean_data_parser.inspect import inspect_variables as inspect_variables
 
 LOG_LEVELS = ["TRACE", "DEBUG", "INFO", "WARNING", "ERROR"]
@@ -139,7 +139,7 @@ def main(
         click.echo(f"log_file_level={log_file_level}")
 
 
-main.add_command(convert)
+main.add_command(convert.cli, name="convert")
 main.add_command(inspect_variables)
 
 if __name__ == "__main__":
