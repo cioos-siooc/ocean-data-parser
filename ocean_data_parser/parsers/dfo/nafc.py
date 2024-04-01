@@ -32,6 +32,18 @@ global_attributes = {
     "naming_authority": "ca.gc.nafc",
 }
 
+def _catch_encoding_error(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except UnicodeDecodeError as error:
+            if "encoding_errors" in kwargs:
+                logger.warning("Encoding error was detected and will be ignored: {}",error)
+                kwargs["encoding_errors"] = "replace"
+            else:
+                raise error
+            return func(*args, **kwargs)
+    return wrapper 
 
 def _traceback_error_line():
     current_frame = inspect.currentframe()
@@ -293,12 +305,13 @@ def _pfile_history_to_cf(lines: list) -> str:
 
     return "".join([f"{timestamp} - {line}" for line in lines[1:]])
 
-
+@_catch_encoding_error
 def pfile(
     file: str,
     encoding: str = "UTF-8",
     rename_variables: bool = True,
     generate_extra_variables: bool = True,
+    encoding_errors:str = "strict",
 ) -> xr.Dataset:
     """Parse DFO NAFC oceanography p-file format
 
@@ -352,7 +365,7 @@ def pfile(
     line = None
     header = {}
     section = None
-    with open(file, encoding=encoding) as file_handle:
+    with open(file, encoding=encoding, errors=encoding_errors) as file_handle:
         # Read the four first lines to extract the information
         original_header = [file_handle.readline() for _ in range(4)]
         metadata_lines = original_header[:4]
@@ -398,6 +411,7 @@ def pfile(
             engine="python",
             names=names,
             dtype={name: _get_dtype(name) for name in names},
+            encoding_errors=encoding_errors,
         ).to_xarray()
 
     # Review datatypes
@@ -504,12 +518,13 @@ def pfile(
 
     return ds
 
-
+@_catch_encoding_error
 def pcnv(
     path: Path,
     rename_variables: bool = True,
     generate_extra_variables: bool = True,
     global_attributes: dict = None,
+    encoding_errors: str = "strict",
 ) -> xr.Dataset:
     """DFO NAFC pcnv file format parser
     The pcnv format  essentially a seabird cnv file format
@@ -548,7 +563,7 @@ def pcnv(
             " and ".join(f"{key} == '{value}'" for key, value in kwargs.items())
         ).to_dict(orient="records")
 
-    ds = seabird.cnv(path,xml_parsing_error_level="WARNING")
+    ds = seabird.cnv(path,encoding_errors=encoding_errors,xml_parsing_error_level="WARNING")
 
     # Map global attributes
     ship_trip_seq_station = re.search(

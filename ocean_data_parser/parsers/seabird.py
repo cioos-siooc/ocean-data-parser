@@ -57,7 +57,7 @@ def _add_seabird_vocabulary(variable_attributes: dict) -> dict:
     return variable_attributes
 
 
-def cnv(file_path: str, encoding: str = "UTF-8", xml_parsing_error_level="ERROR") -> xarray.Dataset:
+def cnv(file_path: str, encoding: str = "UTF-8",encoding_errors="strict", xml_parsing_error_level="ERROR") -> xarray.Dataset:
     """Parse Seabird CNV format
 
     Args:
@@ -70,7 +70,7 @@ def cnv(file_path: str, encoding: str = "UTF-8", xml_parsing_error_level="ERROR"
     """
     """Import Seabird cnv format as an xarray dataset."""
 
-    with open(file_path, encoding=encoding) as f:
+    with open(file_path, encoding=encoding,errors=encoding_errors) as f:
         header = _parse_seabird_file_header(f,xml_parsing_error_level=xml_parsing_error_level)
         header["variables"] = _add_seabird_vocabulary(header["variables"])
         df = pd.read_csv(
@@ -81,6 +81,7 @@ def cnv(file_path: str, encoding: str = "UTF-8", xml_parsing_error_level="ERROR"
                 var: var_dtypes.get(var, float) for var in header["variables"].keys()
             },
             na_values=["-1.#IO", "-9.99E-29"],
+            encoding_errors=encoding_errors,
         )
 
     header = _generate_seabird_cf_history(header)
