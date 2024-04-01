@@ -134,7 +134,7 @@ def _parse_pfile_header_line1(line: str) -> dict:
         set_number=_int(
             line[58:61],
             ("SET", "xxx", "set", "XXX", "ctd", "xbt", "Stn"),
-            match=r"(\d+)|[sS](\d+)|[sS][tT](\d+)|\#(\d+)",
+            match=r"\s*(\d+)\.?|[sS](\d+)|[sS][tT](\d+)|\#(\d+)",
         ),  # usually same as stn
         cast_type=line[62],  # V vertical profile T for tow
         comment=line[62:78],
@@ -200,7 +200,7 @@ def _parse_pfile_header_line3(line: str) -> dict:
         air_wet_temp_celsius=_float(
             line[33:38], [-99.0, 99.9, -99.9, 999.9]
         ),  # f5.1,tem= p °C
-        waves_period=_int(line[39:41]),  # i2,
+        waves_period=_int(line[39:41],null_values=["XX"],match=r"\s+(\d+)\.?"),  # i2,
         waves_height=_float(line[42:44]),  # i2,
         swell_dir=_int(line[45:47]) * 10 if line[45:47].strip() else None,  # i2,
         swell_period=_int(line[48:50], null_values=["XX"]),  # i2,
