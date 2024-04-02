@@ -369,7 +369,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
 
     # Parse file to xarray
     logger.debug("Parse file: {}", file)
-    ds = read.file(file, parser=parser)
+    ds = read.file(file, parser=parser, **config.get("parser_kwargs", {}))
     if not isinstance(ds, Dataset):
         raise RuntimeError(
             f"{parser.__module__}{parser.__name__}:{file} "
