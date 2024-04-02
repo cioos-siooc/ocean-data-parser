@@ -118,18 +118,6 @@ def _float(value: str, null_values=None, level="WARNING") -> float:
         return pd.NA
 
 
-def to_datetime(value: str) -> pd.Timestamp:
-    try:
-        return pd.to_datetime(value, format="%Y-%m-%d %H:%M", utc=True)
-    except (pd.errors.ParserError, ValueError):
-        logger.error(
-            "Failed to convert: {} => pd.to_datetime('{}', format='%Y-%m-%d %H:%M', utc=True)",
-            _traceback_error_line(),
-            value,
-        )
-        return pd.NaT
-
-
 def _get_dtype(var: str):
     return int if var == "scan" else float
 
@@ -155,7 +143,7 @@ def _parse_pfile_header_line1(line: str) -> dict:
         longitude=_parse_ll(
             _float(line[19:23], level="ERROR"), _float(line[24:29], level="ERROR")
         ),
-        time=to_datetime(line[30:46]),
+        time=pd.to_datetime(line[30:46], format="%Y-%m-%d %H:%M", utc=True),
         sounder_depth=_int(line[47:51], ("9999", "0000")),  # water depth in meters
         instrument=line[52:57],  # see note below
         set_number=_int(
