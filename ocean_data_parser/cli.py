@@ -75,6 +75,7 @@ classic_logger = logging.getLogger()
     help="Logger level used",
     default="INFO",
     envvar="ODPY_LOG_LEVEL",
+    show_default=True,
 )
 @click.option(
     "--log-file", type=click.Path(), help="Log to a file.", envvar="ODPY_LOG_FILE"
@@ -98,13 +99,26 @@ classic_logger = logging.getLogger()
     help="Delete log file after a given time period. Given value must be compatible with pandas.TimeDelta",
     default=None,
 )
-@click.option("--diagnose", is_flag=True, help="Run diagnose on error")
-@click.option("--backtrace", is_flag=True, help="Show stacktrace on error")
+@click.option(
+    "--diagnose/--no-diagnose",
+    is_flag=True,
+    default=True,
+    help="Run diagnose on error",
+    show_default=True,
+)
+@click.option(
+    "--backtrace/--no-backtrace",
+    is_flag=True,
+    default=True,
+    help="Show stacktrace on error",
+    show_default=True,
+)
 @click.option(
     "--backtrace-limit",
     type=int,
     default=5,
-    help="Limit stacktrace to N lines default=5",
+    help="Limit stacktrace to N lines",
+    show_default=True,
 )
 @click.option(
     "--show-arguments",
