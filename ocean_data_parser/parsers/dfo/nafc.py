@@ -73,7 +73,7 @@ def _int(value: str, null_values=None, level="WARNING", match: str = None) -> in
     if match:
         new_value = re.match(match, value)
         if new_value:
-            value = new_value.group(1)
+            value = [item for item in new_value.groups() if item][0]
         else:
             logger.log(
                 level,
@@ -82,7 +82,7 @@ def _int(value: str, null_values=None, level="WARNING", match: str = None) -> in
                 value,
             )
             return pd.NA
-    if null_values and value in null_values:
+    if (null_values and value in null_values):
         return pd.NA
     elif value in ("0.", ".0"):
         return 0
