@@ -7,9 +7,9 @@ North Atlantic Fisheries Centre
 """
 import inspect
 import re
+from functools import lru_cache
 from pathlib import Path
 from typing import Union
-from functools import lru_cache
 
 import gsw
 import numpy as np
@@ -56,6 +56,7 @@ METQA_DTYPES = {
     "ice_bergs": pd.Int64Dtype(),
     "ice_sit_and_trend": pd.Int64Dtype(),
 }
+
 
 def _traceback_error_line():
     current_frame = inspect.currentframe()
@@ -546,14 +547,17 @@ def _parse_lat_lon(latlon: str) -> float:
 @lru_cache
 def _get_metqa_table(file) -> pd.DataFrame:
     """Load NAFC metqa table which contains each files assoicated weather data"""
-    df = pd.read_csv(file,sep='\s*\,')
-    df.columns = [col.lower().split("[")[0].strip().replace(" ", "_") for col in df.columns]
+    df = pd.read_csv(file, sep="\s*\,", engine="python")
+    df.columns = [
+        col.lower().split("[")[0].strip().replace(" ", "_") for col in df.columns
+    ]
     df["time"] = pd.to_datetime(df["date"] + " " + df["time"], utc=True)
     df["latitude"] = df["latitude"].apply(lambda x: _parse_lat_lon(x))
     df["longitude"] = df["longitude"].apply(lambda x: _parse_lat_lon(x))
     df = df.drop(columns=["date"])
     df = df.rename(columns=METQA_ATTRS_MAPPING).astype(METQA_DTYPES)
     return df
+
 
 def add_metqa_info_to_pcvn(file: Path) -> Path:
     """Find the matching metqa table to the pcnv file"""
@@ -613,7 +617,10 @@ def pcnv(
 
     path = Path(path)
     ds = seabird.cnv(
-        path, encoding=encoding ,encoding_errors=encoding_errors, xml_parsing_error_level="WARNING"
+        path,
+        encoding=encoding,
+        encoding_errors=encoding_errors,
+        xml_parsing_error_level="WARNING",
     )
 
     # Map global attributes

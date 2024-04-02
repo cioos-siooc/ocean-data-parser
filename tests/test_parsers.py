@@ -403,6 +403,7 @@ class TestDFO_NAFC_PcnvFiles:
         """Test DFO NAFC Pcnv Parser"""
         ds = dfo.nafc.pcnv(path)
         review_parsed_dataset(ds, path, caplog)
+
     @pytest.mark.parametrize(
         "path",
         [
@@ -414,7 +415,7 @@ class TestDFO_NAFC_PcnvFiles:
             if not file.endswith(".nc")
         ],
     )
-    def test_dfo_nafc_ctd_metqa(self,path):
+    def test_dfo_nafc_ctd_metqa(self, path):
         """Test DFO NAFC Load metqa Parser"""
         metqa = dfo.nafc._get_metqa_table(path)
 
@@ -425,7 +426,7 @@ class TestDFO_NAFC_PcnvFiles:
         assert "longitude" in metqa.columns
         assert metqa["latitude"].dtype == "float64"
         assert metqa["longitude"].dtype == "float64"
-    
+
     @pytest.mark.parametrize(
         "path",
         ["tests/parsers_test_files/dfo/nafc/pcnv/ctd/cab041_2023_012.pcnv"],
@@ -434,10 +435,8 @@ class TestDFO_NAFC_PcnvFiles:
         """Test DFO NAFC Pcnv Parser with metqa file"""
         ds = dfo.nafc.pcnv(path, match_metqa_table=True)
         review_parsed_dataset(ds, path)
-        assert ds.attrs['swell_height']
-        assert ds.attrs['swell_dir']
-
-
+        assert ds.attrs["swell_height"]
+        assert ds.attrs["swell_dir"]
 
 
 # pylint: disable=W0212
