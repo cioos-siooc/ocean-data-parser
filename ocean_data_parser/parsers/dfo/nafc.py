@@ -82,7 +82,7 @@ def _int(value: str, null_values=None, level="WARNING", match: str = None) -> in
                 value,
             )
             return pd.NA
-    if (null_values and value in null_values):
+    if null_values and value in null_values:
         return pd.NA
     elif value in ("0.", ".0"):
         return 0
@@ -562,7 +562,9 @@ def _get_metqa_table(file) -> pd.DataFrame:
 
 def add_metqa_info_to_pcvn(file: Path) -> Path:
     """Find the matching metqa table to the pcnv file"""
-    metqa_file = list(file.parent.glob(f"{file.stem.rsplit('_',1)[0]}_metqa_*.csv"))
+
+    glob_expression = f"{file.stem.rsplit('_',1)[0]}_metqa_*.csv"
+    metqa_file = list(file.parent.glob(glob_expression))
     if metqa_file and len(metqa_file) == 1:
         df = _get_metqa_table(metqa_file[0])
         metadata = df.query(f"station == '{file.stem}'")
@@ -571,9 +573,16 @@ def add_metqa_info_to_pcvn(file: Path) -> Path:
             return {}
         return metadata.iloc[0].dropna().to_dict()
     elif metqa_file and len(metqa_file) > 1:
-        logger.error("Multiple metqa files found={}", metqa_file)
-
-    logger.warning("No metqa table file found={}", metqa_file)
+        logger.error(
+            "Multiple metqa files found={} for path={},glob={}",
+            metqa_file,
+            file.parent,
+            glob_expression,
+        )
+    else:
+        logger.warning(
+            "No metqa table file path={},glob={}", file.parent, glob_expression
+        )
     return {}
 
 
@@ -609,7 +618,7 @@ def pcnv(
         for name in names:
             if name in ds.attrs:
                 return ds.attrs.pop(name)
-            
+
         if "comment" not in names[0].lower():
             logger.error("No matching attribute found in {}", names)
 
