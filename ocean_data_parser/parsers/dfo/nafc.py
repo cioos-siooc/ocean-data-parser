@@ -82,14 +82,16 @@ def _int(value: str, null_values=None, level="WARNING", match: str = None) -> in
                 value,
             )
             return pd.NA
+    if null_values and value in null_values:
+        return pd.NA
+    elif value in ("0.", ".0"):
+        return 0
     try:
         value = int(value)
         if null_values and value in null_values:
-            return
-        return value
+            return pd.NA
+        return int(value)
     except ValueError:
-        if value in ("0.", ".0"):
-            return 0
         logger.log(
             level,
             "Failed to convert: {} => int('{}')",
@@ -158,7 +160,7 @@ def _parse_pfile_header_line1(line: str) -> dict:
         instrument=line[52:57],  # see note below
         set_number=_int(
             line[58:61],
-            ("SET", "xxx", "set", "XXX", "ctd", "xbt", "Stn", "stn"),
+            ("SET", "xxx", "set", "XXX", "ctd", "xbt", "Stn", "STN", "stn", "nil"),
             match=r"\s*(\d+)\.?|[sS](\d+)|[sS][tT](\d+)|\#(\d+)",
         ),  # usually same as stn
         cast_type=line[62],  # V vertical profile T for tow
@@ -212,7 +214,7 @@ def _parse_pfile_header_line3(line: str) -> dict:
         # ship_code=line[:2],
         # trip=_int(line[2:5]),
         # station=_int(line[5:8]),
-        cloud=_int(line[9], null_values=["x", "-", "/"]),  # i1,
+        cloud=_int(line[9], null_values=["x", "-", "/", "."]),  # i1,
         wind_dir=_int(line[11:13]) * 10
         if line[11:13].strip() and line[11:13] != "99"
         else None,  # in 10 degree steps (eg 270 is=27)
