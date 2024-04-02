@@ -524,6 +524,7 @@ def pfile(
 
     return ds
 
+
 @logger.catch
 def _parse_lat_lon(latlon: str) -> float:
     """Parse latitude and longitude string to float"""
@@ -533,15 +534,16 @@ def _parse_lat_lon(latlon: str) -> float:
     deg, min, dir = latlon.split(" ")
     return (-1 if dir in ("S", "W") else 1) * (int(deg) + float(min) / 60)
 
+
 @logger.catch
 @lru_cache
 def _get_metqa_table(file) -> pd.DataFrame:
     """Load NAFC metqa table which contains each files assoicated weather data"""
     df = pd.read_csv(file)
-    df.columns = [col.lower().split('[')[0].replace(' ','_') for col in df.columns]
+    df.columns = [col.lower().split("[")[0].replace(" ", "_") for col in df.columns]
 
-    df['latitude'] = df['latitude'].apply(lambda x: _parse_lat_lon(x))
-    df['longitude'] = df['longitude'].apply(lambda x: _parse_lat_lon(x))
+    df["latitude"] = df["latitude"].apply(lambda x: _parse_lat_lon(x))
+    df["longitude"] = df["longitude"].apply(lambda x: _parse_lat_lon(x))
     return df
 
 
@@ -564,13 +566,12 @@ def pcnv(
         generate_extra_variables (bool, optional): Generate extra
             vocabulary variables. Defaults to True.
         global_attributes (dict, optional): Global attributes to add to the dataset.
-        match_metqa_table (bool, optional): Match metqa table to the file if 
+        match_metqa_table (bool, optional): Match metqa table to the file if
             available within same directory. Defaults to True.
 
     Returns:
         xr.Dataset: parsed dataset
     """
-
 
     def _pop_attribute_from(names: list):
         """Pop attribute from dataset"""
@@ -583,7 +584,7 @@ def pcnv(
         return p_file_vocabulary.query(
             " and ".join(f"{key} == '{value}'" for key, value in kwargs.items())
         ).to_dict(orient="records")
-    
+
     path = Path(path)
     ds = seabird.cnv(
         path, encoding_errors=encoding_errors, xml_parsing_error_level="WARNING"
@@ -609,7 +610,9 @@ def pcnv(
         "station": _int(ship_trip_seq_station["stn"]),
         "time": pd.to_datetime(ds.attrs.pop("DATE/TIME"), utc=True),
         "latitude": _parse_lat_lon(
-            _pop_attribute_from(["LATITUDE", "LATITUDE XX XX.XX","LATITUDE XX XX.XX N"])
+            _pop_attribute_from(
+                ["LATITUDE", "LATITUDE XX XX.XX", "LATITUDE XX XX.XX N"]
+            )
         ),
         "longitude": _parse_lat_lon(
             _pop_attribute_from(
@@ -634,7 +637,9 @@ def pcnv(
     metqa_file = path.parent.glob(f"{file_prefix}_metqa_*.csv")
     if match_metqa_table and metqa_file:
         metqa_table = _get_metqa_table(metqa_file)
-        metqa_table = metqa_table.query(f"station == '{file_prefix}_{attrs['station']:03g}'")
+        metqa_table = metqa_table.query(
+            f"station == '{file_prefix}_{attrs['station']:03g}'"
+        )
         if not metqa_table.empty:
             logger.debug("Matched metqa table={}", metqa_file)
             attrs.update(metqa_table.iloc[0].to_dict())
@@ -642,7 +647,6 @@ def pcnv(
             logger.warning("No station={} in metqa file={}", file_prefix, metqa_file)
     elif match_metqa_table and not metqa_file:
         logger.error("No metqa table file found={}", metqa_file)
-
 
     # review missing attributes and ignore optional ones
     for attr, value in attrs.items():
