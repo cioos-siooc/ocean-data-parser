@@ -609,7 +609,9 @@ def pcnv(
         for name in names:
             if name in ds.attrs:
                 return ds.attrs.pop(name)
-        logger.error("No matching attribute found in {}", names)
+            
+        if "comment" not in names[0].lower():
+            logger.error("No matching attribute found in {}", names)
 
     def get_vocabulary(**kwargs):
         return p_file_vocabulary.query(
