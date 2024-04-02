@@ -33,23 +33,29 @@ global_attributes = {
     "naming_authority": "ca.gc.nafc",
 }
 
+METQA_ATTRS_MAPPING = {
+    "wind_speed": "wind_speed_knots",
+    "bar_pressure": "pressure_bars",
+    "air_temp_dry": "air_dry_temp_celsius",
+    "air_temp_wet": "air_wet_temp_celsius",
+    "bergs": "ice_bergs",
+    "sit_and_trend": "ice_sit_and_trend",
+}
 
-def _catch_encoding_error(func):
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except UnicodeDecodeError as error:
-            if "encoding_errors" in kwargs:
-                logger.warning(
-                    "Encoding error was detected and will be ignored: {}", error
-                )
-                kwargs["encoding_errors"] = "replace"
-            else:
-                raise error
-            return func(*args, **kwargs)
-
-    return wrapper
-
+METQA_DTYPES = {
+    "wind_speed_knots": pd.Int64Dtype(),
+    "wind_dir": pd.Int64Dtype(),
+    "pressure_bars": float,
+    "air_dry_temp_celsius": float,
+    "air_wet_temp_celsius": float,
+    "swell_dir": pd.Int64Dtype(),
+    "swell_period": pd.Int64Dtype(),
+    "swell_height": float,
+    "ice_conc": pd.Int64Dtype(),
+    "ice_stage": pd.Int64Dtype(),
+    "ice_bergs": pd.Int64Dtype(),
+    "ice_sit_and_trend": pd.Int64Dtype(),
+}
 
 def _traceback_error_line():
     current_frame = inspect.currentframe()
@@ -226,7 +232,7 @@ def _parse_pfile_header_line3(line: str) -> dict:
         ice_conc=_int(line[54]),  # i1,
         ice_stage=_int(line[56]),  # i1,
         ice_bergs=_int(line[58]),  # i1,
-        ice_SandT=_int(line[60]),  # i1,
+        ice_sit_and_trend=_int(line[60]),  # i1,
         card_8_id=_int(line[79]),  # i1 ,=8
     )
 
@@ -325,7 +331,8 @@ def pfile(
     to the pfile documentation,:
 
     1. NAFC_Y2K_HEADER
-    2. 3 single line 80 byte headers, the formats of which is described on an attached page.
+    2. 3 single line 80 byte headers, the formats of which is
+        described on an attached page.
     3. A variable length block of processing history information
     4. A line of channel name identifiers
     5. A start of data flag line -- DATA --
@@ -421,9 +428,9 @@ def pfile(
         ).to_xarray()
 
     # Review datatypes
-    if any([dtype == object for var, dtype in ds.dtypes.items()]):
+    if any([dtype == object for _, dtype in ds.dtypes.items()]):
         logger.warning(
-            "Some columns dtype=object which suggest that the file data wasn't correctely parsed."
+            "Some columns dtype=object suggest the file data wasn't correctely parsed."
         )
 
     # Review metadata
@@ -539,12 +546,30 @@ def _parse_lat_lon(latlon: str) -> float:
 @lru_cache
 def _get_metqa_table(file) -> pd.DataFrame:
     """Load NAFC metqa table which contains each files assoicated weather data"""
-    df = pd.read_csv(file)
-    df.columns = [col.lower().split("[")[0].replace(" ", "_") for col in df.columns]
-
+    df = pd.read_csv(file,sep='\s*\,')
+    df.columns = [col.lower().split("[")[0].strip().replace(" ", "_") for col in df.columns]
+    df["time"] = pd.to_datetime(df["date"] + " " + df["time"], utc=True)
     df["latitude"] = df["latitude"].apply(lambda x: _parse_lat_lon(x))
     df["longitude"] = df["longitude"].apply(lambda x: _parse_lat_lon(x))
+    df = df.drop(columns=["date"])
+    df = df.rename(columns=METQA_ATTRS_MAPPING).astype(METQA_DTYPES)
     return df
+
+def add_metqa_info_to_pcvn(file: Path) -> Path:
+    """Find the matching metqa table to the pcnv file"""
+    metqa_file = list(file.parent.glob(f"{file.stem.rsplit('_',1)[0]}_metqa_*.csv"))
+    if metqa_file and len(metqa_file) == 1:
+        df = _get_metqa_table(metqa_file[0])
+        metadata = df.query(f"station == '{file.stem}'")
+        if metadata.empty:
+            logger.warning("No station={} in metqa file={}", file.stem, metqa_file)
+            return {}
+        return metadata.iloc[0].dropna().to_dict()
+    elif metqa_file and len(metqa_file) > 1:
+        logger.error("Multiple metqa files found={}", metqa_file)
+
+    logger.warning("No metqa table file found={}", metqa_file)
+    return {}
 
 
 def pcnv(
@@ -552,6 +577,7 @@ def pcnv(
     rename_variables: bool = True,
     generate_extra_variables: bool = True,
     global_attributes: dict = None,
+    encoding: str = "UTF-8",
     encoding_errors: str = "strict",
     match_metqa_table: bool = False,
 ) -> xr.Dataset:
@@ -587,7 +613,7 @@ def pcnv(
 
     path = Path(path)
     ds = seabird.cnv(
-        path, encoding_errors=encoding_errors, xml_parsing_error_level="WARNING"
+        path, encoding=encoding ,encoding_errors=encoding_errors, xml_parsing_error_level="WARNING"
     )
 
     # Map global attributes
@@ -633,20 +659,8 @@ def pcnv(
     }
 
     # load metqa table attributes
-    file_prefix = f"{attrs['dfo_nafc_platform_name']}{attrs['trip']}_{attrs['year']}"
-    metqa_file = path.parent.glob(f"{file_prefix}_metqa_*.csv")
-    if match_metqa_table and metqa_file:
-        metqa_table = _get_metqa_table(metqa_file)
-        metqa_table = metqa_table.query(
-            f"station == '{file_prefix}_{attrs['station']:03g}'"
-        )
-        if not metqa_table.empty:
-            logger.debug("Matched metqa table={}", metqa_file)
-            attrs.update(metqa_table.iloc[0].to_dict())
-        else:
-            logger.warning("No station={} in metqa file={}", file_prefix, metqa_file)
-    elif match_metqa_table and not metqa_file:
-        logger.error("No metqa table file found={}", metqa_file)
+    if match_metqa_table:
+        attrs.update(add_metqa_info_to_pcvn(path))
 
     # review missing attributes and ignore optional ones
     for attr, value in attrs.items():
