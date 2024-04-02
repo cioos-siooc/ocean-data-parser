@@ -9,7 +9,7 @@ import inspect
 import re
 from pathlib import Path
 from typing import Union
-from functools import cache
+from functools import lru_cache
 
 import gsw
 import numpy as np
@@ -535,7 +535,7 @@ def _parse_lat_lon(latlon: str) -> float:
     return (-1 if dir in ("S", "W") else 1) * (int(deg) + float(min) / 60)
 
 @logger.catch
-@cache
+@lru_cache
 def _get_metqa_table(file) -> pd.DataFrame:
     """Load NAFC metqa table which contains each files assoicated weather data"""
     df = pd.read_csv(file)
