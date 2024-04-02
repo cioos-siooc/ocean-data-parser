@@ -431,7 +431,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
     output_path = generate_output_path(ds, **config["output"])
     if not output_path.parent.exists():
         logger.info("Create new directory: {}", output_path.parent)
-        output_path.parent.mkdir(parents=True)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
     logger.trace("Save to: {}", output_path)
     ds.to_netcdf(output_path)
 
