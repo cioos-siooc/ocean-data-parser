@@ -312,7 +312,6 @@ def _pfile_history_to_cf(lines: list) -> str:
     return "".join([f"{timestamp} - {line}" for line in lines[1:]])
 
 
-@_catch_encoding_error
 def pfile(
     file: str,
     encoding: str = "UTF-8",
@@ -534,8 +533,8 @@ def _parse_lat_lon(latlon: str) -> float:
     deg, min, dir = latlon.split(" ")
     return (-1 if dir in ("S", "W") else 1) * (int(deg) + float(min) / 60)
 
-
 @logger.catch
+@lru_cache
 def _get_metqa_table(file) -> pd.DataFrame:
     """Load NAFC metqa table which contains each files assoicated weather data"""
     df = pd.read_csv(file)
@@ -546,7 +545,6 @@ def _get_metqa_table(file) -> pd.DataFrame:
     return df
 
 
-@_catch_encoding_error
 def pcnv(
     path: Path,
     rename_variables: bool = True,
