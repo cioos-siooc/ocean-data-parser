@@ -218,7 +218,7 @@ def _parse_pfile_header_line3(line: str) -> dict:
         air_wet_temp_celsius=_float(
             line[33:38], [-99.0, 99.9, -99.9, 999.9]
         ),  # f5.1,tem= p °C
-        waves_period=_int(line[39:41], null_values=["XX"], match=r"\s+(\d+)\.?"),  # i2,
+        waves_period=_int(line[39:41], null_values=["XX"], match=r"\s*(\d+)\.?"),  # i2,
         waves_height=_float(line[42:44]),  # i2,
         swell_dir=_int(line[45:47]) * 10 if line[45:47].strip() else None,  # i2,
         swell_period=_int(line[48:50], null_values=["XX"]),  # i2,
