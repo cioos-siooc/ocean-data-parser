@@ -144,9 +144,9 @@ def _parse_pfile_header_line1(line: str) -> dict:
     """Parse first row of the p file format which contains location and instrument information."""
 
     return dict(
-        ship_code=line[:2],
-        trip=_int(line[2:5], level="ERROR"),
-        station=_int(line[5:8], level="ERROR"),
+        # ship_code=line[:2],
+        # trip=_int(line[2:5], level="ERROR"),
+        # station=_int(line[5:8], level="ERROR"),
         latitude=_parse_ll(
             _float(line[9:12], level="ERROR"), _float(line[13:18], level="ERROR")
         ),
@@ -158,7 +158,7 @@ def _parse_pfile_header_line1(line: str) -> dict:
         instrument=line[52:57],  # see note below
         set_number=_int(
             line[58:61],
-            ("SET", "xxx", "set", "XXX", "ctd", "xbt", "Stn"),
+            ("SET", "xxx", "set", "XXX", "ctd", "xbt", "Stn", "stn"),
             match=r"\s*(\d+)\.?|[sS](\d+)|[sS][tT](\d+)|\#(\d+)",
         ),  # usually same as stn
         cast_type=line[62],  # V vertical profile T for tow
@@ -212,7 +212,7 @@ def _parse_pfile_header_line3(line: str) -> dict:
         # ship_code=line[:2],
         # trip=_int(line[2:5]),
         # station=_int(line[5:8]),
-        cloud=_int(line[9]),  # i1,
+        cloud=_int(line[9], null_values=["x", "-", "/"]),  # i1,
         wind_dir=_int(line[11:13]) * 10
         if line[11:13].strip() and line[11:13] != "99"
         else None,  # in 10 degree steps (eg 270 is=27)
@@ -225,10 +225,12 @@ def _parse_pfile_header_line3(line: str) -> dict:
         air_wet_temp_celsius=_float(
             line[33:38], [-99.0, 99.9, -99.9, 999.9]
         ),  # f5.1,tem= p °C
-        waves_period=_int(line[39:41], null_values=["XX"], match=r"\s*(\d+)\.?"),  # i2,
+        waves_period=_int(
+            line[39:41], null_values=["XX", "- "], match=r"\s*(\d+)\.?"
+        ),  # i2,
         waves_height=_float(line[42:44]),  # i2,
         swell_dir=_int(line[45:47]) * 10 if line[45:47].strip() else None,  # i2,
-        swell_period=_int(line[48:50], null_values=["XX"]),  # i2,
+        swell_period=_int(line[48:50], null_values=["XX", "- "]),  # i2,
         swell_height=_float(line[51:53]),  # i2,
         ice_conc=_int(line[54]),  # i1,
         ice_stage=_int(line[56]),  # i1,
@@ -353,16 +355,24 @@ def pfile(
         xr.Dataset: Parser dataset
     """
 
-    def _check_ship_trip_stn():
+    def _parse_ship_trip_stn():
         """Review if the ship,trip,stn string is the same
-        accorss the 3 metadata rows"""
-        ship_trip_stn = [line[:9] for line in metadata_lines[1:] if line.strip()]
+        accorss the 3 metadata rows and the file name."""
+        ship_trip_stn = [line[:8] for line in metadata_lines[1:] if line.strip()] + [
+            file.stem
+        ]
         if len(set(ship_trip_stn)) != 1:
-            logger.error(
+            logger.warning(
                 "Ship,trip,station isn't consistent: {}. "
-                "Only the first line is considered.",
+                "The file name will be considered = {}.",
                 set(ship_trip_stn),
+                file.stem,
             )
+        return dict(
+            ship_code=file.stem[:2],
+            trip=int(file.stem[2:5]),
+            station=int(file.stem[5:8]),
+        )
 
     def _get_variable_vocabulary(variable: str) -> dict:
         """Retrieve variable vocabulary"""
@@ -371,11 +381,12 @@ def pfile(
             f"(accepted_instruments.isna() or "
             f"accepted_instruments in '{ds.attrs.get('instrument','')}' )"
         )
-        if matching_vocabulary.empty:
+        if matching_vocabulary.empty and not variable.startswith("xxx"):
             logger.warning("No vocabulary is available for variable={}", variable)
             return []
         return matching_vocabulary.to_dict(orient="records")
 
+    file = Path(file)
     line = None
     header = {}
     section = None
@@ -439,13 +450,13 @@ def pfile(
         raise TypeError(
             "File header doesn't contain pfile first line 'NAFC_Y2K_HEADER'"
         )
-    _check_ship_trip_stn()
 
     # Convert dataframe to an xarray and populate information
     ds.attrs.update(
         {
             "id": metadata_lines[1][:8],
             **global_attributes,
+            **_parse_ship_trip_stn(),
             **(_parse_pfile_header_line1(metadata_lines[1]) or {}),
             **(_parse_pfile_header_line2(metadata_lines[2]) or {}),
             **(_parse_pfile_header_line3(metadata_lines[3]) or {}),
