@@ -609,7 +609,7 @@ def pcnv(
         "station": _int(ship_trip_seq_station["stn"]),
         "time": pd.to_datetime(ds.attrs.pop("DATE/TIME"), utc=True),
         "latitude": _parse_lat_lon(
-            _pop_attribute_from(["LATITUDE", "LATITUDE XX XX.XX"])
+            _pop_attribute_from(["LATITUDE", "LATITUDE XX XX.XX","LATITUDE XX XX.XX N"])
         ),
         "longitude": _parse_lat_lon(
             _pop_attribute_from(
