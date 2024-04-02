@@ -585,7 +585,8 @@ def pcnv(
         return p_file_vocabulary.query(
             " and ".join(f"{key} == '{value}'" for key, value in kwargs.items())
         ).to_dict(orient="records")
-
+    
+    path = Path(path)
     ds = seabird.cnv(
         path, encoding_errors=encoding_errors, xml_parsing_error_level="WARNING"
     )
