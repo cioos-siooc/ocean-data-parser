@@ -310,6 +310,25 @@ def _pfile_history_to_cf(lines: list) -> str:
 
     return "".join([f"{timestamp} - {line}" for line in lines[1:]])
 
+def _get_pfile_variable_vocabulary(variable: str,instrument:str=None) -> dict:
+    """Retrieve variable vocabulary"""
+    if variable == "xxx":
+        return []
+    matched_legacy_p_code = p_file_vocabulary.apply(lambda x: re.fullmatch(x['legacy_p_code'],variable,re.IGNORECASE), axis=1).notna()
+
+    if not any(matched_legacy_p_code):
+        logger.warning("No vocabulary is available for variable={}", variable)
+        return []
+    
+    matching_vocabulary = p_file_vocabulary.loc[matched_legacy_p_code].query(
+        f"(accepted_instruments.isna() or "
+        f"accepted_instruments in '{instrument or ''}' )"
+    )
+    if matching_vocabulary.empty:
+        logger.warning("No vocabulary is available for variable={}", variable)
+        return []
+    return matching_vocabulary.to_dict(orient="records")
+
 
 def pfile(
     file: str,
@@ -363,18 +382,6 @@ def pfile(
             trip=int(file.stem[2:5]),
             station=int(file.stem[5:8]),
         )
-
-    def _get_variable_vocabulary(variable: str) -> dict:
-        """Retrieve variable vocabulary"""
-        matching_vocabulary = p_file_vocabulary.query(
-            f"legacy_p_code == '{variable.lower()}' and "
-            f"(accepted_instruments.isna() or "
-            f"accepted_instruments in '{ds.attrs.get('instrument','')}' )"
-        )
-        if matching_vocabulary.empty and not variable.startswith("xxx"):
-            logger.warning("No vocabulary is available for variable={}", variable)
-            return []
-        return matching_vocabulary.to_dict(orient="records")
 
     file = Path(file)
     line = None
@@ -469,7 +476,7 @@ def pfile(
     extra_vocabulary_variables = []
     for var in ds.variables:
         ds[var].attrs.update(variables_span.get(var, {}))
-        variable_attributes = _get_variable_vocabulary(var)
+        variable_attributes = _get_pfile_variable_vocabulary(var,ds.attrs.get("instrument"))
         if not variable_attributes:
             continue
 
@@ -693,7 +700,7 @@ def pcnv(
     # load metqa table attributes
     if match_metqa_table:
         attrs.update(add_metqa_info_to_pcvn(path))
-        
+
     ds.attrs.update(attrs)
 
     # Move coordinates to variables
