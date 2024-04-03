@@ -677,10 +677,6 @@ def pcnv(
         **(global_attributes or {}),
     }
 
-    # load metqa table attributes
-    if match_metqa_table:
-        attrs.update(add_metqa_info_to_pcvn(path))
-
     # review missing attributes and ignore optional ones
     for attr, value in attrs.items():
         if not value and attr not in (
@@ -693,6 +689,11 @@ def pcnv(
             "comments",
         ):
             logger.warning("Missing attribute={}", attr)
+
+    # load metqa table attributes
+    if match_metqa_table:
+        attrs.update(add_metqa_info_to_pcvn(path))
+        
     ds.attrs.update(attrs)
 
     # Move coordinates to variables
