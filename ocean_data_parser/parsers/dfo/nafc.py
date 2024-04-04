@@ -684,18 +684,6 @@ def pcnv(
         **(global_attributes or {}),
     }
 
-    # review missing attributes and ignore optional ones
-    for attr, value in attrs.items():
-        if pd.notna(value) and attr not in (
-            "xbt_number",
-            "ctd_number",
-            "bottles",
-            "do2",
-            "vnet",
-            "comment",
-            "comments",
-        ):
-            logger.warning("Missing attribute={}", attr)
 
     # load metqa table attributes
     if match_metqa_table:
