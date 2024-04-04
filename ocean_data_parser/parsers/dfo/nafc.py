@@ -258,7 +258,7 @@ def _parse_channel_stats(lines: list) -> dict:
 
 def _get_platform_by_nafc_platform_code(platform_code: Union[int, str]) -> dict:
     platform_code = (
-        f"{platform_code:02g}" if isinstance(platform_code, int) else platform_code
+        f"{platform_code:02g}" if isinstance(platform_code, int) else platform_code.upper()
     )
     if p_file_shipcode["dfo_nafc_platform_code"].str.match(platform_code).any():
         return (
