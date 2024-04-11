@@ -14,6 +14,7 @@ logger = logging.getLogger()
 auto_detection_ignore = [
     "CTD_1994038_147_1_DN.ODF",
     "CTD_2020003_004_1_DN.ODF",
+    "cab041_2023_metqa_updated.csv"
 ]
 auto_detection_ignore_extensions = (".nc", ".DS_Store")
 
