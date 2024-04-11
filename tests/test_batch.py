@@ -191,7 +191,7 @@ class TestBatchCLI:
     def test_batch_failed_cli_conversion_with_no_matching_inputs(self):
         result = self._run_cli_batch_process("-i", "*.csv")
         assert result.exit_code == 1
-        assert result.output.startswith("ERROR"), f"unexpected output{result.output=}"
+        assert "ERROR No files detected with *.csv" in result.output
 
     def test_batch_failed_cli_conversion_with_argument_inputs(self):
         result = self._run_cli_batch_process("*.csv")
