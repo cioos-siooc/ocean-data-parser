@@ -62,7 +62,7 @@ def test_odpy_main_args_from_env_variables(env, expected_output):
     ),
 )
 def test_odpy_convert_arguments(args, expected_output):
-    results = run_command(convert.convert, args)
+    results = run_command(convert.cli,args)
     assert expected_output in results.output
 
 
@@ -77,7 +77,7 @@ def test_odpy_convert_arguments(args, expected_output):
     ),
 )
 def test_odpy_convert_args_from_env_variables(env, expected_output):
-    results = run_command(convert.convert, "--show-arguments=stop", env)
+    results = run_command(convert.cli, "--show-arguments=stop", env)
     assert expected_output in results.output
 
 
@@ -102,7 +102,7 @@ def test_odpy_convert_args_from_env_variables(env, expected_output):
     ),
 )
 def test_odpy_convert_args_and_env_variables(args, env, expected_output):
-    results = run_command(convert.convert, args, env)
+    results = run_command(convert.cli, args, env)
     assert expected_output in results.output
 
 
@@ -118,10 +118,10 @@ def test_odpy_convert_registry(tmp_path):
         str(tmp_path / "conversion-registry.csv"),
     )
     env = {"ODPY_LOG_LEVEL": "INFO"}
-    results = run_command(convert.convert, args, env)
+    results = run_command(convert.cli, args, env)
     assert results.exit_code == 0
     assert "ERROR" not in results.output, results.output
-    second_results = run_command(convert.convert, args)
+    second_results = run_command(convert.cli, args)
     assert second_results.exit_code == 0
     assert (
         "Run conversion" not in second_results.output

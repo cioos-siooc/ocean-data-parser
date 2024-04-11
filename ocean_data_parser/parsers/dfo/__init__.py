@@ -1,2 +1,2 @@
-__all__ = ['ios', 'nafc', 'odf']
+__all__ = ["ios", "nafc", "odf"]
 from . import ios, nafc, odf

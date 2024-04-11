@@ -57,20 +57,28 @@ def _add_seabird_vocabulary(variable_attributes: dict) -> dict:
     return variable_attributes
 
 
-def cnv(file_path: str, encoding: str = "UTF-8") -> xarray.Dataset:
+def cnv(
+    file_path: str,
+    encoding: str = "UTF-8",
+    encoding_errors="strict",
+    xml_parsing_error_level="ERROR",
+) -> xarray.Dataset:
     """Parse Seabird CNV format
 
     Args:
         file_path (str): file path
         encoding (str, optional): encoding to use. Defaults to "UTF-8".
+        xml_parsing_error_level (str, optional): Error level for XML parsing. Defaults to "ERROR".
 
     Returns:
         xarray.Dataset: Dataset
     """
     """Import Seabird cnv format as an xarray dataset."""
 
-    with open(file_path, encoding=encoding) as f:
-        header = _parse_seabird_file_header(f)
+    with open(file_path, encoding=encoding, errors=encoding_errors) as f:
+        header = _parse_seabird_file_header(
+            f, xml_parsing_error_level=xml_parsing_error_level
+        )
         header["variables"] = _add_seabird_vocabulary(header["variables"])
         df = pd.read_csv(
             f,
@@ -80,6 +88,7 @@ def cnv(file_path: str, encoding: str = "UTF-8") -> xarray.Dataset:
                 var: var_dtypes.get(var, float) for var in header["variables"].keys()
             },
             na_values=["-1.#IO", "-9.99E-29"],
+            encoding_errors=encoding_errors,
         )
 
     header = _generate_seabird_cf_history(header)
@@ -88,19 +97,24 @@ def cnv(file_path: str, encoding: str = "UTF-8") -> xarray.Dataset:
     return standardize_dataset(ds)
 
 
-def btl(file_path: str, encoding: str = "UTF-8") -> xarray.Dataset:
+def btl(
+    file_path: str, encoding: str = "UTF-8", xml_parsing_error_level="ERROR"
+) -> xarray.Dataset:
     """Parse Seabird BTL format
 
     Args:
         file_path (str): file path
         encoding (str, optional): Encoding to use. Defaults to "UTF-8".
+        xml_parsing_error_level (str, optional): Error level for XML parsing. Defaults to "ERROR".
 
     Returns:
         xarray.Dataset: Dataset
     """
 
     with open(file_path, encoding=encoding) as f:
-        header = _parse_seabird_file_header(f)
+        header = _parse_seabird_file_header(
+            f, xml_parsing_error_level=xml_parsing_error_level
+        )
 
         # Retrieve variables from bottle header and lower the first letter of each variable
         variable_list = [
@@ -174,16 +188,16 @@ def _convert_sbe_dataframe_to_dataset(df, header):
     return ds
 
 
-def _parse_seabird_file_header(f):
+def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
     """Parsed seabird file headers"""
 
     def unknown_line(line):
-        if line in ("* S>\n", "* GetHD\n", "* GetSD\n"):
+        if line in ("* S>\n", "* GetHD\n", "* GetSD\n", "* DS\n", "* DH\n"):
             return
         header["history"] += [re.sub(r"\*\s|\n", "", line)]
         if line.startswith(("* advance", "* delete")) or "added to scan" in line:
             return
-        logger.warning("Unknown line format: %s", line)
+        logger.warning("Unknown line format: %s", line.strip())
 
     def standardize_attribute(attribute):
         return re.sub(r" |\|\)|\/", "_", attribute.strip()).lower()
@@ -201,12 +215,12 @@ def _parse_seabird_file_header(f):
             header["comments"] += [line[2:]]
 
     def read_asterisk_line(line):
-        if " = " in line:
+        if re.match("\*\s\w+", line) and " = " in line:
             attr, value = line[2:].split("=", 1)
             header[standardize_attribute(attr)] = value.strip()
         elif line.startswith((r"* Sea-Bird", r"* SBE ")):
             instrument_type = re.search(
-                r"\* Sea-Bird (.*) Data File\:|\* SBE (.*)", line
+                r"\* Sea-Bird (.*) Data File\:?|\* SBE (.*)", line
             ).groups()
             header["instrument_type"] += "".join(
                 [item for item in instrument_type if item]
@@ -255,12 +269,16 @@ def _parse_seabird_file_header(f):
         else:
             unknown_line(line)
 
-    def parse_xml(xml_section):
+    def parse_xml(xml_section, error_level="ERROR"):
         """Parse XML section"""
         try:
             return xmltodict.parse(f"<temp>{xml_section}</temp>")["temp"]
         except ExpatError:
-            logger.error("Failed to parsed Sea-Bird XML", exc_info=True)
+            logger.log(
+                logging.getLevelName(error_level),
+                "Failed to parsed Sea-Bird XML",
+                exc_info=True,
+            )
             return {}
 
     line = "*"
@@ -319,7 +337,7 @@ def _parse_seabird_file_header(f):
                 section_name = "data_xml"
             elif first_character == "#":
                 section_name = "instrument_xml"
-            xml_dictionary = parse_xml(xml_section)
+            xml_dictionary = parse_xml(xml_section, error_level=xml_parsing_error_level)
             if section_name in header:
                 header[section_name].update(xml_dictionary)
             else:

@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 
 import numpy as np
@@ -24,7 +25,7 @@ def seabird_vocabulary() -> dict:
 
 
 def dfo_platforms() -> pd.DataFrame:
-    return (
+    df = (
         pd.read_csv(
             VOCABULARIES_DIRECTORY / "dfo_platforms.csv",
             dtype={
@@ -35,6 +36,10 @@ def dfo_platforms() -> pd.DataFrame:
         .astype(object)
         .replace({pd.NA: None})
     )
+    df["dfo_nafc_platform_code"] = df["dfo_nafc_platform_code"].apply(
+        lambda x: f"{int(x):02g}" if re.match(r"\s*\d+", x or "") else x
+    )
+    return df
 
 
 def dfo_ios_vocabulary() -> pd.DataFrame:

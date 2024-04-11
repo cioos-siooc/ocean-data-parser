@@ -75,6 +75,7 @@ classic_logger = logging.getLogger()
     help="Logger level used",
     default="INFO",
     envvar="ODPY_LOG_LEVEL",
+    show_default=True,
 )
 @click.option(
     "--log-file", type=click.Path(), help="Log to a file.", envvar="ODPY_LOG_FILE"
@@ -99,6 +100,27 @@ classic_logger = logging.getLogger()
     default=None,
 )
 @click.option(
+    "--diagnose/--no-diagnose",
+    is_flag=True,
+    default=True,
+    help="Run diagnose on error",
+    show_default=True,
+)
+@click.option(
+    "--backtrace/--no-backtrace",
+    is_flag=True,
+    default=True,
+    help="Show stacktrace on error",
+    show_default=True,
+)
+@click.option(
+    "--backtrace-limit",
+    type=int,
+    default=5,
+    help="Limit stacktrace to N lines",
+    show_default=True,
+)
+@click.option(
     "--show-arguments",
     is_flag=True,
     default=False,
@@ -112,6 +134,9 @@ def main(
     log_file_level,
     log_file_rotation,
     log_file_retention,
+    backtrace,
+    backtrace_limit,
+    diagnose,
     show_arguments,
 ):
     """Ocean Data Parser command line main interface."""
@@ -119,8 +144,11 @@ def main(
     logger.add(
         sys.stderr,
         level=log_level,
+        backtrace=backtrace,
+        diagnose=diagnose,
         format=VERBOSE_LOG_FORMAT if verbose else LOG_FORMAT,
     )
+    sys.backtrace_limit = backtrace_limit
     if log_file:
         logger.add(
             log_file,
@@ -128,6 +156,8 @@ def main(
             format=log_format,
             rotation=log_file_rotation,
             retention=log_file_retention,
+            backtrace=backtrace,
+            diagnose=diagnose,
         )
 
     logger.info("ocean-data-parser[{}]: log-level={}", __version__, log_level)

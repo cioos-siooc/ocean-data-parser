@@ -20,6 +20,7 @@ def test_dfo_platform_load():
     assert isinstance(vocab, pd.DataFrame)
     assert not vocab.empty
     assert "platform_name" in vocab.columns
+    assert "02" in vocab["dfo_nafc_platform_code"].values
 
 
 def test_dfo_odf_vocabulary_load():

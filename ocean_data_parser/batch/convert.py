@@ -173,6 +173,7 @@ def cli(**kwargs):
     kwargs.pop("new_config")
     convert(**kwargs)
 
+
 def convert(**kwargs):
     """Run ocean-data-parser conversion on given files."""
     BatchConversion(**kwargs).run()
@@ -368,7 +369,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
 
     # Parse file to xarray
     logger.debug("Parse file: {}", file)
-    ds = read.file(file, parser=parser)
+    ds = read.file(file, parser=parser, **config.get("parser_kwargs", {}))
     if not isinstance(ds, Dataset):
         raise RuntimeError(
             f"{parser.__module__}{parser.__name__}:{file} "
@@ -430,7 +431,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
     output_path = generate_output_path(ds, **config["output"])
     if not output_path.parent.exists():
         logger.info("Create new directory: {}", output_path.parent)
-        output_path.parent.mkdir(parents=True)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
     logger.trace("Save to: {}", output_path)
     ds.to_netcdf(output_path)
 

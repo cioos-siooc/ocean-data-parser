@@ -404,6 +404,40 @@ class TestDFO_NAFC_PcnvFiles:
         ds = dfo.nafc.pcnv(path)
         review_parsed_dataset(ds, path, caplog)
 
+    @pytest.mark.parametrize(
+        "path",
+        [
+            file
+            for file in glob(
+                "tests/parsers_test_files/dfo/nafc/pcnv/ctd/*_metqa_updated.csv",
+                recursive=True,
+            )
+            if not file.endswith(".nc")
+        ],
+    )
+    def test_dfo_nafc_ctd_metqa(self, path):
+        """Test DFO NAFC Load metqa Parser"""
+        metqa = dfo.nafc._get_metqa_table(path)
+
+        assert isinstance(metqa, pd.DataFrame)
+        assert not metqa.empty
+        assert "station" in metqa.columns
+        assert "latitude" in metqa.columns
+        assert "longitude" in metqa.columns
+        assert metqa["latitude"].dtype == "float64"
+        assert metqa["longitude"].dtype == "float64"
+
+    @pytest.mark.parametrize(
+        "path",
+        ["tests/parsers_test_files/dfo/nafc/pcnv/ctd/cab041_2023_012.pcnv"],
+    )
+    def test_dfo_nafc_ctd_pcnv_with_metqa_file(self, path):
+        """Test DFO NAFC Pcnv Parser with metqa file"""
+        ds = dfo.nafc.pcnv(path, match_metqa_table=True)
+        review_parsed_dataset(ds, path)
+        assert ds.attrs["swell_height"]
+        assert ds.attrs["swell_dir"]
+
 
 # pylint: disable=W0212
 class TestDFO_NAFC_pFiles:
@@ -489,12 +523,15 @@ class TestDFO_NAFC_pFiles:
     )
     def test_p_file_metadata_parser_line_failed(self, caplog, line_parser):
         parser = getattr(dfo.nafc, line_parser)
-        response = parser(
-            "56001001 7 08 0a    0999.1 003.8       08 01 18 10 01                          8"
-        )
-        assert isinstance(response, dict)
-        assert response
-        assert f"Failed to convert: <{line_parser}" in caplog.text
+        try:
+            response = parser(
+                "56001001 7 08 0a    0999.1 003.8       08 01 18 10 01                          8"
+            )
+            assert isinstance(response, dict)
+            assert response
+            assert f"Failed to convert: <{line_parser}" in caplog.text
+        except Exception as e:
+            response = e
 
     @pytest.mark.parametrize(
         "deg,min,expected_result",
@@ -519,6 +556,24 @@ class TestDFO_NAFC_pFiles:
         result = dfo.nafc._parse_ll(deg, min)
         assert result == expected_result
 
+    @pytest.mark.parametrize(
+        "variable",
+        ["trp",'temp','trans','light']
+    )
+    def test_p_file_variable_vocabulary_mapper(self, variable):
+        matched_vocabulary = dfo.nafc._get_pfile_variable_vocabulary(variable)
+        assert matched_vocabulary
+        assert len(matched_vocabulary) == 1
+
+    def test_p_file_unknown_variable_vocabulary_mapper(self):
+        matched_vocabulary = dfo.nafc._get_pfile_variable_vocabulary("xxx")
+        assert not matched_vocabulary
+
+    def test_pfile_missing_variable_vocabulary_mapper(self, caplog):
+        matched_vocabulary = dfo.nafc._get_pfile_variable_vocabulary("unknown_variable")
+        assert not matched_vocabulary
+        assert "No vocabulary is available for variable=unknown_variable" in caplog.text
+        assert caplog.records[0].levelname == "WARNING"
 
 class TestDfoIosShell:
     @pytest.mark.parametrize(

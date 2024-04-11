@@ -7,6 +7,7 @@ North Atlantic Fisheries Centre
 """
 import inspect
 import re
+from functools import lru_cache
 from pathlib import Path
 from typing import Union
 
@@ -32,6 +33,30 @@ global_attributes = {
     "naming_authority": "ca.gc.nafc",
 }
 
+METQA_ATTRS_MAPPING = {
+    "wind_speed": "wind_speed_knots",
+    "bar_pressure": "pressure_bars",
+    "air_temp_dry": "air_dry_temp_celsius",
+    "air_temp_wet": "air_wet_temp_celsius",
+    "bergs": "ice_bergs",
+    "sit_and_trend": "ice_sit_and_trend",
+}
+
+METQA_DTYPES = {
+    "wind_speed_knots": pd.Int64Dtype(),
+    "wind_dir": pd.Int64Dtype(),
+    "pressure_bars": float,
+    "air_dry_temp_celsius": float,
+    "air_wet_temp_celsius": float,
+    "swell_dir": pd.Int64Dtype(),
+    "swell_period": pd.Int64Dtype(),
+    "swell_height": float,
+    "ice_conc": pd.Int64Dtype(),
+    "ice_stage": pd.Int64Dtype(),
+    "ice_bergs": pd.Int64Dtype(),
+    "ice_sit_and_trend": pd.Int64Dtype(),
+}
+
 
 def _traceback_error_line():
     current_frame = inspect.currentframe()
@@ -41,18 +66,32 @@ def _traceback_error_line():
     return f"<{previous_frame.f_code.co_name} line {line_number}>: {cmd_line}"
 
 
-def _int(value: str, null_values=None, level="WARNING") -> int:
+def _int(value: str, null_values=None, level="WARNING", match: str = None) -> int:
     """Attemp to convert string to int, return None if empty or failed"""
     if not value or not value.strip() or value in (null_values or []):
         return
+    if match:
+        new_value = re.match(match, value)
+        if new_value:
+            value = [item for item in new_value.groups() if item][0]
+        else:
+            logger.log(
+                level,
+                "Failed to convert: {} => int('{}')",
+                _traceback_error_line(),
+                value,
+            )
+            return pd.NA
+    if null_values and value in null_values:
+        return pd.NA
+    elif value in ("0.", ".0"):
+        return 0
     try:
         value = int(value)
         if null_values and value in null_values:
-            return
-        return value
+            return pd.NA
+        return int(value)
     except ValueError:
-        if value in ("0.", ".0"):
-            return 0
         logger.log(
             level,
             "Failed to convert: {} => int('{}')",
@@ -79,18 +118,6 @@ def _float(value: str, null_values=None, level="WARNING") -> float:
         return pd.NA
 
 
-def to_datetime(value: str) -> pd.Timestamp:
-    try:
-        return pd.to_datetime(value, format="%Y-%m-%d %H:%M", utc=True)
-    except (pd.errors.ParserError, ValueError):
-        logger.error(
-            "Failed to convert: {} => pd.to_datetime('{}', format='%Y-%m-%d %H:%M', utc=True)",
-            _traceback_error_line(),
-            value,
-        )
-        return pd.NaT
-
-
 def _get_dtype(var: str):
     return int if var == "scan" else float
 
@@ -107,20 +134,22 @@ def _parse_pfile_header_line1(line: str) -> dict:
     """Parse first row of the p file format which contains location and instrument information."""
 
     return dict(
-        ship_code=line[:2],
-        trip=_int(line[2:5], level="ERROR"),
-        station=_int(line[5:8], level="ERROR"),
+        # ship_code=line[:2],
+        # trip=_int(line[2:5], level="ERROR"),
+        # station=_int(line[5:8], level="ERROR"),
         latitude=_parse_ll(
             _float(line[9:12], level="ERROR"), _float(line[13:18], level="ERROR")
         ),
         longitude=_parse_ll(
             _float(line[19:23], level="ERROR"), _float(line[24:29], level="ERROR")
         ),
-        time=to_datetime(line[30:46]),
-        sounder_depth=_int(line[47:51], ("9999", "0000")),  # water depth in meters
+        time=pd.to_datetime(line[30:46], format="%Y-%m-%d %H:%M", utc=True),
+        sounder_depth=_int(line[47:51], ["9999", "0000", "-999"]),  # water depth in meters
         instrument=line[52:57],  # see note below
         set_number=_int(
-            line[58:61], ("SET", "xxx", "set", "XXX", "ctd", "xbt", "Stn")
+            line[58:61],
+            ("SET", "xxx", "set", "XXX", "ctd", "xbt", "Stn", "STN", "stn", "nil"),
+            match=r"\s*(\d+)\.?|[sS](\d+)|[sS][tT](\d+)|\#(\d+)",
         ),  # usually same as stn
         cast_type=line[62],  # V vertical profile T for tow
         comment=line[62:78],
@@ -173,28 +202,30 @@ def _parse_pfile_header_line3(line: str) -> dict:
         # ship_code=line[:2],
         # trip=_int(line[2:5]),
         # station=_int(line[5:8]),
-        cloud=_int(line[9]),  # i1,
+        cloud=_int(line[9], null_values=["x", "-", "/", "."]),  # i1,
         wind_dir=_int(line[11:13]) * 10
-        if line[11:13].strip() and line[11:13] != "99"
+        if line[11:13].strip() and line[11:13] not in [ "99" ,"98"]
         else None,  # in 10 degree steps (eg 270 is=27)
-        wind_speed_knots=_int(line[14:16]),  # i2,knots s= cale
+        wind_speed_knots=_int(line[14:16],null_values=["99",]),  # i2,knots s= cale
         ww_code=_int(line[17:19]),  # i2,
         pressure_bars=_float(line[20:26], [-999.0, -999.9]),  # pressure mil-= bars
         air_dry_temp_celsius=_float(
-            line[27:32], [-99.0, -99.9, 999.9]
+            line[27:32], [-99.0, -99.9, 999.9, -49.9]
         ),  # f5.1,tem= p °C
         air_wet_temp_celsius=_float(
-            line[33:38], [-99.0, 99.9, -99.9, 999.9]
+            line[33:38], [-99.0, 99.9, -99.9, 999.9, -49.9]
         ),  # f5.1,tem= p °C
-        waves_period=_int(line[39:41]),  # i2,
-        waves_height=_float(line[42:44]),  # i2,
-        swell_dir=_int(line[45:47]) * 10 if line[45:47].strip() else None,  # i2,
-        swell_period=_int(line[48:50]),  # i2,
-        swell_height=_float(line[51:53]),  # i2,
+        waves_period=_int(
+            line[39:41], null_values=["XX", "- ","99"], match=r"\s*(\d+)\.?"
+        ),  # i2,
+        waves_height=_float(line[42:44],null_values=["99",]),  # i2,
+        swell_dir=_int(line[45:47]) * 10 if line[45:47].strip() and line[45:47] not in ["99",] else None,  # i2,
+        swell_period=_int(line[48:50], null_values=["XX", "- ","99"]),  # i2,
+        swell_height=_float(line[51:53], null_values=["99",]),  # i2,
         ice_conc=_int(line[54]),  # i1,
         ice_stage=_int(line[56]),  # i1,
         ice_bergs=_int(line[58]),  # i1,
-        ice_SandT=_int(line[60]),  # i1,
+        ice_sit_and_trend=_int(line[60]),  # i1,
         card_8_id=_int(line[79]),  # i1 ,=8
     )
 
@@ -227,7 +258,7 @@ def _parse_channel_stats(lines: list) -> dict:
 
 def _get_platform_by_nafc_platform_code(platform_code: Union[int, str]) -> dict:
     platform_code = (
-        f"{platform_code:02g}" if isinstance(platform_code, int) else platform_code
+        f"{platform_code:02g}" if isinstance(platform_code, int) else platform_code.upper()
     )
     if p_file_shipcode["dfo_nafc_platform_code"].str.match(platform_code).any():
         return (
@@ -261,6 +292,8 @@ def _pfile_history_to_cf(lines: list) -> str:
     """
 
     # """Convert history to cf format: 2022-02-02T00:00:00Z - ..."""
+    if not lines:
+        return ""
 
     history_timestamp = re.search(
         r"-- HISTORY --> (\w+ \w\w\w\s+\d+ \d{2}:\d{2}:\d{2} \d{4})", lines[0]
@@ -277,12 +310,32 @@ def _pfile_history_to_cf(lines: list) -> str:
 
     return "".join([f"{timestamp} - {line}" for line in lines[1:]])
 
+def _get_pfile_variable_vocabulary(variable: str,instrument:str=None) -> dict:
+    """Retrieve variable vocabulary"""
+    if variable == "xxx":
+        return []
+    matched_legacy_p_code = p_file_vocabulary.apply(lambda x: re.fullmatch(x['legacy_p_code'],variable,re.IGNORECASE), axis=1).notna()
+
+    if not any(matched_legacy_p_code):
+        logger.warning("No vocabulary is available for variable={}", variable)
+        return []
+    
+    matching_vocabulary = p_file_vocabulary.loc[matched_legacy_p_code].query(
+        f"(accepted_instruments.isna() or "
+        f"accepted_instruments in '{instrument or ''}' )"
+    )
+    if matching_vocabulary.empty:
+        logger.warning("No vocabulary is available for variable={}", variable)
+        return []
+    return matching_vocabulary.to_dict(orient="records")
+
 
 def pfile(
     file: str,
     encoding: str = "UTF-8",
     rename_variables: bool = True,
     generate_extra_variables: bool = True,
+    encoding_errors: str = "strict",
 ) -> xr.Dataset:
     """Parse DFO NAFC oceanography p-file format
 
@@ -290,7 +343,8 @@ def pfile(
     to the pfile documentation,:
 
     1. NAFC_Y2K_HEADER
-    2. 3 single line 80 byte headers, the formats of which is described on an attached page.
+    2. 3 single line 80 byte headers, the formats of which is
+        described on an attached page.
     3. A variable length block of processing history information
     4. A line of channel name identifiers
     5. A start of data flag line -- DATA --
@@ -310,33 +364,30 @@ def pfile(
         xr.Dataset: Parser dataset
     """
 
-    def _check_ship_trip_stn():
+    def _parse_ship_trip_stn():
         """Review if the ship,trip,stn string is the same
-        accorss the 3 metadata rows"""
-        ship_trip_stn = [line[:9] for line in metadata_lines[1:] if line.strip()]
+        accorss the 3 metadata rows and the file name."""
+        ship_trip_stn = [line[:8] for line in metadata_lines[1:] if line.strip()] + [
+            file.stem
+        ]
         if len(set(ship_trip_stn)) != 1:
-            logger.error(
+            logger.warning(
                 "Ship,trip,station isn't consistent: {}. "
-                "Only the first line is considered.",
+                "The file name will be considered = {}.",
                 set(ship_trip_stn),
+                file.stem,
             )
-
-    def _get_variable_vocabulary(variable: str) -> dict:
-        """Retrieve variable vocabulary"""
-        matching_vocabulary = p_file_vocabulary.query(
-            f"legacy_p_code == '{variable.lower()}' and "
-            f"(accepted_instruments.isna() or "
-            f"accepted_instruments in '{ds.attrs.get('instrument','')}' )"
+        return dict(
+            ship_code=file.stem[:2],
+            trip=int(file.stem[2:5]),
+            station=int(file.stem[5:8]),
         )
-        if matching_vocabulary.empty:
-            logger.warning("No vocabulary is available for variable={}", variable)
-            return []
-        return matching_vocabulary.to_dict(orient="records")
 
+    file = Path(file)
     line = None
     header = {}
     section = None
-    with open(file, encoding=encoding) as file_handle:
+    with open(file, encoding=encoding, errors=encoding_errors) as file_handle:
         # Read the four first lines to extract the information
         original_header = [file_handle.readline() for _ in range(4)]
         metadata_lines = original_header[:4]
@@ -360,6 +411,19 @@ def pfile(
 
         # Define each fields width based on the column names
         names = re.findall(r"\w+", previous_line)
+        if len(names) != len(set(names)):
+            # Rename duplicated names
+            logger.warning("Column names aren't unique: {}", names)
+            duplicated_names = []
+            for index, name in enumerate(names):
+                if names.count(name) > 1:
+                    new_name = f"{name}{names[:index].count(name)}"
+                    logger.warning("Rename {} to {}", name, new_name)
+                    duplicated_names += [new_name]
+                else:
+                    duplicated_names += [name]
+
+            names = duplicated_names
 
         # Read data section
         # TODO confirm that 5+12 character width is constant
@@ -369,12 +433,13 @@ def pfile(
             engine="python",
             names=names,
             dtype={name: _get_dtype(name) for name in names},
+            encoding_errors=encoding_errors,
         ).to_xarray()
 
     # Review datatypes
-    if any([dtype == object for var, dtype in ds.dtypes.items()]):
+    if any([dtype == object for _, dtype in ds.dtypes.items()]):
         logger.warning(
-            "Some columns dtype=object which suggest that the file data wasn't correctely parsed."
+            "Some columns dtype=object suggest the file data wasn't correctely parsed."
         )
 
     # Review metadata
@@ -382,13 +447,13 @@ def pfile(
         raise TypeError(
             "File header doesn't contain pfile first line 'NAFC_Y2K_HEADER'"
         )
-    _check_ship_trip_stn()
 
     # Convert dataframe to an xarray and populate information
     ds.attrs.update(
         {
             "id": metadata_lines[1][:8],
             **global_attributes,
+            **_parse_ship_trip_stn(),
             **(_parse_pfile_header_line1(metadata_lines[1]) or {}),
             **(_parse_pfile_header_line2(metadata_lines[2]) or {}),
             **(_parse_pfile_header_line3(metadata_lines[3]) or {}),
@@ -411,7 +476,7 @@ def pfile(
     extra_vocabulary_variables = []
     for var in ds.variables:
         ds[var].attrs.update(variables_span.get(var, {}))
-        variable_attributes = _get_variable_vocabulary(var)
+        variable_attributes = _get_pfile_variable_vocabulary(var,ds.attrs.get("instrument"))
         if not variable_attributes:
             continue
 
@@ -441,7 +506,7 @@ def pfile(
     if generate_extra_variables:
         for name, var, attrs in extra_vocabulary_variables:
             if name in ds:
-                logger.warning(
+                logger.info(
                     (
                         "Extra variable is already in dataset and will be ignored. "
                         "name={}, attrs={} is already in dataset and will be ignored"
@@ -476,11 +541,66 @@ def pfile(
     return ds
 
 
+@logger.catch
+def _parse_lat_lon(latlon: str) -> float:
+    """Parse latitude and longitude string to float"""
+    if not latlon:
+        logger.error("No latitude or longitude provided")
+        return
+    deg, min, dir = latlon.split(" ")
+    return (-1 if dir in ("S", "W") else 1) * (int(deg) + float(min) / 60)
+
+
+@logger.catch
+@lru_cache
+def _get_metqa_table(file) -> pd.DataFrame:
+    """Load NAFC metqa table which contains each files assoicated weather data"""
+    df = pd.read_csv(file, sep="\s*\,", engine="python")
+    df.columns = [
+        col.lower().split("[")[0].strip().replace(" ", "_") for col in df.columns
+    ]
+    df["time"] = pd.to_datetime(df["date"] + " " + df["time"], utc=True)
+    df["latitude"] = df["latitude"].apply(lambda x: _parse_lat_lon(x))
+    df["longitude"] = df["longitude"].apply(lambda x: _parse_lat_lon(x))
+    df = df.drop(columns=["date"])
+    df = df.rename(columns=METQA_ATTRS_MAPPING).astype(METQA_DTYPES)
+    return df
+
+
+def add_metqa_info_to_pcvn(file: Path) -> Path:
+    """Find the matching metqa table to the pcnv file"""
+
+    glob_expression = f"{file.stem.rsplit('_',1)[0]}_metqa_*.csv"
+    metqa_file = list(file.parent.glob(glob_expression))
+    if metqa_file and len(metqa_file) == 1:
+        df = _get_metqa_table(metqa_file[0])
+        metadata = df.query(f"station == '{file.stem}'")
+        if metadata.empty:
+            logger.warning("No station={} in metqa file={}", file.stem, metqa_file)
+            return {}
+        return metadata.iloc[0].dropna().to_dict()
+    elif metqa_file and len(metqa_file) > 1:
+        logger.error(
+            "Multiple metqa files found={} for path={},glob={}",
+            metqa_file,
+            file.parent,
+            glob_expression,
+        )
+    else:
+        logger.warning(
+            "No metqa table file path={},glob={}", file.parent, glob_expression
+        )
+    return {}
+
+
 def pcnv(
     path: Path,
     rename_variables: bool = True,
     generate_extra_variables: bool = True,
     global_attributes: dict = None,
+    encoding: str = "UTF-8",
+    encoding_errors: str = "strict",
+    match_metqa_table: bool = False,
 ) -> xr.Dataset:
     """DFO NAFC pcnv file format parser
     The pcnv format  essentially a seabird cnv file format
@@ -493,33 +613,34 @@ def pcnv(
         generate_extra_variables (bool, optional): Generate extra
             vocabulary variables. Defaults to True.
         global_attributes (dict, optional): Global attributes to add to the dataset.
+        match_metqa_table (bool, optional): Match metqa table to the file if
+            available within same directory. Defaults to True.
 
     Returns:
         xr.Dataset: parsed dataset
     """
-
-    @logger.catch
-    def _parse_lat_lon(latlon: str) -> float:
-        """Parse latitude and longitude string to float"""
-        if not latlon:
-            logger.error("No latitude or longitude provided")
-            return
-        deg, min, dir = latlon.split(" ")
-        return (-1 if dir in ("S", "W") else 1) * (int(deg) + float(min) / 60)
 
     def _pop_attribute_from(names: list):
         """Pop attribute from dataset"""
         for name in names:
             if name in ds.attrs:
                 return ds.attrs.pop(name)
-        logger.error("No matching attribute found in {}", names)
+
+        if "comment" not in names[0].lower():
+            logger.error("No matching attribute found in {}", names)
 
     def get_vocabulary(**kwargs):
         return p_file_vocabulary.query(
             " and ".join(f"{key} == '{value}'" for key, value in kwargs.items())
         ).to_dict(orient="records")
 
-    ds = seabird.cnv(path)
+    path = Path(path)
+    ds = seabird.cnv(
+        path,
+        encoding=encoding,
+        encoding_errors=encoding_errors,
+        xml_parsing_error_level="WARNING",
+    )
 
     # Map global attributes
     ship_trip_seq_station = re.search(
@@ -541,7 +662,9 @@ def pcnv(
         "station": _int(ship_trip_seq_station["stn"]),
         "time": pd.to_datetime(ds.attrs.pop("DATE/TIME"), utc=True),
         "latitude": _parse_lat_lon(
-            _pop_attribute_from(["LATITUDE", "LATITUDE XX XX.XX"])
+            _pop_attribute_from(
+                ["LATITUDE", "LATITUDE XX XX.XX", "LATITUDE XX XX.XX N"]
+            )
         ),
         "longitude": _parse_lat_lon(
             _pop_attribute_from(
@@ -561,17 +684,11 @@ def pcnv(
         **(global_attributes or {}),
     }
 
-    # review missing attributes and ignore optional ones
-    for attr, value in attrs.items():
-        if not value and attr not in (
-            "xbt_number",
-            "ctd_number",
-            "bottles",
-            "do2",
-            "vnet",
-            "comment",
-        ):
-            logger.warning("Missing attribute={}", attr)
+
+    # load metqa table attributes
+    if match_metqa_table:
+        attrs.update(add_metqa_info_to_pcvn(path))
+
     ds.attrs.update(attrs)
 
     # Move coordinates to variables

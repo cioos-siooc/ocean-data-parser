@@ -2947,16 +2947,6 @@ files = [
 doc = ["reno", "sphinx", "tornado (>=4.5)"]
 
 [[package]]
-name = "timeout-decorator"
-version = "0.5.0"
-description = "Timeout decorator"
-optional = false
-python-versions = "*"
-files = [
-    {file = "timeout-decorator-0.5.0.tar.gz", hash = "sha256:6a2f2f58db1c5b24a2cc79de6345760377ad8bdc13813f5265f6c3e63d16b3d7"},
-]
-
-[[package]]
 name = "tinycss2"
 version = "1.2.1"
 description = "A tiny CSS parser"
@@ -3241,4 +3231,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.13"
-content-hash = "5365f00a7a3f98050d335d3caf436ef2ad5b2fc3615780c1784c20cfe7701154"
+content-hash = "dc4bc06a840d1f70f63f3924f7c4dbad86623f658859e784a5de093d0a0b8316"
