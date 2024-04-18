@@ -9,7 +9,7 @@ title: odpy CLI
     :depth: 0
 
 !!! Tip "Environment Variables"
-    All the inputs available within the `odpy` command can be defined through environment variables:  `ODPY_*`, `ODPY_CONVERT_*` and `ODPY_COMPILE_*` respectively. 
+    All the inputs available within the `odpy` command can be defined through environment variables:  `ODPY_*`, `ODPY_CONVERT_*` and `ODPY_COMPILE_*` respectively.
 
     Example: 
     - `ODPY_LOG_LEVEL=WARNING` will force `odpy` to log only the warning events.
