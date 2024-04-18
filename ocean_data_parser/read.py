@@ -27,7 +27,10 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
     """
     # Retrieve file extension and the first few lines of the file header
     file = Path(file)
+    if file.is_dir():
+        raise ValueError(f"Directory provided instead of a file: {file}")
     ext = file.suffix[1:]
+
     with open(file, encoding=encoding, errors="ignore") as file_handle:
         header = "".join((next(file_handle) for _ in range(5)))
 
@@ -95,7 +98,7 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
     elif all(re.search(r"\$.*,.*,", line) for line in header.split("\n") if line):
         parser = "nmea.file"
     else:
-        raise ImportError("Unable to match file to a specific data parser")
+        raise ImportError(f"Unable to match file to a specific data parser: {file}")
 
     logger.info("Selected parser: %s", parser)
     return parser
