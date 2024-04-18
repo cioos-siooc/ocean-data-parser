@@ -39,10 +39,10 @@ odpy convert -i '**/*.cnv' -p 'seabird.cnv'
 Load a compatible file with the automated parser detection method:
 
 ```python
-import ocean_data_parser.parsers
+import ocean_data_parser.read
 
 # Load a file to an xarray object
-ds = ocean_data_parser.parsers.file('Path to file')
+ds = ocean_data_parser.read.file('Path to file')
 
 # Save to netcdf
 ds.to_netcdf('save-path.nc')
