@@ -86,6 +86,7 @@ classic_logger = logging.getLogger()
     help="Log file level used",
     default="INFO",
     envvar="ODPY_LOG_FILE_LEVEL",
+    show_default=True,
 )
 @click.option(
     "--log-file-rotation",
@@ -96,14 +97,18 @@ classic_logger = logging.getLogger()
 @click.option(
     "--log-file-retention",
     type=str,
-    help="Delete log file after a given time period. Given value must be compatible with pandas.TimeDelta",
+    help=(
+        "Delete log file after a given time period. "
+        "Given value must be compatible with pandas.TimeDelta (e.g. '1D', '1W'). "
+        "If None, file will be kept indefinitely."
+    ),
     default=None,
 )
 @click.option(
     "--diagnose/--no-diagnose",
     is_flag=True,
     default=True,
-    help="Run diagnose on error",
+    help="Run loguru diagnose on errors, to see all variable inputs and stacktrace",
     show_default=True,
 )
 @click.option(
@@ -169,8 +174,8 @@ def main(
         click.echo(f"log_file_level={log_file_level}")
 
 
-main.add_command(convert.cli, name="convert")
+main.add_command(convert.cli)
 main.add_command(inspect_variables)
 
 if __name__ == "__main__":
-    main()
+    main(auto_envar_prefix="ODPY")

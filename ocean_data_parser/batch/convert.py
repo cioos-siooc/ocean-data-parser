@@ -70,7 +70,7 @@ def get_parser_list(ctx, _, value):
     ctx.exit()
 
 
-@click.command(context_settings={"auto_envvar_prefix": "ODPY_CONVERT"})
+@click.command(name="convert", context_settings={"auto_envvar_prefix": "ODPY_CONVERT"})
 @click.option(
     "-i",
     "--input-path",

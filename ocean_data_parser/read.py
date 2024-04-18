@@ -7,7 +7,7 @@ from importlib import import_module
 from pathlib import Path
 from typing import Union
 
-from xarray import Dataset
+import xarray as xr
 
 logger = logging.getLogger(__name__)
 
@@ -27,12 +27,17 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
     """
     # Retrieve file extension and the first few lines of the file header
     file = Path(file)
+    if file.is_dir():
+        raise ValueError(f"Directory provided instead of a file: {file}")
     ext = file.suffix[1:]
+
     with open(file, encoding=encoding, errors="ignore") as file_handle:
         header = "".join((next(file_handle) for _ in range(5)))
 
     # Detect the right file format
-    if ext == "btl" and "* Sea-Bird" in header:
+    if ext == "nc":
+        parser = "netcdf"
+    elif ext == "btl" and "* Sea-Bird" in header:
         parser = "seabird.btl"
     elif ext == "cnv" and "* Sea-Bird" in header:
         parser = "seabird.cnv"
@@ -93,20 +98,23 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
     elif all(re.search(r"\$.*,.*,", line) for line in header.split("\n") if line):
         parser = "nmea.file"
     else:
-        raise ImportError("Unable to match file to a specific data parser")
+        raise ImportError(f"Unable to match file to a specific data parser: {file}")
 
     logger.info("Selected parser: %s", parser)
     return parser
 
 
 def import_parser(parser: str):
+    if parser == "netcdf":
+        return xr.open_dataset
+
     read_module, filetype = parser.rsplit(".", 1)
     logger.info("Import module: ocean_data_parser.parsers.%s", read_module)
     mod = import_module(f"ocean_data_parser.parsers.{read_module}")
     return getattr(mod, filetype)
 
 
-def file(path: str, parser: str = None, **kwargs: Union[str, int, float]) -> Dataset:
+def file(path: str, parser: str = None, **kwargs: Union[str, int, float]) -> xr.Dataset:
     """Load compatible file format as an xarray dataset.
 
     ```python

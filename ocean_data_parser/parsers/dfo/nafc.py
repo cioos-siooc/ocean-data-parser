@@ -144,7 +144,9 @@ def _parse_pfile_header_line1(line: str) -> dict:
             _float(line[19:23], level="ERROR"), _float(line[24:29], level="ERROR")
         ),
         time=pd.to_datetime(line[30:46], format="%Y-%m-%d %H:%M", utc=True),
-        sounder_depth=_int(line[47:51], ["9999", "0000", "-999"]),  # water depth in meters
+        sounder_depth=_int(
+            line[47:51], ["9999", "0000", "-999"]
+        ),  # water depth in meters
         instrument=line[52:57],  # see note below
         set_number=_int(
             line[58:61],
@@ -204,9 +206,14 @@ def _parse_pfile_header_line3(line: str) -> dict:
         # station=_int(line[5:8]),
         cloud=_int(line[9], null_values=["x", "-", "/", "."]),  # i1,
         wind_dir=_int(line[11:13]) * 10
-        if line[11:13].strip() and line[11:13] not in [ "99" ,"98"]
+        if line[11:13].strip() and line[11:13] not in ["99", "98"]
         else None,  # in 10 degree steps (eg 270 is=27)
-        wind_speed_knots=_int(line[14:16],null_values=["99",]),  # i2,knots s= cale
+        wind_speed_knots=_int(
+            line[14:16],
+            null_values=[
+                "99",
+            ],
+        ),  # i2,knots s= cale
         ww_code=_int(line[17:19]),  # i2,
         pressure_bars=_float(line[20:26], [-999.0, -999.9]),  # pressure mil-= bars
         air_dry_temp_celsius=_float(
@@ -216,12 +223,28 @@ def _parse_pfile_header_line3(line: str) -> dict:
             line[33:38], [-99.0, 99.9, -99.9, 999.9, -49.9]
         ),  # f5.1,tem= p °C
         waves_period=_int(
-            line[39:41], null_values=["XX", "- ","99"], match=r"\s*(\d+)\.?"
+            line[39:41], null_values=["XX", "- ", "99"], match=r"\s*(\d+)\.?"
         ),  # i2,
-        waves_height=_float(line[42:44],null_values=["99",]),  # i2,
-        swell_dir=_int(line[45:47]) * 10 if line[45:47].strip() and line[45:47] not in ["99",] else None,  # i2,
-        swell_period=_int(line[48:50], null_values=["XX", "- ","99"]),  # i2,
-        swell_height=_float(line[51:53], null_values=["99",]),  # i2,
+        waves_height=_float(
+            line[42:44],
+            null_values=[
+                "99",
+            ],
+        ),  # i2,
+        swell_dir=_int(line[45:47]) * 10
+        if line[45:47].strip()
+        and line[45:47]
+        not in [
+            "99",
+        ]
+        else None,  # i2,
+        swell_period=_int(line[48:50], null_values=["XX", "- ", "99"]),  # i2,
+        swell_height=_float(
+            line[51:53],
+            null_values=[
+                "99",
+            ],
+        ),  # i2,
         ice_conc=_int(line[54]),  # i1,
         ice_stage=_int(line[56]),  # i1,
         ice_bergs=_int(line[58]),  # i1,
@@ -258,7 +281,9 @@ def _parse_channel_stats(lines: list) -> dict:
 
 def _get_platform_by_nafc_platform_code(platform_code: Union[int, str]) -> dict:
     platform_code = (
-        f"{platform_code:02g}" if isinstance(platform_code, int) else platform_code.upper()
+        f"{platform_code:02g}"
+        if isinstance(platform_code, int)
+        else platform_code.upper()
     )
     if p_file_shipcode["dfo_nafc_platform_code"].str.match(platform_code).any():
         return (
@@ -310,16 +335,19 @@ def _pfile_history_to_cf(lines: list) -> str:
 
     return "".join([f"{timestamp} - {line}" for line in lines[1:]])
 
-def _get_pfile_variable_vocabulary(variable: str,instrument:str=None) -> dict:
+
+def _get_pfile_variable_vocabulary(variable: str, instrument: str = None) -> dict:
     """Retrieve variable vocabulary"""
     if variable == "xxx":
         return []
-    matched_legacy_p_code = p_file_vocabulary.apply(lambda x: re.fullmatch(x['legacy_p_code'],variable,re.IGNORECASE), axis=1).notna()
+    matched_legacy_p_code = p_file_vocabulary.apply(
+        lambda x: re.fullmatch(x["legacy_p_code"], variable, re.IGNORECASE), axis=1
+    ).notna()
 
     if not any(matched_legacy_p_code):
         logger.warning("No vocabulary is available for variable={}", variable)
         return []
-    
+
     matching_vocabulary = p_file_vocabulary.loc[matched_legacy_p_code].query(
         f"(accepted_instruments.isna() or "
         f"accepted_instruments in '{instrument or ''}' )"
@@ -476,7 +504,9 @@ def pfile(
     extra_vocabulary_variables = []
     for var in ds.variables:
         ds[var].attrs.update(variables_span.get(var, {}))
-        variable_attributes = _get_pfile_variable_vocabulary(var,ds.attrs.get("instrument"))
+        variable_attributes = _get_pfile_variable_vocabulary(
+            var, ds.attrs.get("instrument")
+        )
         if not variable_attributes:
             continue
 
@@ -683,7 +713,6 @@ def pcnv(
         "bottles": _int(ds.attrs.pop("BOTTLES", None)),
         **(global_attributes or {}),
     }
-
 
     # load metqa table attributes
     if match_metqa_table:

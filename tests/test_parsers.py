@@ -556,10 +556,7 @@ class TestDFO_NAFC_pFiles:
         result = dfo.nafc._parse_ll(deg, min)
         assert result == expected_result
 
-    @pytest.mark.parametrize(
-        "variable",
-        ["trp",'temp','trans','light']
-    )
+    @pytest.mark.parametrize("variable", ["trp", "temp", "trans", "light"])
     def test_p_file_variable_vocabulary_mapper(self, variable):
         matched_vocabulary = dfo.nafc._get_pfile_variable_vocabulary(variable)
         assert matched_vocabulary
@@ -574,6 +571,7 @@ class TestDFO_NAFC_pFiles:
         assert not matched_vocabulary
         assert "No vocabulary is available for variable=unknown_variable" in caplog.text
         assert caplog.records[0].levelname == "WARNING"
+
 
 class TestDfoIosShell:
     @pytest.mark.parametrize(
