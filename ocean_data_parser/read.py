@@ -107,7 +107,7 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
 def import_parser(parser: str):
     if parser == "netcdf":
         return xr.open_dataset
-    
+
     read_module, filetype = parser.rsplit(".", 1)
     logger.info("Import module: ocean_data_parser.parsers.%s", read_module)
     mod = import_module(f"ocean_data_parser.parsers.{read_module}")

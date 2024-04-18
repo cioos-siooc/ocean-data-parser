@@ -62,7 +62,7 @@ def test_odpy_main_args_from_env_variables(env, expected_output):
     ),
 )
 def test_odpy_convert_arguments(args, expected_output):
-    results = run_command(convert.cli,args)
+    results = run_command(convert.cli, args)
     assert expected_output in results.output
 
 

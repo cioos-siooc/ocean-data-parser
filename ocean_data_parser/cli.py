@@ -169,7 +169,7 @@ def main(
         click.echo(f"log_file_level={log_file_level}")
 
 
-main.add_command(convert.cli, name="convert")
+main.add_command(convert.cli)
 main.add_command(inspect_variables)
 
 if __name__ == "__main__":

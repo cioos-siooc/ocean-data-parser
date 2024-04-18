@@ -7,12 +7,9 @@ import yaml
 from click.testing import CliRunner
 
 from ocean_data_parser.batch.config import glob
-from ocean_data_parser.batch.convert import (
-    BatchConversion,
-    FileConversionRegistry,
-    cli as convert_cli,
-    load_config,
-)
+from ocean_data_parser.batch.convert import BatchConversion, FileConversionRegistry
+from ocean_data_parser.batch.convert import cli as convert_cli
+from ocean_data_parser.batch.convert import load_config
 from ocean_data_parser.batch.utils import generate_output_path
 from ocean_data_parser.read import file
 
