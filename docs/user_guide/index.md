@@ -1,3 +1,5 @@
+# User Guide
+
 The ocean-data-parser can be used through two main methods:
 
 - [command line interface `odpy`: Ideal for conversions, CI tools.](odpy.md)

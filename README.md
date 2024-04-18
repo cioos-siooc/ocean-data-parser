@@ -1,13 +1,6 @@
-<!-- NOTE: All sections are placeholders. Use the relevant ones-->
 
 ![Logo](docs/images/logo_EN_FR-1024x208.png#gh-light-mode-only)
 ![Logo](docs/images/cioos-national_EN_FR_W-01.png#gh-dark-mode-only)
-
-<!-- Make a favicon/logo using something like:
-
-* https://favicon.io/
-* https://www.shopify.com/tools/logo-maker/open-source-software
-* https://primitive.lol/ -->
 
 # ocean-data-parser
 
