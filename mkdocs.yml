@@ -83,7 +83,7 @@ nav:
     - Contributions: get_started/contributions.md
   - User Guide:
     - main: user_guide/index.md
-    - odpy (cli): user_guide/odpy.md
+    - odpy (Command Line Interface): user_guide/odpy.md
     - ocean_data_parser.read: user_guide/read.md
     - ocean_data_parser.parsers:
         - How to: user_guide/parsers/how-to.md

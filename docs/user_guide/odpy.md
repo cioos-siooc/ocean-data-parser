@@ -1,4 +1,7 @@
-The ocean-data-parser provides a `odpy [ODPY OPTIONS] [METHOD] [method OPTIONS]` tool.
+---
+title: odpy CLI
+---
+# Command Line Interface
 
 ::: mkdocs-click
     :module: ocean_data_parser.cli
@@ -11,6 +14,3 @@ The ocean-data-parser provides a `odpy [ODPY OPTIONS] [METHOD] [method OPTIONS]`
     Example: 
     - `ODPY_LOG_LEVEL=WARNING` will force `odpy` to log only the warning events.
     - `ODPY_CONVERT_OUTPUT_PATH=output` will force `odpy convert` to output to the the local directory `./output/`
-
-!!! Warning
-    An argument take priority over an environment variable.
