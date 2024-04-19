@@ -2,7 +2,7 @@
 
 This page contains all the information necessary to setup a local development environment.
 
-## Contribution
+## :octicons-person-add-24: Contribution
 
 All contributions are welcome!
 
@@ -10,7 +10,8 @@ Please create a new [discussion](https://github.com/cioos-siooc/ocean-data-parse
 or [issue](https://github.com/cioos-siooc/ocean-data-parser/issues) within the
 github repository for any questions, ideas and suggestions.
 
-## Installation
+## :octicons-download-24: Installation
+
 Clone the project locally
 
 ```console
@@ -37,11 +38,11 @@ Go to the project directory and install dependancies in a poetry environment.
   poetry install --with dev
 ```
 
-## Testing
+## :material-test-tube: Testing
 
 The package use pytest to run a series of tests in order to help the development of the different aspect of the package. Within a developping environment, to run the different tests, run the pytest commmand through your terminal within the base directory of the repository. Pytest can also be integrated with different IDE and is run on any pushes and PR to the `main` and `development` branches.
 
-## Parsers Tests
+## :material-checkbox-multiple-marked-circle-outline: Parsers Tests
 
 The package contains a number of different parsers compatible with different standard file formats. Each parser is tested on a series of test files made available within the [test file directory](https://github.com/cioos-siooc/ocean-data-parser/blob/main/tests/parsers_test_files) The different tests executed on each individual parsers can be subdivided in 3 main categories:
 
@@ -50,7 +51,7 @@ The package contains a number of different parsers compatible with different sta
 3. Parse test file to an xarray dataset and compare to a reference file ('*_reference.nc) if made available. Any differences are flagged
 4. *(in development)* Assess parsed xarray object compliance with the different convention by using the ioos-compliance checker, resulting objects should be to a minimum compliante to ACDD 1.3 and CF 1.6. Other conventions can be added by adding them to the xarray object global attribute `Convention`.
 
-## Documentation Build
+## :octicons-book-24: Documentation Build
 
 To run a local instance of the documentation webpage. Install the dependancies:
 

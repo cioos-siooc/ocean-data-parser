@@ -78,7 +78,7 @@ nav:
   - User Guide:
     - User Guide: user_guide/index.md
     - Command Line Interface (odpy): user_guide/cli.md
-    - ocean_data_parser.read: user_guide/read.md
+    - ocean_data_parser.read.file: user_guide/read.md
     - ocean_data_parser.parsers:
         - How to: user_guide/parsers/how-to.md
         - amundsen: user_guide/parsers/amundsen.md
