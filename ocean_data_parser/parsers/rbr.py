@@ -1,31 +1,43 @@
 """
-# RBR Ltd.
-<https://rbr-global.com/>
+RBR Ltd. is a company that specializes in oceanographic instruments and sensors.
 
+They provide a range of instruments for measuring various parameters in the ocean,
+including temperature, salinity, pressure, and more.
 """
+
 import re
 
 import pandas as pd
+from loguru import logger
+from xarray import Dataset
 
 from ocean_data_parser.parsers.utils import standardize_dataset
 
 
-def rtext(file_path, encoding="UTF-8", output=None):
-    """
-    Read RBR R-Text format.
-    :param errors: default ignore
-    :param encoding: default UTF-8
-    :param file_path: path to file to read
-    :return: metadata dictionary dataframe
-    """
-    # MON File Header end
-    header_end = "NumberOfSamples"
+def rtext(
+    file_path: str,
+    encoding="UTF-8",
+    header_end: str = "NumberOfSamples",
+    errors: str = "raise",
+) -> Dataset:
+    """Read RBR legacy R-Text Engineering format.
 
+    Args:
+        file_path (Path): RBR R-Text file path
+        encoding (str, optional): File encoding. Defaults to "UTF-8".
+        header_end (str, optional): End of the metadata header.
+            Defaults to "NumberOfSamples".
+        errors (str, optional): Error handling. Defaults to "raise".
+
+    Raises:
+        RuntimeError: File length do not match expected Number of Samples
+
+    Returns:
+        Dataset: Parsed Dataset
+    """
+    line = ""
+    metadata = {}
     with open(file_path, encoding=encoding) as fid:
-        line = ""
-        section = "header_info"
-        metadata = {section: {}}
-
         while not line.startswith(header_end):
             # Read line by line
             line = fid.readline()
@@ -61,7 +73,12 @@ def rtext(file_path, encoding="UTF-8", output=None):
 
         # Make sure that line count is good
         if ds.dims["index"] != metadata["number_of_samples"]:
-            raise RuntimeError("Data length do not match expected Number of Samples")
+            if errors == "raise":
+                raise RuntimeError(
+                    "Data length do not match expected Number of Samples"
+                )
+            else:
+                logger.warning("Data length do not match expected Number of Samples")
 
         # Convert to datset
         ds.attrs = {

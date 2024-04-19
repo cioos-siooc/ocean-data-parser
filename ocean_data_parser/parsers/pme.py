@@ -1,7 +1,6 @@
 """
-# PME Instruments 
-<https://www.pme.com/>
-
+[Precision Measurement Engineering (PME)](https://www.pme.com/)
+is a company that manufactures instruments to measure different water properties.
 """
 
 import logging
@@ -16,7 +15,7 @@ from o2conversion import O2ctoO2p, O2ctoO2s
 from ocean_data_parser.parsers.utils import standardize_dataset
 
 logger = logging.getLogger(__name__)
-variable_attributes = {
+VARIABLE_ATTRIBUTES = {
     "index": {},
     "Time (sec)": {"long_name": "Time", "standard_name": "time"},
     "T (deg C)": {
@@ -45,7 +44,7 @@ variable_attributes = {
     "Q ()": {"long_name": "Q"},
 }
 
-vars_rename = {
+VARIABLE_RENAMING_MAPPING = {
     "Time (sec)": "time",
     "T (deg C)": "temperature",
     "BV (Volts)": "batt_volt",
@@ -53,7 +52,7 @@ vars_rename = {
     "Q ()": "q",
 }
 
-variable_attributes = {
+VARIABLE_ATTRIBUTES = {
     "Time (sec)": dict(long_name="Time", standard_name="time"),
     "T (deg C)": dict(
         long_name="Temperature",
@@ -75,8 +74,15 @@ global_attributes = {"Conventions": "CF-1.6"}
 def minidot_txt(
     path: str, read_csv_kwargs: dict = None, rename_variables: bool = True
 ) -> xr.Dataset:
-    """
-    minidot_txt parses the txt format provided by the PME Minidot instruments.
+    """Parse PME MiniDot txt file
+
+    Args:
+        path (str): txt file path
+        read_csv_kwargs (dict, optional): Extra . Defaults to None.
+        rename_variables (bool, optional): _description_. Defaults to True.
+
+    Returns:
+        xarray.Dataset
     """
 
     def _append_to_history(msg):
@@ -150,16 +156,16 @@ def minidot_txt(
 
     # Add attributes to the dataset and rename variables to mapped names.
     for var in ds.variables:
-        if var not in variable_attributes:
+        if var not in VARIABLE_ATTRIBUTES:
             logger.warning("Unknown variable: %s", var)
             continue
-        ds[var].attrs = variable_attributes[var]
+        ds[var].attrs = VARIABLE_ATTRIBUTES[var]
 
     if rename_variables:
-        ds = ds.rename_vars(vars_rename)
+        ds = ds.rename_vars(VARIABLE_RENAMING_MAPPING)
     ds.attrs[
         "history"
-    ] += f"\n{pd.Timestamp.now().isoformat()} Rename variables: {vars_rename}"
+    ] += f"\n{pd.Timestamp.now().isoformat()} Rename variables: {VARIABLE_RENAMING_MAPPING}"
 
     ds = standardize_dataset(ds)
     return ds

@@ -1,7 +1,7 @@
 """
-This module contains all the different tools used to handle
-the different [Seabird Scientific](https://www.seabird.com) file formats.
-
+This page provides functions for parsing data files in Seabird Scientific format.
+The Seabird Scientific format is commonly used for oceanographic data collection
+and is supported by [Seabird Scientific](https://www.seabird.com).
 """
 
 import difflib

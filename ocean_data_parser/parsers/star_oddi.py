@@ -1,7 +1,7 @@
 """
-# Star-Oddi
-<https://www.star-oddi.com/>
-
+[Star-Oddi](https://www.star-oddi.com/) is a company that specializes in manufacturing and providing data 
+loggers and sensors for oceanographic research. Their DAT files contain recorded 
+data from various oceanographic parameters such as temperature, salinity, conductivity, and sound velocity.
 """
 import logging
 import re
@@ -11,9 +11,9 @@ import xarray
 
 logger = logging.getLogger(__name__)
 
-default_global_attributes = {"instrument_manufacturer": "Star-Oddi", "source": None}
+DEFAULT_GLOBAL_ATTRIBUTES = {"instrument_manufacturer": "Star-Oddi", "source": None}
 
-variables_attributes = {
+VARIABLES_ATTRIBUTES = {
     "temperature": {
         "long_name": "Temperature",
         "standard_name": "sea_water_temperature",
@@ -33,18 +33,24 @@ variables_attributes = {
 }
 
 
-def DAT(
-    path: str, encoding: str = "cp1252", kwargs_read_csv: dict = None
-) -> xarray.Dataset:
+def DAT(path: str, encoding: str = "cp1252") -> xarray.Dataset:
+    """Parse Star-Oddi DAT files
+
+    Args:
+        path (str): DAT file path
+        encoding (str, optional): Encoding used. Defaults to "cp1252".
+
+    Returns:
+        xarray.Dataset: Dataset
+    """
+
     def _standardize_attributes(item):
         item = re.sub(r"[\.\:]", "", item.strip().lower())
         return re.sub(r"\s", "_", item)
 
-    if kwargs_read_csv is None:
-        kwargs_read_csv = {}
     metadata = {}
     variables = {}
-    original_header = ""
+    original_ = ""
     with open(path, "r", encoding=encoding) as f:
         line = "#"
 
@@ -102,7 +108,7 @@ def DAT(
         # Convert to xarray object and add related metadata
         ds = df.to_xarray()
         ds.attrs = {
-            **default_global_attributes,
+            **DEFAULT_GLOBAL_ATTRIBUTES,
             "source": path,
             **dict(
                 zip(
@@ -124,5 +130,5 @@ def DAT(
         }
         # Add variable attributes
         for var in ds:
-            ds[var].attrs = {**variables[var], **variables_attributes.get(var, {})}
+            ds[var].attrs = {**variables[var], **VARIABLES_ATTRIBUTES.get(var, {})}
         return ds
