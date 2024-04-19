@@ -1,4 +1,16 @@
+# Development
 
+This page contains all the information necessary to setup a local development environment.
+
+## Contribution
+
+All contributions are welcome!
+
+Please create a new [discussion](https://github.com/cioos-siooc/ocean-data-parser/discussions)
+or [issue](https://github.com/cioos-siooc/ocean-data-parser/issues) within the
+github repository for any questions, ideas and suggestions.
+
+## Installation
 Clone the project locally
 
 ```console
@@ -38,7 +50,7 @@ The package contains a number of different parsers compatible with different sta
 3. Parse test file to an xarray dataset and compare to a reference file ('*_reference.nc) if made available. Any differences are flagged
 4. *(in development)* Assess parsed xarray object compliance with the different convention by using the ioos-compliance checker, resulting objects should be to a minimum compliante to ACDD 1.3 and CF 1.6. Other conventions can be added by adding them to the xarray object global attribute `Convention`.
 
-## Documentation
+## Documentation Build
 
 To run a local instance of the documentation webpage. Install the dependancies:
 

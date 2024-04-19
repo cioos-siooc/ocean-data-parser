@@ -111,9 +111,7 @@ nav:
     - DFO BIO NAFC Pfiles example: notebooks/dfo_nafc_p_file_parser_example.ipynb
     - NMEA example: notebooks/nmea_parser_example.ipynb
     - Seabird CNV and BTL files example: notebooks/seabird_cnv_and_btl_parser_example.ipynb
-  - Development: 
-    - Installation: development/installation.md
-    - Contributions: development/contributions.md
+  - Development: development.md
 
 
 extra:
