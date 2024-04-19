@@ -32,6 +32,7 @@ theme:
     - navigation.footer
     - navigation.top
     - navigation.tracking
+    - navigation.indexes
     - toc.integrate
     - toc.follow
     - navigation.tabs
@@ -72,6 +73,8 @@ markdown_extensions:
     - pymdownx.emoji:
         emoji_index: !!python/name:material.extensions.emoji.twemoji
         emoji_generator: !!python/name:material.extensions.emoji.to_svg
+    - toc:
+        permalink: true
 
 nav:
   - Home: index.md
@@ -80,7 +83,7 @@ nav:
     - Command Line Interface (odpy): user_guide/cli.md
     - ocean_data_parser.read.file: user_guide/read.md
     - ocean_data_parser.parsers:
-        - How to: user_guide/parsers/how-to.md
+        - user_guide/parsers/index.md
         - amundsen: user_guide/parsers/amundsen.md
         - dfo:
             - dfo.ios: user_guide/parsers/dfo/ios.md

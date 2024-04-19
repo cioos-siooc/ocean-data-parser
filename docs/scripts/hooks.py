@@ -91,19 +91,26 @@ def copy_notebooks(output="docs/notebooks"):
         shutil.copy(notebook, docs_notebooks / notebook.name)
 
 
-def get_parser_list(output="docs/user_guide/parsers/parser-list.md"):
+def get_parser_list(output="docs/user_guide/parsers/index.md"):
     def _get_parser_page_link(parser):
         if "." not in parser:
-            return parser
+            return parser, parser
         parser_module, _ = parser.rsplit(".", 1)
-        return f"[{parser}](parsers/{parser_module.replace('.','/')}/#ocean_data_parser.parsers.{parser})"
+        return (parser_module, f"[{parser}]({parser_module.replace('.','/')}/#ocean_data_parser.parsers.{parser})")
 
-    with open(output, "w") as file:
-        file.write("## Available Parsers\n")
-        file.write(
-            "\n".join([f"- {_get_parser_page_link(parser)}" for parser in PARSERS])
-        )
-
+    index_html = Path("docs/user_guide/parsers/header-index.md").read_text()
+    table_parser = {}
+    for parser in PARSERS:
+        parser_module, link = _get_parser_page_link(parser)
+        if parser_module not in table_parser:
+            table_parser[parser_module] = []
+        table_parser[parser_module].append(link)
+    parsers_toc = ""
+    for parser_module in sorted(table_parser):
+        parsers_toc += f"[{parser_module.upper()}]({parser_module.replace('.','/')})\n\n- "
+        parsers_toc += "\n- ".join(table_parser[parser_module]) + "\n\n"
+    index_html = index_html.replace("{{ parsers_list }}",parsers_toc)
+    Path(output).write_text(index_html)
 
 def on_pre_build(config, **kwargs) -> None:
     add_vocabularies_dir()
