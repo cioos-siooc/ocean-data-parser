@@ -12,67 +12,67 @@ ds = dfo.odf.bio_odf('file_path')
 
 Ocean Data Parser includes the following data format parsers:
 
-[AMUNDSEN](amundsen)
+[AMUNDSEN](amundsen.md)
 
-- [amundsen.int_format](amundsen/#ocean_data_parser.parsers.amundsen.int_format)
+- [amundsen.int_format](amundsen.md#ocean_data_parser.parsers.amundsen.int_format)
 
-[DFO.IOS](dfo/ios)
+[DFO.IOS](dfo/ios.md)
 
-- [dfo.ios.shell](dfo/ios/#ocean_data_parser.parsers.dfo.ios.shell)
-- [dfo.ios.shell](dfo/ios/#ocean_data_parser.parsers.dfo.ios.shell)
+- [dfo.ios.shell](dfo/ios.md#ocean_data_parser.parsers.dfo.ios.shell)
+- [dfo.ios.shell](dfo/ios.md#ocean_data_parser.parsers.dfo.ios.shell)
 
-[DFO.NAFC](dfo/nafc)
+[DFO.NAFC](dfo/nafc.md)
 
-- [dfo.nafc.pcnv](dfo/nafc/#ocean_data_parser.parsers.dfo.nafc.pcnv)
-- [dfo.nafc.pfile](dfo/nafc/#ocean_data_parser.parsers.dfo.nafc.pfile)
+- [dfo.nafc.pcnv](dfo/nafc.md#ocean_data_parser.parsers.dfo.nafc.pcnv)
+- [dfo.nafc.pfile](dfo/nafc.md#ocean_data_parser.parsers.dfo.nafc.pfile)
 
-[DFO.ODF](dfo/odf)
+[DFO.ODF](dfo/odf.md)
 
-- [dfo.odf.bio_odf](dfo/odf/#ocean_data_parser.parsers.dfo.odf.bio_odf)
-- [dfo.odf.mli_odf](dfo/odf/#ocean_data_parser.parsers.dfo.odf.mli_odf)
-- [dfo.odf.mli_odf](dfo/odf/#ocean_data_parser.parsers.dfo.odf.mli_odf)
+- [dfo.odf.bio_odf](dfo/odf.md#ocean_data_parser.parsers.dfo.odf.bio_odf)
+- [dfo.odf.mli_odf](dfo/odf.md#ocean_data_parser.parsers.dfo.odf.mli_odf)
+- [dfo.odf.mli_odf](dfo/odf.md#ocean_data_parser.parsers.dfo.odf.mli_odf)
 
-[ELECTRICBLUE](electricblue)
+[ELECTRICBLUE](electricblue.md)
 
-- [electricblue.csv](electricblue/#ocean_data_parser.parsers.electricblue.csv)
-- [electricblue.log_csv](electricblue/#ocean_data_parser.parsers.electricblue.log_csv)
+- [electricblue.csv](electricblue.md#ocean_data_parser.parsers.electricblue.csv)
+- [electricblue.log_csv](electricblue.md#ocean_data_parser.parsers.electricblue.log_csv)
 
-[NETCDF](netcdf)
+[NETCDF](netcdf.md)
 
-- netcdf
+- [netcdf](netcdf.md)
 
-[NMEA](nmea)
+[NMEA](nmea.md)
 
-- [nmea.file](nmea/#ocean_data_parser.parsers.nmea.file)
+- [nmea.file](nmea.md#ocean_data_parser.parsers.nmea.file)
 
-[ONSET](onset)
+[ONSET](onset.md)
 
-- [onset.csv](onset/#ocean_data_parser.parsers.onset.csv)
+- [onset.csv](onset.md#ocean_data_parser.parsers.onset.csv)
 
-[PME](pme)
+[PME](pme.md)
 
-- [pme.minidot_txt](pme/#ocean_data_parser.parsers.pme.minidot_txt)
+- [pme.minidot_txt](pme.md#ocean_data_parser.parsers.pme.minidot_txt)
 
-[RBR](rbr)
+[RBR](rbr.md)
 
-- [rbr.rtext](rbr/#ocean_data_parser.parsers.rbr.rtext)
+- [rbr.rtext](rbr.md#ocean_data_parser.parsers.rbr.rtext)
 
-[SEABIRD](seabird)
+[SEABIRD](seabird.md)
 
-- [seabird.btl](seabird/#ocean_data_parser.parsers.seabird.btl)
-- [seabird.cnv](seabird/#ocean_data_parser.parsers.seabird.cnv)
+- [seabird.btl](seabird.md#ocean_data_parser.parsers.seabird.btl)
+- [seabird.cnv](seabird.md#ocean_data_parser.parsers.seabird.cnv)
 
-[STAR_ODDI](star_oddi)
+[STAR_ODDI](star-oddi.md)
 
-- [star_oddi.DAT](star_oddi/#ocean_data_parser.parsers.star_oddi.DAT)
+- [star_oddi.DAT](star-oddi.md#ocean_data_parser.parsers.star_oddi.DAT)
 
-[SUNBURST](sunburst)
+[SUNBURST](sunburst.md)
 
-- [sunburst.superCO2_notes](sunburst/#ocean_data_parser.parsers.sunburst.superCO2_notes)
-- [sunburst.superCO2](sunburst/#ocean_data_parser.parsers.sunburst.superCO2)
+- [sunburst.superCO2_notes](sunburst.md#ocean_data_parser.parsers.sunburst.superCO2_notes)
+- [sunburst.superCO2](sunburst.md#ocean_data_parser.parsers.sunburst.superCO2)
 
-[VAN_ESSEN_INSTRUMENTS](van_essen_instruments)
+[VAN_ESSEN_INSTRUMENTS](van-essen-instruments.md)
 
-- [van_essen_instruments.mon](van_essen_instruments/#ocean_data_parser.parsers.van_essen_instruments.mon)
+- [van_essen_instruments.mon](van-essen-instruments.md#ocean_data_parser.parsers.van_essen_instruments.mon)
 
 

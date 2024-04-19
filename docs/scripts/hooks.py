@@ -94,9 +94,9 @@ def copy_notebooks(output="docs/notebooks"):
 def get_parser_list(output="docs/user_guide/parsers/index.md"):
     def _get_parser_page_link(parser):
         if "." not in parser:
-            return parser, parser
+            return parser, f"[{parser}]({parser.replace('_','-')}.md)"
         parser_module, _ = parser.rsplit(".", 1)
-        return (parser_module, f"[{parser}]({parser_module.replace('.','/')}/#ocean_data_parser.parsers.{parser})")
+        return (parser_module, f"[{parser}]({parser_module.replace('.','/').replace('_','-')}.md#ocean_data_parser.parsers.{parser})")
 
     index_html = Path("docs/user_guide/parsers/header-index.md").read_text()
     table_parser = {}
@@ -107,7 +107,7 @@ def get_parser_list(output="docs/user_guide/parsers/index.md"):
         table_parser[parser_module].append(link)
     parsers_toc = ""
     for parser_module in sorted(table_parser):
-        parsers_toc += f"[{parser_module.upper()}]({parser_module.replace('.','/')})\n\n- "
+        parsers_toc += f"[{parser_module.upper()}]({parser_module.replace('.','/').replace('_','-')}.md)\n\n- "
         parsers_toc += "\n- ".join(table_parser[parser_module]) + "\n\n"
     index_html = index_html.replace("{{ parsers_list }}",parsers_toc)
     Path(output).write_text(index_html)

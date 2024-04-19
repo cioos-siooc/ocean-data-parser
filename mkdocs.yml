@@ -91,13 +91,14 @@ nav:
             - dfo.odf: user_guide/parsers/dfo/odf.md
         - electricblue: user_guide/parsers/electricblue.md
         - nmea: user_guide/parsers/nmea.md
+        - netcdf: user_guide/parsers/netcdf.md
         - onset: user_guide/parsers/onset.md
         - pme: user_guide/parsers/pme.md
         - rbr: user_guide/parsers/rbr.md
         - seabird: user_guide/parsers/seabird.md
         - star_oddi: user_guide/parsers/star-oddi.md
         - sunburst: user_guide/parsers/sunburst.md
-        - van_essen_instruments: user_guide/parsers/van-essen-intruments.md
+        - van_essen_instruments: user_guide/parsers/van-essen-instruments.md
     - vocabularies: 
         - amundsen: user_guide/vocabularies/amundsen-int.md
         - dfo.odf: user_guide/vocabularies/dfo-odf.md
