@@ -1,5 +1,6 @@
+---
 site_name: Ocean Data Parser
-site_url: https://cioos-siooc.github.io/ocean-data-parser/  
+site_url: https://cioos-siooc.github.io/ocean-data-parser/
 
 repo_name: ocean-data-parser
 repo_url: https://github.com/cioos-siooc/ocean-data-parser
@@ -43,7 +44,7 @@ theme:
 plugins:
   - mkdocstrings
   - mkdocs-jupyter:
-      ignore_h1_titles: True
+      ignore_h1_titles: true
   - mike:
       # These fields are all optional; the defaults are as below...
       canonical_version: main
@@ -52,69 +53,69 @@ plugins:
         on_pre_build: "docs.scripts.hooks:on_pre_build"
   - search
   - material-plausible
-        
+
 markdown_extensions:
-    - mkdocs-click
-    - admonition
-    - attr_list
-    - def_list
-    - pymdownx.tasklist:
-        custom_checkbox: true
-    - pymdownx.highlight:
-        anchor_linenums: true
-        line_spans: __span
-        pygments_lang_class: true
-    - pymdownx.inlinehilite
-    - pymdownx.snippets
-    - pymdownx.superfences
-    - admonition
-    - pymdownx.details
-    - pymdownx.superfences
-    - pymdownx.emoji:
-        emoji_index: !!python/name:material.extensions.emoji.twemoji
-        emoji_generator: !!python/name:material.extensions.emoji.to_svg
-    - toc:
-        permalink: true
+  - mkdocs-click
+  - admonition
+  - attr_list
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - toc:
+      permalink: true
 
 nav:
   - Home: index.md
   - User Guide:
-    - User Guide: user_guide/index.md
-    - Command Line Interface (odpy): user_guide/cli.md
-    - ocean_data_parser.read.file: user_guide/read.md
-    - ocean_data_parser.parsers:
-        - user_guide/parsers/index.md
-        - amundsen: user_guide/parsers/amundsen.md
-        - dfo:
-            - dfo.ios: user_guide/parsers/dfo/ios.md
-            - dfo.nafc: user_guide/parsers/dfo/nafc.md
-            - dfo.odf: user_guide/parsers/dfo/odf.md
-        - electricblue: user_guide/parsers/electricblue.md
-        - nmea: user_guide/parsers/nmea.md
-        - netcdf: user_guide/parsers/netcdf.md
-        - onset: user_guide/parsers/onset.md
-        - pme: user_guide/parsers/pme.md
-        - rbr: user_guide/parsers/rbr.md
-        - seabird: user_guide/parsers/seabird.md
-        - star_oddi: user_guide/parsers/star-oddi.md
-        - sunburst: user_guide/parsers/sunburst.md
-        - van_essen_instruments: user_guide/parsers/van-essen-instruments.md
-    - vocabularies: 
-        - amundsen: user_guide/vocabularies/amundsen-int.md
-        - dfo.odf: user_guide/vocabularies/dfo-odf.md
-        - dfo.ios.shell: user_guide/vocabularies/dfo-ios-shell.md
-        - dfo.nafc.pfile: user_guide/vocabularies/dfo-nafc-p-files.md
-        - seabird: user_guide/vocabularies/seabird.md
-  # - Metadata: # TODO 
+      - User Guide: user_guide/index.md
+      - Command Line Interface (odpy): user_guide/cli.md
+      - ocean_data_parser.read.file: user_guide/read.md
+      - ocean_data_parser.parsers:
+          - user_guide/parsers/index.md
+          - amundsen: user_guide/parsers/amundsen.md
+          - dfo:
+              - dfo.ios: user_guide/parsers/dfo/ios.md
+              - dfo.nafc: user_guide/parsers/dfo/nafc.md
+              - dfo.odf: user_guide/parsers/dfo/odf.md
+          - electricblue: user_guide/parsers/electricblue.md
+          - nmea: user_guide/parsers/nmea.md
+          - netcdf: user_guide/parsers/netcdf.md
+          - onset: user_guide/parsers/onset.md
+          - pme: user_guide/parsers/pme.md
+          - rbr: user_guide/parsers/rbr.md
+          - seabird: user_guide/parsers/seabird.md
+          - star_oddi: user_guide/parsers/star-oddi.md
+          - sunburst: user_guide/parsers/sunburst.md
+          - van_essen_instruments: user_guide/parsers/van-essen-instruments.md
+      - vocabularies:
+          - amundsen: user_guide/vocabularies/amundsen-int.md
+          - dfo.odf: user_guide/vocabularies/dfo-odf.md
+          - dfo.ios.shell: user_guide/vocabularies/dfo-ios-shell.md
+          - dfo.nafc.pfile: user_guide/vocabularies/dfo-nafc-p-files.md
+          - seabird: user_guide/vocabularies/seabird.md
+  # - Metadata: # TODO
   #   - CF: metadata/cf.md
   #   - NERC: metadata/nerc.md
   #   - Polar Data Catalog: metadata/pdc.md
   - Example Notebooks:
-    - Amundsen INT example: notebooks/amundsen_int_parser_example.ipynb
-    - DFO BIO ODF example: notebooks/dfo_bio_odf_parser_example.ipynb
-    - DFO BIO NAFC Pfiles example: notebooks/dfo_nafc_p_file_parser_example.ipynb
-    - NMEA example: notebooks/nmea_parser_example.ipynb
-    - Seabird CNV and BTL files example: notebooks/seabird_cnv_and_btl_parser_example.ipynb
+      - Amundsen INT example: notebooks/amundsen_int_parser_example.ipynb
+      - DFO BIO ODF example: notebooks/dfo_bio_odf_parser_example.ipynb
+      - DFO BIO NAFC Pfiles example: notebooks/dfo_nafc_p_file_parser_example.ipynb
+      - NMEA example: notebooks/nmea_parser_example.ipynb
+      - Seabird CNV and BTL files example: notebooks/seabird_cnv_and_btl_parser_example.ipynb
   - Development: development.md
 
 
@@ -122,7 +123,7 @@ extra:
   version:
     provider: mike
   social:
-    - icon: fontawesome/brands/github 
+    - icon: fontawesome/brands/github
       link: https://github.com/cioos-siooc
   generator: false
   analytics:
