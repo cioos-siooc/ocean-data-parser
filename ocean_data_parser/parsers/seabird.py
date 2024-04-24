@@ -215,7 +215,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             header["comments"] += [line[2:]]
 
     def read_asterisk_line(line):
-        if re.match("\*\s\w+", line) and " = " in line:
+        if re.match(r"\*\s\w+", line) and " = " in line:
             attr, value = line[2:].split("=", 1)
             header[standardize_attribute(attr)] = value.strip()
         elif line.startswith((r"* Sea-Bird", r"* SBE ")):
