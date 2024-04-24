@@ -1,6 +1,7 @@
 """
 This module contains all the different tools needed to parse a file.
 """
+
 import logging
 import re
 from importlib import import_module

@@ -1,15 +1,16 @@
 """
-    Python class to read IOS data files and store data for conversion to netcdf format
-    Changelog Version
-        0.1: July 15 2019:
-            Convert python scripts and functions into a python class
-        0.2: August 2023:
-            Migrate the code to the ocean-data-parser package and reduce code base
-    Authors:
-        Pramod Thupaki (pramod.thupaki@hakai.org)
-        Jessy Barrette
+Python class to read IOS data files and store data for conversion to netcdf format
+Changelog Version
+    0.1: July 15 2019:
+        Convert python scripts and functions into a python class
+    0.2: August 2023:
+        Migrate the code to the ocean-data-parser package and reduce code base
+Authors:
+    Pramod Thupaki (pramod.thupaki@hakai.org)
+    Jessy Barrette
 
 """
+
 import json
 import logging
 import re

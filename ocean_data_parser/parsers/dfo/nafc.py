@@ -1,10 +1,8 @@
 """
 The Fisheries and Oceans Canada - Newfoundland and Labrador Region -
-North Atlantic Fisheries Centre
-
-
-
+North Atlantic Fisheries Centre (NAFC) is a research facility located in St. John's, Newfoundland and Labrador.
 """
+
 import inspect
 import re
 from functools import lru_cache
@@ -367,16 +365,6 @@ def pfile(
 ) -> xr.Dataset:
     """Parse DFO NAFC oceanography p-file format
 
-    The NAFC oceanography p-files format is according
-    to the pfile documentation,:
-
-    1. NAFC_Y2K_HEADER
-    2. 3 single line 80 byte headers, the formats of which is
-        described on an attached page.
-    3. A variable length block of processing history information
-    4. A line of channel name identifiers
-    5. A start of data flag line -- DATA --
-
     Args:
         file (str): file path
         encoding (str, optional): file encoding. Defaults to "UTF-8".
@@ -597,7 +585,7 @@ def _get_metqa_table(file) -> pd.DataFrame:
     return df
 
 
-def add_metqa_info_to_pcvn(file: Path) -> Path:
+def _add_metqa_info_to_pcvn(file: Path) -> Path:
     """Find the matching metqa table to the pcnv file"""
 
     glob_expression = f"{file.stem.rsplit('_',1)[0]}_metqa_*.csv"
@@ -633,8 +621,9 @@ def pcnv(
     match_metqa_table: bool = False,
 ) -> xr.Dataset:
     """DFO NAFC pcnv file format parser
+
     The pcnv format  essentially a seabird cnv file format
-    with NAFC specific inputs within the manual section
+    with NAFC specific inputs within the manual section.
 
     Args:
         path (Path): pcvn file path
@@ -647,7 +636,7 @@ def pcnv(
             available within same directory. Defaults to True.
 
     Returns:
-        xr.Dataset: parsed dataset
+        xr.Dataset
     """
 
     def _pop_attribute_from(names: list):
@@ -716,7 +705,7 @@ def pcnv(
 
     # load metqa table attributes
     if match_metqa_table:
-        attrs.update(add_metqa_info_to_pcvn(path))
+        attrs.update(_add_metqa_info_to_pcvn(path))
 
     ds.attrs.update(attrs)
 

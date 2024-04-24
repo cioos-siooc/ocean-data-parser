@@ -1,6 +1,7 @@
 """
 QC Module present a set of tools to manually qc data.
 """
+
 import logging
 from typing import Union
 

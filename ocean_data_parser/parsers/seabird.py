@@ -1,7 +1,7 @@
 """
-This module contains all the different tools used to handle
-the different [Seabird Scientific](https://www.seabird.com) file formats.
-
+This page provides functions for parsing data files in Seabird Scientific format.
+The Seabird Scientific format is commonly used for oceanographic data collection
+and is supported by [Seabird Scientific](https://www.seabird.com).
 """
 
 import difflib
@@ -215,7 +215,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             header["comments"] += [line[2:]]
 
     def read_asterisk_line(line):
-        if re.match("\*\s\w+", line) and " = " in line:
+        if re.match(r"\*\s\w+", line) and " = " in line:
             attr, value = line[2:].split("=", 1)
             header[standardize_attribute(attr)] = value.strip()
         elif line.startswith((r"* Sea-Bird", r"* SBE ")):

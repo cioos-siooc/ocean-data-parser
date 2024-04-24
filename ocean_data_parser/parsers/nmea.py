@@ -1,8 +1,7 @@
 """
-# NMEA Standard Protocol
-<https://en.wikipedia.org/wiki/NMEA_0183>
-
-
+The NMEA 0183 protocol is a standard communication protocol used in marine
+and navigation systems to exchange data between different electronic devices.
+It stands for "National Marine Electronics Association 0183."
 """
 
 import logging
@@ -15,14 +14,8 @@ import xarray
 
 logger = logging.getLogger(__name__)
 
-variable_mapping = {
-    ("Heave", "heading"): (
-        "Heave",
-        "heave",
-    )  # fix in https://github.com/Knio/pynmea2/pull/129 but not included in pipy yet
-}
 
-nmea_dtype_mapping = {
+NMEA_0183_DTYPES = {
     "row": float,
     "prefix": str,
     "talker": str,
@@ -235,7 +228,10 @@ def nmea_0183(
 
     def rename_variable(name):
         """Rename variable based on variable mapping dictionary or return name"""
-        return variable_mapping[name] if name in variable_mapping else name
+        if name == ("Heave", "heading"):
+            # fix in https://github.com/Knio/pynmea2/pull/129 but not included in pipy yet
+            return ("Heave", "heave")
+        return name
 
     nmea = []
     long_names = {}
@@ -288,18 +284,18 @@ def nmea_0183(
     df = df.astype(
         {
             var: dtype
-            for var, dtype in nmea_dtype_mapping.items()
+            for var, dtype in NMEA_0183_DTYPES.items()
             if var in df and dtype != datetime
         }
     )
 
     # Cast variables to the appropriate type
-    unknown_variables_dtype = [var for var in df if var not in nmea_dtype_mapping]
+    unknown_variables_dtype = [var for var in df if var not in NMEA_0183_DTYPES]
     if unknown_variables_dtype:
         logger.warning("unknown dtype for nmea columns: %s", unknown_variables_dtype)
     # Convert datetime columns
     for col in df:
-        if nmea_dtype_mapping.get(col) != datetime:
+        if NMEA_0183_DTYPES.get(col) != datetime:
             continue
         df[col] = pd.to_datetime(df[col], utc=True).dt.tz_convert(None)
 

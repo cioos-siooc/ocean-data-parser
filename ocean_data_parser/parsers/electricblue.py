@@ -1,9 +1,9 @@
 """
-# ElectricBlue
-<https://electricblue.eu/envloggers>
-
-ElectricBlue is a non-profit technology transfer startup creating research-oriented solutions for the scientific community
+[ElectricBlue](https://electricblue.eu/envloggers)
+is a non-profit technology transfer startup creating
+research-oriented solutions for the scientific community.
 """
+
 import logging
 import re
 
@@ -17,13 +17,13 @@ from ocean_data_parser.parsers.utils import (
 
 logger = logging.getLogger(__name__)
 
-default_global_attribute = {
+GLOBAL_ATTRIBUTES = {
     "instrument_manufacturer": "ElectricBlue",
     "instrument_manufacturer_webpage": "https://electricblue.eu/",
     "source": None,
     "source_file_header": "",
 }
-default_variable_attributes = {
+VARIABLE_ATTRIBUTES = {
     "latitude": {
         "long_name": "Latitude",
         "units": "degrees_east",
@@ -48,12 +48,13 @@ def csv(
     Args:
         path (str): path to the csv file to parse
         encoding (str='UTF-8', optional): file encoding
+
     Returns:
-        dataset: xarray dataset
+        xarray.Dataset
     """
     with open(path, encoding=encoding) as f:
         line = True
-        metadata = default_global_attribute
+        metadata = GLOBAL_ATTRIBUTES
         metadata["source_file"] = path
 
         while line:
@@ -112,8 +113,8 @@ def csv(
 
         # Variables attributes
         for var in ds:
-            if var in default_variable_attributes:
-                ds[var].attrs = default_variable_attributes[var]
+            if var in VARIABLE_ATTRIBUTES:
+                ds[var].attrs = VARIABLE_ATTRIBUTES[var]
         ds["temp"].attrs["units"] = ds.attrs.pop("temperature")
         ds = standardize_dataset(ds)
         return ds
@@ -122,10 +123,22 @@ def csv(
 def log_csv(
     path: str, encoding: str = "UTF-8", rename_variables: bool = True
 ) -> xarray.Dataset:
+    """Parse ElectricBlue log csv file
+
+    Args:
+        path (str): path to the csv file
+        encoding (str, optional): File encoding. Defaults to "UTF-8".
+        rename_variables (bool, optional): Rename variables to
+            valid NetCDF names. Defaults to True.
+
+    Returns:
+        xarray.Dataset
+    """
+
     df = pd.read_csv(path, encoding=encoding, parse_dates=True, index_col=["time"])
     ds = df.to_xarray()
     # add default attributes
-    ds.attrs.update({**default_global_attribute, "source": path})
+    ds.attrs.update({**GLOBAL_ATTRIBUTES, "source": path})
     ds = standardize_dataset(ds)
 
     # Rename variables to be compatible with NetCDF
