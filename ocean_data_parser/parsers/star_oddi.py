@@ -50,7 +50,7 @@ def DAT(path: str, encoding: str = "cp1252") -> xarray.Dataset:
 
     metadata = {}
     variables = {}
-    original_ = ""
+    original_header = ""
     with open(path, "r", encoding=encoding) as f:
         line = "#"
 
