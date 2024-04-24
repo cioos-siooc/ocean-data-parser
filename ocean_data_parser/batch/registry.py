@@ -206,7 +206,7 @@ class FileConversionRegistry:
         sources: list = None,
         placeholder=None,
         dataframe: Union[list, pd.DataFrame] = None,
-        **kwargs
+        **kwargs,
     ):
         """Update registry sources with given values
 

@@ -1,8 +1,9 @@
 """
-[Star-Oddi](https://www.star-oddi.com/) is a company that specializes in manufacturing and providing data 
-loggers and sensors for oceanographic research. Their DAT files contain recorded 
+[Star-Oddi](https://www.star-oddi.com/) is a company that specializes in manufacturing and providing data
+loggers and sensors for oceanographic research. Their DAT files contain recorded
 data from various oceanographic parameters such as temperature, salinity, conductivity, and sound velocity.
 """
+
 import logging
 import re
 

@@ -3,6 +3,7 @@
 is a non-profit technology transfer startup creating
 research-oriented solutions for the scientific community.
 """
+
 import logging
 import re
 
@@ -127,7 +128,7 @@ def log_csv(
     Args:
         path (str): path to the csv file
         encoding (str, optional): File encoding. Defaults to "UTF-8".
-        rename_variables (bool, optional): Rename variables to 
+        rename_variables (bool, optional): Rename variables to
             valid NetCDF names. Defaults to True.
 
     Returns:

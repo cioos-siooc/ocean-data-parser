@@ -2,7 +2,7 @@
 This test compare the *_reference.nc files made available within the repository
 tests folder to the present associated parser.
 
-Any differences observed between the generated xarray 
+Any differences observed between the generated xarray
 object and the reference netcdf will raise an issue.
 """
 

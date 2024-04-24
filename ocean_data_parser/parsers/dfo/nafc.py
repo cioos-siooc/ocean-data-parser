@@ -2,6 +2,7 @@
 The Fisheries and Oceans Canada - Newfoundland and Labrador Region -
 North Atlantic Fisheries Centre (NAFC) is a research facility located in St. John's, Newfoundland and Labrador.
 """
+
 import inspect
 import re
 from functools import lru_cache
