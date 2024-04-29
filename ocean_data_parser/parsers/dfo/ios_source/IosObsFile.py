@@ -1201,6 +1201,9 @@ class IosFile(object):
                 "units": "degrees_east",
                 "standard_name": "longitude",
             }
+            ds.encoding(
+                {"latitude": {"dtype": "float32"}, "longitude": {"dtype": "float32"}}
+            )
 
         # Define dimensions
         if "time" in ds and ds["time"].dims and ds["index"].size == ds["time"].size:
