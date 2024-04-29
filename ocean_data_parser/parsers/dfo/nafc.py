@@ -130,6 +130,13 @@ def _parse_ll(deg: float, min: float) -> float:
 
 def _parse_pfile_header_line1(line: str) -> dict:
     """Parse first row of the p file format which contains location and instrument information."""
+    
+    if line[44:46] == "60":
+        # Fix some dates are using 60 minutes which is not compatible with pandas datetime
+        dt = pd.Timedelta("1min")
+        line = line[:44] +  "00" + line[46:]
+    else:
+        dt = pd.Timedelta("0")
 
     return dict(
         # ship_code=line[:2],
@@ -141,7 +148,7 @@ def _parse_pfile_header_line1(line: str) -> dict:
         longitude=_parse_ll(
             _float(line[19:23], level="ERROR"), _float(line[24:29], level="ERROR")
         ),
-        time=pd.to_datetime(line[30:46], format="%Y-%m-%d %H:%M", utc=True),
+        time=pd.to_datetime(line[30:46], format="%Y-%m-%d %H:%M", utc=True) + dt,
         sounder_depth=_int(
             line[47:51], ["9999", "0000", "-999"]
         ),  # water depth in meters
