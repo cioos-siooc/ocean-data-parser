@@ -459,6 +459,10 @@ def pfile(
             encoding_errors=encoding_errors,
         ).to_xarray()
 
+    
+    if len(ds.index) == 0:
+        logger.error("No data found in file")
+
     # Review datatypes
     if any([dtype == object for _, dtype in ds.dtypes.items()]):
         logger.warning(
