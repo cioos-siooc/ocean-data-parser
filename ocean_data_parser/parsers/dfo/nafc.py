@@ -543,6 +543,7 @@ def pfile(
                     var.name,
                     attrs,
                 )
+                continue
             apply_func = attrs.pop("apply_func", None)
             new_data = (
                 eval(
@@ -561,7 +562,8 @@ def pfile(
                 if apply_func not in (None, np.nan)
                 else var
             )
-            # TODO add to this history new variables generated
+            ds.attrs['history'] += f"\n{pd.Timestamp.now()} - Generated variable {name} = {apply_func}"
+            attrs['source'] = f"Generated variable {name} = {apply_func}"
             ds[name] = (var.dims, new_data.data, {**var.attrs, **attrs})
 
     # standardize
