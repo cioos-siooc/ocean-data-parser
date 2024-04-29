@@ -278,7 +278,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             )
         elif line.startswith("# QA Applied:"):
             # This could be specific to DFO NAFC PCNV format
-            header['history'] += "\n" + line.split(":")[1].strip()
+            header["history"] += "\n" + line.split(":")[1].strip()
         elif " = " in line:
             attr, value = line[2:].split("=", 1)
             header[standardize_attribute(attr)] = value.strip()
