@@ -580,8 +580,9 @@ class TestDFO_NAFC_pFiles:
             "tests/parsers_test_files/dfo/nafc/pfile/ctd/51705100.p2000",
         )
         assert "depth" in ds.variables
-        assert "Generated variable" not in ds['depth'].attrs.get("source","")
-        assert "Generated variable" not in ds.attrs.get('history',"")
+        assert "Generated variable" not in ds["depth"].attrs.get("source", "")
+        assert "Generated variable" not in ds.attrs.get("history", "")
+
 
 class TestDfoIosShell:
     @pytest.mark.parametrize(
