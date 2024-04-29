@@ -1181,6 +1181,12 @@ class IosFile(object):
             # ds["time"].encoding["units"] = "seconds since 1970-01-01T00:00:00Z"
         elif self.start_dateobj:
             ds["time"] = self.start_dateobj
+        else:
+            logger.warning("Unable to set time coordinate")
+        ds["time"].attrs = {
+            "long_name": "Time",
+            "standard_name": "time",
+        }
 
         ds.attrs["time_coverage_resolution"] = (
             pd.Timedelta(self.time_increment).isoformat()
