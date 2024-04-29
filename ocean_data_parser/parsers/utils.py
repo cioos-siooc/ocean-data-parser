@@ -217,7 +217,7 @@ def standardize_variable_attributes(ds):
         if (
             ds[var].dtype in [float, int, "float32", "float64", "int64", "int32"]
             and "flag_values" not in ds[var].attrs
-            and ds[var].size > 1
+            and ds[var].size > 0
         ):
             ds[var].attrs["actual_range"] = np.array(
                 np.array((ds[var].min().item(0), ds[var].max().item(0))).astype(
@@ -242,7 +242,7 @@ def get_spatial_coverage_attributes(
     """
     # TODO add resolution attributes
     # time
-    if time in ds.variables:
+    if time in ds.variables and ds[time].size > 0:
         is_utc = ds[time].attrs.get("timezone") == "UTC" or utc
         ds.attrs.update(
             {
@@ -257,7 +257,12 @@ def get_spatial_coverage_attributes(
         )
 
     # lat/long
-    if lat in ds.variables and lon in ds.variables:
+    if (
+        lat in ds.variables
+        and lon in ds.variables
+        and ds[lat].size > 0
+        and ds[lon].size > 0
+    ):
         ds.attrs.update(
             {
                 "geospatial_lat_min": ds[lat].min().item(0),
@@ -270,7 +275,7 @@ def get_spatial_coverage_attributes(
         )
 
     # depth coverage
-    if depth in ds.variables and ds[depth].size > 1:
+    if depth in ds.variables and ds[depth].size > 0:
         ds["depth"].attrs["positive"] = ds["depth"].attrs.get("positive", "down")
         ds.attrs.update(
             {
