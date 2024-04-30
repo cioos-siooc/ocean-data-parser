@@ -1060,13 +1060,12 @@ class IosFile(object):
             )
 
         # Detect and rename duplicated variable names with different units
-        col_name = "ios_name"
-        duplicated_name = variables.duplicated(subset=[col_name])
+        duplicated_name = variables.duplicated(subset=["ios_name"])
         if duplicated_name.any():
-            variables["var_index"] = variables.groupby(col_name).cumcount()
+            variables["var_index"] = variables.groupby("ios_name").cumcount()
             to_replace = duplicated_name & (variables["var_index"] > 0)
             new_names = variables.loc[to_replace].apply(
-                lambda x: update_variable_index(x[col_name], x["var_index"] + 1),
+                lambda x: update_variable_index(x["ios_name"], x["var_index"] + 1),
                 axis="columns",
             )
             logger.info(
@@ -1074,7 +1073,7 @@ class IosFile(object):
                 list(
                     zip(
                         variables.loc[
-                            to_replace, list(set(["ios_name", "units"] + [col_name]))
+                            to_replace, list(set(["ios_name", "units"]))
                         ]
                         .reset_index()
                         .values.tolist(),
@@ -1082,18 +1081,18 @@ class IosFile(object):
                     )
                 ),
             )
-            variables.loc[to_replace, col_name] = new_names
+            variables.loc[to_replace, "ios_name"] = new_names
 
         # Parse data, assign appropriate data type, padding values
         #  and convert to xarray object
         ds = (
             pd.DataFrame.from_records(
-                self.data[:, variables.index], columns=variables[col_name]
+                self.data[:, variables.index], columns=variables["ios_name"]
             )
             .replace(r"\.$", "", regex=True)
-            .astype(dict(variables[[col_name, "dtype"]].values))
+            .astype(dict(variables[["ios_name", "dtype"]].values))
             .replace(
-                dict(variables[[col_name, "_FillValues"]].dropna().values), value=np.nan
+                dict(variables[["ios_name", "_FillValues"]].dropna().values), value=np.nan
             )
             .to_xarray()
         )
@@ -1106,7 +1105,7 @@ class IosFile(object):
             ds_sub.attrs = ds.attrs
 
         for id, row in variables.iterrows():
-            var = ds[row[col_name]]
+            var = ds[row["ios_name"]]
             var.attrs = _drop_empty_attrs(
                 {
                     "original_ios_variable": str(
@@ -1126,7 +1125,7 @@ class IosFile(object):
 
             # Generate vocabulary variables
             for new_var_attrs in row["matching_vocabularies"]:
-                new_var = new_var_attrs.pop("rename", row[col_name])
+                new_var = new_var_attrs.pop("rename", row["ios_name"])
 
                 # if variable already exist from a different source variable
                 #  append variable index
@@ -1155,14 +1154,14 @@ class IosFile(object):
                     ufunc = eval(new_var_attrs["apply_func"], {"ds": ds, "gsw": gsw})
                     new_data = xr.apply_ufunc(ufunc, var)
                     self.add_to_history(
-                        f"Generate new variable from {row[col_name]} ->"
+                        f"Generate new variable from {row['ios_name']} ->" 
                         f" apply {new_var_attrs['apply_func']}) -> {new_var}"
                     )
 
                 else:
                     new_data = var
                     self.add_to_history(
-                        f"Generate new variable from {row[col_name]} -> {new_var}"
+                        f"Generate new variable from {row['ios_name']} -> {new_var}"
                     )
 
                 ds_sub[new_var] = (
@@ -1178,7 +1177,6 @@ class IosFile(object):
         if self.obs_time and replace_date_time_variables:
             ds = ds.drop_vars([var for var in ds if var in ["Date", "Time"]])
             ds["time"] = (ds.dims, pd.Series(self.obs_time))
-            # ds["time"].encoding["units"] = "seconds since 1970-01-01T00:00:00Z"
         elif self.start_dateobj:
             ds["time"] = self.start_dateobj
         else:
