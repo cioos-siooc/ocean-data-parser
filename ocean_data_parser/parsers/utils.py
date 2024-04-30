@@ -116,7 +116,7 @@ def generate_variables_encoding(
 
     for var in variables or ds.variables:
         ds.encoding[var] = {}
-        if var in ds.encoding:
+        if ds.encoding.get(var):
             continue
         elif "datetime" in ds[var].dtype.name:
             ds[var].encoding.update(
