@@ -84,9 +84,9 @@ GLOBAL_ATTRIBUTES = {
 
 
 def _cast_ios_variable(ios_type, ios_format, ios_name):
-    dtype = (ios_type or ios_format).strip().upper()
-    if dtype[0] in IOS_TYPE_MAPPING:
-        return IOS_TYPE_MAPPING[dtype]
+    dtype = (ios_type or ios_format or "").strip().upper()
+    if dtype and dtype[0] in IOS_TYPE_MAPPING:
+        return IOS_TYPE_MAPPING[dtype[0]]
     elif re.search("flag", ios_name, re.IGNORECASE):
         return "int32"
     elif re.search("time|date", ios_name, re.IGNORECASE):
@@ -148,6 +148,7 @@ class IosFile(object):
         self.obs_time = None
         self.vocabulary_attributes = None
         self.history = None
+        self.geo_code = None
 
         # Load file
         try:
@@ -819,7 +820,7 @@ class IosFile(object):
             )
             self.vocabulary_attributes += [
                 [
-                    row.dropna().to_dict()
+                    row.to_dict()
                     for _, row in matched_vocab[vocabulary_attributes].iterrows()
                 ]
             ]
@@ -939,7 +940,7 @@ class IosFile(object):
             "comments": self.comments,
             "remarks": self.remarks,
             "history": self.history,
-            "geographic_area": self.geo_code,
+            # "geographic_area": self.geo_code,
             "headers": json.dumps(
                 self.get_complete_header(), ensure_ascii=False, indent=False
             ),
@@ -957,8 +958,6 @@ class IosFile(object):
         self,
         generate_extra_variables=True,
         rename_variables=True,
-        append_sub_variables=True,
-        replace_date_time_variables=True,
     ):
         """Convert ios class to xarray dataset
 
@@ -974,11 +973,6 @@ class IosFile(object):
             elif varname.endswith(("1", "X")):
                 return f"{varname[:-1]}{id}"
             return f"{varname}{id:02g}"
-
-        def _drop_empty_attrs(attrs):
-            if isinstance(attrs, dict):
-                return {key: value for key, value in attrs.items() if value}
-            return attrs
 
         def _flag_bad_values(dataset):
             bad_values = [-9.99, -99.9, -99.0, -99.999, -9.9, -999.0, -9.0]
@@ -1053,8 +1047,8 @@ class IosFile(object):
             {
                 "ios_name": self.channels["Name"],
                 "units": self.channels["Units"],
-                "ios_type": self.channel_details.get("Type", []),
-                "ios_format": self.channel_details.get("Format", []),
+                "ios_type": self.channel_details.get("Type"),
+                "ios_format": self.channel_details.get("Format"),
                 "pad": self.channel_details.get("Pad"),
                 "vocabularies": self.vocabulary_attributes,
             }
@@ -1093,13 +1087,15 @@ class IosFile(object):
         ds.attrs = self.get_global_attributes()
 
         # Add variable attributes
-        for id, attrs in variables.iterrows():
+        for _, attrs in variables.iterrows():
             ds[attrs["ios_name"]].attrs = dict(
                 long_name=attrs["ios_name"],
                 units=attrs["units"],
                 original_ios_name=attrs["ios_name"],
                 original_ios_variable={
-                    key: value for key, value in attrs.items() if key != "vocabularies"
+                    key: value
+                    for key, value in attrs.items()
+                    if key not in ("vocabularies", "dtype", "_FillValues")
                 },
             )
 
@@ -1116,7 +1112,7 @@ class IosFile(object):
             .sort_values(
                 ["rename", "apply_func", "sdn_parameter_name"],
                 na_position="first",
-                key=lambda col: col.str.len()
+                key=lambda col: col.fillna("").str.len()
                 if col.name == "sdn_parameter_name"
                 else col,
             )
@@ -1176,7 +1172,7 @@ class IosFile(object):
         ds = ds_new
 
         # coordinates
-        if self.obs_time and replace_date_time_variables:
+        if self.obs_time:
             ds = ds.drop_vars([var for var in ds if var in ["Date", "Time"]])
             ds["time"] = (ds.dims, pd.Series(self.obs_time))
         elif self.start_dateobj:
@@ -1240,6 +1236,6 @@ class IosFile(object):
         if any(var in ds for var in coordinates_variables):
             ds = ds.set_coords([var for var in coordinates_variables if var in ds])
             if "index" in ds.coords and ("time" in ds.coords or "depth" in ds.coords):
-                ds = ds.reset_coords("index").drop("index")
+                ds = ds.drop_vars("index")
 
         return ds
