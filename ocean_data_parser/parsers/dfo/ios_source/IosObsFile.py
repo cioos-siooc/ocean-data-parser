@@ -1178,9 +1178,9 @@ class IosFile(object):
             ds = ds.drop_vars([var for var in ds if var in ["Date", "Time"]])
             ds["time"] = (ds.dims, pd.Series(self.obs_time))
         elif self.start_dateobj:
-            ds["time"] = self.start_dateobj
+            ds["time"] = pd.to_datetime(self.start_dateobj)
         else:
-            logger.warning("Unable to set time coordinate")
+            logger.error("Unable to set time coordinate")
         ds["time"].attrs = {
             "long_name": "Time",
             "standard_name": "time",
