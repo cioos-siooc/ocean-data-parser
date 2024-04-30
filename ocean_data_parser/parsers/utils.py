@@ -217,6 +217,7 @@ def standardize_variable_attributes(ds):
         if (
             ds[var].dtype in [float, int, "float32", "float64", "int64", "int32"]
             and "flag_values" not in ds[var].attrs
+            and ds[var].size > 0
         ):
             ds[var].attrs["actual_range"] = np.array(
                 np.array((ds[var].min().item(0), ds[var].max().item(0))).astype(
@@ -240,11 +241,10 @@ def get_spatial_coverage_attributes(
     This method generates the geospatial and time coverage attributes associated to an xarray dataset.
     """
     # TODO add resolution attributes
-    time_spatial_coverage = {}
     # time
-    if time in ds.variables:
+    if time in ds.variables and ds[time].size > 0:
         is_utc = ds[time].attrs.get("timezone") == "UTC" or utc
-        time_spatial_coverage.update(
+        ds.attrs.update(
             {
                 "time_coverage_start": pd.to_datetime(
                     ds[time].min().item(0), utc=is_utc
@@ -257,8 +257,13 @@ def get_spatial_coverage_attributes(
         )
 
     # lat/long
-    if lat in ds.variables and lon in ds.variables:
-        time_spatial_coverage.update(
+    if (
+        lat in ds.variables
+        and lon in ds.variables
+        and ds[lat].size > 0
+        and ds[lon].size > 0
+    ):
+        ds.attrs.update(
             {
                 "geospatial_lat_min": ds[lat].min().item(0),
                 "geospatial_lat_max": ds[lat].max().item(0),
@@ -270,9 +275,9 @@ def get_spatial_coverage_attributes(
         )
 
     # depth coverage
-    if depth in ds.variables:
+    if depth in ds.variables and ds[depth].size > 0:
         ds["depth"].attrs["positive"] = ds["depth"].attrs.get("positive", "down")
-        time_spatial_coverage.update(
+        ds.attrs.update(
             {
                 "geospatial_vertical_min": ds[depth].min().item(0),
                 "geospatial_vertical_max": ds[depth].max().item(0),
@@ -281,8 +286,6 @@ def get_spatial_coverage_attributes(
             }
         )
 
-    # Add to global attributes
-    ds.attrs.update(time_spatial_coverage)
     return ds
 
 
