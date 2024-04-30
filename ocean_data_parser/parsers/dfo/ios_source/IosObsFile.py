@@ -936,12 +936,10 @@ class IosFile(object):
             **_format_attributes("deployment", "deployment_"),
             **_format_attributes("recovery", "recovery_"),
             "calibration": json.dumps(self.calibration) if self.calibration else None,
-            "comments": str(self.comments)
-            if self.comments
-            else None,  # TODO missing file_remarks
-            "remarks": str(self.remarks) if self.remarks else None,
-            "history": str(self.history) if hasattr(self, "history") else None,
-            "geographic_area": self.geo_code if hasattr(self, "geo_code") else None,
+            "comments": self.comments,
+            "remarks": self.remarks,
+            "history": self.history,
+            "geographic_area": self.geo_code,
             "headers": json.dumps(
                 self.get_complete_header(), ensure_ascii=False, indent=False
             ),

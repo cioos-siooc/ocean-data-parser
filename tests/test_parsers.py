@@ -213,12 +213,23 @@ class TestIOSShellParser:
         ds = dfo.ios.shell(path)
         review_parsed_dataset(ds, path)
 
-    def test_dfo_ios_shell_ctd_file_not_ovewrite_exisiting_variable(self):
+    def test_dfo_ios_shell_ctd_file_not_overwrite_exisiting_depth_variable(self):
         path = "tests/parsers_test_files/dfo/ios/shell/cruise/CTD/2023-003-0003.ctd"
         ds = dfo.ios.shell(path)
         assert "depth" in ds.variables
         assert "Pressure" not in ds["depth"].attrs["original_ios_variable"]
         assert "Depth" in ds["depth"].attrs["original_ios_name"]
+
+    def test_dfo_ios_shell_ctd_file_generate_new_depth_variable(self):
+        path = "tests/parsers_test_files/dfo/ios/shell/cruise/CTD/2015-018-0008.ctd"
+        ds = dfo.ios.shell(path)
+        assert "depth" in ds.variables
+        assert "Pressure" in ds["depth"].attrs["original_ios_variable"]
+        assert "Pressure" in ds["depth"].attrs["original_ios_name"]
+        assert (
+            "Pressure -> apply lambda x: -1*gsw.z_from_p(x,ds.attrs['latitude']))"
+            in ds.attrs["history"]
+        )
 
 
 class TestODFParser:
