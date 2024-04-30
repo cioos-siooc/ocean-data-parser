@@ -1104,7 +1104,7 @@ class IosFile(object):
             )
 
         # Add vocabulary attributes
-        #  sort matching vocabulary by rename, apply_func, sdn_parameter_name(length) 
+        #  sort matching vocabulary by rename, apply_func, sdn_parameter_name(length)
         #  and keep the first one matching for each rename outputed variables
         ds_new = xr.Dataset()
         ds_new.attrs = ds.attrs
@@ -1116,7 +1116,9 @@ class IosFile(object):
             .sort_values(
                 ["rename", "apply_func", "sdn_parameter_name"],
                 na_position="first",
-                key=lambda col: col.str.len() if col.name == "sdn_parameter_name" else col,
+                key=lambda col: col.str.len()
+                if col.name == "sdn_parameter_name"
+                else col,
             )
             .groupby("rename")
             .head(1)
@@ -1129,28 +1131,31 @@ class IosFile(object):
                 ds_new[variable] = ds[variable]
                 continue
             variable_vocabulary = variables_vocabularies.loc[[variable]]
-            
+
             if not rename_variables and not generate_extra_variables:
                 ds_new[variable] = ds[variable]
                 # ignore apply_func vocabularies and get the most precise vocabulary
-                vocab = variable_vocabulary.query('apply_func.isna()')
+                vocab = variable_vocabulary.query("apply_func.isna()")
                 if vocab.empty:
                     continue
-                ds_new[variable].attrs.update(vocab.iloc[-1].drop('rename').dropna().to_dict())
-            
+                ds_new[variable].attrs.update(
+                    vocab.iloc[-1].drop("rename").dropna().to_dict()
+                )
+
             if not generate_extra_variables:
                 # favorize not transform variables if available
-                vocab = variable_vocabulary.query('apply_func.isna()')
-                if variable_vocabulary.query('apply_func.isna()').empty:
-                    variable_vocabulary = variable_vocabulary.query('apply_func.isna()').iloc[[-1]]
-                else: 
+                vocab = variable_vocabulary.query("apply_func.isna()")
+                if variable_vocabulary.query("apply_func.isna()").empty:
+                    variable_vocabulary = variable_vocabulary.query(
+                        "apply_func.isna()"
+                    ).iloc[[-1]]
+                else:
                     variable_vocabulary = variable_vocabulary.iloc[[-1]]
 
-            for variable,attrs in variable_vocabulary.iterrows():
-                
+            for variable, attrs in variable_vocabulary.iterrows():
                 new_var = attrs.pop("rename")
 
-                if pd.notna(attrs['apply_func']):
+                if pd.notna(attrs["apply_func"]):
                     ufunc = eval(attrs["apply_func"], {"ds": ds, "gsw": gsw})
                     new_data = xr.apply_ufunc(ufunc, ds[variable])
                     self.add_to_history(
@@ -1159,8 +1164,14 @@ class IosFile(object):
                     )
                 else:
                     new_data = ds[variable]
-                    self.add_to_history(f"Generate new variable from {variable} -> {new_var}")
-                ds_new[new_var] = (ds[variable].dims, new_data.data, {**ds[variable].attrs, **attrs.dropna().to_dict()})
+                    self.add_to_history(
+                        f"Generate new variable from {variable} -> {new_var}"
+                    )
+                ds_new[new_var] = (
+                    ds[variable].dims,
+                    new_data.data,
+                    {**ds[variable].attrs, **attrs.dropna().to_dict()},
+                )
 
         ds = ds_new
 
