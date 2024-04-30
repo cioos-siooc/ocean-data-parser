@@ -1205,7 +1205,7 @@ class IosFile(object):
                 "units": "degrees_east",
                 "standard_name": "longitude",
             }
-            ds.encoding(
+            ds.encoding.update(
                 {"latitude": {"dtype": "float32"}, "longitude": {"dtype": "float32"}}
             )
 
