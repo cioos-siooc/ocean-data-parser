@@ -590,6 +590,17 @@ class TestDFO_NAFC_pFiles:
         assert "No vocabulary is available for variable=unknown_variable" in caplog.text
         assert caplog.records[0].levelname == "WARNING"
 
+    def test_pfile_with_already_existing_depth(self):
+        """Test pfile with already existing depth variable
+        Make sure that the parser does derive a new depth variable
+        """
+        ds = dfo.nafc.pfile(
+            "tests/parsers_test_files/dfo/nafc/pfile/ctd/51705100.p2000",
+        )
+        assert "depth" in ds.variables
+        assert "Generated variable" not in ds["depth"].attrs.get("source", "")
+        assert "Generated variable" not in ds.attrs.get("history", "")
+
 
 class TestDfoIosShell:
     @pytest.mark.parametrize(
