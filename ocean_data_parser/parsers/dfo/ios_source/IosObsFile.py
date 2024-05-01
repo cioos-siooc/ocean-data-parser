@@ -155,7 +155,7 @@ class IosFile(object):
             with open(self.filename, "r", encoding="ASCII") as file:
                 self.lines = file.readlines()
         except UnicodeDecodeError:
-            logger.warning("Bad characters were encountered. We will ignore them")
+            logger.info("Bad characters were encountered. We will ignore them")
             with open(self.filename, "r", encoding="ASCII", errors="ignore") as file:
                 self.lines = file.readlines()
 
