@@ -65,6 +65,7 @@ DATETIME_REGEX_FORMATS = [
     (r"\d\d\/\d\d\/\d\d\s+\d\d\:\d\d\:\d\d\s+\w\w", r"%m/%d/%y %I:%M:%S %p"),
     (r"\d\d\d\d\/\d\d\/\d\d\s+\d\d\:\d\d\:\d\d\s+\w\w", r"%Y/%m/%d %I:%M:%S %p"),
     (r"\d\d\/\d\d\/\d\d\s+\d\d\:\d\d", r"%m/%d/%y %H:%M"),
+    (r"\d\d\/\d\d\/\d\d\d\d\s+\d\d\:\d\d\:\d\d\s+(AM|PM)", r"%m/%d/%Y %H:%M:%S %p"),
     (r"\d+\/\d+\/\d\d\s+\d\d\:\d\d", r"%m/%d/%y %H:%M"),
     (r"^\d\d\d\d\-\d\d\-\d\d\s+\d\d\:\d\d\:\d\d$", r"%Y-%m-%d %H:%M:%S"),
     (r"\d\d\d\d\-\d\d\-\d\d\s+\d\d\:\d\d\:\d\d (AM|PM)", r"%Y-%m-%d %I:%M:%S %p"),
@@ -87,7 +88,7 @@ def _parse_onset_time(
         time_format = None
     else:
         for regex, datetime_format in DATETIME_REGEX_FORMATS:
-            if re.match(regex, time):
+            if re.fullmatch(regex, time):
                 time_format = datetime_format
                 break
         else:
