@@ -43,11 +43,13 @@ def dfo_platforms() -> pd.DataFrame:
 
 
 def dfo_ios_vocabulary() -> pd.DataFrame:
-    return pd.read_csv(
+    df = pd.read_csv(
         VOCABULARIES_DIRECTORY / "dfo_ios_vocabulary.csv",
         na_values={"accepted_units": [""]},
         keep_default_na=False,
     ).replace({"": np.nan})
+    df = df.fillna({"rename":df['ios_name']})
+    return df
 
 
 def dfo_odf_vocabulary() -> pd.DataFrame:
