@@ -111,6 +111,7 @@ IOS_SHELL_HEADER_SECTIONS = {
     "DEPLOYMENT",
     "RECOVERY",
     "CALIBRATION",
+    "RAW",
 }
 
 
@@ -149,6 +150,7 @@ class IosFile(object):
         self.vocabulary_attributes = None
         self.history = None
         self.geo_code = None
+        self.raw = None
 
         # Load file
         try:
@@ -185,6 +187,8 @@ class IosFile(object):
             self.recovery = self.get_section("RECOVERY")
         if "CALIBRATION" in sections_available:
             self.calibration = self.get_section("CALIBRATION")
+        if "RAW" in sections_available:
+            self.raw = self.get_section("RAW")
 
         unparsed_sections = sections_available - IOS_SHELL_HEADER_SECTIONS
         if unparsed_sections:
