@@ -1035,6 +1035,12 @@ class IosFile(object):
                     lambda x: update_variable_index(x["ios_name"], x["var_index"] + 1),
                     axis="columns",
                 )
+                # Update vocabulary ios_name
+                for _, row in variables.loc[to_replace].iterrows():
+                    for vocab in row["vocabularies"]:
+                        vocab["ios_name"] = update_variable_index(
+                            vocab["ios_name"], row["var_index"] + 1
+                        )
                 logger.info(
                     "Duplicated variable names, rename variables: %s",
                     [
