@@ -48,7 +48,7 @@ def dfo_ios_vocabulary() -> pd.DataFrame:
         na_values={"accepted_units": [""]},
         keep_default_na=False,
     ).replace({"": np.nan})
-    df = df.fillna({"rename":df['ios_name']})
+    df = df.fillna({"rename": df["ios_name"]})
     return df
 
 

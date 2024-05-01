@@ -296,13 +296,12 @@ class IosFile(object):
         return info
 
     def get_flag_convention(self, name: str, units: str = None) -> dict:
-
         common_attrs = {
             "ios_name": name.lower(),
             "rename": name.lower(),
             "standard_name": "quality_flag",
         }
-        
+
         if name.lower() == "flag:at_sea":
             return {
                 **common_attrs,
@@ -345,12 +344,12 @@ class IosFile(object):
                     ]
                 ),
             }
-        elif name.lower().startswith("flag") and self.filename.endswith(("che",'bot')):
+        elif name.lower().startswith("flag") and self.filename.endswith(("che", "bot")):
             return {
                 **common_attrs,
                 "flag_values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                 "flag_meanings": " ".join(
-                    [   
+                    [
                         "acceptable_measurement_with_no_header_comment",
                         "sample_drawn_from_water_bottle_but_not_analyzed_sample_lost",
                         "acceptable_measurement_with_header_comment",
@@ -827,14 +826,18 @@ class IosFile(object):
                     name,
                     units,
                 )
-                self.vocabulary_attributes += [[{"long_name": name, "units": units,"ios_name": name}]]
+                self.vocabulary_attributes += [
+                    [{"long_name": name, "units": units, "ios_name": name}]
+                ]
                 continue
 
             # Consider only the vocabularies specific to this ios_file_extension group
             matched_vocab = matched_vocab.query(
                 f'ios_file_extension == "{matched_vocab.index.get_level_values(0)[0]}"'
             )
-            self.vocabulary_attributes += [matched_vocab[vocabulary_attributes].to_dict('records')]
+            self.vocabulary_attributes += [
+                matched_vocab[vocabulary_attributes].to_dict("records")
+            ]
 
     def fix_variable_names(self):
         # get variable name list
