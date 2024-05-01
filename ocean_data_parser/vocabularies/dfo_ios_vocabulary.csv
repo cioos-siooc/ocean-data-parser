@@ -281,6 +281,7 @@ che,oxygen:dissolved,umol\/kg,,,Dissolved Oxygen,moles_of_oxygen_per_unit_mass_i
 ,precipitation,mm,,,Precipitation,thickness_of_rainfall_amount,mm,,,,,,,
 ,precipitation:rate,mm\/hr,,,Precipitation Rate,rainfall_rate,mm/hr,,,,,,,
 ,pressure,count|counts,,,Pressure,,counts,,,,,,PRESPR01,
+,pressure,Kpascal,,lambda x: 10*x,Pressure,sea_water_pressure,decibar,,SDN:P01::PRESPR01,Pressure (spatial coordinate) exerted by the water body by profiling pressure sensor and correction to read zero at sea level,,,PRESPR01,
 ,pressure,dbar|dbars|decibar|decibars|DBars|DBAR,,,Pressure,sea_water_pressure,decibar,,SDN:P01::PRESPR01,Pressure (spatial coordinate) exerted by the water body by profiling pressure sensor and correction to read zero at sea level,,,PRESPR01,
 ctd,pressure,dbar|dbars|decibar|decibars|DBars|DBAR,,"lambda x: -1*gsw.z_from_p(x,ds.attrs['latitude'])",Depth,depth,m,,SDN:P01::ADEPZZ01,Depth (spatial coordinate) relative to water surface in the water body,,,depth,
 ctd,pressure,dbar|dbars|decibar|decibars|DBars|DBAR,,,Pressure,sea_water_pressure,decibar,,SDN:P01::PRESPR01,Pressure (spatial coordinate) exerted by the water body by profiling pressure sensor and correction to read zero at sea level,,,PRESPR01,
