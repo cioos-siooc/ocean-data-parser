@@ -1134,7 +1134,7 @@ class IosFile(object):
         for variable in ds.variables:
             if variable == "index":
                 continue
-            elif variable.lower() in ["date", "time"]:
+            elif variable.lower().startswith(("date", "time")):
                 ds_new[variable] = ds[variable]
                 continue
             elif variable not in variables_vocabularies.index:
