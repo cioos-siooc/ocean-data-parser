@@ -35,7 +35,8 @@ def mon(
     file_path: str,
     standardize_variable_names: bool = True,
     convert_pressure_to_dbar: bool = True,
-    errors: str = "raise",
+    errors: str = "strict",
+    encoding: str = "utf-8",
 ) -> xarray.Dataset:
     """Parse Van Essen Instruments mon format to NetCDF.
 
@@ -44,14 +45,13 @@ def mon(
         standardize_variable_names (bool, optional): Rename variables. Defaults to True.
         convert_pressure_to_dbar (bool, optional): Convert pressure data in
             cmH2O/mH2O to dbar. Defaults to True.
-        errors (str, optional): Error handling. Defaults to "raise".
+        encoding (str, optional): File encoding. Defaults to "utf-8".
+        errors (str, optional): Error handling. Defaults to "strict".
 
     Returns:
         xarray.Dataset: Parsed dataset
     """
-    with open(
-        file_path,
-    ) as fid:
+    with open(file_path, encoding=encoding, errors=errors) as fid:
         line = ""
         section = "header_info"
         info = {section: {}}
@@ -101,6 +101,8 @@ def mon(
             skipfooter=1,
             engine="python",
             comment="END OF DATA FILE OF DATALOGGER FOR WINDOWS",
+            encoding=encoding,
+            encoding_errors=errors,
         )
 
     # handle time variable

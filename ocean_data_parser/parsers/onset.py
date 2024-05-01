@@ -170,27 +170,28 @@ def _standardized_variable_mapping(variables):
 def csv(
     path: str,
     convert_units_to_si: bool = True,
-    read_csv_kwargs: dict = None,
     standardize_variable_names: bool = True,
+    encoding: str = "UTF-8",
+    errors: str = "strict",
 ) -> xarray.Dataset:
     """Parses the Onset CSV format generate by HOBOware into a xarray object
 
     Inputs:
         path: The path to the CSV file
         convert_units_to_si: Whether to standardize data units to SI units
-        read_csv_kwargs: dictionary of keyword arguments to be passed to pd.read_csv
         standardize_variable_names: Rename the variable names a standardize name
         convention
+        encoding: File encoding. Defaults to "utf-8"
+        errors: Error handling. Defaults to "strict"
     Returns:
         xarray.Dataset
     """
-    if read_csv_kwargs is None:
-        read_csv_kwargs = {}
+
     raw_header = []
     with open(
         path,
-        encoding=read_csv_kwargs.get("encoding", "UTF-8"),
-        errors=read_csv_kwargs.get("encoding_errors"),
+        encoding=encoding,
+        errors=errors,
     ) as f:
         raw_header += [f.readline().replace("\n", "")]
         header_lines = 1
@@ -214,8 +215,9 @@ def csv(
         header=header_lines,
         memory_map=True,
         names=column_names,
-        usecols=[id for id, name in enumerate(column_names)],
-        **read_csv_kwargs,
+        usecols=[id for id, _ in enumerate(column_names)],
+        encoding_errors=errors,
+        encoding=encoding,
     )
     df[header["time_variables"]] = df[header["time_variables"]].map(
         lambda x: _parse_onset_time(x, header["timezone"])

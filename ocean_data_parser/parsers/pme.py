@@ -72,14 +72,18 @@ global_attributes = {"Conventions": "CF-1.6"}
 
 
 def minidot_txt(
-    path: str, read_csv_kwargs: dict = None, rename_variables: bool = True
+    path: str,
+    rename_variables: bool = True,
+    encoding: str = "utf-8",
+    errors: str = "strict",
 ) -> xr.Dataset:
     """Parse PME MiniDot txt file
 
     Args:
-        path (str): txt file path
-        read_csv_kwargs (dict, optional): Extra . Defaults to None.
+        path (str): txt file path to read
         rename_variables (bool, optional): _description_. Defaults to True.
+        encoding (str, optional): File encoding. Defaults to 'utf-8'.
+        errors (str, optional): Error handling. Defaults to 'strict'.
 
     Returns:
         xarray.Dataset
@@ -88,16 +92,12 @@ def minidot_txt(
     def _append_to_history(msg):
         ds.attrs["history"] += f"{pd.Timestamp.utcnow():%Y-%m-%dT%H:%M:%SZ} {msg}"
 
-    # Default read_csv_kwargs
-    if read_csv_kwargs is None:
-        read_csv_kwargs = {}
-
     # Read MiniDot
     with open(
         path,
         "r",
-        encoding=read_csv_kwargs.get("encoding", "utf-8"),
-        errors=read_csv_kwargs.get("encoding_errors"),
+        encoding=encoding,
+        errors=errors,
     ) as f:
         # Read the headre
         serial_number = f.readline().replace("\n", "")
@@ -119,7 +119,8 @@ def minidot_txt(
         ds = pd.read_csv(
             f,
             converters={0: lambda x: pd.Timestamp(int(x), unit="s", tz="UTC")},
-            **read_csv_kwargs,
+            encoding=encoding,
+            encoding_errors=errors,
         ).to_xarray()
 
     # Strip whitespaces from variables names
@@ -171,11 +172,15 @@ def minidot_txt(
     return ds
 
 
-def minidot_txts(paths: Union[list, str]) -> xr.Dataset:
+def minidot_txts(
+    paths: Union[list, str], encoding: str = "utf-8", errors: str = "strict"
+) -> xr.Dataset:
     """Parse PME Minidots txt files
 
     Args:
         paths (listorstr): List of file paths to read.
+        encoding (str, optional): File encoding. Defaults to 'utf-8'.
+        errors (str, optional): Error handling. Defaults to 'strict'.
 
     Returns:
         xr.Dataset: xarray dataset which is compliant with CF-1.6
@@ -191,18 +196,25 @@ def minidot_txts(paths: Union[list, str]) -> xr.Dataset:
             print(f"Ignore {path}")
             continue
         # Read txt file
-        datasets += minidot_txt(path)
+        datasets += minidot_txt(path, encoding=encoding, errors=errors)
 
     return xr.merge(datasets)
 
 
-def minidot_cat(path: str, read_csv_kwargs: dict = None) -> xr.Dataset:
+def minidot_cat(
+    path: str, encoding: str = "utf-8", errors: str = "strict"
+) -> xr.Dataset:
+    """cat reads PME MiniDot concatenated CAT files
+
+    Args:
+        path (str): File path to read
+        encoding (str, optional): File encoding. Defaults to 'utf-8'.
+        errors (str, optional): Error handling. Defaults to 'strict'.
+
+    Returns:
+        xr.Dataset: xarray dataset which is compliant with CF-1.6
     """
-    cat reads PME MiniDot concatenated CAT files
-    """
-    if read_csv_kwargs is None:
-        read_csv_kwargs = {}
-    with open(path, "r", encoding=read_csv_kwargs.get("encoding", "utf8")) as f:
+    with open(path, "r", encoding=encoding, errors=errors) as f:
         header = f.readline()
 
         if header != "MiniDOT Logger Concatenated Data File\n":
@@ -216,7 +228,9 @@ def minidot_cat(path: str, read_csv_kwargs: dict = None) -> xr.Dataset:
         names = columns[0].replace(r"\n", "").split(",")
         units = columns[1].replace(r"\n", "")
 
-        ds = pd.read_csv(f, names=names, **read_csv_kwargs).to_xarray()
+        ds = pd.read_csv(
+            f, names=names, encoding=encoding, encoding_errors=errors
+        ).to_xarray()
 
     # Include units
     for name, units in zip(names, units):
