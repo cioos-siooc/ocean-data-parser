@@ -798,7 +798,7 @@ class IosFile(object):
         # iterate over variables and find matching vocabulary
         self.vocabulary_attributes = []
         for name, units in zip(self.channels["Name"], self.channels["Units"]):
-            # Drop trailing spaces and commas
+            # Drop trailing spaces and quotes
             name = re.sub(r"^\'|[\s\']+$", "", name.lower())
             units = re.sub(r"^\'|[\s\']+$", "", units)
 
@@ -823,19 +823,14 @@ class IosFile(object):
                     name,
                     units,
                 )
-                self.vocabulary_attributes += [[{"long_name": name, "units": units}]]
+                self.vocabulary_attributes += [[{"long_name": name, "units": units,"ios_name": name}]]
                 continue
 
             # Consider only the vocabularies specific to this ios_file_extension group
             matched_vocab = matched_vocab.query(
                 f'ios_file_extension == "{matched_vocab.index.get_level_values(0)[0]}"'
             )
-            self.vocabulary_attributes += [
-                [
-                    row.to_dict()
-                    for _, row in matched_vocab[vocabulary_attributes].iterrows()
-                ]
-            ]
+            self.vocabulary_attributes += [matched_vocab[vocabulary_attributes].to_dict('records')]
 
     def fix_variable_names(self):
         # get variable name list
