@@ -1,5 +1,6 @@
 ios_file_extension,ios_name,accepted_units,accepted_instrument_type,apply_func,long_name,standard_name,units,scale,sdn_parameter_urn,sdn_parameter_name,sdn_uom_urn,sdn_uom_name,rename,comments
 ,% light transmittance,%,,,% Light transmittance,,%,,,,,,,
+,salinity:absolute,g/kg (TEOS-10)|g/kg,,,Absolute Salinity,sea_water_absolute_salinity,g/kg,,SDN:P01::ASLTZZ01,Absolute salinity of the water body,SDN:P06::UGKG,Grams per kilogram,ASLTZZ01,
 ,adenosine_triphosphate,mg\/m\^3,,,Adenosine Triphosphate,mass_concentration_of_adenosine_triphosphate_in_sea_water,mg/m^3,,SDN:P01::ATPXZZDZ,Concentration of adenosine triphosphate {ATP CAS 56-65-5} per unit volume of the water body [dissolved plus reactive particulate <unknown phase],,,ATPXZZDZ,
 ,alkalinity,mmol\/m,,,Alkalinity,sea_water_alkalinity_expressed_as_mole_equivalent,mmol/m,,SDN:P01::ALKYZZXX,Total alkalinity per unit volume of the water body,,,ALKYZZXX,
 ,alkalinity:carbonate,mmol\/L,,,,mole_concentration_of_carbonate_expressed_as_carbon_in_sea_water,mmol/L,,SDN:P01:CRBTWCAL,,,,,
