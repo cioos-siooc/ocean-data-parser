@@ -292,9 +292,16 @@ class IosFile(object):
         return info
 
     def get_flag_convention(self, name: str, units: str = None) -> dict:
+
+        common_attrs = {
+            "ios_name": name.lower(),
+            "rename": name.lower(),
+            "standard_name": "quality_flag",
+        }
+        
         if name.lower() == "flag:at_sea":
             return {
-                "rename": "flag:at_sea",
+                **common_attrs,
                 "flag_values": [0, 1, 2, 3, 4, 5],
                 "flag_meanings": " ".join(
                     [
@@ -309,6 +316,7 @@ class IosFile(object):
             }
         elif units.lower() == "igoss_flags":
             return {
+                **common_attrs,
                 "flag_values": [0, 1, 2, 3, 4, 5],
                 "flag_meanings": " ".join(
                     [
@@ -323,6 +331,7 @@ class IosFile(object):
             }
         elif name.lower() == "flag:ctd" or name.lower() == "flag":
             return {
+                **common_attrs,
                 "flag_values": [0, 2, 6],
                 "flag_meanings": " ".join(
                     [
@@ -332,16 +341,18 @@ class IosFile(object):
                     ]
                 ),
             }
-        elif name.lower().startswith("flag") and self.filename.endswith("che"):
+        elif name.lower().startswith("flag") and self.filename.endswith(("che",'bot')):
             return {
+                **common_attrs,
                 "flag_values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                 "flag_meanings": " ".join(
-                    [
-                        "sample_drawn_from_water_bottle_but_not_analyzed",
-                        "acceptable_measurement",
-                        "questionable_measurement",
-                        "bad_measurement",
-                        "not_reported",
+                    [   
+                        "acceptable_measurement_with_no_header_comment",
+                        "sample_drawn_from_water_bottle_but_not_analyzed_sample_lost",
+                        "acceptable_measurement_with_header_comment",
+                        "questionable_measurement(probably_bad)",
+                        "poor_measurement(probably_bad)",
+                        "not_reported(bad)",
                         "mean_of_replicate_measurement",
                         "manual_chromatographic_peak_measurement",
                         "irregular_digital_chromatographic_peak_integration",
@@ -352,6 +363,7 @@ class IosFile(object):
 
         elif name.lower() == "sample_method":
             return {
+                **common_attrs,
                 "flag_values": ["UN", "US", "USM"],
                 "flag_meanings": " ".join(["no_stop", "stop_for_30s", "up_stop_mix"]),
             }
