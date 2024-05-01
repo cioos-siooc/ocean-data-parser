@@ -191,14 +191,6 @@ def _convert_sbe_dataframe_to_dataset(df, header):
 def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
     """Parsed seabird file headers"""
 
-    def unknown_line(line):
-        if line in ("* S>\n", "* GetHD\n", "* GetSD\n", "* DS\n", "* DH\n"):
-            return
-        header["history"] += [re.sub(r"\*\s|\n", "", line)]
-        if line.startswith(("* advance", "* delete")) or "added to scan" in line:
-            return
-        logger.warning("Unknown line format: %s", line.strip())
-
     def standardize_attribute(attribute):
         return re.sub(r" |\|\)|\/", "_", attribute.strip()).lower()
 
@@ -238,8 +230,34 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             header[key.strip().replace("_", " ")] = value
         elif re.match(r"\* autorun .*", line):
             header["autorun"] = line[2:].strip()
+        elif line in ("* S>\n", "* GetHD\n", "* GetSD\n", "* DS\n", "* DH\n"):
+            pass
+        elif (
+            line.startswith(("* advance", "* delete", "* test"))
+            or "added to scan" in line
+        ):
+            header["history"] += [re.sub(r"\*\s|\n", "", line)]
+        elif line.startswith("* SeacatPlus V"):
+            header["instrument_firmware"] = line[10:].split("SERIAL")[0].strip()
+        elif sensor_calibration := re.match(
+            r"\* (?P<variable>temperature|conductivity|pressure):\s*(?P<calibration_date>\d\d-\w\w\w-\d\d)",
+            line,
+        ):
+            if "calibration" not in header:
+                header["calibration"] = {}
+            header["calibration"][sensor_calibration["variable"]] = {
+                "calibration_date": sensor_calibration["calibration_date"]
+            }
+        elif re.match("\*\s{4,}[A-Z0-9]+ = [0-9\.e\-\+]+", line):
+            attr, value = line[2:].split(" = ", 1)
+            # Retrieve the last sensor added to calibration
+            sensor = list(header["calibration"].keys())[-1]
+
+            header["calibration"][sensor][attr.strip()] = float(value.strip())
+        elif line.startswith("* UploadData="):
+            header["upload_data"] = line[13:].strip()
         else:
-            unknown_line(line)
+            logger.warning("Unknown line format: %s", line.strip())
 
     def read_number_line(line):
         if line.startswith("# name"):
@@ -258,6 +276,9 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             header["variables"][int(span["id"])].update(
                 {"value_min": values[0], "value_max": values[1]}
             )
+        elif line.startswith("# QA Applied:"):
+            # This could be specific to DFO NAFC PCNV format
+            header["history"] += "\n" + line.split(":")[1].strip()
         elif " = " in line:
             attr, value = line[2:].split("=", 1)
             header[standardize_attribute(attr)] = value.strip()
@@ -267,7 +288,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             attr, value = line[2:].split(": ", 1)
             header[standardize_attribute(attr)] = value.strip()
         else:
-            unknown_line(line)
+            logger.warning("Unknown line format: %s", line.strip())
 
     def parse_xml(xml_section, error_level="ERROR"):
         """Parse XML section"""
@@ -277,7 +298,6 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             logger.log(
                 logging.getLevelName(error_level),
                 "Failed to parsed Sea-Bird XML",
-                exc_info=True,
             )
             return {}
 
@@ -351,7 +371,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
         elif line.startswith("# "):
             read_number_line(line)
         else:
-            unknown_line(line)
+            logger.warning("Unknown line format: %s", line.strip())
     # Remap variables to seabird variables
     variables = {
         attrs["sbe_variable"]: attrs for key, attrs in header["variables"].items()
