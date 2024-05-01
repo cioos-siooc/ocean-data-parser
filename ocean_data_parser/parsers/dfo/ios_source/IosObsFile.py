@@ -91,8 +91,8 @@ def _cast_ios_variable(ios_type, ios_format, ios_name):
         return "int32"
     elif re.search("time|date", ios_name, re.IGNORECASE):
         return str
-    logger.warning(
-        "Unknown data type for variable %s [Type=%s, Format=%s]",
+    logger.info(
+        "Unknown data type for variable %s [Type=%s, Format=%s], default to 'float32'",
         ios_name,
         ios_type,
         ios_format,
