@@ -1121,7 +1121,6 @@ class IosFile(object):
             variables.explode("vocabularies")
             .set_index("ios_name")["vocabularies"]
             .apply(pd.Series)
-            .fillna({"rename": variables["ios_name"]})
             .sort_values(
                 ["rename", "apply_func", "sdn_parameter_name"],
                 na_position="first",
