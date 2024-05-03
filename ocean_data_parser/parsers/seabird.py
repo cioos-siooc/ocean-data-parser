@@ -192,22 +192,28 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
     """Parsed seabird file headers"""
 
     def standardize_attribute(attribute):
-        return re.sub(r" |\|\)|\/", "_", attribute.strip()).lower()
+        attribute = re.sub(r"\s+|\(|\||\)|\/", "_", attribute.strip()).lower()
+        attribute = re.sub(r"\_+", "_", attribute)
+        attribute = re.sub(r"\_+$", "", attribute)
+        return attribute
 
     def read_comments(line):
         if re.match(r"\*\* .*(\:|\=).*", line):
             result = re.match(r"\*\* (?P<key>[^:=]*)(\:|\=)(?P<value>.*)", line)
             key, _, value = result.groups()
+            # Standardize key to match NetCDF requirements
+            key = standardize_attribute(key)
+
             if key.strip() in header:
                 # append string to existing key on a new line
-                header[key.strip()] += "\n" + value.strip()
+                header[key] += "\n" + value.strip()
             else:
-                header[key.strip()] = value.strip()
+                header[key] = value.strip()
         else:
             header["comments"] += [line[2:]]
 
     def read_asterisk_line(line):
-        if re.match(r"\*\s\w+", line) and " = " in line:
+        if re.match(r"\*\s[\w\s]+\=", line):
             attr, value = line[2:].split("=", 1)
             header[standardize_attribute(attr)] = value.strip()
         elif line.startswith((r"* Sea-Bird", r"* SBE ")):
@@ -227,7 +233,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             key, value = re.match(
                 r"\* (advance [^0-9]+)([\d\.]+ seconds)", line
             ).groups()
-            header[key.strip().replace("_", " ")] = value
+            header[standardize_attribute(key)] = value
         elif re.match(r"\* autorun .*", line):
             header["autorun"] = line[2:].strip()
         elif line in ("* S>\n", "* GetHD\n", "* GetSD\n", "* DS\n", "* DH\n"):
@@ -239,6 +245,10 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             header["history"] += [re.sub(r"\*\s|\n", "", line)]
         elif line.startswith("* SeacatPlus V"):
             header["instrument_firmware"] = line[10:].split("SERIAL")[0].strip()
+        elif line.startswith("* cast"):
+            if "casts" not in header:
+                header["casts"] = []
+            header["casts"] += [line[2:].strip()]
         elif sensor_calibration := re.match(
             r"\* (?P<variable>temperature|conductivity|pressure):\s*(?P<calibration_date>\d\d-\w\w\w-\d\d)",
             line,

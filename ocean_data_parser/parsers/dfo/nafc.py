@@ -678,12 +678,12 @@ def pcnv(
     # Map global attributes
     ship_trip_seq_station = re.search(
         r"(?P<dfo_nafc_platform_name>\w{3})(?P<trip>\d{3})_(?P<year>\d{4})_(?P<stn>\d{3})",
-        ds.attrs.pop("VESSEL/TRIP/SEQ STN", ""),
+        ds.attrs.pop("vessel_trip_seq_stn", ""),
     )
     if not ship_trip_seq_station:
         logger.error(
             "Unable to parse ship_trip_seq_station from VESEL/TRIP/SEQ STN= {}",
-            ds.attrs.get("VESEL/TRIP/SEQ STN", ""),
+            ds.attrs.get("vessel_trip_seq_stn", ""),
         )
     attrs = {
         "dfo_nafc_platform_name": ship_trip_seq_station["dfo_nafc_platform_name"],
@@ -693,27 +693,27 @@ def pcnv(
         "trip": _int(ship_trip_seq_station["trip"]),
         "year": _int(ship_trip_seq_station["year"]),
         "station": _int(ship_trip_seq_station["stn"]),
-        "time": pd.to_datetime(ds.attrs.pop("DATE/TIME"), utc=True),
+        "time": pd.to_datetime(ds.attrs.pop("date_time"), utc=True),
         "latitude": _parse_lat_lon(
             _pop_attribute_from(
-                ["LATITUDE", "LATITUDE XX XX.XX", "LATITUDE XX XX.XX N"]
+                ["latitude", "latitude_xx_xx.xx", "latitude_xx_xx.xx_n"]
             )
         ),
         "longitude": _parse_lat_lon(
             _pop_attribute_from(
-                ["LONGITUDE", "LONGITUDE XX XX.XX", "LONGITUDE XX XX.XX W"]
+                ["longitude", "longitude_xx_xx.xx", "longitude _xx_xx.xx_w"]
             )
         ),
-        "sounder_depth": ds.attrs.pop("SOUNDING DEPTH (M)", None),
-        "instrument": ds.attrs.pop("PROBE TYPE", None),
-        "set_number": _int(ds.attrs.pop("XBT NUMBER", None))
-        or _int(ds.attrs.pop("CTD NUMBER", None)),
-        "format": ds.attrs.pop("FORMAT", None),
-        "commment": _pop_attribute_from(["COMMENTS", "COMMENTS (14 CHAR)"]),
-        "trip_tag": ds.attrs.pop("TRIP TAG", None),
-        "vnet": ds.attrs.pop("VNET", None),
-        "do2": ds.attrs.pop("DO2", None),
-        "bottles": _int(ds.attrs.pop("BOTTLES", None)),
+        "sounder_depth": ds.attrs.pop("sounding_depth_m", None),
+        "instrument": ds.attrs.pop("probe_type", None),
+        "set_number": _int(ds.attrs.pop("xbt_number", None))
+        or _int(ds.attrs.pop("ctd_number", None)),
+        "format": ds.attrs.pop("format", None),
+        "commment": _pop_attribute_from(["comments", "comments_14_char"]),
+        "trip_tag": ds.attrs.pop("trip_tag", None),
+        "vnet": ds.attrs.pop("vnet", None),
+        "do2": ds.attrs.pop("do2", None),
+        "bottles": _int(ds.attrs.pop("bottles", None)),
         **(global_attributes or {}),
     }
 
