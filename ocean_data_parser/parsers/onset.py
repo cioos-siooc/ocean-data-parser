@@ -58,6 +58,7 @@ IGNORED_VARIABLES = [
     "low_power",
     "water_detect",
     "record",
+    "eof",
     "",
 ]
 
@@ -77,32 +78,11 @@ DATETIME_REGEX_FORMATS = [
 ]
 
 
-def _parse_onset_time(
-    time: Union[str, np.datetime64], timezone: str = "UTC"
-) -> pd.Timestamp:
-    """Convert Onset timestamps to UTC pd.Timestamps"""
-    if time in ("", None) or pd.isna(time):
-        return pd.NaT
-
-    if isinstance(time, np.datetime64):
-        time_format = None
-    else:
-        for regex, datetime_format in DATETIME_REGEX_FORMATS:
-            if re.fullmatch(regex, time):
-                time_format = datetime_format
-                break
-        else:
-            logger.error("Unkown datetime format: %s", time)
-            return pd.NaT
-    try:
-        return (
-            pd.to_datetime(time, format=time_format)
-            .tz_localize(timezone)
-            .tz_convert("UTC")
-        )
-    except ParserError:
-        logging.error("Failed to convert to timestamp: %s", time, exc_info=True)
-        return pd.NaT
+def _get_time_format(time):
+    for regex, datetime_format in DATETIME_REGEX_FORMATS:
+        if re.fullmatch(regex, time):
+            return datetime_format
+    return None
 
 
 def _parse_onset_csv_header(header_lines):
@@ -197,32 +177,41 @@ def csv(
         raw_header += [f.readline().replace("\n", "")]
         header_lines = 1
         if "Serial Number:" in raw_header[0]:
+            # Some historical format have an extra line after initial serial number
             # skip second empty line
             header_lines += 1
             f.readline()  #
         # Read csv columns
         raw_header += [f.readline()]
+        first_row = f.readline()
+        date_format = _get_time_format(first_row.split(",")[1])
 
     # Parse onset header
     header, variables = _parse_onset_csv_header(raw_header)
 
     # Inputs to pd.read_csv
-    column_names = [var for var in list(variables.keys()) if var]
+    consider_columns = {
+        var: id
+        for id, var in enumerate(variables.keys())
+        if var.lower().replace(" ", "_") not in IGNORED_VARIABLES
+    }
     df = pd.read_csv(
         path,
         na_values=[" "],
+        skiprows=list(range(header_lines + 1)),
+        parse_dates=["Date Time"],
+        date_format=date_format,
         sep=",",
-        engine="python",
-        header=header_lines,
+        header=None,
         memory_map=True,
-        names=column_names,
-        usecols=[id for id, _ in enumerate(column_names)],
+        names=consider_columns.keys(),
+        usecols=consider_columns.values(),
         encoding_errors=errors,
         encoding=encoding,
     )
-    df[header["time_variables"]] = df[header["time_variables"]].map(
-        lambda x: _parse_onset_time(x, header["timezone"])
-    )
+
+    # Add timezone to time variables
+    df["Date Time"] = df["Date Time"].dt.tz_localize(header["timezone"])
 
     # Convert to dataset
     ds = df.to_xarray()
