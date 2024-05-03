@@ -49,23 +49,9 @@ VARIABLE_RENAMING_MAPPING = {
     "T (deg C)": "temperature",
     "BV (Volts)": "batt_volt",
     "DO (mg/l)": "do_mg_l",
+    "DO (perc)": "do_perc",
+    "pO2 (mbar)": "po2_mbar",
     "Q ()": "q",
-}
-
-VARIABLE_ATTRIBUTES = {
-    "Time (sec)": dict(long_name="Time", standard_name="time"),
-    "T (deg C)": dict(
-        long_name="Temperature",
-        units="degrees_celsius",
-        standard_name="sea_water_temperature",
-    ),
-    "BV (Volts)": dict(long_name="Battery Voltage", units="Volts"),
-    "DO (mg/l)": dict(
-        long_name="Dissolved Oxygen Concentration",
-        units="mg/l",
-        standard_name="mass_concentration_of_oxygen_in_sea_water",
-    ),
-    "Q ()": dict(long_name="Q"),
 }
 
 global_attributes = {"Conventions": "CF-1.6"}
