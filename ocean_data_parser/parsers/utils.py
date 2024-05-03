@@ -18,6 +18,32 @@ time_variables_default_encoding = {
 object_variables_default_encoding = {"dtype": "str"}
 
 
+def test_attribute_names(dataset):
+    """Test if attributes names are valid"""
+    attribute_checker = re.compile(r"[a-zA-Z_\$][a-zA-Z0-9_\.\@\$]*")
+    invalid_global_attributes = []
+    invalid_variable_attributes = []
+    for key in dataset.attrs:
+        if not attribute_checker.fullmatch(key):
+            invalid_global_attributes.append(key)
+    for variable in dataset:
+        for key in dataset[variable].attrs:
+            if not attribute_checker.fullmatch(key):
+                invalid_variable_attributes.append(f"{variable} -> {key}")
+    error_msg = []                  
+    if invalid_global_attributes:
+        error_msg += [
+            "Invalid global attributes names: %s", ", ".join(invalid_global_attributes)
+        ]
+    if invalid_variable_attributes:
+        error_msg += [
+            "Invalid variable attributes names: %s",
+            ", ".join(invalid_variable_attributes),
+        ]
+    if error_msg:
+        raise ValueError("\n".join(error_msg))
+
+
 def rename_variables_to_valid_netcdf(dataset):
     def _transform(variable_name):
         variable_name = re.sub(r"[\(\)\-\s]+", "_", variable_name.strip())
@@ -179,6 +205,7 @@ def standardize_dataset(
         - Apply standardize_variable_attributes
         - Apply standardize_global_attributes
         - Define time variables encoding
+        - Verify attribute names
 
     Args:
         ds (xr.Dataset): Dataset to standardized
@@ -198,7 +225,7 @@ def standardize_dataset(
     ds = generate_variables_encoding(
         ds, time_variables_encoding=time_variables_encoding, utc=utc
     )
-
+    test_attribute_names(ds)
     return ds
 
 
