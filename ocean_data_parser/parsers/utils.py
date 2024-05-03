@@ -30,10 +30,11 @@ def test_attribute_names(dataset):
         for key in dataset[variable].attrs:
             if not attribute_checker.fullmatch(key):
                 invalid_variable_attributes.append(f"{variable} -> {key}")
-    error_msg = []                  
+    error_msg = []
     if invalid_global_attributes:
         error_msg += [
-            "Invalid global attributes names: %s", ", ".join(invalid_global_attributes)
+            "Invalid global attributes names: %s",
+            ", ".join(invalid_global_attributes),
         ]
     if invalid_variable_attributes:
         error_msg += [
