@@ -11,12 +11,9 @@ import logging
 import re
 from csv import reader
 from datetime import datetime
-from typing import Union
 
-import numpy as np
 import pandas as pd
 import xarray
-from dateutil.parser._parser import ParserError
 
 from ocean_data_parser.parsers.utils import standardize_dataset
 
