@@ -71,7 +71,9 @@ def csv(
                 key = items[0]
                 value = items[1] if len(items) == 2 else ""
 
-                attr = re.sub(r"[\s\[\]\(\)]+", "_", key.lower())
+                attr = re.sub(r"[\s\[\]\(\)\-]+", "_", key.lower())
+                attr = re.sub(r"__+", "_", attr)
+                attr = re.sub(r"_$", "", attr)
 
                 # cast value
                 if re.match(r"^[+-]*\d+$", value):
