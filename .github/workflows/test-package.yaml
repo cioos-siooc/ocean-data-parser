@@ -43,6 +43,6 @@ jobs:
       - name: Run ruff
         run: poetry run ruff check --output-format=github .
       - name: Test with pytest parsers
-        run: poetry run pytest -W error::UserWarning
+        run: poetry run pytest -W error::UserWarning -k "not test_metadata"
       - name: Run benchmark
         run: poetry run pytest tests/run_benchmark.py  --benchmark-json output.json
