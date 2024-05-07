@@ -62,13 +62,18 @@ def cnv(
     encoding: str = "UTF-8",
     encoding_errors="strict",
     xml_parsing_error_level="ERROR",
+    generate_instrument_variables: bool = False,
+    save_orginal_header: bool = False,
 ) -> xarray.Dataset:
     """Parse Seabird CNV format
 
     Args:
         file_path (str): file path
         encoding (str, optional): encoding to use. Defaults to "UTF-8".
-        xml_parsing_error_level (str, optional): Error level for XML parsing. Defaults to "ERROR".
+        xml_parsing_error_level (str, optional): Error level for XML parsing.
+            Defaults to "ERROR".
+        generate_instrument_variables (bool, optional): Generate instrument
+            variables following the IOOS 1.2 standard. Defaults to False.
 
     Returns:
         xarray.Dataset: Dataset
@@ -94,11 +99,15 @@ def cnv(
     header = _generate_seabird_cf_history(header)
 
     ds = _convert_sbe_dataframe_to_dataset(df, header)
+    if generate_instrument_variables:
+        ds, _ = _generate_instruments_variables_from_xml(ds, header["seabird_header"])
+    if not save_orginal_header:
+        ds.attrs.pop("seabird_header")
     return standardize_dataset(ds)
 
 
 def btl(
-    file_path: str, encoding: str = "UTF-8", xml_parsing_error_level="ERROR"
+    file_path: str, encoding: str = "UTF-8", xml_parsing_error_level="ERROR", save_orginal_header: bool = False
 ) -> xarray.Dataset:
     """Parse Seabird BTL format
 
@@ -165,7 +174,9 @@ def btl(
             ds[var].attrs[
                 "cell_method"
             ] = f"scan: mean (previous {n_scan_per_bottle} scans)"
-
+    
+    if not save_orginal_header:
+        ds.attrs.pop("seabird_header")
     return standardize_dataset(ds)
 
 
@@ -315,6 +326,11 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
                 "Failed to parsed Sea-Bird XML",
             )
             return {}
+    
+    def _read_next_line():
+        line = f.readline()
+        header["seabird_header"] += line
+        return line
 
     line = "*"
     header = {
@@ -324,11 +340,12 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
         "calibration": {},
         "history": [],
         "comments": [],
+        "seabird_header": "",
     }
     read_next_line = True
     while "*END*" not in line and line.startswith(("*", "#")):
         if read_next_line:
-            line = f.readline()
+            line = _read_next_line()
         else:
             read_next_line = True
 
@@ -365,10 +382,10 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
                     "CC",
                     "EC",
                 ):
-                    line = f.readline()
+                    line = _read_next_line()
                     continue
                 xml_section += line[1:]
-                line = f.readline()
+                line = _read_next_line()
             read_next_line = False
             # Add section_name
             if first_character == "*":
