@@ -685,7 +685,7 @@ def pcnv(
             "Unable to parse ship_trip_seq_station from VESEL/TRIP/SEQ STN= {}",
             ds.attrs.get("vessel_trip_seq_stn", ""),
         )
-    attrs = {
+    ds.attrs.update({
         "dfo_nafc_platform_name": ship_trip_seq_station["dfo_nafc_platform_name"],
         **_get_platform_by_nafc_platform_name(
             ship_trip_seq_station["dfo_nafc_platform_name"]
@@ -714,14 +714,9 @@ def pcnv(
         "vnet": ds.attrs.pop("vnet", None),
         "do2": ds.attrs.pop("do2", None),
         "bottles": _int(ds.attrs.pop("bottles", None)),
+        **(_add_metqa_info_to_pcvn(path) if match_metqa_table else {}),
         **(global_attributes or {}),
-    }
-
-    # load metqa table attributes
-    if match_metqa_table:
-        attrs.update(_add_metqa_info_to_pcvn(path))
-
-    ds.attrs.update(attrs)
+    })
 
     # Move coordinates to variables
     coords = ["time", "latitude", "longitude"]
