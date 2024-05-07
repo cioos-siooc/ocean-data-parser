@@ -658,7 +658,7 @@ def _generate_instruments_variables_from_xml(
         return ds, {}
 
     sensors_comments = re.findall(
-        r"\s*\<!--\s*(Frequency \d+|A/D voltage \d+|.* voltage|Count){1}, (.*)-->\n",
+        r"\s*\<!--\s*(Frequency \d+|A/D voltage \d+|.* voltage|Count|Serial RS-232){1}, (.*)-->\n",
         calibration_xml,
     )
     # Consider only channels with sensor mounted
