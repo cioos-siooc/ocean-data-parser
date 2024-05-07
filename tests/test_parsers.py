@@ -60,6 +60,11 @@ class TestSeabirdParsers:
         ds = seabird.cnv(path)
         review_parsed_dataset(ds, path, caplog)
 
+    @pytest.mark.parametrize("path", glob("tests/parsers_test_files/seabird/**/*.cnv"))
+    def test_cnv_parser_with_instrument_variables(self, path, caplog):
+        ds = seabird.cnv(path, generate_instrument_variables=True)
+        review_parsed_dataset(ds, path, caplog)
+
 
 class TestVanEssenParsers:
     @pytest.mark.parametrize(
