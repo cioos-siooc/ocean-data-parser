@@ -679,7 +679,7 @@ def _generate_instruments_variables_from_xml(
     for sensor, sensor_comment in zip(sensors, sensors_comments):
         sensor_key = list(sensor.keys())[1].strip()
         attrs = sensor[sensor_key]
-        channel, description = sensor_comment
+        channel_type, description = sensor_comment
 
         # Define senor variable name
         if "UserPolynomial" in sensor_key and attrs.get("SensorName"):
@@ -716,7 +716,8 @@ def _generate_instruments_variables_from_xml(
             "component": f"{sensor_var_name}_sn{attrs['SerialNumber']}",  # IOOS 1.2
             "discriminant": str(sensor_number),  # IOOS 1.2
             "make_model": sensor_name,  # IOOS 1.2, NCEI 2.0
-            "channel": channel,
+            "channel": sensor["@Channel"],
+            "channel_type": channel_type,
             "sbe_sensor_id": int(attrs.pop("@SensorID")),
             "serial_number": attrs.pop("SerialNumber"),  # NCEI 2.0
             "calibration": json.dumps(attrs),
