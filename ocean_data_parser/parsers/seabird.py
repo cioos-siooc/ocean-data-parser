@@ -319,6 +319,11 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
                 header["processing"][-1][processing_row["parameter"]] = processing_row[
                     "value"
                 ]
+        elif line.startswith("# Using the GSW Toolkit version") and header["processing"][-1]['module'] == 'DeriveTEOS':
+            # Add GSW toolkit version to the last processing step 
+            # which should be DeriveTEOS
+            header['history'] += [line[2:].strip()]
+            header["processing"][-1]["gsw_toolkit_version"] = line[31:].strip()
         elif " = " in line:
             attr, value = line[2:].split("=", 1)
             header[standardize_attribute(attr)] = value.strip()
