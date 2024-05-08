@@ -307,7 +307,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             header["history"] += [line[2:].strip()]
             if (
                 header["processing"] == []
-                or processing_row["module"] not in header["processing"][-1]["module"]
+                or processing_row["module"].lower() != header["processing"][-1]["module"].lower()
             ):
                 header["processing"].append(
                     {
