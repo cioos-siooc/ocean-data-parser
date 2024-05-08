@@ -543,6 +543,7 @@ sbe_data_processing_modules = [
     "section",
     "wild",
     "window",
+    "bottlesum",
 ]
 is_seabird_processing_stage = re.compile(
     rf"\# (?P<step>{'|'.join(sbe_data_processing_modules)})"
