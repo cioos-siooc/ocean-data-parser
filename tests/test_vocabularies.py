@@ -34,8 +34,6 @@ class TestPlatformVocabulary:
             "platform_name",
             "platform_id",
             "ices_platform_codes",
-            "wmo_platform_code",
-            "call_sign",
             "sdn_platform_urn",
             "dfo_nafc_platform_code",
             "dfo_nafc_platform_name",
