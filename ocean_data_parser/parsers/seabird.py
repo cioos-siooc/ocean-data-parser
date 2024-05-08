@@ -107,7 +107,10 @@ def cnv(
 
 
 def btl(
-    file_path: str, encoding: str = "UTF-8", xml_parsing_error_level="ERROR", save_orginal_header: bool = False
+    file_path: str,
+    encoding: str = "UTF-8",
+    xml_parsing_error_level="ERROR",
+    save_orginal_header: bool = False,
 ) -> xarray.Dataset:
     """Parse Seabird BTL format
 
