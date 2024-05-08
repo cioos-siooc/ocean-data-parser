@@ -24,7 +24,7 @@ from ocean_data_parser.vocabularies.load import (
 
 MODULE_PATH = Path(__file__).parent
 p_file_vocabulary = dfo_nafc_p_file_vocabulary()
-p_file_shipcode = dfo_platforms()
+p_file_shipcode = dfo_platforms().drop(columns=["accepted_platform_name"])
 
 global_attributes = {
     "Conventions": "CF-1.6,CF-1.7,CF-1.8,ACDD-1.3,IOOS 1.2",
