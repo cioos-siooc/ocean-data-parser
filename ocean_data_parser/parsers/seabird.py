@@ -53,6 +53,28 @@ IGNORED_HEADER_LINES = [
     "*\n",
 ]
 
+SBE_DATA_PROCESSING_MODULES = [
+    "datcnv",
+    "filter",
+    "alignctd",
+    "celltm",
+    "loopedit",
+    "derive",
+    "Derive",
+    "DeriveTEOS_10",
+    "binavg",
+    "split",
+    "strip",
+    "section",
+    "wild",
+    "window",
+    "bottlesum",
+]
+is_seabird_processing_stage = re.compile(
+    rf"\# (?P<module>{'|'.join(SBE_DATA_PROCESSING_MODULES)})"
+    r"_(?P<parameter>[^\s\:]+)( = |: )(?P<value>.*)"
+)
+
 
 def _convert_to_netcdf_var_name(var_name):
     """Convert seabird variable name to a netcdf compatible format."""
@@ -489,7 +511,7 @@ def _generate_seabird_cf_history(attrs, drop_processing_attrs=False):
         timestamp = pd.to_datetime(step["date"], format=SBE_TIME_FORMAT).isoformat() if "date" in step else "0000-00-00T00:00:00"
         label = (
             "SBEDataProcessing"
-            if step["module"] in sbe_data_processing_modules
+            if step["module"] in SBE_DATA_PROCESSING_MODULES
             else "Processing step"
         )
         history.append(f"{timestamp} {label}: {json.dumps(step)}")
@@ -548,28 +570,6 @@ seabird_to_bodc = {
     "User Polynomial, 3": [],
 }
 
-sbe_data_processing_modules = [
-    "datcnv",
-    "filter",
-    "alignctd",
-    "celltm",
-    "loopedit",
-    "derive",
-    "Derive",
-    "DeriveTEOS_10",
-    "binavg",
-    "split",
-    "strip",
-    "section",
-    "wild",
-    "window",
-    "bottlesum",
-]
-is_seabird_processing_stage = re.compile(
-    rf"\# (?P<module>{'|'.join(sbe_data_processing_modules)})"
-    r"_(?P<parameter>[^\s\:]+)( = |: )(?P<value>.*)"
-)
-
 
 def _get_seabird_instrument_from_header(seabird_header: str) -> str:
     """Retrieve main instrument model from Sea-Bird CNV header"""
@@ -595,7 +595,7 @@ def _get_seabird_processing_history(seabird_header: str) -> str:
     with the sbe data processing tool
     """
     if "# datcnv" in seabird_header:
-        sbe_hist = r"\# (" + "|".join(sbe_data_processing_modules) + r").*"
+        sbe_hist = r"\# (" + "|".join(SBE_DATA_PROCESSING_MODULES) + r").*"
         return "\n".join(
             [line for line in seabird_header.split("\n") if re.match(sbe_hist, line)]
         )
