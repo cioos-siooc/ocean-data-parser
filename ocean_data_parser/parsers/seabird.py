@@ -42,8 +42,17 @@ IGNORED_HEADER_LINES = [
     "* GetCD\n",
     "* GetCC\n",
     "* GetEC\n",
+    "* HD\n",
+    "* SD\n",
+    "* DS\n",
+    "* DH\n",
+    "* CD\n",
+    "* CC\n",
+    "* EC\n",
+    "* S>\n",
     "*\n",
 ]
+
 
 def _convert_to_netcdf_var_name(var_name):
     """Convert seabird variable name to a netcdf compatible format."""
@@ -232,14 +241,17 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
                 header[key] += "\n" + value.strip()
             else:
                 header[key] = value.strip()
+        elif line.startswith("** QA Applied:"):
+            # This could be specific to DFO NAFC PCNV format
+            header["processing"].append(
+                {"module": "QA applied", "message": line.split(":", 1)[1]}
+            )
         else:
             header["comments"] += [line[2:]]
 
     def read_asterisk_line(line):
-        if re.match(r"\*\s[\w\s]+\=", line):
-            attr, value = line[2:].split("=", 1)
-            header[standardize_attribute(attr)] = value.strip()
-        elif line.startswith((r"* Sea-Bird", r"* SBE ")):
+
+        if line.startswith((r"* Sea-Bird", r"* SBE ")) and not line.startswith("* SBE 38 = "):
             instrument_type = re.search(
                 r"\* Sea-Bird (.*) Data File\:?|\* SBE (.*)", line
             ).groups()
@@ -252,31 +264,35 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             header["software_version"] = re.search(
                 r"\* Software version (.*)", line, re.IGNORECASE
             )[1]
-        elif re.match(r"\* (advance [^0-9]+)([\d\.]+ seconds)", line):
-            key, value = re.match(
-                r"\* (advance [^0-9]+)([\d\.]+ seconds)", line
-            ).groups()
-            header[standardize_attribute(key)] = value
-        elif re.match(r"\* autorun .*", line):
-            header["autorun"] = line[2:].strip()
         elif (
-            line.startswith(("* advance", "* delete", "* test"))
+            line.startswith(("* advance", "* delete", "* test","* autorun","* number of scans to average"))
             or "added to scan" in line
         ):
-            header["history"].append(re.sub(r"\*\s|\n", "", line)[1])
+            header["processing"].append({"module": "on-instrument", "message": line[2:]})
         elif line.startswith("* SeacatPlus V"):
             header["instrument_firmware"] = line[10:].split("SERIAL")[0].strip()
         elif line.startswith("* cast"):
-            if "casts" not in header:
-                header["casts"] = []
-            header["casts"] += [line[2:].strip()]
+            header["processing"].append({"module": "cast", "message": line[2:]})
         elif sensor_calibration := re.match(
-            r"\* (?P<variable>temperature|conductivity|pressure):\s*(?P<calibration_date>\d\d-\w\w\w-\d\d)",
+            r"\* (?P<variable>temperature|conductivity|pressure|rtc):\s*(?P<calibration_date>\d\d-\w\w\w-\d\d)",
             line,
         ):
             header["calibration"][sensor_calibration["variable"]] = {
                 "calibration_date": sensor_calibration["calibration_date"]
             }
+        elif pressure_sensor := re.match(r"\* pressure sensor = (?P<type>[\w\s]+), range = (?P<range>.*)", line):
+            if "pressure" not in header["calibration"]:
+                header["calibration"]["pressure"] = {}
+            header["calibration"]["pressure"].update(pressure_sensor.groupdict())
+        elif pressure_sensor := re.match(r"\* pressure S\/N = (?P<serial_number>\d+), range = (?P<range>[^:]):(?P<calibration_date>.+)", line):
+            if "pressure" not in header["calibration"]:
+                header["calibration"]["pressure"] = {}
+            header["calibration"]["pressure"].update(pressure_sensor.groupdict())
+        elif volt_calibration := re.match(r"\* volt\s*(?P<channel>\d)+:\s(?P<extra>.*)", line):
+            header["calibration"][f"volt {volt_calibration['channel']}"] = dict(
+                [item.split(" = ") for item in volt_calibration["extra"].split(", ")]
+            )
+
         elif re.match(r"\*\s{4,}[A-Z0-9]+ = [0-9\.e\-\+]+", line):
             attr, value = line[2:].split(" = ", 1)
             # Retrieve the last sensor added to calibration
@@ -285,6 +301,14 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             header["calibration"][sensor][attr.strip()] = float(value.strip())
         elif line.startswith("* UploadData="):
             header["upload_data"] = line[13:].strip()
+        elif ", " in line and " = " in line:
+            # Split line into multiple attributes
+            for attr in line[2:].split(", "):
+                attr, value = attr.split(" = ", 1)
+                header[standardize_attribute(attr)] = value.strip()
+        elif re.match(r"\*\s[\w\s]+\=", line):
+            attr, value = line[2:].split("=", 1)
+            header[standardize_attribute(attr)] = value.strip()
         else:
             logger.warning("Unknown line format: %s", line.strip())
 
@@ -308,27 +332,35 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             )
         elif line.startswith("# QA Applied:"):
             # This could be specific to DFO NAFC PCNV format
-            header["history"].append(line[2:].strip())
+            header["processing"].append(
+                {"module": "QA applied", "message": line.split(":", 1)[1]}
+            )
         elif processing_row := is_seabird_processing_stage.match(line):
-            header["history"] += [line[2:].strip()]
+            if processing_row["parameter"] == "date":
+                parameters = dict(
+                    zip(["date", "version"], processing_row["value"].split(","))
+                )
+            else:
+                parameters = {processing_row["parameter"]: processing_row["value"]}
+
             if (
                 header["processing"] == []
-                or processing_row["module"].lower() != header["processing"][-1]["module"].lower()
+                or processing_row["module"].lower()
+                != header["processing"][-1]["module"].lower()
             ):
                 header["processing"].append(
                     {
                         "module": processing_row["module"],
-                        processing_row["parameter"]: processing_row["value"],
                     }
                 )
-            else:
-                header["processing"][-1][processing_row["parameter"]] = processing_row[
-                    "value"
-                ]
-        elif line.startswith("# Using the GSW Toolkit version") and header["processing"][-1]['module'] == 'DeriveTEOS':
-            # Add GSW toolkit version to the last processing step 
+
+            header["processing"][-1].update(parameters)
+        elif (
+            line.startswith("# Using the GSW Toolkit version")
+            and header["processing"][-1]["module"] == "DeriveTEOS"
+        ):
+            # Add GSW toolkit version to the last processing step
             # which should be DeriveTEOS
-            header['history'] += [line[2:].strip()]
             header["processing"][-1]["gsw_toolkit_version"] = line[31:].strip()
         elif " = " in line:
             attr, value = line[2:].split("=", 1)
@@ -362,7 +394,6 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
         "instrument_type": "",
         "variables": {},
         "processing": [],
-        "casts": [],
         "calibration": {},
         "history": [],
         "comments": [],
@@ -378,8 +409,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
         # Ignore empty lines or last header line
         if line in IGNORED_HEADER_LINES or "*END*" in line:
             continue
-
-        if re.match(r"(\*|\#)\s*\<", line):
+        elif re.match(r"(\*|\#)\s*\<", line):
             # Load XML header
             # Retriveve the whole block of XML header
             xml_section = ""
@@ -453,41 +483,18 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
 
 
 def _generate_seabird_cf_history(attrs, drop_processing_attrs=False):
-    """Generate CF standard history from Seabird parsed attributes"""
-    sbe_processing_steps = ("datcnv", "bottlesum")
-    history = []
-    for step in sbe_processing_steps:
-        step_attrs = {
-            key.replace(step + "_", ""): value
-            for key, value in attrs.items()
-            if key.startswith(step)
-        }
-        if not step_attrs:
-            continue
-
-        date_line = step_attrs.pop("date")
-        if isinstance(date_line, datetime):
-            iso_date_str = date_line.isoformat()
-            extra = attrs.pop(step + "_comment") if f"{step}_comment" in attrs else None
-        else:
-            date_str, extra = date_line.split(",", 1)
-            iso_date_str = pd.to_datetime(date_str).isoformat()
-        if extra:
-            extra = re.search(
-                r"^\s(?P<software_version>[\d\.]+)\s*(?P<date_extra>.*)", extra
-            )
-            step_attrs.update(extra.groupdict())
-        history += [f"{iso_date_str} - {step_attrs}"]
-    # Sort history by date
-    attrs["history"] = attrs.get("history", []) + sorted(history)
-
-    # Drop processing attributes
+    """Generate CF standard history from Seabird Processing Modules"""
+    history = attrs.get("history")
+    for step in attrs["processing"]:
+        timestamp = pd.to_datetime(step["date"], format=SBE_TIME_FORMAT).isoformat() if "date" in step else "0000-00-00T00:00:00"
+        label = (
+            "SBEDataProcessing"
+            if step["module"] in sbe_data_processing_modules
+            else "Processing step"
+        )
+        history.append(f"{timestamp} {label}: {json.dumps(step)}")
     if drop_processing_attrs:
-        drop_keys = [
-            key for key in attrs.keys() if key.startswith(sbe_processing_steps)
-        ]
-        for key in drop_keys:
-            attrs.pop(key)
+        attrs.pop("processing")
     return attrs
 
 
@@ -549,7 +556,7 @@ sbe_data_processing_modules = [
     "loopedit",
     "derive",
     "Derive",
-    "DeriveTEOS",
+    "DeriveTEOS_10",
     "binavg",
     "split",
     "strip",
