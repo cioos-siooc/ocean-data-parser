@@ -7,7 +7,6 @@ and is supported by [Seabird Scientific](https://www.seabird.com).
 import difflib
 import json
 import logging
-import os
 import re
 from datetime import datetime
 
