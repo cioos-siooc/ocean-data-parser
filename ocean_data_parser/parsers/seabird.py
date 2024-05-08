@@ -301,10 +301,21 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             # This could be specific to DFO NAFC PCNV format
             header["history"].append(line[2:].strip())
         elif processing_row := is_seabird_processing_stage.match(line):
-            header['history'] += [line[2:].strip()]
-            if processing_row['step'] not in header["processing"]:
-                header["processing"][processing_row['step']] = {}
-            header["processing"][processing_row['step']][processing_row['parameter']] = processing_row['value']
+            header["history"] += [line[2:].strip()]
+            if (
+                header["processing"] == []
+                or processing_row["module"] not in header["processing"][-1]["module"]
+            ):
+                header["processing"].append(
+                    {
+                        "module": processing_row["module"],
+                        processing_row["parameter"]: processing_row["value"],
+                    }
+                )
+            else:
+                header["processing"][-1][processing_row["parameter"]] = processing_row[
+                    "value"
+                ]
         elif " = " in line:
             attr, value = line[2:].split("=", 1)
             header[standardize_attribute(attr)] = value.strip()
@@ -326,7 +337,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
                 "Failed to parsed Sea-Bird XML",
             )
             return {}
-    
+
     def _read_next_line():
         line = f.readline()
         header["seabird_header"] += line
@@ -336,7 +347,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
     header = {
         "instrument_type": "",
         "variables": {},
-        "processing": {},
+        "processing": [],
         "calibration": {},
         "history": [],
         "comments": [],
@@ -537,6 +548,7 @@ sbe_data_processing_modules = [
     "loopedit",
     "derive",
     "Derive",
+    "DeriveTEOS10",
     "binavg",
     "split",
     "strip",
@@ -546,9 +558,10 @@ sbe_data_processing_modules = [
     "bottlesum",
 ]
 is_seabird_processing_stage = re.compile(
-    rf"\# (?P<step>{'|'.join(sbe_data_processing_modules)})"
-    r"_(?P<parameter>[^\s]+) = (?P<value>.*)"
+    rf"\# (?P<module>{'|'.join(sbe_data_processing_modules)})"
+    r"_(?P<parameter>[^\s\:]+)( = |: )(?P<value>.*)"
 )
+
 
 def _get_seabird_instrument_from_header(seabird_header: str) -> str:
     """Retrieve main instrument model from Sea-Bird CNV header"""
