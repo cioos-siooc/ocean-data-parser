@@ -1,7 +1,8 @@
+import json
+
+import numpy as np
 import pandas as pd
 import pytest
-import numpy as np
-import json
 
 from ocean_data_parser.parsers import utils
 
@@ -40,17 +41,27 @@ def test_consider_attribute(value, expected):
         (np.nan, None, None),
         (pd.NaT, None, None),
         ([1, 4, 5], np.ndarray, np.array([1, 4, 5])),
-        ([2.12,23.2,.122], np.ndarray, np.array([2.12,23.2,.122])),
+        ([2.12, 23.2, 0.122], np.ndarray, np.array([2.12, 23.2, 0.122])),
         ([True, False, True], np.ndarray, np.array([True, False, True])),
-        ([2,3,2.234], np.ndarray, np.array([2,3,2.234])),
+        ([2, 3, 2.234], np.ndarray, np.array([2, 3, 2.234])),
         ({"a": 1, "b": 2}, str, json.dumps({"a": 1, "b": 2})),
-        ([{"a": 1, "b": 2}, {"a": 3, "b": 4}], str, json.dumps([{"a": 1, "b": 2}, {"a": 3, "b": 4}])),
+        (
+            [{"a": 1, "b": 2}, {"a": 3, "b": 4}],
+            str,
+            json.dumps([{"a": 1, "b": 2}, {"a": 3, "b": 4}]),
+        ),
     ],
 )
-def test_standardize_attribute(value, dtype,expected_value):
+def test_standardize_attribute(value, dtype, expected_value):
     """Test standardize_attributes function"""
-    response = utils.standardize_attributes({"test":value})
-    assert dtype is None or isinstance(response["test"], dtype), "Attribute was not converted to expected dtype"
-    assert "test" not in response if dtype is None else True, "Null attribute was not removed"
+    response = utils.standardize_attributes({"test": value})
+    assert dtype is None or isinstance(
+        response["test"], dtype
+    ), "Attribute was not converted to expected dtype"
+    assert (
+        "test" not in response if dtype is None else True
+    ), "Null attribute was not removed"
     is_equal = response.get("test") == expected_value
-    assert all(is_equal) if isinstance(expected_value,np.ndarray) else is_equal, "Attribute was not converted to expected value"
+    assert (
+        all(is_equal) if isinstance(expected_value, np.ndarray) else is_equal
+    ), "Attribute was not converted to expected value"
