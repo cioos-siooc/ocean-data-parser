@@ -153,7 +153,7 @@ def btl(
     df = df.drop(columns=drop_columns)
 
     # Improve metadata
-    n_scan_per_bottle = int(header["datcnv_scans_per_bottle"])
+    n_scan_per_bottle = int(header['processing']['datcnv']['scans_per_bottle'])
     header = _generate_seabird_cf_history(header)
 
     # Retrieve vocabulary associated with each variables
