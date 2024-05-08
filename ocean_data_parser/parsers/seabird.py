@@ -19,23 +19,31 @@ from pyexpat import ExpatError
 from ocean_data_parser.parsers.utils import convert_datetime_str, standardize_dataset
 from ocean_data_parser.vocabularies.load import seabird_vocabulary
 
-SBE_TIME_FORMAT = "%b %d %Y %H:%M:%S"  # Jun 23 2016 13:51:30
+logger = logging.getLogger(__name__)
+
 var_dtypes = {
     "date": str,
     "bottle": str,
     "stats": str,
     "scan": int,
 }
+SBE_TIME_FORMAT = "%b %d %Y %H:%M:%S"  # Jun 23 2016 13:51:30
 sbe_time = re.compile(
     r"(?P<time>\w\w\w\s+\d{1,2}\s+\d{1,4}\s+\d\d\:\d\d\:\d\d)(?P<comment>.*)"
 )
-logger = logging.getLogger(__name__)
 
-reference_vocabulary_path = os.path.join(
-    os.path.dirname(__file__), "vocabularies", "seabird_variable_attributes.json"
-)
 seabird_variable_attributes = seabird_vocabulary()
 
+IGNORED_HEADER_LINES = [
+    "* GetHD\n",
+    "* GetSD\n",
+    "* GetDS\n",
+    "* GetDH\n",
+    "* GetCD\n",
+    "* GetCC\n",
+    "* GetEC\n",
+    "*\n",
+]
 
 def _convert_to_netcdf_var_name(var_name):
     """Convert seabird variable name to a netcdf compatible format."""
@@ -251,8 +259,6 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             header[standardize_attribute(key)] = value
         elif re.match(r"\* autorun .*", line):
             header["autorun"] = line[2:].strip()
-        elif line in ("* S>\n", "* GetHD\n", "* GetSD\n", "* DS\n", "* DH\n"):
-            pass
         elif (
             line.startswith(("* advance", "* delete", "* test"))
             or "added to scan" in line
@@ -356,6 +362,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
         "instrument_type": "",
         "variables": {},
         "processing": [],
+        "casts": [],
         "calibration": {},
         "history": [],
         "comments": [],
@@ -369,11 +376,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             read_next_line = True
 
         # Ignore empty lines or last header line
-        if (
-            re.match(r"^\*\s*$", line)
-            or "*END*" in line
-            or re.match(r"^\s*Bottle .*", line)
-        ):
+        if line in IGNORED_HEADER_LINES or "*END*" in line:
             continue
 
         if re.match(r"(\*|\#)\s*\<", line):
@@ -383,26 +386,18 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             first_character = line[0]
             while (
                 re.match(rf"\{first_character}\s*\<", line)
-                or re.match(rf"^\{first_character}\s*$", line)
+                or re.search(r"\>\s*$", line)
                 or line.startswith("** ")
                 or line.startswith("* cast")
-                or re.search(r"\>\s*$", line)
-                or (
-                    line.startswith("* Get")
-                    and line[5:].strip() in ("HD", "SD", "CD", "CC", "EC")
-                )
+                or line in IGNORED_HEADER_LINES
             ):
                 if "**" in line:
                     read_comments(line)
-                if line.startswith("* Get") and line[5:].strip() in (
-                    "HD",
-                    "SD",
-                    "CD",
-                    "CC",
-                    "EC",
-                ):
+                elif line in IGNORED_HEADER_LINES:
                     line = _read_next_line()
                     continue
+                elif line.startswith("* cast"):
+                    read_asterisk_line(line)
                 xml_section += line[1:]
                 line = _read_next_line()
             read_next_line = False
