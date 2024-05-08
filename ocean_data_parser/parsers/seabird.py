@@ -554,7 +554,7 @@ sbe_data_processing_modules = [
     "loopedit",
     "derive",
     "Derive",
-    "DeriveTEOS10",
+    "DeriveTEOS",
     "binavg",
     "split",
     "strip",
