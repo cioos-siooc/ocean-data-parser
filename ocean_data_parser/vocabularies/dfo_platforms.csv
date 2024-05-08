@@ -47,10 +47,10 @@ Atlantic Lindsey,ship,,,,,,,,,44,,
 Sir Wilfred Grenfell,ship,,,,,,,,,45,,
 Cape Ballard,ship,,,,,,,,,48,,
 Penny Smart,ship,,,,,,,,,49,,
-naka,,,,,,,,,,50,,nafc short name: naka50
-naka,,,,,,,,,,51,,nafc short name: naka51
-naka,,,,,,,,,,52,,nafc short name: naka52
-naka,,,,,,,,,,53,,nafc short name: naka53
+naka50,,,,,,,,,,50,,nafc short name: naka50
+naka51,,,,,,,,,,51,,nafc short name: naka51
+naka52,,,,,,,,,,52,,nafc short name: naka52
+naka53,,,,,,,,,,53,,nafc short name: naka53
 Gilbert Bay,ship,,,,,,,,,54,,
 Discovery,ship,NERC,research vessel,United Kingdom,74EQ,74EQ,9588029,2FGX5,SDN:C17::74EQ,55,dis,
 Atlantis,ship,U.S. Navy,Research Vessel,United States,33AT,33AT,9105798,KAQP,SDN:C17::33AT,56,atl,
@@ -79,14 +79,14 @@ afap84,,,,,,,,,,84,,nafc short name: afap84
 afap85,,,,,,,,,,85,,nafc short name: afap85
 afap86,,,,,,,,,,86,,nafc short name: afap86
 afap89,,,,,,,,,,89,,nafc short name: afap89
-meds_data,,,,,,,,,,90,,nafc short name: meds90
+meds90,,,,,,,,,,90,,nafc short name: meds90
 olabs,,,,,,,,,,91,,nafc short name: olabs
 french,,,,,,,,,,92,,nafc short name: doc
 osc,,,,,,,,,,93,,nafc short name: osc
 spanish,,,,,,,,,,94,,nafc short name: spanish
-meds_data,,,,,,,,,,95,,nafc short name: meds95
-meds_data,,,,,,,,,,96,,nafc short name: meds96
-DUMMY SHIP -testing-,ship,,,,,,,,,99,,
+meds95,,,,,,,,,,95,,nafc short name: meds95
+meds96,,,,,,,,,,96,,nafc short name: meds96
+DUMMY SHIP,ship,,,,,,,,,99,,
 sent_AA,,,,,,,,,,AA,,nafc short name: AA
 sent_AB,,,,,,,,,,AB,,nafc short name: AB
 sent_AC,,,,,,,,,,AC,,nafc short name: AC
@@ -162,8 +162,8 @@ Pandaslus,ship,,,,,,,,,,,
 Pandora II,ship,,,Canada,18P2,18P2,,CZ3946,SDN:C17::18P2,,,
 Penguin,ship,USS,naval vessel,United States,319P,319P,,NUKM,SDN:C17::319P,,,
 Petrel,ship,,Naval Vessel,France,35PE,35PE,,FCPL,SDN:C17::35PE,,,
-Pierre Radisson,ship,Canadian Coast Guard,Research Vessel,Canada,18RD,18RD,7510834,CGSB,SDN:C17:18RD,,,
-Provo Wallis,ship,,,,,,,CGDP,SDN:C17::18PW,,,
+Pierre Radisson,ship,Canadian Coast Guard,Research Vessel,Canada,18RD,18RD,7510834,CGSB,SDN:C17::18RD,,,
+Provo Wallis,ship,,,,18PW,18PW,,CGDP,SDN:C17::18PW,,,
 Quadra,ship,Canadian Coast Guard,Research Vessel,Canada,18QA,18QA,,VE0MP,SDN:C17::18QA,,,
 Quest,ship,,,,,,,,,,,
 Sackville,ship,Fisheries Research Board,Research Vessel,Canada,18SV,18SV,,CNAV,SDN:C17::18SV,,,
@@ -171,8 +171,8 @@ Sambro,ship,Canadian Coast Guard,self-propelled small boat,Canada,18S9,18S9,,CG2
 Shippigan,ship,,,,,,,,,,,
 Sigma T,ship,Canadian Coast Guard,Coastal Research Vessel,Canada,18SG,18SG,,,SDN:C17::18SG,,,
 Sir John Franklin,ship,Canadian Coast Guard,Offshore Fishery Science Vessel,Canada,18SZ,18SZ,9781839,VFAM,SDN:C17::18SZ,,,
-Sir Wilfrid Laurier,ship,Canadian Coast Guard,Arctic Class 2,Canada,	18LU,	18LU,8320456,CGJK,SDN:C17::18LU,,,
-Sir William Alexander,ship,Canadian Coast Guard,Vessel of Opportunity,Canada,18WA,18WA,8320482,CGUM,SDN:C17:18WA,,,
+Sir Wilfrid Laurier,ship,Canadian Coast Guard,Arctic Class 2,Canada,18LU,18LU,8320456,CGJK,SDN:C17::18LU,,,
+Sir William Alexander,ship,Canadian Coast Guard,Vessel of Opportunity,Canada,18WA,18WA,8320482,CGUM,SDN:C17::18WA,,,
 Spray,ship,Canadian Coast Guard,self-propelled small boat,Canada,18PY,18PY,,CG2248,SDN:C17::18PY,,,
 Theron,ship,,Research Vessel,Canada,18TE,18TE,5358737,,SDN:C17::18TE,,,
 Tudlik,ship,,,,,,,,,,,
@@ -182,4 +182,4 @@ Vector,ship,Canadian Coast Guard,Mid Shore Science Vessel,Canada,18VT,18VT,67177
 VESSEL OF OPPORTUNITY,ship,,,,,,,,,,,
 Viola M. Davidson,ship,Canadian Coast Guard,Research vessel,Canada,18AU,18AU,,CGEC,SDN:C17::18AU,,,
 WB Scott,ship,,,,,,,,,,,
-WILFRED TEMPLEMAN,ship,Canadian Coast Guard,Research Vessel,Canada,181C,181C,7907099,CGDV,SDN:C17:181C,,,
+WILFRED TEMPLEMAN,ship,Canadian Coast Guard,Research Vessel,Canada,181C,181C,7907099,CGDV,SDN:C17::181C,,,
