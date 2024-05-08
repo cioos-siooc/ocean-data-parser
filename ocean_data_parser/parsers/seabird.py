@@ -435,8 +435,6 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             if "comment" in time_attr.groupdict() and time_attr["comment"] != "":
                 new_attributes[key + "_comment"] = time_attr["comment"].strip()
     header.update(new_attributes)
-    #    header = {key: datetime.strptime(value,SBE_TIME_FORMAT)
-    # if sbe_time.match(value) else value for key, value in header.items()}
 
     # btl header row
     if "Bottle" in line:
