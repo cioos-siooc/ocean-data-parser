@@ -194,7 +194,13 @@ def btl(
     df = df.drop(columns=drop_columns)
 
     # Improve metadata
-    n_scan_per_bottle = int(header["processing"][0]["scans_per_bottle"])
+    
+    n_scan_per_bottle = [int(step["scans_per_bottle"]) for step in header["processing"] if step["module"] == "datcnv"]
+    if not n_scan_per_bottle:
+        logger.warning("Failed to retrieve the number of scans per bottle")
+        n_scan_per_bottle = "unknown"
+    else:
+        n_scan_per_bottle = n_scan_per_bottle[0]
     header = _generate_seabird_cf_history(header)
 
     # Retrieve vocabulary associated with each variables
@@ -286,7 +292,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
                 r"\* Software version (.*)", line, re.IGNORECASE
             )[1]
         elif (
-            line.startswith(("* advance", "* delete", "* test","* autorun","* number of scans to average"))
+            line.startswith(("* advance", "* delete", "* test","* autorun","* number of scans to average","* Store"))
             or "added to scan" in line
         ):
             header["processing"].append({"module": "on-instrument", "message": line[2:]})
@@ -327,7 +333,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             for attr in line[2:].split(", "):
                 attr, value = attr.split(" = ", 1)
                 header[standardize_attribute(attr)] = value.strip()
-        elif re.match(r"\*\s[\w\s]+\=", line):
+        elif re.match(r"\*\s[\w\s\(\)]+\=", line):
             attr, value = line[2:].split("=", 1)
             header[standardize_attribute(attr)] = value.strip()
         else:
@@ -404,6 +410,19 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
                 "Failed to parsed Sea-Bird XML",
             )
             return {}
+    def _parse_seabird_bottle_header(line):
+        """Parse Seabird Bottle Header"""
+        var_columns = line[22:-1]
+        var_width = 11
+        header["bottle_columns"] = ["Bottle", "Date"] + [
+            var_columns[index : index + var_width].strip()
+            for index in range(0, len(var_columns), var_width)
+        ]
+        # Read  Position Time line
+        line = f.readline()
+        if not re.match(r"\s*Position\s+Time", line):
+            assert ValueError("Position Time line not found, something is wrong with the file")
+
 
     def _read_next_line():
         line = f.readline()
@@ -470,13 +489,15 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             read_asterisk_line(line)
         elif line.startswith("# "):
             read_hash_line(line)
+        elif re.match(r"\s*Bottle\s+Date", line):
+            _parse_seabird_bottle_header(line)
+            break
         else:
             logger.warning("Unknown line format: %s", line.strip())
     # Remap variables to seabird variables
-    variables = {
-        attrs["sbe_variable"]: attrs for key, attrs in header["variables"].items()
-    }
-    header["variables"] = variables
+    header["variables"] = {
+        attrs["sbe_variable"]: attrs for _, attrs in header["variables"].items()
+     }
 
     # Convert time attributes to datetime
     new_attributes = {}
@@ -490,16 +511,6 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
                 new_attributes[key + "_comment"] = time_attr["comment"].strip()
     header.update(new_attributes)
 
-    # btl header row
-    if "Bottle" in line:
-        var_columns = line[22:-1]
-        var_width = 11
-        header["bottle_columns"] = ["Bottle", "Date"] + [
-            var_columns[index : index + var_width].strip()
-            for index in range(0, len(var_columns), var_width)
-        ]
-        # Read  Position Time line
-        line = f.readline()
     return header
 
 
@@ -519,7 +530,6 @@ def _generate_seabird_cf_history(attrs, drop_processing_attrs=False):
     return attrs
 
 
-# TODO Integreate IOOS 1.2 attributes to standard seabird module.
 seabird_to_bodc = {
     "Temperature": ["TEMPP681", "TEMPP901", "TEMPS601", "TEMPS901", "TEMPPR01"],
     "Temperature, 2": ["TEMPP682", "TEMPP902", "TEMPS602", "TEMPS902", "TEMPPR02"],
