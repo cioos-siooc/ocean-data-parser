@@ -384,7 +384,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             header["processing"][-1].update(parameters)
         elif (
             line.startswith("# Using the GSW Toolkit version")
-            and header["processing"][-1]["module"] == "DeriveTEOS"
+            and header["processing"][-1]["module"] == "DeriveTEOS_10"
         ):
             # Add GSW toolkit version to the last processing step
             # which should be DeriveTEOS
