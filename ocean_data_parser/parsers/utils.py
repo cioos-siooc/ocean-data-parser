@@ -374,7 +374,7 @@ global_attributes_order = [
     "platform_owner",
     "platform_type",
     "country_of_origin",
-    "ices_platform_codes",
+    "ices_platform_code",
     "wmo_platform_code",
     "call_sign",
     "id",
