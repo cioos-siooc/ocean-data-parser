@@ -78,6 +78,7 @@ ioos-qc = "^2.1.0"
 pytest-benchmark = "^4.0.0"
 flake8 = "^6.1.0"
 ruff = "^0.3.4"
+toml = "^0.10.2"
 
 [tool.poetry.scripts]
 odpy = 'ocean_data_parser.cli:main'
