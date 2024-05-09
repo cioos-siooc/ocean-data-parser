@@ -27,11 +27,11 @@ def get_platform_vocabulary(id: str) -> dict:
     attrs = json.loads(result["definition"]["@value"])["node"]
     return {
         "platform_name": result["prefLabel"]["@value"],
-        "platform_type": attrs["platformclass"],
-        "country_of_origin": attrs["country"],
-        "platform_owner": attrs["title"],
+        "platform_type": attrs.get("platformclass"),
+        "country_of_origin": attrs.get("country"),
+        "platform_owner": attrs.get("title"),
         "platform_id": id,
-        "ices_platform_codes": id,
+        "ices_platform_code": id,
         "wmo_platform_code": attrs.get("IMO"),
         "call_sign": attrs.get("callsign"),
         "sdn_platform_urn": result["identifier"],
