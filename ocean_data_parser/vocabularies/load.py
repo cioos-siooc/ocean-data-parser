@@ -4,7 +4,6 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import requests
 
 VOCABULARIES_DIRECTORY = Path(__file__).parent
 
@@ -59,13 +58,3 @@ def dfo_nafc_p_file_vocabulary() -> pd.DataFrame:
     return pd.read_csv(
         VOCABULARIES_DIRECTORY / "dfo_nafc_p_files_vocabulary.csv"
     ).replace({"variable_name": {np.nan: None}})
-
-
-def nerc_c17_to_platform(identifier):
-    response = requests.get(
-        f"https://vocab.nerc.ac.uk/collection/C17/current/{identifier}/?_profile=nvs&_mediatype=application/ld+json"
-    )
-    response.raise_for_status()
-    data = response.json()
-    # C17 definition is a json data
-    platform_attributes = json.loads(data["definition"])
