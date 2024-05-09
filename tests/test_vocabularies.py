@@ -32,7 +32,7 @@ class TestPlatformVocabulary:
         [
             "platform_name",
             "platform_id",
-            "ices_platform_codes",
+            "ices_platform_code",
             "sdn_platform_urn",
             "dfo_nafc_platform_code",
             "dfo_nafc_platform_name",
@@ -56,17 +56,17 @@ class TestPlatformVocabulary:
 
     def test_matching_id_ices_sdn_codes(self):
         mismatched_codes = platforms_vocab.query(
-            "ices_platform_codes != platform_id and (ices_platform_codes.notna() or platform_id.notna())"
+            "ices_platform_code != platform_id and (ices_platform_code.notna() or platform_id.notna())"
         )
         assert (
             mismatched_codes.empty
-        ), f"mismatched codes found: {mismatched_codes[['platform_name','platform_id','ices_platform_codes','sdn_platform_urn']]}"
+        ), f"mismatched codes found: {mismatched_codes[['platform_name','platform_id','ices_platform_code','sdn_platform_urn']]}"
         mismatched_codes = platforms_vocab.query(
             "sdn_platform_urn.str.replace('SDN:C17::','') != platform_id and (sdn_platform_urn.notna() or platform_id.notna())"
         )
         assert (
             mismatched_codes.empty
-        ), f"mismatched codes found: {mismatched_codes[['platform_name','platform_id','ices_platform_codes','sdn_platform_urn']]}"
+        ), f"mismatched codes found: {mismatched_codes[['platform_name','platform_id','ices_platform_code','sdn_platform_urn']]}"
 
 
     @nerc_vocabulary_test
