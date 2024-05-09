@@ -25,7 +25,7 @@ import pandas as pd
 import xarray as xr
 from pytz import timezone
 
-from ocean_data_parser._version import __version__
+from ocean_data_parser import __version__
 from ocean_data_parser.vocabularies.load import dfo_ios_vocabulary
 
 logger = logging.getLogger(__name__)
