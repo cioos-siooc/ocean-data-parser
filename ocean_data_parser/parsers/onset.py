@@ -208,6 +208,10 @@ def csv(
     )
 
     # Add timezone to time variables
+    if df["Date Time"].dtype == "object":
+        logger.warning("Date Time column is not in a consistent format. Trying to convert")
+        df["Date Time"] = df["Date Time"].apply(lambda x: pd.to_datetime(x,format=_get_time_format(x)))
+        
     df["Date Time"] = df["Date Time"].dt.tz_localize(header["timezone"])
 
     # Convert to dataset
