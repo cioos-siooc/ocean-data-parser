@@ -20,7 +20,12 @@ from ocean_data_parser.vocabularies.load import dfo_platforms
 logger = logging.getLogger(__name__)
 
 stationless_programs = ("Maritime Region Ecosystem Survey",)
+
+# Transform platform name to a list of accepted platform names
 reference_platforms = dfo_platforms()
+reference_platforms['accepted_platform_name'] = reference_platforms['accepted_platform_name'].str.split('|') 
+reference_platforms = reference_platforms.explode('accepted_platform_name') 
+
 section_prefix = {
     "EVENT_HEADER": "event_",
     "INSTRUMENT_HEADER": "instrument_",
@@ -43,13 +48,13 @@ def _generate_platform_attributes(platform: str) -> dict:
         r"CCGS_*\s*|CGCB\s*|FRV\s*|NGCC\s*|^_|MV\s*", "", platform
     ).strip()
     matched_platform = get_close_matches(
-        platform.lower(), reference_platforms["platform_name"]
+        platform.lower(), reference_platforms["accepted_platform_name"], n=1
     )
     if matched_platform:
         return (
-            reference_platforms.query(f"platform_name == '{matched_platform[0]}'")
+            reference_platforms.query(f"accepted_platform_name == '{matched_platform[0]}'")
             .iloc[0]
-            .to_dict()
+            .to_dict() 
         )
 
     logger.warning("Unknown platform %s", platform)
