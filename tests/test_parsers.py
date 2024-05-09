@@ -53,17 +53,17 @@ class TestSeabirdParsers:
     @pytest.mark.parametrize("path", glob("tests/parsers_test_files/seabird/**/*.btl"))
     def test_btl_parser(self, path, caplog):
         ds = seabird.btl(path)
-        review_parsed_dataset(ds, path, caplog)
+        review_parsed_dataset(ds, path, caplog, max_log_levelno=20)
 
     @pytest.mark.parametrize("path", glob("tests/parsers_test_files/seabird/**/*.cnv"))
     def test_cnv_parser(self, path, caplog):
         ds = seabird.cnv(path)
-        review_parsed_dataset(ds, path, caplog)
+        review_parsed_dataset(ds, path, caplog, max_log_levelno=20)
 
     @pytest.mark.parametrize("path", glob("tests/parsers_test_files/seabird/**/*.cnv"))
     def test_cnv_parser_with_instrument_variables(self, path, caplog):
         ds = seabird.cnv(path, generate_instrument_variables=True)
-        review_parsed_dataset(ds, path, caplog)
+        review_parsed_dataset(ds, path, caplog, max_log_levelno=20)
 
 
 class TestVanEssenParsers:
