@@ -55,7 +55,7 @@ jobs:
               - 'CHANGELOG.md'
       - name: Run tests with metadata tests
         if: steps.changes.outputs.vocabularies == 'true'
-        run: poetry run pytest -W error::UserWarning
+        run: poetry run pytest -W error::UserWarning --nerc-vocab
       - name: Run tests without metadata tests
         if: steps.changes.outputs.vocabularies == 'false'
         run: poetry run pytest -W error::UserWarning -k "not test_metadata"
