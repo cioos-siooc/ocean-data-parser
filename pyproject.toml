@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ocean-data-parser"
-version = "0.3.1"
+version = "0.4.0"
 description = "Package used to parse different Ocean Instruments Propriatary format to an xarray dataset."
 repository = "https://github.com/cioos-siooc/ocean-data-parser"
 homepage = "https://cioos.ca"
