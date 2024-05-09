@@ -685,43 +685,40 @@ def pcnv(
             "Unable to parse ship_trip_seq_station from VESEL/TRIP/SEQ STN= {}",
             ds.attrs.get("vessel_trip_seq_stn", ""),
         )
-    attrs = {
-        "dfo_nafc_platform_name": ship_trip_seq_station["dfo_nafc_platform_name"],
-        **_get_platform_by_nafc_platform_name(
-            ship_trip_seq_station["dfo_nafc_platform_name"]
-        ),
-        "trip": _int(ship_trip_seq_station["trip"]),
-        "year": _int(ship_trip_seq_station["year"]),
-        "station": _int(ship_trip_seq_station["stn"]),
-        "time": pd.to_datetime(ds.attrs.pop("date_time"), utc=True),
-        "latitude": _parse_lat_lon(
-            _pop_attribute_from(
-                ["latitude", "latitude_xx_xx.xx", "latitude_xx_xx.xx_n"]
-            )
-        ),
-        "longitude": _parse_lat_lon(
-            _pop_attribute_from(
-                ["longitude", "longitude_xx_xx.xx", "longitude _xx_xx.xx_w"]
-            )
-        ),
-        "sounder_depth": ds.attrs.pop("sounding_depth_m", None),
-        "instrument": ds.attrs.pop("probe_type", None),
-        "set_number": _int(ds.attrs.pop("xbt_number", None))
-        or _int(ds.attrs.pop("ctd_number", None)),
-        "format": ds.attrs.pop("format", None),
-        "commment": _pop_attribute_from(["comments", "comments_14_char"]),
-        "trip_tag": ds.attrs.pop("trip_tag", None),
-        "vnet": ds.attrs.pop("vnet", None),
-        "do2": ds.attrs.pop("do2", None),
-        "bottles": _int(ds.attrs.pop("bottles", None)),
-        **(global_attributes or {}),
-    }
-
-    # load metqa table attributes
-    if match_metqa_table:
-        attrs.update(_add_metqa_info_to_pcvn(path))
-
-    ds.attrs.update(attrs)
+    ds.attrs.update(
+        {
+            "dfo_nafc_platform_name": ship_trip_seq_station["dfo_nafc_platform_name"],
+            **_get_platform_by_nafc_platform_name(
+                ship_trip_seq_station["dfo_nafc_platform_name"]
+            ),
+            "trip": _int(ship_trip_seq_station["trip"]),
+            "year": _int(ship_trip_seq_station["year"]),
+            "station": _int(ship_trip_seq_station["stn"]),
+            "time": pd.to_datetime(ds.attrs.pop("date_time"), utc=True),
+            "latitude": _parse_lat_lon(
+                _pop_attribute_from(
+                    ["latitude", "latitude_xx_xx.xx", "latitude_xx_xx.xx_n"]
+                )
+            ),
+            "longitude": _parse_lat_lon(
+                _pop_attribute_from(
+                    ["longitude", "longitude_xx_xx.xx", "longitude _xx_xx.xx_w"]
+                )
+            ),
+            "sounder_depth": ds.attrs.pop("sounding_depth_m", None),
+            "instrument": ds.attrs.pop("probe_type", None),
+            "set_number": _int(ds.attrs.pop("xbt_number", None))
+            or _int(ds.attrs.pop("ctd_number", None)),
+            "format": ds.attrs.pop("format", None),
+            "commment": _pop_attribute_from(["comments", "comments_14_char"]),
+            "trip_tag": ds.attrs.pop("trip_tag", None),
+            "vnet": ds.attrs.pop("vnet", None),
+            "do2": ds.attrs.pop("do2", None),
+            "bottles": _int(ds.attrs.pop("bottles", None)),
+            **(_add_metqa_info_to_pcvn(path) if match_metqa_table else {}),
+            **(global_attributes or {}),
+        }
+    )
 
     # Move coordinates to variables
     coords = ["time", "latitude", "longitude"]

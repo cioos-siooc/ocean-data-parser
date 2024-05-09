@@ -70,7 +70,7 @@ def get_history_handler():
 def _consider_attribute(value):
     if value is pd.NA or value is None:
         return False
-    if isinstance(value, (dict, tuple, list, np.ndarray)):
+    elif isinstance(value, (dict, tuple, list, np.ndarray)):
         return len(value) > 0
     return (pd.notnull(value) or value in (0, 0.0)) and value != ""
 
@@ -91,21 +91,27 @@ def standardize_attributes(attrs) -> dict:
     """
 
     def _encode_attribute(value):
-        if isinstance(value, dict):
-            return json.dumps(value)
-        elif isinstance(value, (list, tuple)):
-            if not value:
-                return
-            if all(
-                isinstance(item, type(value[0])) for item in value
-            ) and not isinstance(value[0], str):
-                return np.array(value).astype(type(value[0]))
+        if isinstance(value, bool):
+            return str(value)
+        elif isinstance(value, (str, int, float)):
             return value
+        elif isinstance(value, dict):
+            return json.dumps(value)
+        elif isinstance(value, (list, tuple)) and len(value) == 0:
+            # ignore empty lists
+            return
+        elif isinstance(value, (list, tuple)) and all(
+            isinstance(item, (int, float)) for item in value
+        ):
+            return np.array(value)
+        elif isinstance(value, (list, tuple)):
+            return json.dumps(value)
         elif type(value) in (datetime, pd.Timestamp):
             return value.isoformat().replace("+00:00", "Z")
-        elif isinstance(value, bool):
-            return str(value)
+        elif isinstance(value, np.ndarray):
+            return value
         else:
+            logger.warning("Unknown attribute type: %s", type(value))
             return value
 
     return {
