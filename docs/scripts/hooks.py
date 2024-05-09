@@ -115,6 +115,11 @@ def get_parser_list(output="docs/user_guide/parsers/index.md"):
     index_html = index_html.replace("{{ parsers_list }}", parsers_toc)
     Path(output).write_text(index_html)
 
+def copy_changelog(output="docs/release-notes.md"):
+    """Copy changelog to docs"""
+    changelog = Path("CHANGELOG.md")
+    docs_changelog = Path(output)
+    shutil.copy(changelog, docs_changelog)
 
 def on_pre_build(config, **kwargs) -> None:
     add_vocabularies_dir()
@@ -125,3 +130,4 @@ def on_pre_build(config, **kwargs) -> None:
     get_dfo_pfile_vocab_markdown()
     copy_notebooks()
     get_parser_list()
+    copy_changelog()

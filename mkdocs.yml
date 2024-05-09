@@ -117,6 +117,8 @@ nav:
       - NMEA example: notebooks/nmea_parser_example.ipynb
       - Seabird CNV and BTL files example: notebooks/seabird_cnv_and_btl_parser_example.ipynb
   - Development: development.md
+  - Release notes: release-notes.md
+  
 
 
 extra:
