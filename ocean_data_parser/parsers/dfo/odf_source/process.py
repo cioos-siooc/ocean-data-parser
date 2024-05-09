@@ -7,7 +7,7 @@ from pathlib import Path
 import xarray as xr
 
 import ocean_data_parser.parsers.seabird as seabird
-from ocean_data_parser._version import __version__
+from ocean_data_parser import __version__
 from ocean_data_parser.parsers.dfo.odf_source import attributes, flags
 from ocean_data_parser.parsers.dfo.odf_source import parser as odf_parser
 from ocean_data_parser.parsers.utils import standardize_dataset

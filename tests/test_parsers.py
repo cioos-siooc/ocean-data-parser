@@ -587,6 +587,20 @@ class TestDFO_NAFC_pFiles:
         assert "depth" in ds.variables
         assert "Generated variable" not in ds["depth"].attrs.get("source", "")
         assert "Generated variable" not in ds.attrs.get("history", "")
+    
+    def test_unknown_nafc_platform_code(self, caplog):
+        """Test missing nafc platform code"""
+        attrs = dfo.nafc._get_platform_by_nafc_platform_code(9999)
+        assert not attrs
+        assert "Unknown dfo_nafc_platform_code" in caplog.records[0].message
+        assert "WARNING" in caplog.records[0].levelname
+    
+    def test_unknown_nafc_platform_name(self, caplog):
+        """Test missing nafc platform name"""
+        attrs = dfo.nafc._get_platform_by_nafc_platform_name("unknown")
+        assert not attrs
+        assert "Unknown dfo_nafc_platform_name" in caplog.records[0].message
+        assert "WARNING" in caplog.records[0].levelname
 
 
 class TestDfoIosShell:

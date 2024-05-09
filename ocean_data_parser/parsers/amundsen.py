@@ -12,7 +12,7 @@ import pandas as pd
 import xarray as xr
 from gsw import z_from_p
 
-from ocean_data_parser._version import __version__
+from ocean_data_parser import __version__
 from ocean_data_parser.parsers.utils import get_history_handler, standardize_dataset
 from ocean_data_parser.vocabularies.load import amundsen_vocabulary
 

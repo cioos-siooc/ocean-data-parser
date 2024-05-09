@@ -7,7 +7,7 @@ import sys
 import click
 from loguru import logger
 
-from ocean_data_parser._version import __version__
+from ocean_data_parser import __version__
 from ocean_data_parser.batch import convert
 from ocean_data_parser.inspect import inspect_variables as inspect_variables
 

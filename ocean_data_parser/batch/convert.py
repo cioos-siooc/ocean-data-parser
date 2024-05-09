@@ -12,7 +12,7 @@ from tqdm import tqdm
 from xarray import Dataset
 
 from ocean_data_parser import PARSERS, geo, read
-from ocean_data_parser._version import __version__
+from ocean_data_parser import __version__
 from ocean_data_parser.batch.config import load_config
 from ocean_data_parser.batch.registry import FileConversionRegistry
 from ocean_data_parser.batch.utils import VariableLevelLogger, generate_output_path

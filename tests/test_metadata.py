@@ -1,7 +1,7 @@
 import logging
-import unittest
 
 import pandas as pd
+import pytest
 
 from ocean_data_parser.metadata import cf, nerc, pdc
 
@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
 
 
-class PDCMetadataTests(unittest.TestCase):
+class TestPDCMetadatas:
     def test_fgdc_to_acdd_on_profiles(self):
         ccins = [80, 12713, 12715, 12518]
         for ccin in ccins:
@@ -20,7 +20,7 @@ class PDCMetadataTests(unittest.TestCase):
             pdc.fgdc_to_acdd(fgdc_metadata_url)
 
 
-class CFStandardNameTests(unittest.TestCase):
+class TestCFStandardName:
     def test_get_standard_names_default_version(self):
         standard_names = cf.get_standard_names()
         assert not standard_names.empty, "Failed to retrieve any standard_names"
@@ -35,7 +35,7 @@ class CFStandardNameTests(unittest.TestCase):
         ), "standard_name.attrs.version_number doesn't match v70"
 
 
-class NERCVocabulariesTest(unittest.TestCase):
+class TestNERCVocabularies:
     def test_get_nerc_p01_vocabulary(self):
         p01 = nerc.get_vocabulary("P01")
         assert isinstance(
@@ -49,3 +49,10 @@ class NERCVocabulariesTest(unittest.TestCase):
             id_info = nerc.get_vocabulary_term("P01", id)
             assert id_info is not None, "term vocabulary retrieved is None"
             assert isinstance(id_info, dict), "term vocabulary isn't a dictionary"
+
+    @pytest.mark.parametrize("id,expected", [("18DL", "Amundsen")])
+    def test_retrieve_platform(self, id, expected):
+        platform = nerc.get_platform_vocabulary(id)
+        assert (
+            platform["platform_name"] == expected
+        ), f"platform name {platform['platform_name']} doesn't match expected {expected}"

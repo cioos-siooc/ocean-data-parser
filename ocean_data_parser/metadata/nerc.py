@@ -18,5 +18,21 @@ def get_vocabulary(vocab: str) -> pd.DataFrame:
 def get_vocabulary_term(vocab: str, id: str) -> dict:
     url = f"http://vocab.nerc.ac.uk/collection/{vocab}/current/{id}/?_profile=nvs&_mediatype=application/ld+json"
     with requests.get(url) as response:
-        json_text = response.text
-    return json.loads(json_text)
+        return response.json()
+
+
+def get_platform_vocabulary(id: str) -> dict:
+    result = get_vocabulary_term("C17", id)
+    # Parse the json data in the definition field
+    attrs = json.loads(result["definition"]["@value"])["node"]
+    return {
+        "platform_name": result["prefLabel"]["@value"],
+        "platform_type": attrs.get("platformclass"),
+        "country_of_origin": attrs.get("country"),
+        "platform_owner": attrs.get("title"),
+        "platform_id": id,
+        "ices_platform_code": id,
+        "wmo_platform_code": attrs.get("IMO"),
+        "call_sign": attrs.get("callsign"),
+        "sdn_platform_urn": result["identifier"],
+    }

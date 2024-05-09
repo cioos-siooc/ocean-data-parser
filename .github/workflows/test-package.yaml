@@ -42,7 +42,26 @@ jobs:
           poetry run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Run ruff
         run: poetry run ruff check --output-format=github .
-      - name: Test with pytest parsers
+      - name: Review if metadata is updated
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            vocabularies:
+              - 'ocean_data_parser/vocabularies/**'
+              - 'ocean_data_parser/metatadata/**'
+              - 'tests/test_metadata.py'
+            changelog:
+              - 'CHANGELOG.md'
+      - name: Run tests with metadata tests
+        if: steps.changes.outputs.vocabularies == 'true'
+        run: poetry run pytest -W error::UserWarning --nerc-vocab
+      - name: Run tests without metadata tests
+        if: steps.changes.outputs.vocabularies == 'false'
         run: poetry run pytest -W error::UserWarning -k "not test_metadata"
       - name: Run benchmark
         run: poetry run pytest tests/run_benchmark.py  --benchmark-json output.json
+      - name: Update CHANGELOG
+        if: steps.changes.outputs.changelog == 'false'
+        run: exit 1
+        
