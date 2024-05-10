@@ -48,6 +48,7 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
         "Plot Title" in header
         or (re.search(r"Serial Number:\s*\d+\s*", header) and "Host Connect" in header)
         or (re.search(r"\"LGR S\/N:\s*[\d\-]+", header) and "Date Time, GMT" in header)
+        or ('#,"Date Time, GMT' in header and "(LGR S/N: " in header)
     ):
         parser = "onset.csv"
     elif (
