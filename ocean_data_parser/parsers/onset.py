@@ -63,6 +63,7 @@ DATETIME_REGEX_FORMATS = [
     (r"\d\d\/\d\d\/\d\d\s+\d\d\:\d\d\:\d\d\s+\w\w", r"%m/%d/%y %I:%M:%S %p"),
     (r"\d\d\d\d\/\d\d\/\d\d\s+\d\d\:\d\d\:\d\d\s+\w\w", r"%Y/%m/%d %I:%M:%S %p"),
     (r"\d\d\/\d\d\/\d\d\s+\d\d\:\d\d", r"%m/%d/%y %H:%M"),
+    (r"\d\d\/\d\d\/\d\d\s+\d\d\:\d\d:\d\d", r"%y/%m/%d %H:%M:%S"),
     (r"\d\d\/\d\d\/\d\d\d\d\s+\d\d\:\d\d\:\d\d\s+(AM|PM)", r"%m/%d/%Y %H:%M:%S %p"),
     (r"\d+\/\d+\/\d\d\s+\d\d\:\d\d", r"%m/%d/%y %H:%M"),
     (r"^\d\d\d\d\-\d\d\-\d\d\s+\d\d\:\d\d\:\d\d$", r"%Y-%m-%d %H:%M:%S"),
@@ -79,6 +80,7 @@ def _get_time_format(time):
     for regex, datetime_format in DATETIME_REGEX_FORMATS:
         if re.fullmatch(regex, time):
             return datetime_format
+    logger.warning("Unknown datetime format: %s", time)
     return None
 
 
@@ -166,22 +168,20 @@ def csv(
     """
 
     raw_header = []
+    line = ""
     with open(
         path,
         encoding=encoding,
         errors=errors,
     ) as f:
-        raw_header += [f.readline().replace("\n", "")]
-        header_lines = 1
-        if "Serial Number:" in raw_header[0]:
-            # Some historical format have an extra line after initial serial number
-            # skip second empty line
-            header_lines += 1
-            f.readline()  #
-        # Read csv columns
-        raw_header += [f.readline()]
+        while "Date Time" not in line and len(raw_header) < 10:
+            line = f.readline()
+            raw_header.append(line)
         first_row = f.readline()
-        date_format = _get_time_format(first_row.split(",")[1])
+    if "Date Time" not in raw_header[-1]:
+        raise ValueError("Date Time column not found in header")
+    
+    date_format = _get_time_format(first_row.split(",")[1])
 
     # Parse onset header
     header, variables = _parse_onset_csv_header(raw_header)
@@ -195,7 +195,7 @@ def csv(
     df = pd.read_csv(
         path,
         na_values=[" "],
-        skiprows=list(range(header_lines + 1)),
+        skiprows=list(range(len(raw_header) + 1)),
         parse_dates=["Date Time"],
         date_format=date_format,
         sep=",",
