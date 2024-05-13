@@ -62,6 +62,7 @@ def minidot_txt(
     rename_variables: bool = True,
     encoding: str = "utf-8",
     errors: str = "strict",
+    timezone: str = "UTC",
 ) -> xr.Dataset:
     """Parse PME MiniDot txt file
 
@@ -100,18 +101,22 @@ def minidot_txt(
         if metadata is None:
             warnings.warn("Failed to read: {path}", RuntimeWarning)
             return pd.DataFrame(), None
+        
+        # Parse column names
+        columns = [item.strip() for item in f.readline().split(',')]
 
         # Read the data with pandas
-        ds = pd.read_csv(
+        df = pd.read_csv(
             f,
-            converters={0: lambda x: pd.Timestamp(int(x), unit="s", tz="UTC")},
+            converters={0: lambda x: pd.Timestamp(int(x), unit="s")},
             encoding=encoding,
             encoding_errors=errors,
-        ).to_xarray()
+            names=columns,
+            header = None,
+        )
+        ds = df.to_xarray()
 
-    # Strip whitespaces from variables names
-    ds = ds.rename({var: var.strip() for var in ds.keys()})
-
+    ds["Time (sec)"] = ds['Time (sec)'].to_index().tz_localize(timezone)
     # Global attributes
     ds.attrs = {
         **global_attributes,
