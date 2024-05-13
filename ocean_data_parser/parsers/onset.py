@@ -180,7 +180,7 @@ def csv(
         first_row = f.readline()
     if "Date Time" not in raw_header[-1]:
         raise ValueError("Date Time column not found in header")
-    
+
     date_format = _get_time_format(first_row.split(",")[1])
 
     # Parse onset header
@@ -195,7 +195,7 @@ def csv(
     df = pd.read_csv(
         path,
         na_values=[" "],
-        skiprows=list(range(len(raw_header) + 1)),
+        skiprows=list(range(len(raw_header))),
         parse_dates=["Date Time"],
         date_format=date_format,
         sep=",",
@@ -209,9 +209,13 @@ def csv(
 
     # Add timezone to time variables
     if df["Date Time"].dtype == "object":
-        logger.warning("Date Time column is not in a consistent format. Trying to convert")
-        df["Date Time"] = df["Date Time"].apply(lambda x: pd.to_datetime(x,format=_get_time_format(x)))
-        
+        logger.warning(
+            "Date Time column is not in a consistent format. Trying to convert"
+        )
+        df["Date Time"] = df["Date Time"].apply(
+            lambda x: pd.to_datetime(x, format=_get_time_format(x))
+        )
+
     df["Date Time"] = df["Date Time"].dt.tz_localize(header["timezone"])
 
     # Convert to dataset
