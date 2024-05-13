@@ -101,9 +101,9 @@ def minidot_txt(
         if metadata is None:
             warnings.warn("Failed to read: {path}", RuntimeWarning)
             return pd.DataFrame(), None
-        
+
         # Parse column names
-        columns = [item.strip() for item in f.readline().split(',')]
+        columns = [item.strip() for item in f.readline().split(",")]
 
         # Read the data with pandas
         df = pd.read_csv(
@@ -112,11 +112,15 @@ def minidot_txt(
             encoding=encoding,
             encoding_errors=errors,
             names=columns,
-            header = None,
+            header=None,
         )
         ds = df.to_xarray()
 
-    ds["Time (sec)"] = (ds.dims, ds['Time (sec)'].to_index().tz_localize(timezone), {"timezone": timezone})
+    ds["Time (sec)"] = (
+        ds.dims,
+        ds["Time (sec)"].to_index().tz_localize(timezone),
+        {"timezone": timezone},
+    )
 
     # Global attributes
     ds.attrs = {
@@ -152,7 +156,7 @@ def minidot_txt(
         if var not in VARIABLE_ATTRIBUTES:
             logger.warning("Unknown variable: %s", var)
             continue
-        ds[var].attrs = VARIABLE_ATTRIBUTES[var]
+        ds[var].attrs.update(VARIABLE_ATTRIBUTES[var])
 
     if rename_variables:
         ds = ds.rename_vars(VARIABLE_RENAMING_MAPPING)
