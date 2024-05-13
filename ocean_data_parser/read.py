@@ -33,7 +33,12 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
     ext = file.suffix[1:]
 
     with open(file, encoding=encoding, errors="ignore") as file_handle:
-        header = "".join((next(file_handle) for _ in range(5)))
+        header = ""
+        for _ in range(5):
+            try:
+                header += next(file_handle)
+            except StopIteration:
+                break
 
     # Detect the right file format
     if ext == "nc":

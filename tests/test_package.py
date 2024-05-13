@@ -1,7 +1,9 @@
-
 from pathlib import Path
-from ocean_data_parser import __version__
+
 import toml
+
+from ocean_data_parser import __version__
+
 
 def test_pyproject_version():
     pyproject = Path(__file__).parent / ".." / "pyproject.toml"

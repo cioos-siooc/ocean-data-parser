@@ -194,8 +194,12 @@ def btl(
     df = df.drop(columns=drop_columns)
 
     # Improve metadata
-    
-    n_scan_per_bottle = [int(step["scans_per_bottle"]) for step in header["processing"] if step["module"] == "datcnv"]
+
+    n_scan_per_bottle = [
+        int(step["scans_per_bottle"])
+        for step in header["processing"]
+        if step["module"] == "datcnv"
+    ]
     if not n_scan_per_bottle:
         logger.warning("Failed to retrieve the number of scans per bottle")
         n_scan_per_bottle = "unknown"
@@ -277,8 +281,9 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             header["comments"] += [line[2:]]
 
     def read_asterisk_line(line):
-
-        if line.startswith((r"* Sea-Bird", r"* SBE ")) and not line.startswith("* SBE 38 = "):
+        if line.startswith((r"* Sea-Bird", r"* SBE ")) and not line.startswith(
+            "* SBE 38 = "
+        ):
             instrument_type = re.search(
                 r"\* Sea-Bird (.*) Data File\:?|\* SBE (.*)", line
             ).groups()
@@ -292,10 +297,21 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
                 r"\* Software version (.*)", line, re.IGNORECASE
             )[1]
         elif (
-            line.startswith(("* advance", "* delete", "* test","* autorun","* number of scans to average","* Store"))
+            line.startswith(
+                (
+                    "* advance",
+                    "* delete",
+                    "* test",
+                    "* autorun",
+                    "* number of scans to average",
+                    "* Store",
+                )
+            )
             or "added to scan" in line
         ):
-            header["processing"].append({"module": "on-instrument", "message": line[2:]})
+            header["processing"].append(
+                {"module": "on-instrument", "message": line[2:]}
+            )
         elif line.startswith("* SeacatPlus V"):
             header["instrument_firmware"] = line[10:].split("SERIAL")[0].strip()
         elif line.startswith("* cast"):
@@ -307,15 +323,22 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             header["calibration"][sensor_calibration["variable"]] = {
                 "calibration_date": sensor_calibration["calibration_date"]
             }
-        elif pressure_sensor := re.match(r"\* pressure sensor = (?P<type>[\w\s]+), range = (?P<range>.*)", line):
+        elif pressure_sensor := re.match(
+            r"\* pressure sensor = (?P<type>[\w\s]+), range = (?P<range>.*)", line
+        ):
             if "pressure" not in header["calibration"]:
                 header["calibration"]["pressure"] = {}
             header["calibration"]["pressure"].update(pressure_sensor.groupdict())
-        elif pressure_sensor := re.match(r"\* pressure S\/N = (?P<serial_number>\d+), range = (?P<range>[^:]):(?P<calibration_date>.+)", line):
+        elif pressure_sensor := re.match(
+            r"\* pressure S\/N = (?P<serial_number>\d+), range = (?P<range>[^:]):(?P<calibration_date>.+)",
+            line,
+        ):
             if "pressure" not in header["calibration"]:
                 header["calibration"]["pressure"] = {}
             header["calibration"]["pressure"].update(pressure_sensor.groupdict())
-        elif volt_calibration := re.match(r"\* volt\s*(?P<channel>\d)+:\s(?P<extra>.*)", line):
+        elif volt_calibration := re.match(
+            r"\* volt\s*(?P<channel>\d)+:\s(?P<extra>.*)", line
+        ):
             header["calibration"][f"volt {volt_calibration['channel']}"] = dict(
                 [item.split(" = ") for item in volt_calibration["extra"].split(", ")]
             )
@@ -410,6 +433,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
                 "Failed to parsed Sea-Bird XML",
             )
             return {}
+
     def _parse_seabird_bottle_header(line):
         """Parse Seabird Bottle Header"""
         var_columns = line[22:-1]
@@ -421,8 +445,9 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
         # Read  Position Time line
         line = f.readline()
         if not re.match(r"\s*Position\s+Time", line):
-            assert ValueError("Position Time line not found, something is wrong with the file")
-
+            assert ValueError(
+                "Position Time line not found, something is wrong with the file"
+            )
 
     def _read_next_line():
         line = f.readline()
@@ -497,7 +522,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
     # Remap variables to seabird variables
     header["variables"] = {
         attrs["sbe_variable"]: attrs for _, attrs in header["variables"].items()
-     }
+    }
 
     # Convert time attributes to datetime
     new_attributes = {}
@@ -518,7 +543,11 @@ def _generate_seabird_cf_history(attrs, drop_processing_attrs=False):
     """Generate CF standard history from Seabird Processing Modules"""
     history = attrs.get("history")
     for step in attrs["processing"]:
-        timestamp = pd.to_datetime(step["date"], format=SBE_TIME_FORMAT).isoformat() if "date" in step else "0000-00-00T00:00:00"
+        timestamp = (
+            pd.to_datetime(step["date"], format=SBE_TIME_FORMAT).isoformat()
+            if "date" in step
+            else "0000-00-00T00:00:00"
+        )
         label = (
             "SBEDataProcessing"
             if step["module"] in SBE_DATA_PROCESSING_MODULES

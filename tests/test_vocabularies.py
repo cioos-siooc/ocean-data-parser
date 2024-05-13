@@ -1,14 +1,16 @@
 import pandas as pd
 import pytest
 
-from ocean_data_parser.vocabularies import load
 from ocean_data_parser.metadata import nerc
-
+from ocean_data_parser.vocabularies import load
 
 nerc_vocabulary_test = pytest.mark.skipif("not config.getoption('nerc_vocab')")
 
 platforms_vocab = load.dfo_platforms()
-platforms_vocab["wmo_platform_code"] = platforms_vocab["wmo_platform_code"].apply(lambda x: int(x) if x else x)
+platforms_vocab["wmo_platform_code"] = platforms_vocab["wmo_platform_code"].apply(
+    lambda x: int(x) if x else x
+)
+
 
 def test_amundsen_vocabulary_load():
     vocab = load.amundsen_vocabulary()
@@ -20,6 +22,8 @@ def test_seabird_vocabulary_load():
     vocab = load.seabird_vocabulary()
     assert vocab
     assert isinstance(vocab, dict)
+
+
 class TestPlatformVocabulary:
     def test_dfo_platform_load(self):
         assert isinstance(platforms_vocab, pd.DataFrame)
@@ -68,18 +72,35 @@ class TestPlatformVocabulary:
             mismatched_codes.empty
         ), f"mismatched codes found: {mismatched_codes[['platform_name','platform_id','ices_platform_code','sdn_platform_urn']]}"
 
-
     @nerc_vocabulary_test
     @pytest.mark.parametrize(
         "id",
-        platforms_vocab['platform_id'].dropna().values,
+        platforms_vocab["platform_id"].dropna().values,
     )
     def test_nerc_c17_to_platform(self, id):
-        attrs = ["platform_name", "platform_type", "country_of_origin", "platform_id", "ices_platform_code", "wmo_platform_code", "call_sign", "sdn_platform_urn"]
+        attrs = [
+            "platform_name",
+            "platform_type",
+            "country_of_origin",
+            "platform_id",
+            "ices_platform_code",
+            "wmo_platform_code",
+            "call_sign",
+            "sdn_platform_urn",
+        ]
 
         nerc_platform = nerc.get_platform_vocabulary(id)
-        nerc_platform = {attr: nerc_platform.get(attr) for attr in attrs if nerc_platform.get(attr) is not None}
-        local_platform = platforms_vocab.query(f"platform_id == '{id}'")[attrs].iloc[0].dropna().to_dict()
+        nerc_platform = {
+            attr: nerc_platform.get(attr)
+            for attr in attrs
+            if nerc_platform.get(attr) is not None
+        }
+        local_platform = (
+            platforms_vocab.query(f"platform_id == '{id}'")[attrs]
+            .iloc[0]
+            .dropna()
+            .to_dict()
+        )
         assert nerc_platform == local_platform
 
 

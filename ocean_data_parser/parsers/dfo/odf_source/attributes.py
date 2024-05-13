@@ -23,8 +23,10 @@ stationless_programs = ("Maritime Region Ecosystem Survey",)
 
 # Transform platform name to a list of accepted platform names
 reference_platforms = dfo_platforms()
-reference_platforms['accepted_platform_name'] = reference_platforms['accepted_platform_name'].str.split('|') 
-reference_platforms = reference_platforms.explode('accepted_platform_name') 
+reference_platforms["accepted_platform_name"] = reference_platforms[
+    "accepted_platform_name"
+].str.split("|")
+reference_platforms = reference_platforms.explode("accepted_platform_name")
 
 section_prefix = {
     "EVENT_HEADER": "event_",
@@ -52,9 +54,11 @@ def _generate_platform_attributes(platform: str) -> dict:
     )
     if matched_platform:
         return (
-            reference_platforms.query(f"accepted_platform_name == '{matched_platform[0]}'")
+            reference_platforms.query(
+                f"accepted_platform_name == '{matched_platform[0]}'"
+            )
             .iloc[0]
-            .to_dict() 
+            .to_dict()
         )
 
     logger.warning("Unknown platform %s", platform)
