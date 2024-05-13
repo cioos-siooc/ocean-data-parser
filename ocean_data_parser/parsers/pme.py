@@ -116,7 +116,8 @@ def minidot_txt(
         )
         ds = df.to_xarray()
 
-    ds["Time (sec)"] = ds['Time (sec)'].to_index().tz_localize(timezone)
+    ds["Time (sec)"] = (ds.dims, ds['Time (sec)'].to_index().tz_localize(timezone), {"timezone": timezone})
+
     # Global attributes
     ds.attrs = {
         **global_attributes,
