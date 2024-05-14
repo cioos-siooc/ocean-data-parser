@@ -28,10 +28,7 @@ def get_path_generation_input(ds: xarray.Dataset, source_path: Path) -> dict:
     }
 
     # Add time_min and time_max as pandas Timestamp
-    if (
-        "time" in ds
-        and isinstance(ds["time"].values, np.ndarray)
-    ):
+    if "time" in ds and isinstance(ds["time"].values, np.ndarray):
         format_variables["time_min"] = ds["time"].to_index().min()
         format_variables["time_max"] = ds["time"].to_index().max()
     elif "time" in ds and isinstance(ds["time"].values, np.datetime64):

@@ -76,14 +76,16 @@ def DAT(path: str, encoding: str = "cp1252") -> xarray.Dataset:
             else:
                 metadata[_standardize_attributes(attr)] = value.strip()
 
-
         # Check if date & time format is supported
-        if metadata["date_&_time"] != "1" or metadata["date_def"] != "dd.mm.yyyy	." or metadata["time_def"] != ":":
+        if (
+            metadata["date_&_time"] != "1"
+            or metadata["date_def"] != "dd.mm.yyyy	."
+            or metadata["time_def"] != ":"
+        ):
             raise ValueError("Date & Time format is not supported")
         else:
             variables = {**{"time": {}}, **variables}
 
-        
         # TODO parse recorder info
         # TODO rename attributes to cf standard
         # TODO parse data line to review time range and n_records
