@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Test get_path_generation_input on all test files and parsers
 
+### Fixed
+
+- Fix star_oddi parser time variable to output a datetime dataarray.
+
 ## `v0.4.0` - 2024-05-04
 
 ### Added
