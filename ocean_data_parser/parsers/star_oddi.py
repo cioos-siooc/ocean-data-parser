@@ -76,10 +76,14 @@ def DAT(path: str, encoding: str = "cp1252") -> xarray.Dataset:
             else:
                 metadata[_standardize_attributes(attr)] = value.strip()
 
-        # Split metadata
-        if metadata["date_&_time"] == "1":
+
+        # Check if date & time format is supported
+        if metadata["date_&_time"] != "1" or metadata["date_def"] != "dd.mm.yyyy	." or metadata["time_def"] != ":":
+            raise ValueError("Date & Time format is not supported")
+        else:
             variables = {**{"time": {}}, **variables}
 
+        
         # TODO parse recorder info
         # TODO rename attributes to cf standard
         # TODO parse data line to review time range and n_records
@@ -93,6 +97,7 @@ def DAT(path: str, encoding: str = "cp1252") -> xarray.Dataset:
             decimal=metadata.pop("decimal_point"),
             names=variables.keys(),
             parse_dates=["time"],
+            date_format="%d.%m.%Y\t%H:%M:%S",
         )
         if "time" in df:
             df = df.set_index(["time"])
@@ -131,5 +136,7 @@ def DAT(path: str, encoding: str = "cp1252") -> xarray.Dataset:
         }
         # Add variable attributes
         for var in ds:
+            if var not in VARIABLES_ATTRIBUTES:
+                logger.warning("Unknown variable %s", var)
             ds[var].attrs = {**variables[var], **VARIABLES_ATTRIBUTES.get(var, {})}
         return ds
