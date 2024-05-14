@@ -94,8 +94,8 @@ def generate_output_path(
     path_generation_inputs = get_path_generation_input(ds, original_source)
 
     # Generate path and file name
-    output_path = Path(path.format(**defaults, **path_generation_inputs))
-    file_name = file_name.format(**defaults, **path_generation_inputs)
+    output_path = Path(path.format(**(defaults or {}), **path_generation_inputs))
+    file_name = file_name.format(**(defaults or {}), **path_generation_inputs)
 
     # Retrieve output_format if given in source
 
