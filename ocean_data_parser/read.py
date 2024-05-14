@@ -108,7 +108,7 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
     else:
         raise ImportError(f"Unable to match file to a specific data parser: {file}")
 
-    logger.info("Selected parser: %s", parser)
+    logger.debug("Selected parser: %s", parser)
     return parser
 
 

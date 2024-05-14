@@ -1,10 +1,12 @@
 from glob import glob
+from pathlib import Path
 
 import pandas as pd
 import pytest
 import xarray as xr
 from loguru import logger
 
+from ocean_data_parser.batch.utils import get_path_generation_input
 from ocean_data_parser.parsers import (
     amundsen,
     dfo,
@@ -31,6 +33,16 @@ def review_parsed_dataset(ds, source, caplog=None, max_log_levelno=30):
             assert record.levelno <= max_log_levelno, str(record) % record.args
 
     ds.to_netcdf(source + "_test.nc", format="NETCDF4")
+
+    # Test path generation input
+    path_generation_input = get_path_generation_input(ds, Path(source))
+    assert isinstance(path_generation_input, dict)
+    assert path_generation_input, "Failed to generate path generation input"
+    if "time" in ds:
+        assert "time_min" in path_generation_input
+        assert "time_max" in path_generation_input
+        assert isinstance(path_generation_input["time_min"], pd.Timestamp)
+        assert isinstance(path_generation_input["time_max"], pd.Timestamp)
 
 
 @pytest.fixture
