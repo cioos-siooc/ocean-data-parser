@@ -4,6 +4,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 import xarray as xr
+from compliance_checker.runner import ComplianceChecker
 from loguru import logger
 
 from ocean_data_parser.batch.utils import get_path_generation_input
@@ -32,7 +33,8 @@ def review_parsed_dataset(ds, source, caplog=None, max_log_levelno=30):
         for record in caplog.records:
             assert record.levelno <= max_log_levelno, str(record) % record.args
 
-    ds.to_netcdf(source + "_test.nc", format="NETCDF4")
+    resulting_test_file = source + "_test.nc"
+    ds.to_netcdf(resulting_test_file, format="NETCDF4")
 
     # Test path generation input
     path_generation_input = get_path_generation_input(ds, Path(source))
@@ -43,6 +45,17 @@ def review_parsed_dataset(ds, source, caplog=None, max_log_levelno=30):
         assert "time_max" in path_generation_input
         assert isinstance(path_generation_input["time_min"], pd.Timestamp)
         assert isinstance(path_generation_input["time_max"], pd.Timestamp)
+
+    # Metadata Compliance check
+    return_value, compliance_errors = ComplianceChecker.run_checker(
+        resulting_test_file,
+        checker_names=["cf", "acdd"],
+        verbose=True,
+        criteria="normal",
+        output_filename=resulting_test_file + "_compliance_report.json",
+        output_format="json",
+    )
+    assert return_value, compliance_errors
 
 
 @pytest.fixture
