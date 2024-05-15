@@ -49,7 +49,7 @@ def review_parsed_dataset(ds, source, caplog=None, max_log_levelno=30):
     # Metadata Compliance check
     return_value, compliance_errors = ComplianceChecker.run_checker(
         resulting_test_file,
-        checker_names=["cf", "acdd"],
+        checker_names=["cf:1.6", "acdd:1.3"],
         verbose=True,
         criteria="normal",
         output_filename=resulting_test_file + "_compliance_report.json",
