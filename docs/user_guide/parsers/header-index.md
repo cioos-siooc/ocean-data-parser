@@ -1,4 +1,4 @@
-# Ocean Data Parsers 
+# Ocean Data Parsers
 
 Each parser can also be imported by itself:
 
