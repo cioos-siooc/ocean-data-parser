@@ -18,7 +18,7 @@ pip install git+https://github.com/cioos-siooc/ocean-data-parser.git
 
 ## How to 
 
-### :octicons-command-palette-24: via Command Line Interface `odpy`
+### [:octicons-command-palette-24: via Command Line Interface `odpy`](user_guide/cli.md)
 
 Once installed, the package is usable via the command line interface 
 via the `odpy` command. As an example to convert a series of cnv files to netcdf, 
@@ -34,7 +34,8 @@ For futher details see [here](user_guide/cli.md) or run the following command:
 odpy --help 
 ```
 
-###  :material-file-find: via `ocean_data_parser.read.file`
+### [:material-file-find: via `ocean_data_parser.read.file`](user_guide/read.md)
+
 Load a compatible file with the global read.file method
 
 ```py title="from ocean_data_parser import read"
@@ -47,7 +48,8 @@ ds = read.file('Path to file')
 ds.to_netcdf('save-path.nc')
 ```
 
-###  :material-sitemap-outline: via `from ocean_data_parser.parsers import ...`
+### [:material-sitemap-outline: via `from ocean_data_parser.parsers import ...`](user_guide/parsers/index.md)
+
 Or specify the specific parser to use for this file format:
 
 ```py title="from ocean_data_parser.parsers import ..."
