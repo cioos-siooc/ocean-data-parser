@@ -30,7 +30,6 @@ Install the github development version via pip. You can also install a specific 
 
 === "Specific tag"
 
-
     ``` shell
     # if `tag=v1.2`
     pip install git+git+https://github.com/cioos-siooc/ocean-data-parser.git@v1.2
@@ -51,7 +50,7 @@ package api is still subject to change over the future versions.
 You can achieve that either:
 
 - with `pip` by generating a `requirement.txt`
-- (recommanded) with `poetry` by creating a `pyproject.toml` and `poetry.lock` file.
+- (recommanded) with [`poetry`](https://python-poetry.org/) by creating a `pyproject.toml` and `poetry.lock` file.
 
 === "poetry"
 
@@ -83,4 +82,14 @@ You can achieve that either:
 
     # use next time
     pip install -r requirement.txt
+    ```
+
+!!! info "Poetry package-mode"
+
+    If you only use poetry for dependancy management and tracking versions used
+    in your project. Add the following snippet in our `pyproject.toml`:
+    
+    ``` toml
+    [tool.poetry]
+    package-mode = false
     ```
