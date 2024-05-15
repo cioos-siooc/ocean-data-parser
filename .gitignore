@@ -45,4 +45,3 @@ site/**
 .python-version
 
 .vscode/launch.json
-docs/release-notes.md
