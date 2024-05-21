@@ -233,7 +233,7 @@ def csv(
     if convert_units_to_si:
         if standardize_variable_names:
             if "temperature" in ds and ("C" not in ds["temperature"].attrs["units"]):
-                logger.warning("Temperaure in farenheit will be converted to celsius")
+                logger.warning("Temperature in Farenheit will be converted to celsius")
                 ds["temperature"] = _farenheit_to_celsius(ds["temperature"])
                 ds["temperature"].attrs["units"] = "degC"
                 ds.attrs["history"] += " ".join(
