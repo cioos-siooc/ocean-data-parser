@@ -7,6 +7,7 @@ import re
 from importlib import import_module
 from pathlib import Path
 from typing import Union
+import sys
 
 import xarray as xr
 
@@ -117,8 +118,15 @@ def import_parser(parser: str):
         return xr.open_dataset
 
     read_module, filetype = parser.rsplit(".", 1)
-    logger.info("Import module: ocean_data_parser.parsers.%s", read_module)
-    mod = import_module(f"ocean_data_parser.parsers.{read_module}")
+    imported_modules = sys.modules
+    module_full_name = f"ocean_data_parser.parsers.{read_module}"
+
+    if module_full_name not in imported_modules:
+        logger.info("Import module: %s", module_full_name)
+        mod = import_module(module_full_name)
+    else:
+        logger.debug("Module already imported: %s", module_full_name)
+        mod = imported_modules[module_full_name]
     return getattr(mod, filetype)
 
 
