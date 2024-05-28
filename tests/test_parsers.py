@@ -1,3 +1,4 @@
+import re
 from glob import glob
 from pathlib import Path
 
@@ -24,12 +25,16 @@ from ocean_data_parser.parsers.dfo.odf_source.attributes import _review_station
 from ocean_data_parser.parsers.dfo.odf_source.parser import _convert_odf_time
 
 
-def review_parsed_dataset(ds, source, caplog=None, max_log_levelno=30):
+def review_parsed_dataset(
+    ds, source, caplog=None, max_log_levelno=30, ignore_log_records=None
+):
     assert isinstance(ds, xr.Dataset)
     assert ds.attrs, "dataset do not contains any global attributes"
     assert ds.variables, "Dataset has no variables."
     if caplog:
         for record in caplog.records:
+            if ignore_log_records and re.search(ignore_log_records, record.message):
+                continue
             assert record.levelno <= max_log_levelno, str(record) % record.args
 
     ds.to_netcdf(source + "_test.nc", format="NETCDF4")
@@ -91,7 +96,16 @@ class TestOnsetParser:
     @pytest.mark.parametrize("path", glob("tests/parsers_test_files/onset/**/*.csv"))
     def test_csv_parser(self, path, caplog):
         ds = onset.csv(path)
-        review_parsed_dataset(ds, path, caplog)
+        review_parsed_dataset(
+            ds,
+            path,
+            caplog,
+            max_log_levelno=2,
+            ignore_log_records="|".join([
+                "suggest a (Fall|Spring) daylight saving issue is present",
+                "Date Time column is not in a consistent format"
+            ]),
+        )
 
 
 class TestRBRParser:

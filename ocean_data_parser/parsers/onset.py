@@ -22,6 +22,7 @@ GLOBAL_ATTRIBUTES = {"Convention": "CF-1.6"}
 logger = logging.getLogger(__name__)
 VARIABLE_NAME_MAPPING = {
     "#": "record_number",
+    "\ufeff#": "record_number",
     "Date Time": "time",
     "Temp": "temperature",
     "Intensity": "light_intensity",
@@ -181,10 +182,10 @@ def csv(
     if "Date Time" not in raw_header[-1]:
         raise ValueError("Date Time column not found in header")
 
-    date_format = _get_time_format(first_row.split(",")[1])
-
     # Parse onset header
     header, variables = _parse_onset_csv_header(raw_header)
+    date_column_index = list(variables.keys()).index("Date Time")
+    date_format = _get_time_format(first_row.split(",")[date_column_index])
 
     # Inputs to pd.read_csv
     consider_columns = {

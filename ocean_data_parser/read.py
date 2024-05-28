@@ -4,10 +4,10 @@ This module contains all the different tools needed to parse a file.
 
 import logging
 import re
+import sys
 from importlib import import_module
 from pathlib import Path
 from typing import Union
-import sys
 
 import xarray as xr
 

@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix star_oddi parser time variable to output a datetime dataarray.
-- Fix typo in onset parser.
+- Fix onset parser date time handling.
 - Avoid reimporting parser if already imported in read.file with parser
 defined via string expression.
 
