@@ -64,14 +64,14 @@ def test_read_file_unique_import(file_path, parser, caplog):
         read.file(file_path, parser=parser)
         assert (
             f"Import module: ocean_data_parser.parsers.{parser_module}" in caplog.text
-        )
+        ), f"Failed to match log message for module import: {caplog.text}"
         caplog.clear()
         read.file(file_path, parser=parser)
         assert (
             f"Import module: ocean_data_parser.parsers.{parser_module}"
             not in caplog.text
-        )
+        ), f"Module was imported again: {caplog.text}"
         assert (
             f"Module already imported: ocean_data_parser.parsers.{parser_module}"
             in caplog.text
-        )
+        ), f"Failed to match log message for module already imported: {caplog.text}"
