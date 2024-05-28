@@ -1,6 +1,7 @@
 import logging
 import re
 from pathlib import Path
+import sys
 
 import pytest
 from xarray import Dataset
@@ -60,6 +61,12 @@ def test_read_file_parser_inputs(file_path, parser):
 def test_read_file_unique_import(file_path, parser, caplog):
     """Test that read.file only import the parser once"""
     parser_module = parser.rsplit(".")[0]
+    
+    # Clear ocean_data_parser.parsers modules from sys.modules
+    for key, module in sys.modules.items():
+        if key.startswith("ocean_data_parser.parsers"):
+            del module
+
     with caplog.at_level(logging.DEBUG):
         read.file(file_path, parser=parser)
         assert (
