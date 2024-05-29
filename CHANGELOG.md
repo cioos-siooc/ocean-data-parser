@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Test get_path_generation_input on all test files and parsers
+- Run all tests in parallel with pytest-xdist
 
 ### Fixed
 
