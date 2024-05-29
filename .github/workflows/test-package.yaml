@@ -6,6 +6,7 @@ on:
       - main
       - development
     paths:
+      - .github/workflows/test-package.yaml
       - setup.py
       - MANIFEST.in
       - ocean_data_parser/**
