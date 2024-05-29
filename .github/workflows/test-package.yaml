@@ -6,6 +6,7 @@ on:
       - main
       - development
     paths:
+      - .github/workflows/test-package.yaml
       - setup.py
       - MANIFEST.in
       - ocean_data_parser/**
@@ -55,10 +56,10 @@ jobs:
               - 'CHANGELOG.md'
       - name: Run tests with metadata tests
         if: steps.changes.outputs.vocabularies == 'true'
-        run: poetry run pytest -W error::UserWarning --nerc-vocab
+        run: poetry run pytest -W error::UserWarning --nerc-vocab -n auto
       - name: Run tests without metadata tests
         if: steps.changes.outputs.vocabularies == 'false'
-        run: poetry run pytest -W error::UserWarning -k "not test_metadata"
+        run: poetry run pytest -W error::UserWarning -k "not test_metadata" -n auto
       - name: Run benchmark
         run: poetry run pytest tests/run_benchmark.py  --benchmark-json output.json
       - name: Update CHANGELOG
