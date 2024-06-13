@@ -101,10 +101,12 @@ class TestOnsetParser:
             path,
             caplog,
             max_log_levelno=2,
-            ignore_log_records="|".join([
-                "suggest a (Fall|Spring) daylight saving issue is present",
-                "Date Time column is not in a consistent format"
-            ]),
+            ignore_log_records="|".join(
+                [
+                    "suggest a (Fall|Spring) daylight saving issue is present",
+                    "Date Time column is not in a consistent format",
+                ]
+            ),
         )
 
 
