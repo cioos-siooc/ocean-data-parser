@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix onset parser date time handling.
 - Avoid reimporting parser if already imported in read.file with parser
 defined via string expression.
+- Fix Amundsen int timestamp format
 
 ## `v0.4.0` - 2024-05-04
 
