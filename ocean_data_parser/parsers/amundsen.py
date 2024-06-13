@@ -52,7 +52,7 @@ def _standardize_attribute_value(value: str, name: str = None):
     if name in string_attributes or not isinstance(value, str):
         return value
     elif re.match(r"\d\d-\w\w\w-\d\d\d\d \d\d\:\d\d\:\d\d", value):
-        return pd.to_datetime(value, utc=(name and "utc" in name))
+        return pd.to_datetime(value, utc=(name and "utc" in name), format="%d-%b-%Y %H:%M:%S")
     elif re.match(r"^-{0,1}\d+\.\d+$", value):
         return float(value)
     elif re.match(r"^-{0,1}\d+$", value):
