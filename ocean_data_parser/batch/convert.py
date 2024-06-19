@@ -4,6 +4,7 @@ import sys
 from glob import glob
 from multiprocessing import Pool
 from pathlib import Path
+import json
 
 import click
 import pandas as pd
@@ -92,6 +93,12 @@ def get_parser_list(ctx, _, value):
     callback=validate_parser,
 )
 @click.option(
+    "--parser-kwargs",
+    type=str,
+    help="Parser specific arguments to pass to the parser.",
+    default=None
+)
+@click.option(
     "--overwrite",
     type=bool,
     is_flag=True,
@@ -170,6 +177,8 @@ def cli(**kwargs):
             return
     kwargs.pop("show_arguments")
     kwargs.pop("new_config")
+    if kwargs['parser_kwargs']:
+        kwargs['parser_kwargs'] = json.loads(kwargs['parser_kwargs'])
     convert(**kwargs)
 
 
