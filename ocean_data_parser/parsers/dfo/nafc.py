@@ -605,6 +605,7 @@ def _add_metqa_info_to_pcvn(file: Path) -> Path:
     glob_expression = f"{file.stem.rsplit('_',1)[0]}_metqa_*.csv"
     metqa_file = list(file.parent.glob(glob_expression))
     if metqa_file and len(metqa_file) == 1:
+        logger.debug("Load weather data from metqa file={}", metqa_file[0])
         df = _get_metqa_table(metqa_file[0])
         metadata = df.query(f"station == '{file.stem}'")
         if metadata.empty:
