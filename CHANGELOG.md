@@ -22,6 +22,7 @@ inputs to parser
 defined via string expression.
 - Fix Amundsen int timestamp format
 - Drop trip_tag attribute from dfo.nafc.pcnv parser
+- Make dfo.nafc.pcnv parser attempt to retrieve metqa file info by default.
 
 ## `v0.4.0` - 2024-05-04
 
