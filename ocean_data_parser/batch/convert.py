@@ -4,6 +4,7 @@ import sys
 from glob import glob
 from multiprocessing import Pool
 from pathlib import Path
+import json
 
 import click
 import pandas as pd
@@ -68,6 +69,18 @@ def get_parser_list(ctx, _, value):
     click.echo(get_parser_list_string())
     ctx.exit()
 
+def validate_parser_kwargs(ctx, _, value):
+    """Test if given parser_kwargs is a valid JSON string and return the parsed JSON object"""
+    if not value:
+        return value
+    try:
+        return json.loads(value)
+    except json.JSONDecodeError:
+        raise click.BadParameter(
+            click.style(
+                "parser-kwargs should be a valid JSON string", fg="bright_red"
+            )
+        )
 
 @click.command(name="convert", context_settings={"auto_envvar_prefix": "ODPY_CONVERT"})
 @click.option(
@@ -90,6 +103,16 @@ def get_parser_list(ctx, _, value):
         " Use --parser_list to retrieve list of parsers available"
     ),
     callback=validate_parser,
+)
+@click.option(
+    "--parser-kwargs",
+    type=str,
+    help=(
+        "Parser key word arguments to pass to the parser. Expect a JSON string."
+        " (ex: '{\"globa_attributes\": {\"project\": \"test\"}')"
+    ),
+    default=None,
+    callback=validate_parser_kwargs,
 )
 @click.option(
     "--overwrite",
