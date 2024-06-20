@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Test get_path_generation_input on all test files and parsers
 - Run all tests in parallel with pytest-xdist
+- Add --parser-kwargs option to odpy convert command line interface to pass
+inputs to parser
 
 ### Fixed
 
@@ -19,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Avoid reimporting parser if already imported in read.file with parser
 defined via string expression.
 - Fix Amundsen int timestamp format
+- Drop trip_tag attribute from dfo.nafc.pcnv parser
 
 ## `v0.4.0` - 2024-05-04
 
