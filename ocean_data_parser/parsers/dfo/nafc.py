@@ -712,7 +712,7 @@ def pcnv(
             or _int(ds.attrs.pop("ctd_number", None)),
             "format": ds.attrs.pop("format", None),
             "commment": _pop_attribute_from(["comments", "comments_14_char"]),
-            "trip_tag": ds.attrs.pop("trip_tag", None),
+            # "trip_tag": ds.attrs.pop("trip_tag", None),
             "vnet": ds.attrs.pop("vnet", None),
             "do2": ds.attrs.pop("do2", None),
             "bottles": _int(ds.attrs.pop("bottles", None)),
