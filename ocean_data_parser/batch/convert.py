@@ -69,6 +69,18 @@ def get_parser_list(ctx, _, value):
     click.echo(get_parser_list_string())
     ctx.exit()
 
+def validate_parser_kwargs(ctx, _, value):
+    """Test if given parser_kwargs is a valid JSON string and return the parsed JSON object"""
+    if not value:
+        return value
+    try:
+        return json.loads(value)
+    except json.JSONDecodeError:
+        raise click.BadParameter(
+            click.style(
+                "parser-kwargs should be a valid JSON string", fg="bright_red"
+            )
+        )
 
 @click.command(name="convert", context_settings={"auto_envvar_prefix": "ODPY_CONVERT"})
 @click.option(
@@ -96,10 +108,11 @@ def get_parser_list(ctx, _, value):
     "--parser-kwargs",
     type=str,
     help=(
-        "Parser specific arguments to pass to the parser. Expect a JSON string."
+        "Parser key word arguments to pass to the parser. Expect a JSON string."
         " (ex: '{\"globa_attributes\": {\"project\": \"test\"}')"
     ),
-    default=None
+    default=None,
+    callback=validate_parser_kwargs,
 )
 @click.option(
     "--overwrite",
@@ -180,8 +193,6 @@ def cli(**kwargs):
             return
     kwargs.pop("show_arguments")
     kwargs.pop("new_config")
-    if kwargs['parser_kwargs']:
-        kwargs['parser_kwargs'] = json.loads(kwargs['parser_kwargs'])
     convert(**kwargs)
 
 
