@@ -599,7 +599,7 @@ def _get_metqa_table(file) -> pd.DataFrame:
     return df
 
 
-def _add_metqa_info_to_pcvn(file: Path) -> Path:
+def _add_metqa_info_to_pcvn(file: Path, match_metqa_file) -> Path:
     """Find the matching metqa table to the pcnv file"""
 
     glob_expression = f"{file.stem.rsplit('_',1)[0]}_metqa_*.csv"
@@ -620,8 +620,10 @@ def _add_metqa_info_to_pcvn(file: Path) -> Path:
             glob_expression,
         )
     else:
-        logger.warning(
-            "No metqa table file path={},glob={}", file.parent, glob_expression
+        level = "WARNING" if match_metqa_file else "DEBUG"
+        logger.log(
+            level,
+            "No metqa table file found path={},glob={}", file.parent, glob_expression
         )
     return {}
 
@@ -716,7 +718,7 @@ def pcnv(
             "vnet": ds.attrs.pop("vnet", None),
             "do2": ds.attrs.pop("do2", None),
             "bottles": _int(ds.attrs.pop("bottles", None)),
-            **(_add_metqa_info_to_pcvn(path) if match_metqa_table else {}),
+            **_add_metqa_info_to_pcvn(path,match_metqa_table),
             **(global_attributes or {}),
         }
     )
