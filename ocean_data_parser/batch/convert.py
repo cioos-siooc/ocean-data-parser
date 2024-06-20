@@ -95,7 +95,10 @@ def get_parser_list(ctx, _, value):
 @click.option(
     "--parser-kwargs",
     type=str,
-    help="Parser specific arguments to pass to the parser.",
+    help=(
+        "Parser specific arguments to pass to the parser. Expect a JSON string."
+        " (ex: '{\"globa_attributes\": {\"project\": \"test\"}')"
+    ),
     default=None
 )
 @click.option(
