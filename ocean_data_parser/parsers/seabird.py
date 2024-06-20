@@ -1,12 +1,12 @@
 """
-This module contains all the different tools used to handle the different [Seabird Scientific](https://www.seabird.com) file formats.
-
+This page provides functions for parsing data files in Seabird Scientific format.
+The Seabird Scientific format is commonly used for oceanographic data collection
+and is supported by [Seabird Scientific](https://www.seabird.com).
 """
 
 import difflib
 import json
 import logging
-import os
 import re
 from datetime import datetime
 
@@ -18,24 +18,61 @@ from pyexpat import ExpatError
 from ocean_data_parser.parsers.utils import convert_datetime_str, standardize_dataset
 from ocean_data_parser.vocabularies.load import seabird_vocabulary
 
-SBE_TIME_FORMAT = "%b %d %Y %H:%M:%S"  # Jun 23 2016 13:51:30
+logger = logging.getLogger(__name__)
+
 var_dtypes = {
     "date": str,
     "bottle": str,
-    "Flag": int,
-    "flag": int,
     "stats": str,
     "scan": int,
 }
+SBE_TIME_FORMAT = "%b %d %Y %H:%M:%S"  # Jun 23 2016 13:51:30
 sbe_time = re.compile(
     r"(?P<time>\w\w\w\s+\d{1,2}\s+\d{1,4}\s+\d\d\:\d\d\:\d\d)(?P<comment>.*)"
 )
-logger = logging.getLogger(__name__)
 
-reference_vocabulary_path = os.path.join(
-    os.path.dirname(__file__), "vocabularies", "seabird_variable_attributes.json"
-)
 seabird_variable_attributes = seabird_vocabulary()
+
+IGNORED_HEADER_LINES = [
+    "* GetHD\n",
+    "* GetSD\n",
+    "* GetDS\n",
+    "* GetDH\n",
+    "* GetCD\n",
+    "* GetCC\n",
+    "* GetEC\n",
+    "* HD\n",
+    "* SD\n",
+    "* DS\n",
+    "* DH\n",
+    "* CD\n",
+    "* CC\n",
+    "* EC\n",
+    "* S>\n",
+    "*\n",
+]
+
+SBE_DATA_PROCESSING_MODULES = [
+    "datcnv",
+    "filter",
+    "alignctd",
+    "celltm",
+    "loopedit",
+    "derive",
+    "Derive",
+    "DeriveTEOS_10",
+    "binavg",
+    "split",
+    "strip",
+    "section",
+    "wild",
+    "window",
+    "bottlesum",
+]
+is_seabird_processing_stage = re.compile(
+    rf"\# (?P<module>{'|'.join(SBE_DATA_PROCESSING_MODULES)})"
+    r"_(?P<parameter>[^\s\:]+)( = |: )(?P<value>.*)"
+)
 
 
 def _convert_to_netcdf_var_name(var_name):
@@ -58,20 +95,33 @@ def _add_seabird_vocabulary(variable_attributes: dict) -> dict:
     return variable_attributes
 
 
-def cnv(file_path: str, encoding: str = "UTF-8") -> xarray.Dataset:
+def cnv(
+    file_path: str,
+    encoding: str = "UTF-8",
+    encoding_errors="strict",
+    xml_parsing_error_level="ERROR",
+    generate_instrument_variables: bool = False,
+    save_orginal_header: bool = False,
+) -> xarray.Dataset:
     """Parse Seabird CNV format
 
     Args:
         file_path (str): file path
         encoding (str, optional): encoding to use. Defaults to "UTF-8".
+        xml_parsing_error_level (str, optional): Error level for XML parsing.
+            Defaults to "ERROR".
+        generate_instrument_variables (bool, optional): Generate instrument
+            variables following the IOOS 1.2 standard. Defaults to False.
 
     Returns:
         xarray.Dataset: Dataset
     """
     """Import Seabird cnv format as an xarray dataset."""
 
-    with open(file_path, encoding=encoding) as f:
-        header = _parse_seabird_file_header(f)
+    with open(file_path, encoding=encoding, errors=encoding_errors) as f:
+        header = _parse_seabird_file_header(
+            f, xml_parsing_error_level=xml_parsing_error_level
+        )
         header["variables"] = _add_seabird_vocabulary(header["variables"])
         df = pd.read_csv(
             f,
@@ -81,27 +131,40 @@ def cnv(file_path: str, encoding: str = "UTF-8") -> xarray.Dataset:
                 var: var_dtypes.get(var, float) for var in header["variables"].keys()
             },
             na_values=["-1.#IO", "-9.99E-29"],
+            encoding_errors=encoding_errors,
         )
 
     header = _generate_seabird_cf_history(header)
 
     ds = _convert_sbe_dataframe_to_dataset(df, header)
+    if generate_instrument_variables:
+        ds, _ = _generate_instruments_variables_from_xml(ds, header["seabird_header"])
+    if not save_orginal_header:
+        ds.attrs.pop("seabird_header")
     return standardize_dataset(ds)
 
 
-def btl(file_path: str, encoding: str = "UTF-8") -> xarray.Dataset:
+def btl(
+    file_path: str,
+    encoding: str = "UTF-8",
+    xml_parsing_error_level="ERROR",
+    save_orginal_header: bool = False,
+) -> xarray.Dataset:
     """Parse Seabird BTL format
 
     Args:
         file_path (str): file path
         encoding (str, optional): Encoding to use. Defaults to "UTF-8".
+        xml_parsing_error_level (str, optional): Error level for XML parsing. Defaults to "ERROR".
 
     Returns:
         xarray.Dataset: Dataset
     """
 
     with open(file_path, encoding=encoding) as f:
-        header = _parse_seabird_file_header(f)
+        header = _parse_seabird_file_header(
+            f, xml_parsing_error_level=xml_parsing_error_level
+        )
 
         # Retrieve variables from bottle header and lower the first letter of each variable
         variable_list = [
@@ -131,7 +194,17 @@ def btl(file_path: str, encoding: str = "UTF-8") -> xarray.Dataset:
     df = df.drop(columns=drop_columns)
 
     # Improve metadata
-    n_scan_per_bottle = int(header["datcnv_scans_per_bottle"])
+
+    n_scan_per_bottle = [
+        int(step["scans_per_bottle"])
+        for step in header["processing"]
+        if step["module"] == "datcnv"
+    ]
+    if not n_scan_per_bottle:
+        logger.warning("Failed to retrieve the number of scans per bottle")
+        n_scan_per_bottle = "unknown"
+    else:
+        n_scan_per_bottle = n_scan_per_bottle[0]
     header = _generate_seabird_cf_history(header)
 
     # Retrieve vocabulary associated with each variables
@@ -153,6 +226,8 @@ def btl(file_path: str, encoding: str = "UTF-8") -> xarray.Dataset:
                 "cell_method"
             ] = f"scan: mean (previous {n_scan_per_bottle} scans)"
 
+    if not save_orginal_header:
+        ds.attrs.pop("seabird_header")
     return standardize_dataset(ds)
 
 
@@ -175,46 +250,120 @@ def _convert_sbe_dataframe_to_dataset(df, header):
     return ds
 
 
-def _parse_seabird_file_header(f):
+def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
     """Parsed seabird file headers"""
 
-    def unknown_line(line):
-        if line in ("* S>\n"):
-            return
-        header["history"] += [re.sub(r"\*\s|\n", "", line)]
-        if line.startswith(("* advance", "* delete")) or "added to scan" in line:
-            return
-        logger.warning("Unknown line format: %s", line)
-
     def standardize_attribute(attribute):
-        return re.sub(r" |\|\)|\/", "_", attribute.strip()).lower()
+        attribute = re.sub(r"\s+|\(|\||\)|\/", "_", attribute.strip()).lower()
+        attribute = re.sub(r"\_+", "_", attribute)
+        attribute = re.sub(r"\_+$", "", attribute)
+        return attribute
 
     def read_comments(line):
+        """Read comments(**) in seabird header"""
         if re.match(r"\*\* .*(\:|\=).*", line):
-            result = re.match(r"\*\* (?P<key>.*)(\:|\=)(?P<value>.*)", line)
-            header[result["key"].strip()] = result["value"].strip()
+            result = re.match(r"\*\* (?P<key>[^:=]*)(\:|\=)(?P<value>.*)", line)
+            key, _, value = result.groups()
+            # Standardize key to match NetCDF requirements
+            key = standardize_attribute(key)
+
+            if key.strip() in header:
+                # append string to existing key on a new line
+                header[key] += "\n" + value.strip()
+            else:
+                header[key] = value.strip()
+        elif line.startswith("** QA Applied:"):
+            # This could be specific to DFO NAFC PCNV format
+            header["processing"].append(
+                {"module": "QA applied", "message": line.split(":", 1)[1]}
+            )
         else:
             header["comments"] += [line[2:]]
 
     def read_asterisk_line(line):
-        if " = " in line:
-            attr, value = line[2:].split("=", 1)
-            header[standardize_attribute(attr)] = value.strip()
-        elif line.startswith((r"* Sea-Bird", r"* SBE ")):
+        if line.startswith((r"* Sea-Bird", r"* SBE ")) and not line.startswith(
+            "* SBE 38 = "
+        ):
             instrument_type = re.search(
-                r"\* Sea-Bird (.*) Data File\:|\* SBE (.*)", line
+                r"\* Sea-Bird (.*) Data File\:?|\* SBE (.*)", line
             ).groups()
             header["instrument_type"] += "".join(
                 [item for item in instrument_type if item]
             )
+        elif re.match(r"\* Turo XBT Data File:", line):
+            header["instrument_type"] += "Turo XBT"
         elif re.match(r"\* Software version .*", line, re.IGNORECASE):
             header["software_version"] = re.search(
                 r"\* Software version (.*)", line, re.IGNORECASE
             )[1]
-        else:
-            unknown_line(line)
+        elif (
+            line.startswith(
+                (
+                    "* advance",
+                    "* delete",
+                    "* test",
+                    "* autorun",
+                    "* number of scans to average",
+                    "* Store",
+                )
+            )
+            or "added to scan" in line
+        ):
+            header["processing"].append(
+                {"module": "on-instrument", "message": line[2:]}
+            )
+        elif line.startswith("* SeacatPlus V"):
+            header["instrument_firmware"] = line[10:].split("SERIAL")[0].strip()
+        elif line.startswith("* cast"):
+            header["processing"].append({"module": "cast", "message": line[2:]})
+        elif sensor_calibration := re.match(
+            r"\* (?P<variable>temperature|conductivity|pressure|rtc):\s*(?P<calibration_date>\d\d-\w\w\w-\d\d)",
+            line,
+        ):
+            header["calibration"][sensor_calibration["variable"]] = {
+                "calibration_date": sensor_calibration["calibration_date"]
+            }
+        elif pressure_sensor := re.match(
+            r"\* pressure sensor = (?P<type>[\w\s]+), range = (?P<range>.*)", line
+        ):
+            if "pressure" not in header["calibration"]:
+                header["calibration"]["pressure"] = {}
+            header["calibration"]["pressure"].update(pressure_sensor.groupdict())
+        elif pressure_sensor := re.match(
+            r"\* pressure S\/N = (?P<serial_number>\d+), range = (?P<range>[^:]):(?P<calibration_date>.+)",
+            line,
+        ):
+            if "pressure" not in header["calibration"]:
+                header["calibration"]["pressure"] = {}
+            header["calibration"]["pressure"].update(pressure_sensor.groupdict())
+        elif volt_calibration := re.match(
+            r"\* volt\s*(?P<channel>\d)+:\s(?P<extra>.*)", line
+        ):
+            header["calibration"][f"volt {volt_calibration['channel']}"] = dict(
+                [item.split(" = ") for item in volt_calibration["extra"].split(", ")]
+            )
 
-    def read_number_line(line):
+        elif re.match(r"\*\s{4,}[A-Z0-9]+ = [0-9\.e\-\+]+", line):
+            attr, value = line[2:].split(" = ", 1)
+            # Retrieve the last sensor added to calibration
+            sensor = list(header["calibration"].keys())[-1]
+
+            header["calibration"][sensor][attr.strip()] = float(value.strip())
+        elif line.startswith("* UploadData="):
+            header["upload_data"] = line[13:].strip()
+        elif ", " in line and " = " in line:
+            # Split line into multiple attributes
+            for attr in line[2:].split(", "):
+                attr, value = attr.split(" = ", 1)
+                header[standardize_attribute(attr)] = value.strip()
+        elif re.match(r"\*\s[\w\s\(\)]+\=", line):
+            attr, value = line[2:].split("=", 1)
+            header[standardize_attribute(attr)] = value.strip()
+        else:
+            logger.warning("Unknown line format: %s", line.strip())
+
+    def read_hash_line(line):
+        """Read hash(#) line in seabird header"""
         if line.startswith("# name"):
             attrs = re.search(
                 r"\# name (?P<id>\d+) = (?P<sbe_variable>[^\s]+)\: (?P<long_name>.*)"
@@ -231,55 +380,128 @@ def _parse_seabird_file_header(f):
             header["variables"][int(span["id"])].update(
                 {"value_min": values[0], "value_max": values[1]}
             )
+        elif line.startswith("# QA Applied:"):
+            # This could be specific to DFO NAFC PCNV format
+            header["processing"].append(
+                {"module": "QA applied", "message": line.split(":", 1)[1]}
+            )
+        elif processing_row := is_seabird_processing_stage.match(line):
+            if processing_row["parameter"] == "date":
+                parameters = dict(
+                    zip(["date", "version"], processing_row["value"].split(","))
+                )
+            else:
+                parameters = {processing_row["parameter"]: processing_row["value"]}
+
+            if (
+                header["processing"] == []
+                or processing_row["module"].lower()
+                != header["processing"][-1]["module"].lower()
+            ):
+                header["processing"].append(
+                    {
+                        "module": processing_row["module"],
+                    }
+                )
+
+            header["processing"][-1].update(parameters)
+        elif (
+            line.startswith("# Using the GSW Toolkit version")
+            and header["processing"][-1]["module"] == "DeriveTEOS_10"
+        ):
+            # Add GSW toolkit version to the last processing step
+            # which should be DeriveTEOS
+            header["processing"][-1]["gsw_toolkit_version"] = line[31:].strip()
         elif " = " in line:
             attr, value = line[2:].split("=", 1)
             header[standardize_attribute(attr)] = value.strip()
+        elif line.endswith("=\n"):
+            header[standardize_attribute(line[2:-3])] = None
+        elif ": " in line:
+            attr, value = line[2:].split(": ", 1)
+            header[standardize_attribute(attr)] = value.strip()
         else:
-            unknown_line(line)
+            logger.warning("Unknown line format: %s", line.strip())
+
+    def parse_xml(xml_section, error_level="ERROR"):
+        """Parse XML section"""
+        try:
+            return xmltodict.parse(f"<temp>{xml_section}</temp>")["temp"]
+        except ExpatError:
+            logger.log(
+                logging.getLevelName(error_level),
+                "Failed to parsed Sea-Bird XML",
+            )
+            return {}
+
+    def _parse_seabird_bottle_header(line):
+        """Parse Seabird Bottle Header"""
+        var_columns = line[22:-1]
+        var_width = 11
+        header["bottle_columns"] = ["Bottle", "Date"] + [
+            var_columns[index : index + var_width].strip()
+            for index in range(0, len(var_columns), var_width)
+        ]
+        # Read  Position Time line
+        line = f.readline()
+        if not re.match(r"\s*Position\s+Time", line):
+            assert ValueError(
+                "Position Time line not found, something is wrong with the file"
+            )
+
+    def _read_next_line():
+        line = f.readline()
+        header["seabird_header"] += line
+        return line
 
     line = "*"
-    header = {}
-    header["variables"] = {}
-    header["instrument_type"] = ""
-    header["history"] = []
+    header = {
+        "instrument_type": "",
+        "variables": {},
+        "processing": [],
+        "calibration": {},
+        "history": [],
+        "comments": [],
+        "seabird_header": "",
+    }
     read_next_line = True
     while "*END*" not in line and line.startswith(("*", "#")):
         if read_next_line:
-            line = f.readline()
+            line = _read_next_line()
         else:
             read_next_line = True
 
         # Ignore empty lines or last header line
-        if (
-            re.match(r"^\*\s*$", line)
-            or "*END*" in line
-            or re.match(r"^\s*Bottle .*", line)
-        ):
+        if line in IGNORED_HEADER_LINES or "*END*" in line:
             continue
-
-        if re.match(r"(\*|\#)\s*\<", line):
+        elif re.match(r"(\*|\#)\s*\<", line):
             # Load XML header
             # Retriveve the whole block of XML header
             xml_section = ""
             first_character = line[0]
             while (
                 re.match(rf"\{first_character}\s*\<", line)
-                or re.match(rf"^\{first_character}\s*$", line)
+                or re.search(r"\>\s*$", line)
                 or line.startswith("** ")
                 or line.startswith("* cast")
-                or re.search(r"\>\s*$", line)
+                or line in IGNORED_HEADER_LINES
             ):
                 if "**" in line:
                     read_comments(line)
+                elif line in IGNORED_HEADER_LINES:
+                    line = _read_next_line()
+                    continue
+                elif line.startswith("* cast"):
+                    read_asterisk_line(line)
                 xml_section += line[1:]
-                line = f.readline()
+                line = _read_next_line()
             read_next_line = False
             # Add section_name
             if first_character == "*":
                 section_name = "data_xml"
             elif first_character == "#":
                 section_name = "instrument_xml"
-            xml_dictionary = xmltodict.parse(f"<temp>{xml_section}</temp>")["temp"]
+            xml_dictionary = parse_xml(xml_section, error_level=xml_parsing_error_level)
             if section_name in header:
                 header[section_name].update(xml_dictionary)
             else:
@@ -291,14 +513,16 @@ def _parse_seabird_file_header(f):
         elif line.startswith("* "):
             read_asterisk_line(line)
         elif line.startswith("# "):
-            read_number_line(line)
+            read_hash_line(line)
+        elif re.match(r"\s*Bottle\s+Date", line):
+            _parse_seabird_bottle_header(line)
+            break
         else:
-            unknown_line(line)
+            logger.warning("Unknown line format: %s", line.strip())
     # Remap variables to seabird variables
-    variables = {
-        attrs["sbe_variable"]: attrs for key, attrs in header["variables"].items()
+    header["variables"] = {
+        attrs["sbe_variable"]: attrs for _, attrs in header["variables"].items()
     }
-    header["variables"] = variables
 
     # Convert time attributes to datetime
     new_attributes = {}
@@ -311,62 +535,30 @@ def _parse_seabird_file_header(f):
             if "comment" in time_attr.groupdict() and time_attr["comment"] != "":
                 new_attributes[key + "_comment"] = time_attr["comment"].strip()
     header.update(new_attributes)
-    #    header = {key: datetime.strptime(value,SBE_TIME_FORMAT)
-    # if sbe_time.match(value) else value for key, value in header.items()}
 
-    # btl header row
-    if "Bottle" in line:
-        var_columns = line[22:-1]
-        var_width = 11
-        header["bottle_columns"] = ["Bottle", "Date"] + [
-            var_columns[index : index + var_width].strip()
-            for index in range(0, len(var_columns), var_width)
-        ]
-        # Read  Position Time line
-        line = f.readline()
     return header
 
 
 def _generate_seabird_cf_history(attrs, drop_processing_attrs=False):
-    """Generate CF standard history from Seabird parsed attributes"""
-    sbe_processing_steps = ("datcnv", "bottlesum")
-    history = []
-    for step in sbe_processing_steps:
-        step_attrs = {
-            key.replace(step + "_", ""): value
-            for key, value in attrs.items()
-            if key.startswith(step)
-        }
-        if not step_attrs:
-            continue
-
-        date_line = step_attrs.pop("date")
-        if isinstance(date_line, datetime):
-            iso_date_str = date_line.isoformat()
-            extra = attrs.pop(step + "_comment") if f"{step}_comment" in attrs else None
-        else:
-            date_str, extra = date_line.split(",", 1)
-            iso_date_str = pd.to_datetime(date_str).isoformat()
-        if extra:
-            extra = re.search(
-                r"^\s(?P<software_version>[\d\.]+)\s*(?P<date_extra>.*)", extra
-            )
-            step_attrs.update(extra.groupdict())
-        history += [f"{iso_date_str} - {step_attrs}"]
-    # Sort history by date
-    attrs["history"] = "\n".join(attrs.get("history", []) + sorted(history))
-
-    # Drop processing attributes
+    """Generate CF standard history from Seabird Processing Modules"""
+    history = attrs.get("history")
+    for step in attrs["processing"]:
+        timestamp = (
+            pd.to_datetime(step["date"], format=SBE_TIME_FORMAT).isoformat()
+            if "date" in step
+            else "0000-00-00T00:00:00"
+        )
+        label = (
+            "SBEDataProcessing"
+            if step["module"] in SBE_DATA_PROCESSING_MODULES
+            else "Processing step"
+        )
+        history.append(f"{timestamp} {label}: {json.dumps(step)}")
     if drop_processing_attrs:
-        drop_keys = [
-            key for key in attrs.keys() if key.startswith(sbe_processing_steps)
-        ]
-        for key in drop_keys:
-            attrs.pop(key)
+        attrs.pop("processing")
     return attrs
 
 
-# TODO Integreate IOOS 1.2 attributes to standard seabird module.
 seabird_to_bodc = {
     "Temperature": ["TEMPP681", "TEMPP901", "TEMPS601", "TEMPS901", "TEMPPR01"],
     "Temperature, 2": ["TEMPP682", "TEMPP902", "TEMPS602", "TEMPS902", "TEMPPR02"],
@@ -416,22 +608,6 @@ seabird_to_bodc = {
     "User Polynomial, 3": [],
 }
 
-sbe_data_processing_modules = [
-    "datcnv",
-    "filter",
-    "align",
-    "celltm",
-    "loopedit",
-    "derive",
-    "Derive",
-    "binavg",
-    "split",
-    "strip",
-    "section",
-    "wild",
-    "window",
-]
-
 
 def _get_seabird_instrument_from_header(seabird_header: str) -> str:
     """Retrieve main instrument model from Sea-Bird CNV header"""
@@ -457,7 +633,7 @@ def _get_seabird_processing_history(seabird_header: str) -> str:
     with the sbe data processing tool
     """
     if "# datcnv" in seabird_header:
-        sbe_hist = r"\# (" + "|".join(sbe_data_processing_modules) + r").*"
+        sbe_hist = r"\# (" + "|".join(SBE_DATA_PROCESSING_MODULES) + r").*"
         return "\n".join(
             [line for line in seabird_header.split("\n") if re.match(sbe_hist, line)]
         )
@@ -519,7 +695,6 @@ def _update_attributes_from_seabird_header(
     if parse_manual_inputs:
         for key, value in manual_inputs:
             ds.attrs[key.replace(r" ", r"_").lower()] = value
-
     return ds
 
 
@@ -543,7 +718,7 @@ def _generate_instruments_variables_from_xml(
         return ds, {}
 
     sensors_comments = re.findall(
-        r"\s*\<!--\s*(Frequency \d+|A/D voltage \d+|.* voltage|Count){1}, (.*)-->\n",
+        r"\s*\<!--\s*(Frequency \d+|A/D voltage \d+|.* voltage|Count|Serial RS-232){1}, (.*)-->\n",
         calibration_xml,
     )
     # Consider only channels with sensor mounted
@@ -564,7 +739,7 @@ def _generate_instruments_variables_from_xml(
     for sensor, sensor_comment in zip(sensors, sensors_comments):
         sensor_key = list(sensor.keys())[1].strip()
         attrs = sensor[sensor_key]
-        channel, description = sensor_comment
+        channel_type, description = sensor_comment
 
         # Define senor variable name
         if "UserPolynomial" in sensor_key and attrs.get("SensorName"):
@@ -601,7 +776,8 @@ def _generate_instruments_variables_from_xml(
             "component": f"{sensor_var_name}_sn{attrs['SerialNumber']}",  # IOOS 1.2
             "discriminant": str(sensor_number),  # IOOS 1.2
             "make_model": sensor_name,  # IOOS 1.2, NCEI 2.0
-            "channel": channel,
+            "channel": sensor["@Channel"],
+            "channel_type": channel_type,
             "sbe_sensor_id": int(attrs.pop("@SensorID")),
             "serial_number": attrs.pop("SerialNumber"),  # NCEI 2.0
             "calibration": json.dumps(attrs),

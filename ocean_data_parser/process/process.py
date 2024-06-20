@@ -6,108 +6,9 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
-from ocean_data_parser.parsers import seabird, utils
+from ocean_data_parser.parsers import utils
 
 logger = logging.getLogger(__name__)
-
-
-def generate_dataset_file_name(ds: xr.Dataset, suffix: str = "") -> str:
-    return (
-        "_".join(
-            [
-                "Hakai",
-                f"{ds.attrs['instrument_manufacturer']}-{ds.attrs['instrument_type']}-{ds.attrs['instrument_sub_type']}",
-                f"SN{ds.attrs['serial_number']}",
-                f"{ds.attrs['region']}-{ds.attrs['site']}",
-                f"{pd.to_datetime(ds['time'].min().values):%y%m%d}-{pd.to_datetime(ds['time'].max().values):%y%m%d}",
-            ]
-        )
-        + suffix
-    )
-
-
-def load_cnv(file: str):
-    """Load seabird cnv and apply conversion
-
-    Args:
-        file (str): _description_
-
-    Returns:
-        _type_: _description_
-    """
-    ds = seabird.cnv(file)
-    ds["time"] = (
-        ds["timeK"].dims,
-        pd.to_datetime(ds["timeK"], origin="2000-01-01", unit="s").to_pydatetime(),
-    )
-    return ds.swap_dims({"index": "time"}).drop("index")
-
-
-def match_metadata(file, log):
-    file = Path(file)
-    ds = load_cnv(file)
-
-    # Append lat/lon/station/file_id variables
-    # Find any matching records in log
-    is_matching_sn = log["Serial Number"] == int(ds.attrs["temperature_sn"])
-    is_within_deploymen_time = (
-        log["Deployment Time"].dt.tz_localize(None) < ds["time"].mean().values
-    ) & (
-        (log["Retrieval Time"].dt.tz_localize(None) > ds["time"].mean().values)
-        | (log["Retrieval Time"].isna())
-    )
-    selected_log_record = log.loc[is_matching_sn & is_within_deploymen_time]
-
-    if len(selected_log_record) != 1:
-        raise RuntimeError("Failed to match an appropriate record")
-    elif selected_log_record.empty:
-        raise RuntimeError("Failed to match record to any deployments")
-    return selected_log_record.iloc[0]
-
-
-def get_L0_file(
-    file: str, selected_log_record: pd.Series = None, ds: xr.Dataset = None
-):
-    # Load raw file
-    file = Path(file)
-    if not ds:
-        ds = load_cnv(file)
-
-    # Try to match metadata if not given
-    if selected_log_record is None:
-        selected_log_record = match_metadata
-
-    # Add Log metadata to record
-    ds["file_id"] = file.name
-    ds["instrument_model"] = ds.attrs["instrument_type"].strip()
-    ds["instrument_serialnumber"] = f"037{ds.attrs['temperature_sn']}"
-    ds["station"] = selected_log_record["Site"]
-    ds["latitude"] = selected_log_record["Target Latitude (dd°mm.mmm'N) "]
-    ds["latitude"].attrs = {
-        "long_name": "Latitude",
-        "standard_name": "latitude",
-        "units": "degrees_north",
-    }
-    ds["longitude"] = selected_log_record["Target Longitude (dd°mm.mmm'W)"]
-    ds["longitude"].attrs = {
-        "long_name": "Longitude",
-        "standard_name": "longitude",
-        "units": "degrees_east",
-    }
-
-    # Standardize units to match previous data
-    ds["sal00"].attrs["units"] = "1e-3"
-    ds["sbeopoxMLPerL"].attrs["units"] = "mL/L"
-    ds["prdM"].attrs["units"] = "dbar"
-
-    # Dump all log as global attributes
-    ds.attrs.update(
-        {
-            key.lower().replace(" ", "_").split("(")[0]: value
-            for key, value in selected_log_record.to_dict().items()
-        }
-    )
-    return ds
 
 
 @xr.register_dataset_accessor("process")
@@ -144,7 +45,7 @@ class Processing:
         # Add directory if doesn't exists
         if not name.parent.exists():
             name.parent.mkdir()
-        if overwrite == False and name.exists():
+        if not overwrite and name.exists():
             logger.warning("File already exists and won't be overwritten")
             return
 

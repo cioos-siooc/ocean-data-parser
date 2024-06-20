@@ -3,9 +3,41 @@ from io import StringIO
 from pathlib import Path
 from typing import Union
 
+import numpy as np
 import pandas as pd
 import xarray
 from loguru import logger
+
+
+def get_path_generation_input(ds: xarray.Dataset, source_path: Path) -> dict:
+    """Get all variables to be used in the path generation."""
+    format_variables = {
+        # All global attribtes
+        **{f"{key}": value for key, value in ds.attrs.items() if value},
+        # All variable attributes
+        **{
+            f"variable_{var}_{key}": value
+            for var in ds.variables
+            for key, value in ds[var].attrs.items()
+        },
+        # Source path and stem
+        "source_file": source_path,
+        "source_path": source_path.parent,
+        "source_stem": source_path.stem,
+        "pd": pd,
+    }
+
+    # Add time_min and time_max as pandas Timestamp
+    if "time" in ds and isinstance(ds["time"].values, np.ndarray):
+        format_variables["time_min"] = ds["time"].to_index().min()
+        format_variables["time_max"] = ds["time"].to_index().max()
+    elif "time" in ds and isinstance(ds["time"].values, np.datetime64):
+        format_variables["time_min"] = pd.to_datetime(ds["time"].values)
+        format_variables["time_max"] = pd.to_datetime(ds["time"].values)
+    elif "time" in ds:
+        raise RuntimeError("Time variable is not compatible with Timestamp formating.")
+
+    return format_variables
 
 
 def generate_output_path(
@@ -27,9 +59,11 @@ def generate_output_path(
             attributes accoding to the convention:
               - source_path: pathlib.Path of original parsed file filename
               - source_stem: original parsed file filename without the extension
-              - global attributes: `{global_asttribute}`
+              - global attributes: `{global_attribute}`
               - variable attributes: `{variable_[variable]_[attribute]}`
-            ex: ".\\{program}\\{project}\\{source_stem}.nc"
+              - time_min: minimum time value (compatible with Timestamp formating)
+              - time_max: maximum time value (compatible with Timestamp formating)
+            ex: ".\\{program}\\{project}\\{source_stem}_{time_min.isoformat()}.nc"
         defaults (dict, optional): Placeholder for any global
             attributes or variable attributes used in output path. Defaults to None.
         file_preffix (str, optional): Preffix to add to file name. Defaults to "".
@@ -54,35 +88,11 @@ def generate_output_path(
         path = str(path)
 
     # Review file_output path given by config
-    path_generation_inputs = {
-        **(defaults or {}),
-        **{f"{key}": value for key, value in ds.attrs.items() if value},
-        **{
-            f"variable_{var}_{key}": value
-            for var in ds.variables
-            for key, value in ds[var].attrs.items()
-        },
-        **(
-            {
-                "source_path": original_source.parent,
-                "source_stem": original_source.stem,
-            }
-            if original_source
-            else {}
-        ),
-        **(
-            {
-                "time_min": pd.to_datetime(ds["time"].min().values),
-                "time_max": pd.to_datetime(ds["time"].max().values),
-            }
-            if "time" in ds
-            else {}
-        ),
-    }
+    path_generation_inputs = get_path_generation_input(ds, original_source)
 
     # Generate path and file name
-    output_path = Path(path.format(**path_generation_inputs))
-    file_name = file_name.format(**path_generation_inputs)
+    output_path = Path(path.format(**(defaults or {}), **path_generation_inputs))
+    file_name = file_name.format(**(defaults or {}), **path_generation_inputs)
 
     # Retrieve output_format if given in source
 

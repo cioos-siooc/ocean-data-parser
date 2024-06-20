@@ -1,11 +1,11 @@
-import unittest
 from pathlib import Path
 from time import sleep
 
 import pandas as pd
-from utils import compare_text_files
 
 from ocean_data_parser.batch.convert import FileConversionRegistry
+
+from .utils import compare_text_files
 
 PACKAGE_PATH = Path(__file__).parent
 TEST_REGISTRY_PATH = Path("tests/test_file_registry.csv")
@@ -19,8 +19,11 @@ for output_path in TEST_REGISTRY.data["output_path"].dropna():
     with open(output_path, "w") as file:
         file.write("test file from registry")
 
+MTIME_PLACEHOLDER = 0.0
+HASH_PLACEHOLDER = "0"
 
-class FileRegistryTests(unittest.TestCase):
+
+class TestFileRegistry:
     def _get_test_registry(self, update=True):
         registry = FileConversionRegistry(path=TEST_REGISTRY_PATH)
         if update:
@@ -95,19 +98,19 @@ class FileRegistryTests(unittest.TestCase):
 
     def test_registry_copy(self):
         deep_copied_file_registry = self._get_test_registry()
-        deep_copied_file_registry.data["hash"] = 0
+        deep_copied_file_registry.data["hash"] = HASH_PLACEHOLDER
         assert (
             deep_copied_file_registry != self._get_test_registry()
         ), "Deed copied registry after modification changed the original"
 
         copied_file_registry = deep_copied_file_registry.copy()
-        copied_file_registry.data["hash"] = 2
+        copied_file_registry.data["hash"] = "2"
         assert (
             deep_copied_file_registry != copied_file_registry
         ), "Copied registry after modification changed the original"
 
         not_copied_registry = deep_copied_file_registry
-        not_copied_registry.data["hash"] = 2
+        not_copied_registry.data["hash"] = "2"
         assert (
             deep_copied_file_registry == not_copied_registry
         ), "Registry after modification didn't changed the original"
@@ -115,54 +118,58 @@ class FileRegistryTests(unittest.TestCase):
     def test_load(self):
         file_registry = self._get_test_registry()
         # Replace registry parameters
-        file_registry.data["mtime"] = 0
-        file_registry.data["hash"] = 0
+        file_registry.data["mtime"] = MTIME_PLACEHOLDER
+        file_registry.data["hash"] = HASH_PLACEHOLDER
         file_registry.load()
-        assert (file_registry.data["mtime"] == 0).all(), "mtime was updated with load()"
-        assert (file_registry.data["hash"] == 0).all(), "hash was updated with load()"
+        assert (
+            file_registry.data["mtime"] == MTIME_PLACEHOLDER
+        ).all(), "mtime was updated with load()"
+        assert (
+            file_registry.data["hash"] == HASH_PLACEHOLDER
+        ).all(), "hash was updated with load()"
         file_registry.load(overwrite=True)
         assert (
-            file_registry.data["mtime"] != 0
+            file_registry.data["mtime"] != MTIME_PLACEHOLDER
         ).all(), "mtime wasn't updated with load(overwrite=Trues)"
         assert (
-            file_registry.data["hash"] != 0
+            file_registry.data["hash"] != HASH_PLACEHOLDER
         ).all(), "hash wasn't updated with load()"
 
     def test_update(self):
         file_registry = self._get_test_registry(update=False)
 
         # Replace registry parameters
-        file_registry.data["mtime"] = 0
-        file_registry.data["hash"] = 0
+        file_registry.data["mtime"] = MTIME_PLACEHOLDER
+        file_registry.data["hash"] = HASH_PLACEHOLDER
         assert (
             file_registry != self._get_test_registry()
         ), "local test registry wasn't modify"
 
         file_registry.update()
         assert (
-            file_registry.data["mtime"] != 0
+            file_registry.data["mtime"] != MTIME_PLACEHOLDER
         ).all(), "mtime wasn't updated wiht update()"
         assert (
-            file_registry.data["hash"] != 0
+            file_registry.data["hash"] != MTIME_PLACEHOLDER
         ).all(), "hash wasn't updated wiht update()"
 
     def test_update_specific_source(self):
         file_registry = self._get_test_registry()
         # Replace registry parameters
-        file_registry.data["mtime"] = 0
-        file_registry.data["hash"] = 0
+        file_registry.data["mtime"] = MTIME_PLACEHOLDER
+        file_registry.data["hash"] = HASH_PLACEHOLDER
         file_registry.update([file_registry.data.index[0]])
         assert (
-            file_registry.data.iloc[0]["mtime"] != 0
+            file_registry.data.iloc[0]["mtime"] != MTIME_PLACEHOLDER
         ), "mtime wasn't updated wiht update(source)"
         assert (
-            file_registry.data.iloc[1:]["mtime"] == 0
+            file_registry.data.iloc[1:]["mtime"] == MTIME_PLACEHOLDER
         ).all(), "mtime source!=source shouldn't be updated with update(source)"
         assert (
-            file_registry.data.iloc[0]["hash"] != 0
+            file_registry.data.iloc[0]["hash"] != HASH_PLACEHOLDER
         ), "hash wasn't updated wiht update(source)"
         assert (
-            file_registry.data.iloc[1:]["hash"] == 0
+            file_registry.data.iloc[1:]["hash"] == HASH_PLACEHOLDER
         ).all(), "hash source!=source shouldn't be updated with update(source)"
 
     def test_update_field_for_all_sources_with_missing_field(self):
@@ -285,10 +292,10 @@ class FileRegistryTests(unittest.TestCase):
         assert not changed_files.any()
         assert file_registry.get_modified_source_files() == []
 
-    def test_get_sources_with_modified_hash(self):
+    def test_get_sources_with_modified_hash(self, tmp_path):
         file_registry = self._get_test_registry()
         TEST_SAVE_PATH = self.make_test_file(
-            Path("temp/test_get_sources_with_modified_hash.csv")
+            tmp_path / "test_get_sources_with_modified_hash.csv"
         )
         file_registry.add([TEST_SAVE_PATH])
         self.make_test_file(TEST_SAVE_PATH, " this is more content", mode="a")
@@ -300,7 +307,7 @@ class FileRegistryTests(unittest.TestCase):
     def update_test_file(
         self,
         file_registry,
-        test_file_path: Path = Path("temp/test_file.csv"),
+        test_file_path: Path = Path("temp") / "test_file.csv",
         dt: int = 4,
     ):
         test_file = self.make_test_file(test_file_path)

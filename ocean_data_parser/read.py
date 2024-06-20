@@ -1,12 +1,15 @@
 """
 This module contains all the different tools needed to parse a file.
 """
+
 import logging
 import re
+import sys
 from importlib import import_module
 from pathlib import Path
+from typing import Union
 
-from xarray import Dataset
+import xarray as xr
 
 logger = logging.getLogger(__name__)
 
@@ -26,12 +29,22 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
     """
     # Retrieve file extension and the first few lines of the file header
     file = Path(file)
+    if file.is_dir():
+        raise ValueError(f"Directory provided instead of a file: {file}")
     ext = file.suffix[1:]
+
     with open(file, encoding=encoding, errors="ignore") as file_handle:
-        header = "".join((next(file_handle) for _ in range(5)))
+        header = ""
+        for _ in range(5):
+            try:
+                header += next(file_handle)
+            except StopIteration:
+                break
 
     # Detect the right file format
-    if ext == "btl" and "* Sea-Bird" in header:
+    if ext == "nc":
+        parser = "netcdf"
+    elif ext == "btl" and "* Sea-Bird" in header:
         parser = "seabird.btl"
     elif ext == "cnv" and "* Sea-Bird" in header:
         parser = "seabird.cnv"
@@ -40,6 +53,8 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
     elif ext == "csv" and (
         "Plot Title" in header
         or (re.search(r"Serial Number:\s*\d+\s*", header) and "Host Connect" in header)
+        or (re.search(r"\"LGR S\/N:\s*[\d\-]+", header) and "Date Time, GMT" in header)
+        or ('#,"Date Time, GMT' in header and "(LGR S/N: " in header)
     ):
         parser = "onset.csv"
     elif (
@@ -55,6 +70,8 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
         parser = "amundsen.int_format"
     elif "*IOS HEADER VERSION" in header:
         parser = "dfo.ios.shell"
+    elif ext == "pcnv":
+        parser = "dfo.nafc.pcnv"
     elif ext[0] == "p" and "NAFC_Y2K_HEADER" in header:
         parser = "dfo.nafc.pfile"
     elif ext == "ODF" and re.search(r"COUNTRY_INSTITUTE_CODE\s*=\s*1810", header):
@@ -90,20 +107,30 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
     elif all(re.search(r"\$.*,.*,", line) for line in header.split("\n") if line):
         parser = "nmea.file"
     else:
-        raise ImportError("Unable to match file to a specific data parser")
+        raise ImportError(f"Unable to match file to a specific data parser: {file}")
 
-    logger.info("Selected parser: %s", parser)
+    logger.debug("Selected parser: %s", parser)
     return parser
 
 
 def import_parser(parser: str):
+    if parser == "netcdf":
+        return xr.open_dataset
+
     read_module, filetype = parser.rsplit(".", 1)
-    logger.info("Import module: ocean_data_parser.parsers.%s", read_module)
-    mod = import_module(f"ocean_data_parser.parsers.{read_module}")
+    imported_modules = sys.modules
+    module_full_name = f"ocean_data_parser.parsers.{read_module}"
+
+    if module_full_name not in imported_modules:
+        logger.info("Import module: %s", module_full_name)
+        mod = import_module(module_full_name)
+    else:
+        logger.debug("Module already imported: %s", module_full_name)
+        mod = imported_modules[module_full_name]
     return getattr(mod, filetype)
 
 
-def file(path: str, parser: str = None, **kwargs) -> Dataset:
+def file(path: str, parser: str = None, **kwargs: Union[str, int, float]) -> xr.Dataset:
     """Load compatible file format as an xarray dataset.
 
     ```python

@@ -2,7 +2,7 @@
 This test compare the *_reference.nc files made available within the repository
 tests folder to the present associated parser.
 
-Any differences observed between the generated xarray 
+Any differences observed between the generated xarray
 object and the reference netcdf will raise an issue.
 """
 
@@ -98,6 +98,16 @@ def compare_test_to_reference_netcdf(
         test.attrs[attr] = re.sub(expression, placeholder, test.attrs[attr])
 
     # Drop some expected differences
+    if ".odf" in reference.attrs.get("source", "").lower():
+        # ignore nafc attributes
+        for attr in [
+            "dfo_newfoundland_ship_code",
+            "dfo_nafc_platform_code",
+            "dfo_nafc_platform_name",
+        ]:
+            reference.attrs.pop(attr, None)
+            test.attrs.pop(attr, None)
+
     # Add placeholders to specific fields in attributes
     ignore_from_attr(
         "history",

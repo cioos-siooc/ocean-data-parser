@@ -1,8 +1,9 @@
 """
-# Star-Oddi
-<https://www.star-oddi.com/>
-
+[Star-Oddi](https://www.star-oddi.com/) is a company that specializes in manufacturing and providing data
+loggers and sensors for oceanographic research. Their DAT files contain recorded
+data from various oceanographic parameters such as temperature, salinity, conductivity, and sound velocity.
 """
+
 import logging
 import re
 
@@ -11,9 +12,9 @@ import xarray
 
 logger = logging.getLogger(__name__)
 
-default_global_attributes = {"instrument_manufacturer": "Star-Oddi", "source": None}
+DEFAULT_GLOBAL_ATTRIBUTES = {"instrument_manufacturer": "Star-Oddi", "source": None}
 
-variables_attributes = {
+VARIABLES_ATTRIBUTES = {
     "temperature": {
         "long_name": "Temperature",
         "standard_name": "sea_water_temperature",
@@ -33,15 +34,21 @@ variables_attributes = {
 }
 
 
-def DAT(
-    path: str, encoding: str = "cp1252", kwargs_read_csv: dict = None
-) -> xarray.Dataset:
+def DAT(path: str, encoding: str = "cp1252") -> xarray.Dataset:
+    """Parse Star-Oddi DAT files
+
+    Args:
+        path (str): DAT file path
+        encoding (str, optional): Encoding used. Defaults to "cp1252".
+
+    Returns:
+        xarray.Dataset: Dataset
+    """
+
     def _standardize_attributes(item):
         item = re.sub(r"[\.\:]", "", item.strip().lower())
         return re.sub(r"\s", "_", item)
 
-    if kwargs_read_csv is None:
-        kwargs_read_csv = {}
     metadata = {}
     variables = {}
     original_header = ""
@@ -69,8 +76,14 @@ def DAT(
             else:
                 metadata[_standardize_attributes(attr)] = value.strip()
 
-        # Split metadata
-        if metadata["date_&_time"] == "1":
+        # Check if date & time format is supported
+        if (
+            metadata["date_&_time"] != "1"
+            or metadata["date_def"] != "dd.mm.yyyy	."
+            or metadata["time_def"] != ":"
+        ):
+            raise ValueError("Date & Time format is not supported")
+        else:
             variables = {**{"time": {}}, **variables}
 
         # TODO parse recorder info
@@ -86,6 +99,7 @@ def DAT(
             decimal=metadata.pop("decimal_point"),
             names=variables.keys(),
             parse_dates=["time"],
+            date_format="%d.%m.%Y\t%H:%M:%S",
         )
         if "time" in df:
             df = df.set_index(["time"])
@@ -102,7 +116,7 @@ def DAT(
         # Convert to xarray object and add related metadata
         ds = df.to_xarray()
         ds.attrs = {
-            **default_global_attributes,
+            **DEFAULT_GLOBAL_ATTRIBUTES,
             "source": path,
             **dict(
                 zip(
@@ -124,5 +138,7 @@ def DAT(
         }
         # Add variable attributes
         for var in ds:
-            ds[var].attrs = {**variables[var], **variables_attributes.get(var, {})}
+            if var not in VARIABLES_ATTRIBUTES:
+                logger.warning("Unknown variable %s", var)
+            ds[var].attrs = {**variables[var], **VARIABLES_ATTRIBUTES.get(var, {})}
         return ds

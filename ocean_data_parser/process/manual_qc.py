@@ -1,12 +1,11 @@
 """
 QC Module present a set of tools to manually qc data.
 """
+
 import logging
 from typing import Union
 
 from ocean_data_parser.parsers import utils
-
-from .process import xr
 
 logger = logging.getLogger(__name__)
 
@@ -187,6 +186,8 @@ flag_conventions = {
 def get_manual_flag_attributes(convention, var=None):
     if isinstance(convention, str) and convention in flag_conventions:
         convention = flag_conventions[convention]
+    else:
+        raise TypeError(f"Unknown flag convention={convention}")
 
     return {
         "flag_meaning": " ".join([attrs["Meaning"] for attrs in convention.values()]),
@@ -366,7 +367,7 @@ def manual_qc_interface(
         within the respective widgets and flags in seperate colors"""
         plots = []
         for flag_name, flag_value in convention.items():
-            if type(flag_value) is dict and "Color" in flag_value:
+            if isinstance(flag_value, dict) and "Color" in flag_value:
                 flag_color = flag_value["Color"]
                 flag_meaning = flag_value["Meaning"]
             else:

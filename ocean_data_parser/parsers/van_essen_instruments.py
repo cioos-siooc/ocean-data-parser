@@ -1,8 +1,7 @@
 """
-# Van Essen Instruments
-<https://www.vanessen.com/>
-
+[Van Essen Instruments](https://www.vanessen.com/) manufactures a variety of water-related instrumentation.
 """
+
 import json
 import logging
 import re
@@ -14,16 +13,16 @@ from ocean_data_parser.parsers.utils import standardize_dataset
 
 logger = logging.getLogger(__name__)
 
-global_attributes = {"Convention": "CF-1.6"}
+GLOBAL_ATTRIBUTES = {"Convention": "CF-1.6"}
 
-van_essen_variable_mapping = {
+VARIABLE_NAME_MAPPING = {
     "PRESSURE": "pressure",
     "TEMPERATURE": "temperature",
     "CONDUCTIVITY": "conductivity",
     "SPEC.COND.": "specific_conductance",
 }
 
-van_essen_vocabulary = {
+VARIABLES_VOCABULARY = {
     "PRESSURE": {"standard_name": "sea_water_pressure"},
     "TEMPERATURE": {"standard_name": "sea_water_temperature"},
     "CONDUCTIVITY": {
@@ -36,6 +35,8 @@ def mon(
     file_path: str,
     standardize_variable_names: bool = True,
     convert_pressure_to_dbar: bool = True,
+    errors: str = "strict",
+    encoding: str = "utf-8",
 ) -> xarray.Dataset:
     """Parse Van Essen Instruments mon format to NetCDF.
 
@@ -44,13 +45,13 @@ def mon(
         standardize_variable_names (bool, optional): Rename variables. Defaults to True.
         convert_pressure_to_dbar (bool, optional): Convert pressure data in
             cmH2O/mH2O to dbar. Defaults to True.
+        encoding (str, optional): File encoding. Defaults to "utf-8".
+        errors (str, optional): Error handling. Defaults to "strict".
 
     Returns:
         xarray.Dataset: Parsed dataset
     """
-    with open(
-        file_path,
-    ) as fid:
+    with open(file_path, encoding=encoding, errors=errors) as fid:
         line = ""
         section = "header_info"
         info = {section: {}}
@@ -100,6 +101,8 @@ def mon(
             skipfooter=1,
             engine="python",
             comment="END OF DATA FILE OF DATALOGGER FOR WINDOWS",
+            encoding=encoding,
+            encoding_errors=errors,
         )
 
     # handle time variable
@@ -107,15 +110,20 @@ def mon(
 
     # If there's less data then expected send a warning
     if len(df) < info["n_records"]:
-        assert RuntimeWarning(
-            f'Missing data, expected {info["n_records"]} and found only {len(df)}'
-        )
+        msg = f'Missing data, expected {info["n_records"]} and found only {len(df)}'
+        if errors == "raise":
+            assert RuntimeWarning(
+                msg,
+            )
+        else:
+            logger.warning(msg)
+
     # Convert to xarray
     ds = df.to_xarray()
 
     # Generate global_attributes
     ds.attrs = {
-        **global_attributes,
+        **GLOBAL_ATTRIBUTES,
         "instrument_manufacturer": "Van Essen Instruments",
         "instrument_type": info["Logger settings"]["Instrument type"],
         "instrument_sn": info["Logger settings"]["Serial number"],
@@ -168,12 +176,12 @@ def mon(
         )
 
     # Add vocabulary
-    for var, attrs in van_essen_vocabulary.items():
+    for var, attrs in VARIABLES_VOCABULARY.items():
         ds[var].attrs.update(attrs)
 
     # Standardize variables names
     if standardize_variable_names:
-        ds = ds.rename(van_essen_variable_mapping)
+        ds = ds.rename(VARIABLE_NAME_MAPPING)
 
     return standardize_dataset(ds)
 

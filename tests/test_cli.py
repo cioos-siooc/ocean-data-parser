@@ -3,9 +3,8 @@ import os
 import pytest
 from click.testing import CliRunner
 
-from ocean_data_parser import __version__, cli
+from ocean_data_parser import cli
 from ocean_data_parser.batch import convert
-from ocean_data_parser.inspect import inspect_variables
 
 
 def run_command(func, args, env=None, isolated_directory=None):
@@ -27,6 +26,16 @@ def run_command(func, args, env=None, isolated_directory=None):
 )
 def test_odpy_main_arguments(args, expected_output):
     results = run_command(cli.main, args)
+    assert expected_output in results.output
+
+
+@pytest.mark.parametrize(
+    "args,expected_output",
+    (("--unknown", "Error: No such option"), ("-1", "Error: No such option")),
+)
+def test_odpy_main_bad_arguments(args, expected_output):
+    results = run_command(cli.main, args)
+    assert results.exit_code == 2
     assert expected_output in results.output
 
 
@@ -53,7 +62,7 @@ def test_odpy_main_args_from_env_variables(env, expected_output):
     ),
 )
 def test_odpy_convert_arguments(args, expected_output):
-    results = run_command(convert.convert, args)
+    results = run_command(convert.cli, args)
     assert expected_output in results.output
 
 
@@ -68,7 +77,7 @@ def test_odpy_convert_arguments(args, expected_output):
     ),
 )
 def test_odpy_convert_args_from_env_variables(env, expected_output):
-    results = run_command(convert.convert, "--show-arguments=stop", env)
+    results = run_command(convert.cli, "--show-arguments=stop", env)
     assert expected_output in results.output
 
 
@@ -93,19 +102,49 @@ def test_odpy_convert_args_from_env_variables(env, expected_output):
     ),
 )
 def test_odpy_convert_args_and_env_variables(args, env, expected_output):
-    results = run_command(convert.convert, args, env)
+    results = run_command(convert.cli, args, env)
     assert expected_output in results.output
 
 
-@pytest.mark.parametrize(
-    "args,expected_output",
-    (
-        ("--version", "version"),
-        ("--help", "Usage:"),
-        ("--show-arguments=stop", "odpy convert parameter inputs:"),
-        (["--show-arguments=stop", "--input=test.nc"], "input=test.nc"),
-    ),
-)
-def test_odpy_convert_arguments(args, expected_output):
-    results = run_command(inspect_variables, args)
-    assert expected_output in results.output
+def test_odpy_convert_registry(tmp_path):
+    args = (
+        "--input-path",
+        "../tests/parsers_test_files/dfo/ios/shell/DRF/*.drf",
+        "--parser",
+        "dfo.ios.shell",
+        "--output-path",
+        str(tmp_path),
+        "--registry-path",
+        str(tmp_path / "conversion-registry.csv"),
+    )
+    env = {"ODPY_LOG_LEVEL": "INFO"}
+    results = run_command(convert.cli, args, env)
+    assert results.exit_code == 0
+    assert "ERROR" not in results.output, results.output
+    second_results = run_command(convert.cli, args)
+    assert second_results.exit_code == 0
+    assert (
+        "Run conversion" not in second_results.output
+    ), "Registry failed to prevent to reprocess twice the same files"
+
+def test_odpy_convert_parser_kwargs(tmp_path):
+    """Test parsers_kwargs by changing default value of match_metqa_table to True"""
+    args = (
+        "--log-level",
+        "DEBUG",
+        "convert",
+        "--input-path",
+        "../tests/parsers_test_files/dfo/nafc/pcnv/ctd/cab041_2023_011.pcnv",
+        "--parser",
+        "dfo.nafc.pcnv",
+        "--output-path",
+        str(tmp_path),
+        "--multiprocessing",
+        "1",
+        "--parser-kwargs",
+        '{"match_metqa_table": true}',
+    )
+    results = run_command(cli.main, args)
+    assert results.exit_code == 0, results.output
+    assert "ERROR" not in results.output, results.output
+    assert "Load weather data from metqa file" in results.output, "Parser kwargs not passed to parser"

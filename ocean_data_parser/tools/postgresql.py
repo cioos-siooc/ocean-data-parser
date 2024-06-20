@@ -10,12 +10,14 @@ def update_database_table(
 ):
     """
     Method use to update database table, it first upload to
-    a temporary table, which then update the original table with any new sample that aren't available already.
+    a temporary table, which then update the original table with any new
+    sample that aren't available already.
     """
 
     def psql_insert_copy(table, conn, keys, data_iter):
         """
-        Execute SQL statement inserting data into a postgresql db with using COPY from CSV to a temporary table and then update on conflict or nothing
+        Execute SQL statement inserting data into a postgresql db with using
+        COPY from CSV to a temporary table and then update on conflict or nothing
 
         Parameters
         ----------
@@ -38,7 +40,11 @@ def update_database_table(
             if distinct_columns:
                 on_conflict = f"ON CONFLICT ({','.join(distinct_columns)}) DO "
                 if if_row_exist == "UPDATE":
-                    on_conflict += f"UPDATE  SET ({','.join(available_columns)}) = ({','.join([f'EXCLUDED.{item}' for item in available_columns])})"
+                    on_conflict += (
+                        f"UPDATE  SET ({','.join(available_columns)}) = ("
+                        + ",".join([f"EXCLUDED.{item}" for item in available_columns])
+                        + ")"
+                    )
 
                 else:
                     on_conflict += "NOTHING"

@@ -4,6 +4,7 @@ import sys
 from glob import glob
 from multiprocessing import Pool
 from pathlib import Path
+import json
 
 import click
 import pandas as pd
@@ -11,8 +12,7 @@ from loguru import logger
 from tqdm import tqdm
 from xarray import Dataset
 
-from ocean_data_parser import PARSERS, geo, process, read
-from ocean_data_parser._version import __version__
+from ocean_data_parser import PARSERS, __version__, geo, read
 from ocean_data_parser.batch.config import load_config
 from ocean_data_parser.batch.registry import FileConversionRegistry
 from ocean_data_parser.batch.utils import VariableLevelLogger, generate_output_path
@@ -69,8 +69,20 @@ def get_parser_list(ctx, _, value):
     click.echo(get_parser_list_string())
     ctx.exit()
 
+def validate_parser_kwargs(ctx, _, value):
+    """Test if given parser_kwargs is a valid JSON string and return the parsed JSON object"""
+    if not value:
+        return value
+    try:
+        return json.loads(value)
+    except json.JSONDecodeError:
+        raise click.BadParameter(
+            click.style(
+                "parser-kwargs should be a valid JSON string", fg="bright_red"
+            )
+        )
 
-@click.command(context_settings={"auto_envvar_prefix": "ODPY_CONVERT"})
+@click.command(name="convert", context_settings={"auto_envvar_prefix": "ODPY_CONVERT"})
 @click.option(
     "-i",
     "--input-path",
@@ -84,6 +96,7 @@ def get_parser_list(ctx, _, value):
 )
 @click.option(
     "--parser",
+    "-p",
     type=str,
     help=(
         "Parser used to parse the data. Default to auto detectection."
@@ -92,8 +105,20 @@ def get_parser_list(ctx, _, value):
     callback=validate_parser,
 )
 @click.option(
+    "--parser-kwargs",
+    type=str,
+    help=(
+        "Parser key word arguments to pass to the parser. Expect a JSON string."
+        " (ex: '{\"globa_attributes\": {\"project\": \"test\"}')"
+    ),
+    default=None,
+    callback=validate_parser_kwargs,
+)
+@click.option(
     "--overwrite",
     type=bool,
+    is_flag=True,
+    default=False,
     help="Overwrite already converted files when source file is changed.",
 )
 @click.option(
@@ -120,6 +145,7 @@ def get_parser_list(ctx, _, value):
 )
 @click.option(
     "--output-path",
+    "-o",
     type=click.Path(),
     help="Output directory where to save converted files.",
 )
@@ -157,29 +183,28 @@ def get_parser_list(ctx, _, value):
     help="Print present argument values. If  stop argument is given, do not run the conversion.",
 )
 @click.version_option(version=__version__, package_name="ocean-data-parser.convert")
-def convert(**kwargs):
-    """Run ocean-data-parser conversion on given files."""
+def cli(**kwargs):
+    """Ocean Data Parser Batch Conversion CLI Interface."""
     # Drop empty kwargs
     if kwargs.get("show_arguments"):
         click.echo("odpy convert parameter inputs:")
         click.echo("\n".join([f"{key}={value}" for key, value in kwargs.items()]))
         if kwargs["show_arguments"] == "stop":
             return
-    kwargs.pop("show_arguments", None)
+    kwargs.pop("show_arguments")
+    kwargs.pop("new_config")
+    convert(**kwargs)
 
-    kwargs = {
-        key: None if value == "None" else value
-        for key, value in kwargs.items()
-        if value
-    }
 
+def convert(**kwargs):
+    """Run ocean-data-parser conversion on given files."""
     BatchConversion(**kwargs).run()
 
 
 class BatchConversion:
     def __init__(self, config=None, **kwargs):
         self.config = self._get_config(config, **kwargs)
-        self.registry = FileConversionRegistry(**self.config["registry"])
+        self.registry = FileConversionRegistry(**self.config.get("registry", {}))
 
     @staticmethod
     def _get_config(config: dict = None, **kwargs) -> dict:
@@ -191,6 +216,10 @@ class BatchConversion:
         Returns:
             dict: combined configuration
         """
+        if config:
+            logger.info("Load configuration file and ignore other inputs")
+            return load_config(config) if isinstance(config, str) else config or {}
+
         logger.info("Load configuration={}, kwargs={}", config, kwargs)
         output_kwarg = {
             key[7:]: kwargs.pop(key)
@@ -204,11 +233,11 @@ class BatchConversion:
         }
         config = {
             **load_config(DEFAULT_CONFIG_PATH),
-            **(load_config(config) if isinstance(config, str) else config or {}),
             **kwargs,
         }
         config["output"].update(output_kwarg)
         config["registry"].update(registry_kwarg)
+
         return config
 
     def get_excluded_files(self) -> list:
@@ -221,7 +250,7 @@ class BatchConversion:
     def get_source_files(self) -> list:
         excluded_files = self.get_excluded_files()
         return [
-            file
+            Path(file)
             for file in glob(self.config["input_path"], recursive=True)
             if file not in excluded_files
         ]
@@ -235,7 +264,7 @@ class BatchConversion:
     def _convert(self, files: list) -> list:
         # Load parser and generate inputs to conversion scripts
         parser = self._get_parser()
-        inputs = ((file, parser, self.config) for file in files)
+        inputs = ((str(file), parser, self.config) for file in files)
         tqdm_parameters = dict(unit="file", total=len(files))
 
         # single pool processing
@@ -260,7 +289,11 @@ class BatchConversion:
 
     def run(self):
         """Run Batch conversion"""
-        logger.info("Run ocean-data-parser[{}] batch conversion", __version__)
+        logger.info(
+            "Run ocean-data-parser[{}] convert {}",
+            __version__,
+            self.config.get("name", ""),
+        )
         files = self.get_source_files()
         if not files:
             error_message = f"ERROR No files detected with {self.config['input_path']}"
@@ -268,7 +301,9 @@ class BatchConversion:
             sys.exit(error_message)
 
         self.registry.add(files)
-        files = self.registry.get_modified_source_files()
+        files = self.registry.get_modified_source_files(
+            overwrite=self.config["overwrite"]
+        )
         if not files:
             logger.info("No file to parse. Conversion completed")
             return self.registry
@@ -284,9 +319,10 @@ class BatchConversion:
             .set_index("sources")
             .replace({"": None})
         )
+        conversion_log.index = conversion_log.index.map(Path)
         self.registry.update_fields(files, dataframe=conversion_log)
         self.registry.save()
-        self.registry.summarize()
+        self.registry.summarize(sources=files, output=self.config.get("summary"))
         logger.info("Conversion completed")
         return self.registry
 
@@ -355,7 +391,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
 
     # Parse file to xarray
     logger.debug("Parse file: {}", file)
-    ds = read.file(file, parser=parser)
+    ds = read.file(file, parser=parser, **config.get("parser_kwargs", {}))
     if not isinstance(ds, Dataset):
         raise RuntimeError(
             f"{parser.__module__}{parser.__name__}:{file} "
@@ -370,7 +406,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
             "source": file,
         }
     )
-    for var, attrs in config.get("variable_attributes").items():
+    for var, attrs in config.get("variable_attributes", {}).items():
         if var in ds:
             ds[var].attrs.update(attrs)
 
@@ -383,7 +419,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
             (ds["longitude"], ds["latitude"]), config["geographical_areas"]["regions"]
         )
     if (
-        config.get("reference_stations").get("path")
+        config.get("reference_stations", {}).get("path")
         and "latitude" in ds
         and "longitude" in ds
     ):
@@ -395,7 +431,7 @@ def convert_file(file: str, parser: str, config: dict) -> str:
         )
 
     # Processing
-    for pipe in config["xarray_pipe"]:
+    for pipe in config.get("xarray_pipe", []):
         ds = ds.pipe(*pipe)
         # TODO add to history
 
@@ -416,8 +452,8 @@ def convert_file(file: str, parser: str, config: dict) -> str:
     # Save to
     output_path = generate_output_path(ds, **config["output"])
     if not output_path.parent.exists():
-        logger.info("Create new directory: {}", output_path.parent)
-        output_path.parent.mkdir(parents=True)
+        logger.debug("Create new directory: {}", output_path.parent)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
     logger.trace("Save to: {}", output_path)
     ds.to_netcdf(output_path)
 
@@ -425,4 +461,4 @@ def convert_file(file: str, parser: str, config: dict) -> str:
 
 
 if __name__ == "__main__":
-    convert(auto_envvar_prefix="ODPY_CONVERT")
+    cli(auto_envvar_prefix="ODPY_CONVERT")

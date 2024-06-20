@@ -1,15 +1,16 @@
 """
-    Python class to read IOS data files and store data for conversion to netcdf format
-    Changelog Version
-        0.1: July 15 2019:
-            Convert python scripts and functions into a python class
-        0.2: August 2023:
-            Migrate the code to the ocean-data-parser package and reduce code base
-    Authors:
-        Pramod Thupaki (pramod.thupaki@hakai.org)
-        Jessy Barrette
+Python class to read IOS data files and store data for conversion to netcdf format
+Changelog Version
+    0.1: July 15 2019:
+        Convert python scripts and functions into a python class
+    0.2: August 2023:
+        Migrate the code to the ocean-data-parser package and reduce code base
+Authors:
+    Pramod Thupaki (pramod.thupaki@hakai.org)
+    Jessy Barrette
 
 """
+
 import json
 import logging
 import re
@@ -60,7 +61,10 @@ global_attributes = {
     "institution": "DFO IOS",
     "ices_edmo_code": 4155,
     "sdn_institution_urn": "SDN:EDMO::4155",
-    "infoUrl": "https://science.gc.ca/site/science/en/educational-resources/marine-and-freshwater-sciences/institute-ocean-sciences",
+    "infoUrl": (
+        "https://science.gc.ca/site/science/en/educational-resources"
+        "/marine-and-freshwater-sciences/institute-ocean-sciences"
+    ),
     "country": "Canada",
     "ioc_country_code": 18,
     "naming_authority": "ca.gc.ios",
@@ -97,7 +101,9 @@ def get_dtype_from_ios_name(ios_name):
         return float
 
 
-ODF_SHELL_HEADER_SECTIONS = (
+IOS_SHELL_HEADER_SECTIONS = {
+    "FILE",
+    "LOCATION",
     "COMMENTS",
     "REMARK",
     "ADMINISTRATION",
@@ -105,7 +111,8 @@ ODF_SHELL_HEADER_SECTIONS = (
     "HISTORY",
     "DEPLOYMENT",
     "RECOVERY",
-)
+    "CALIBRATION",
+}
 
 
 class IosFile(object):
@@ -138,6 +145,7 @@ class IosFile(object):
         self.data = None
         self.deployment = None
         self.recovery = None
+        self.calibration = None
         self.obs_time = None
         self.vocabulary_attributes = None
         self.history = None
@@ -157,7 +165,7 @@ class IosFile(object):
         self.status = 1
 
     def import_data(self):
-        sections_available = self.get_list_of_sections()
+        sections_available = set(self.get_list_of_sections())
         self.start_dateobj, self.start_date = self.get_date(opt="start")
         self.end_dateobj, self.end_date = (
             self.get_date(opt="end") if "END TIME" in self.file else (None, None)
@@ -175,12 +183,10 @@ class IosFile(object):
             self.deployment = self.get_section("DEPLOYMENT")
         if "RECOVERY" in sections_available:
             self.recovery = self.get_section("RECOVERY")
+        if "CALIBRATION" in sections_available:
+            self.calibration = self.get_section("CALIBRATION")
 
-        unparsed_sections = [
-            section
-            for section in sections_available
-            if section not in ODF_SHELL_HEADER_SECTIONS
-        ]
+        unparsed_sections = sections_available - IOS_SHELL_HEADER_SECTIONS
         if unparsed_sections:
             logger.warning(
                 "Unknown sections: %s",
@@ -881,7 +887,7 @@ class IosFile(object):
                 history += [f"rename variable '{chan}' -> 'Time'"]
                 rename_channels[id] = "Time"
             else:
-                logger.warning(f"Unkown date time channel %s", chan)
+                logger.warning("Unkown date time channel %s", chan)
 
         self.channels["Name"] = rename_channels
 
@@ -930,6 +936,7 @@ class IosFile(object):
             **_format_attributes("location"),
             **_format_attributes("deployment", "deployment_"),
             **_format_attributes("recovery", "recovery_"),
+            "calibration": json.dumps(self.calibration) if self.calibration else None,
             "comments": str(self.comments)
             if self.comments
             else None,  # TODO missing file_remarks

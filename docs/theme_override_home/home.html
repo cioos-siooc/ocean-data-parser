@@ -16,10 +16,12 @@
         display: flex;
         height: 100%;
     }
-
+    .main-button{
+        width: 180px;
+    }
     .tx-container {
         padding-top: .0rem;
-        background: linear-gradient(to bottom, var(--md-primary-fg-color),hsla(160deg,47%,55%,1) 100%)
+        background: linear-gradient(to bottom, var(--md-primary-fg-color),rgba(86, 194, 158, 0.8) 100%)
     }
 
     .tx-hero {
@@ -78,10 +80,13 @@
 
     .feature-item {
         font-family: 'Lato', sans-serif;
-        font-weight: 300;
+        font-weight: 1.1rem;
         box-sizing: border-box;
-        padding: 0 15px;
-        word-break: break-word
+        word-break: break-word;
+        background-color: #8e8e8e25;
+        margin:10px;
+        padding: 8px;
+        border-radius: 10px;
     }
 
     .feature-item h2 {
@@ -92,9 +97,9 @@
         overflow: hidden;
         text-overflow: ellipsis;
         line-height: normal;
-        margin-top: 20px;
-        margin-bottom: 10px;
         font-family: inherit;
+        padding: 2px 0;
+        margin: 0;
     }
 
     .feature-item p {
@@ -103,10 +108,17 @@
         text-rendering: optimizeLegibility;
         -webkit-font-smoothing: antialiased;
         color: var(--md-default-fg-color);
-        margin: 0 0 10px;
+        margin: 0;
         display: block;
     }
 
+    #_1 {
+        margin: 0;
+    }
+    #installation {
+        margin: 0 0 .64em
+    }
+    html{scroll-behavior:smooth}
     @media screen and (max-width:30em) {
         .tx-hero h1 {
             font-size: 1.4rem
@@ -230,10 +242,10 @@
         <div class="tx-hero__content">
           <h1> Ocean Data Parser </h1>
           <p>A python tool to parse common ocean data proprietary formats. </p>
-          <a href="{{ page.next_page.url | url }}" title="{{ page.next_page.title | striptags }}" class="md-button md-button--primary">
+          <a id="installation-button" href="#installation" title="Installation" class="md-button md-button--primary  main-button">
             Get started
           </a>
-          <a href="{{ config.repo_url }}" title="{{ lang.t('source.link.title') }}" class="md-button">
+          <a href="{{ config.repo_url }}" title="{{ lang.t('source.link.title') }}" class="md-button main-button">
             Go to GitHub
           </a>
         </div>
@@ -272,11 +284,4 @@
         <p>Notebook examples and api documentation available</p>
     </div>
 </div>
-
-<div class="top-hr">
-</div>
-
-
 {% endblock %}
-{% block content %}{% endblock %}
-{% block footer %}{% endblock %}
