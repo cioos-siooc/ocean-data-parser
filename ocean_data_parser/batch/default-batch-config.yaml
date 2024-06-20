@@ -12,7 +12,7 @@ registry:
   path: null  # file_registry(.csv | .parquet)
 
 sentry:
-  dsn: https://cd67597c647c4767adf0b3acf5d3f6a6@o56764.ingest.sentry.io/4505529390137344
+  dsn: Null
   level: INFO
   event_level: WARNING
   traces_sample_rate: 1.0,
