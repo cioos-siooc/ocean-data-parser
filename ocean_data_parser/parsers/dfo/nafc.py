@@ -587,7 +587,7 @@ def _parse_lat_lon(latlon: str) -> float:
 @lru_cache
 def _get_metqa_table(file) -> pd.DataFrame:
     """Load NAFC metqa table which contains each files assoicated weather data"""
-    df = pd.read_csv(file, sep="\s*\,", engine="python")
+    df = pd.read_csv(file, sep=r"\s*\,", engine="python")
     df.columns = [
         col.lower().split("[")[0].strip().replace(" ", "_") for col in df.columns
     ]

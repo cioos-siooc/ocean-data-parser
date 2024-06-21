@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Remove default sentry dsn from convert default configuration file.
+- Fix deprecation issue in nafc.metqa loader
 
 ## `0.5.0` - 2024-06-20
 
