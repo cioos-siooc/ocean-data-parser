@@ -13,8 +13,8 @@ th, td {
 }
 
 .md-typeset__table table:not([class]) thead {
-    background-color: var(--md-primary-fg-color--light);
-    /* color: var(--md-primary-bg-color) */
+    background-color: var(--md-primary-fg-color--dark);
+    color: var(--md-primary-bg-color)
 }
 
 .md-typeset__table {
@@ -33,12 +33,12 @@ th, td {
 
 /* light mode alternating table bg colors */
 .md-typeset__table tr:nth-child(2n) {
-    background-color: #f8f8f8;
+    background-color: #83838325;
 }
 
 /* dark mode alternating table bg colors */
 [data-md-color-scheme="slate"] .md-typeset__table tr:nth-child(2n) {
-    background-color: hsla(var(--md-hue),25%,25%,1)
+    background-color: #83838325;
 }
 
 .md-footer {
