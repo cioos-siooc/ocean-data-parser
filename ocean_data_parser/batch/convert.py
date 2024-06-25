@@ -268,12 +268,12 @@ class BatchConversion:
 
             if table.get("add_table_name", False):
                 df[table.get("table_name_column", "table_name")] = Path(item).stem
-            
+
             tables.append(df)
 
         return pd.concat(tables, ignore_index=True)
 
-    def get_source_files_from_input_table(self) -> ([],[]):
+    def get_source_files_from_input_table(self) -> ([], []):
         """Retrieve list of source files from input table. If input table is a dictionary, it will be loaded and processed."""
         input_table_config = self.config.get("input_table")
         if not input_table_config:
@@ -292,22 +292,28 @@ class BatchConversion:
             + files_table[input_table_config["file_column"]]
             + input_table_config.get("file_column_suffix", "")
         )
-        files_table["files"] = search_files.apply(
-            lambda x: glob(x, recursive=True)
-        )
+        files_table["files"] = search_files.apply(lambda x: glob(x, recursive=True))
         unmatched_glob = files_table["files"].apply(len) == 0
         if unmatched_glob.any():
-            logger.warning("No files detected with glob expression: {}", search_files[unmatched_glob].tolist())
+            logger.warning(
+                "No files detected with glob expression: {}",
+                search_files[unmatched_glob].tolist(),
+            )
 
         if input_table_config.get("exclude_columns"):
-            files_table = files_table.drop(columns=input_table_config["exclude_columns"])
-        
-        # Generate file list
-        files_table = files_table.explode("files").dropna(subset='files')
+            files_table = files_table.drop(
+                columns=input_table_config["exclude_columns"]
+            )
 
-        files = files_table['files'].apply(Path).tolist()
+        # Generate file list
+        files_table = files_table.explode("files").dropna(subset="files")
+
+        files = files_table["files"].apply(Path).tolist()
         if input_table_config.get("columns_as_attributes"):
-            return files, files_table.apply(lambda x: x.dropna().to_dict(), axis=1).tolist()
+            return (
+                files,
+                files_table.apply(lambda x: x.dropna().to_dict(), axis=1).tolist(),
+            )
         # no attributes
         return files, [{}] * len(files)
 

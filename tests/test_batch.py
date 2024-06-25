@@ -19,11 +19,13 @@ TEST_REGISTRY_PATH = Path("tests/test_file_registry.csv")
 TEST_FILE = Path("temp/test_file.csv")
 TEST_REGISTRY = FileConversionRegistry(path=TEST_REGISTRY_PATH)
 
+
 @pytest.fixture
 def caplog(caplog):
     handler_id = logger.add(caplog.handler, format="{message}")
     yield caplog
     logger.remove(handler_id)
+
 
 class TestConfigLoad:
     def test_default_config_load(self):
@@ -504,7 +506,7 @@ class TestBatchConvertFromInputTable:
             "file_column_suffix": "**/*",
             "add_table_name": True,
             "table_name_column": "table_name",
-            "columns_as_attributes": True
+            "columns_as_attributes": True,
         }
         return config
 
@@ -566,12 +568,17 @@ class TestBatchConvertFromInputTable:
             file.startswith("tests/parsers_test_files/onset/") and file.endswith(".csv")
             for file in files
         )
+
     def test_get_files_with_missing_files_warning(self, config, caplog):
         batch = BatchConversion(config)
         with caplog.at_level("WARNING"):
             files, attrs = batch.get_source_files_from_input_table()
         assert "No files detected with glob expression" in caplog.text
-        assert [record.levelname == "WARNING" for record in caplog.records if "No files detected with glob expression" in record.message]
+        assert [
+            record.levelname == "WARNING"
+            for record in caplog.records
+            if "No files detected with glob expression" in record.message
+        ]
 
     def test_get_files_with_table_name_column(self, config):
         batch = BatchConversion(config)
@@ -585,10 +592,10 @@ class TestBatchConvertFromInputTable:
         files, attrs = batch.get_source_files_from_input_table()
         assert attrs
         assert all("column2" not in attr for attr in attrs)
-        
+
     def test_get_files_with_table_run(self, config, tmp_path, caplog):
         config["input_table"]["file_column_suffix"] = "**/*.csv"
-        config['output']['path'] = str(tmp_path) + "/{column1}/{source_stem}.nc"
+        config["output"]["path"] = str(tmp_path) + "/{column1}/{source_stem}.nc"
         config["registry"]["path"] = str(tmp_path / "registry.csv")
 
         with caplog.at_level("DEBUG"):
@@ -606,5 +613,5 @@ class TestBatchConvertFromInputTable:
         with caplog.at_level("DEBUG"):
             batch = BatchConversion(config)
             registry = batch.run()
-        
+
         assert "No file to parse. Conversion completed" in caplog.text
