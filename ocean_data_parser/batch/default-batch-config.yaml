@@ -2,7 +2,10 @@
 
 name: Batch Conversion Name
 input_path: ""  # file or glob expression
-input_table:  # retrieve files to convert from tables
+input_table:  # retrieve files to convert from tables (ignore input_path if set)
+  # input_table is used to retrieve files to convert from tables
+  # that are listing different glob expressions to retrieve files and associated metadata
+  # to append to generated converted files as global attributes (optionnal)
   path: null  # glob expression to retrieve input tables (e.g. 'inputs_tables/*.csv')
   file_column: null  # column use to generate glob expressions used to retrieve source files to parse
   file_column_prefix: ""  # prefix to add to the file_column value
