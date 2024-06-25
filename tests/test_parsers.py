@@ -24,9 +24,16 @@ from ocean_data_parser.parsers import (
 from ocean_data_parser.parsers.dfo.odf_source.attributes import _review_station
 from ocean_data_parser.parsers.dfo.odf_source.parser import _convert_odf_time
 
-def search_caplog_records(caplog,message,levelname=None):
+
+def search_caplog_records(caplog, message, levelname=None):
     """Search caplog records for a specific message and log level"""
-    return [record for record in caplog.records if message in record.message and (not levelname or record.levelname == levelname)]
+    return [
+        record
+        for record in caplog.records
+        if message in record.message
+        and (not levelname or record.levelname == levelname)
+    ]
+
 
 def review_parsed_dataset(
     ds, source, caplog=None, max_log_levelno=30, ignore_log_records=None
@@ -444,23 +451,21 @@ class TestDFO_NAFC_PcnvFiles:
         """Test DFO NAFC Pcnv Parser without metqa file"""
         path = "tests/parsers_test_files/dfo/nafc/pcnv/ctd/aqv118_2023_348.pcnv"
         _ = dfo.nafc.pcnv(path, match_metqa_table=True)
-        assert search_caplog_records(caplog,"No metqa table file found","WARNING")
+        assert search_caplog_records(caplog, "No metqa table file found", "WARNING")
 
-    def test_dfo_nafc_pcnv_nometqa_debug(self,caplog):
+    def test_dfo_nafc_pcnv_nometqa_debug(self, caplog):
         """Test DFO NAFC Pcnv Parser without metqa file return a debug message if match_metqa_table is False"""
         path = "tests/parsers_test_files/dfo/nafc/pcnv/ctd/aqv118_2023_348.pcnv"
         caplog.set_level("DEBUG")
         _ = dfo.nafc.pcnv(path, match_metqa_table=False)
-        assert search_caplog_records(caplog,"No metqa table file found","DEBUG")
-    
-    def test_dfo_nafc_pcnv_nometqa_default(self,caplog):
+        assert search_caplog_records(caplog, "No metqa table file found", "DEBUG")
+
+    def test_dfo_nafc_pcnv_nometqa_default(self, caplog):
         """Test DFO NAFC Pcnv Parser without metqa file return a debug message if default match_metqa_table is False"""
         path = "tests/parsers_test_files/dfo/nafc/pcnv/ctd/aqv118_2023_348.pcnv"
         caplog.set_level("DEBUG")
         _ = dfo.nafc.pcnv(path)
-        assert search_caplog_records(caplog,"No metqa table file found","DEBUG")
-        
-
+        assert search_caplog_records(caplog, "No metqa table file found", "DEBUG")
 
     @pytest.mark.parametrize(
         "path",
