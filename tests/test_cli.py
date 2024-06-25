@@ -127,6 +127,7 @@ def test_odpy_convert_registry(tmp_path):
         "Run conversion" not in second_results.output
     ), "Registry failed to prevent to reprocess twice the same files"
 
+
 def test_odpy_convert_parser_kwargs(tmp_path):
     """Test parsers_kwargs by changing default value of match_metqa_table to True"""
     args = (
@@ -147,4 +148,6 @@ def test_odpy_convert_parser_kwargs(tmp_path):
     results = run_command(cli.main, args)
     assert results.exit_code == 0, results.output
     assert "ERROR" not in results.output, results.output
-    assert "Load weather data from metqa file" in results.output, "Parser kwargs not passed to parser"
+    assert (
+        "Load weather data from metqa file" in results.output
+    ), "Parser kwargs not passed to parser"

@@ -1,10 +1,9 @@
+import json
 import os
 import shutil
-import sys
 from glob import glob
 from multiprocessing import Pool
 from pathlib import Path
-import json
 
 import click
 import pandas as pd
@@ -69,6 +68,7 @@ def get_parser_list(ctx, _, value):
     click.echo(get_parser_list_string())
     ctx.exit()
 
+
 def validate_parser_kwargs(ctx, _, value):
     """Test if given parser_kwargs is a valid JSON string and return the parsed JSON object"""
     if not value:
@@ -77,10 +77,9 @@ def validate_parser_kwargs(ctx, _, value):
         return json.loads(value)
     except json.JSONDecodeError:
         raise click.BadParameter(
-            click.style(
-                "parser-kwargs should be a valid JSON string", fg="bright_red"
-            )
+            click.style("parser-kwargs should be a valid JSON string", fg="bright_red")
         )
+
 
 @click.command(name="convert", context_settings={"auto_envvar_prefix": "ODPY_CONVERT"})
 @click.option(
@@ -109,7 +108,7 @@ def validate_parser_kwargs(ctx, _, value):
     type=str,
     help=(
         "Parser key word arguments to pass to the parser. Expect a JSON string."
-        " (ex: '{\"globa_attributes\": {\"project\": \"test\"}')"
+        ' (ex: \'{"globa_attributes": {"project": "test"}\')'
     ),
     default=None,
     callback=validate_parser_kwargs,
@@ -255,17 +254,68 @@ class BatchConversion:
             if file not in excluded_files
         ]
 
+    def load_input_table(self, table: dict) -> pd.DataFrame:
+        """Load input table and apply pipe if needed"""
+
+        if "path" not in table:
+            raise ValueError("No path detected in input table")
+        for item in glob(table.path, recursive=True):
+            if table.path.endswith(".csv"):
+                df = pd.read_csv(item)
+            else:
+                raise ValueError("Only csv input table is supported")
+
+            if table.get("add_table_name", False):
+                df[table.get("table_name_column", "table_name")] = Path(item).stem
+
+        return df
+
+    def get_source_files_from_input_table(self) -> pd.DataFrame:
+        """Retrieve list of source files from input table. If input table is a dictionary, it will be loaded and processed."""
+        input_table_config = self.config.get("input_table")
+        if not input_table_config:
+            logger.warning("No input table detected")
+            return []
+
+        if not isinstance(input_table_config, dict):
+            raise ValueError("Input table should be a dictionary")
+
+        # Load tables
+        files_table = self.load_input_table(input_table_config)
+
+        # Retrieve files
+        search_files = (
+            input_table_config.get("file_column_prefix")
+            + files_table[input_table_config["file_column"]]
+            + input_table_config.get("file_column_suffix")
+        )
+        files_table["files"] = search_files.apply(
+            lambda x: glob(x, recursive=True), axis=1
+        )
+
+        if files_table["files"].isna().any():
+            unmatched_glob = search_files[files_table["file_list"].isna()]
+            logger.warning("No files detected with glob expression: {}", unmatched_glob)
+
+        if input_table_config.get("exclude_column"):
+            files = files.drop(columns=input_table_config["exclude_column"])
+
+        files = files_table.explode("files")
+        if input_table_config.get("columns_as_attributes"):
+            attrs = files.apply(lambda x: x.dropna().to_dict(), axis=1)
+        else:
+            attrs = []
+        return files, attrs
+
     def _get_parser(self):
         logger.info("Load parser={}", self.config.get("parser", "None"))
         if not self.config.get("parser"):
             return None
         return read.import_parser(self.config["parser"])
 
-    def _convert(self, files: list) -> list:
+    def _convert(self, inputs: list, n_files) -> list:
         # Load parser and generate inputs to conversion scripts
-        parser = self._get_parser()
-        inputs = ((str(file), parser, self.config) for file in files)
-        tqdm_parameters = dict(unit="file", total=len(files))
+        tqdm_parameters = dict(unit="file", total=n_files)
 
         # single pool processing
         if "multiprocessing" not in self.config or self.config["multiprocessing"] in (
@@ -287,6 +337,7 @@ class BatchConversion:
                 )
             )
 
+    @logger.catch(reraise=True)
     def run(self):
         """Run Batch conversion"""
         logger.info(
@@ -294,23 +345,49 @@ class BatchConversion:
             __version__,
             self.config.get("name", ""),
         )
-        files = self.get_source_files()
+
+        if self.config.get("input_path"):
+            files = self.get_source_files()
+        elif self.config.get("input_table"):
+            files, attributes = self.get_source_files_from_input_table()
+        else:
+            raise ValueError("No input path or input table detected")
+
         if not files:
-            error_message = f"ERROR No files detected with {self.config['input_path']}"
-            logger.error(error_message)
-            sys.exit(error_message)
+            raise ValueError(f"No files detected with {self.config['input_path']}")
 
         self.registry.add(files)
-        files = self.registry.get_modified_source_files(
+        modified_files = self.registry.get_modified_source_files(
             overwrite=self.config["overwrite"]
         )
-        if not files:
+        if not modified_files:
             logger.info("No file to parse. Conversion completed")
             return self.registry
+
+        # Retrieve attributes for modified files
+        if attributes:
+            modified_files_attrs = [
+                attributes[files.index(file)] for file in modified_files
+            ]
+        else:
+            modified_files_attrs = [
+                {},
+            ] * len(modified_files)
+
         logger.info(
-            "{}/{} files needs to be converted", len(files), len(self.registry.data)
+            "{}/{} files needs to be converted", len(modified_files), len(files)
         )
-        conversion_log = self._convert(files)
+
+        # Load parser
+        parser = self._get_parser()
+
+        # Generate inputs for conversion
+        inputs = (
+            (str(file), parser, self.config, attrs)
+            for file, attrs in zip(modified_files, modified_files_attrs)
+        )
+
+        conversion_log = self._convert(inputs)
         conversion_log = (
             pd.DataFrame(
                 conversion_log,
@@ -320,9 +397,11 @@ class BatchConversion:
             .replace({"": None})
         )
         conversion_log.index = conversion_log.index.map(Path)
-        self.registry.update_fields(files, dataframe=conversion_log)
+        self.registry.update_fields(modified_files, dataframe=conversion_log)
         self.registry.save()
-        self.registry.summarize(sources=files, output=self.config.get("summary"))
+        self.registry.summarize(
+            sources=modified_files, output=self.config.get("summary")
+        )
         logger.info("Conversion completed")
         return self.registry
 
@@ -343,14 +422,14 @@ def _convert_file(args):
         warnings, errors = VariableLevelLogger("WARNING"), VariableLevelLogger("ERROR")
         output_file = None
         with logger.catch(reraise=args[2].get("errors") == "raise"):
-            output_file = convert_file(args[0], args[1], args[2])
+            output_file = convert_file(*args)
         output = (args[0], output_file, errors.values(), warnings.values())
         warnings.close()
         errors.close()
         return output
 
 
-def convert_file(file: str, parser: str, config: dict) -> str:
+def convert_file(file: str, parser: str, config: dict, global_attributes=None) -> str:
     """Parse file with given parser and configuration
 
     Args:
@@ -391,7 +470,12 @@ def convert_file(file: str, parser: str, config: dict) -> str:
 
     # Parse file to xarray
     logger.debug("Parse file: {}", file)
-    ds = read.file(file, parser=parser, **config.get("parser_kwargs", {}))
+    ds = read.file(
+        file,
+        parser=parser,
+        **config.get("parser_kwargs", {}),
+        global_attributes=global_attributes,
+    )
     if not isinstance(ds, Dataset):
         raise RuntimeError(
             f"{parser.__module__}{parser.__name__}:{file} "

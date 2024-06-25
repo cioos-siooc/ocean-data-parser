@@ -2,9 +2,20 @@
 
 name: Batch Conversion Name
 input_path: ""  # file or glob expression
+input_table:  # retrieve files to convert from tables
+  - path: null  # glob expression to retrieve input tables (e.g. 'inputs_tables/*.csv')
+  - file_column: null  # column use to generate glob expressions used to retrieve source files to parse
+  - file_column_prefix: ""  # prefix to add to the file_column value
+  - file_column_suffix: ""  # suffix to add to the file_column value
+  - add_table_name: false  # retrieve file name and add as table name column
+  - table_name_column: null  # column name associated with the file name new column to add table name
+  - columns_as_attributes: true  # add columns as attributes to the parsed file
+  - exclude_columns: []  # columns to exclude from the table
 exclude: null  # glob expression of files to exclude
+
 parser: null
 parser_kwargs: {}
+
 overwrite: false
 multiprocessing: 1  # n processes to run [int] or null for all
 errors: "ignore"  # raise|ignore

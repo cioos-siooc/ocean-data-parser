@@ -623,7 +623,9 @@ def _add_metqa_info_to_pcvn(file: Path, match_metqa_file) -> Path:
         level = "WARNING" if match_metqa_file else "DEBUG"
         logger.log(
             level,
-            "No metqa table file found path={},glob={}", file.parent, glob_expression
+            "No metqa table file found path={},glob={}",
+            file.parent,
+            glob_expression,
         )
     return {}
 
@@ -718,7 +720,7 @@ def pcnv(
             "vnet": ds.attrs.pop("vnet", None),
             "do2": ds.attrs.pop("do2", None),
             "bottles": _int(ds.attrs.pop("bottles", None)),
-            **_add_metqa_info_to_pcvn(path,match_metqa_table),
+            **_add_metqa_info_to_pcvn(path, match_metqa_table),
             **(global_attributes or {}),
         }
     )
