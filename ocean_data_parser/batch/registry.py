@@ -134,9 +134,10 @@ class FileConversionRegistry:
         Returns:
             DataFrame: Dataframe of the sources parameters.
         """
-        sources = [source for source in sources if source not in self.data.index]
+        sources = [source for source in sources if Path(source) not in self.data.index]
         if not sources:
             return
+        logger.debug("Add %s new sources to registry", len(sources))
         new_data = generate_registry(sources)
 
         # Retrieve mtime and hash only if a registry is actually saved

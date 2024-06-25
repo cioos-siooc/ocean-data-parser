@@ -259,18 +259,21 @@ class BatchConversion:
 
         if "path" not in table:
             raise ValueError("No path detected in input table")
-        for item in glob(table.path, recursive=True):
-            if table.path.endswith(".csv"):
+        tables = []
+        for item in glob(table["path"], recursive=True):
+            if item.endswith(".csv"):
                 df = pd.read_csv(item)
             else:
                 raise ValueError("Only csv input table is supported")
 
             if table.get("add_table_name", False):
                 df[table.get("table_name_column", "table_name")] = Path(item).stem
+            
+            tables.append(df)
 
-        return df
+        return pd.concat(tables, ignore_index=True)
 
-    def get_source_files_from_input_table(self) -> pd.DataFrame:
+    def get_source_files_from_input_table(self) -> ([],[]):
         """Retrieve list of source files from input table. If input table is a dictionary, it will be loaded and processed."""
         input_table_config = self.config.get("input_table")
         if not input_table_config:
@@ -285,27 +288,28 @@ class BatchConversion:
 
         # Retrieve files
         search_files = (
-            input_table_config.get("file_column_prefix")
+            input_table_config.get("file_column_prefix", "")
             + files_table[input_table_config["file_column"]]
-            + input_table_config.get("file_column_suffix")
+            + input_table_config.get("file_column_suffix", "")
         )
         files_table["files"] = search_files.apply(
-            lambda x: glob(x, recursive=True), axis=1
+            lambda x: glob(x, recursive=True)
         )
+        unmatched_glob = files_table["files"].apply(len) == 0
+        if unmatched_glob.any():
+            logger.warning("No files detected with glob expression: {}", search_files[unmatched_glob].tolist())
 
-        if files_table["files"].isna().any():
-            unmatched_glob = search_files[files_table["file_list"].isna()]
-            logger.warning("No files detected with glob expression: {}", unmatched_glob)
+        if input_table_config.get("exclude_columns"):
+            files_table = files_table.drop(columns=input_table_config["exclude_columns"])
+        
+        # Generate file list
+        files_table = files_table.explode("files").dropna(subset='files')
 
-        if input_table_config.get("exclude_column"):
-            files = files.drop(columns=input_table_config["exclude_column"])
-
-        files = files_table.explode("files")
+        files = files_table['files'].apply(Path).tolist()
         if input_table_config.get("columns_as_attributes"):
-            attrs = files.apply(lambda x: x.dropna().to_dict(), axis=1)
-        else:
-            attrs = []
-        return files, attrs
+            return files, files_table.apply(lambda x: x.dropna().to_dict(), axis=1).tolist()
+        # no attributes
+        return files, [{}] * len(files)
 
     def _get_parser(self):
         logger.info("Load parser={}", self.config.get("parser", "None"))
@@ -387,7 +391,7 @@ class BatchConversion:
             for file, attrs in zip(modified_files, modified_files_attrs)
         )
 
-        conversion_log = self._convert(inputs)
+        conversion_log = self._convert(inputs, n_files=len(modified_files))
         conversion_log = (
             pd.DataFrame(
                 conversion_log,

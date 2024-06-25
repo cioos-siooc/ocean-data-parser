@@ -5,6 +5,7 @@ import pytest
 import xarray as xr
 import yaml
 from click.testing import CliRunner
+from loguru import logger
 
 from ocean_data_parser.batch.config import glob
 from ocean_data_parser.batch.convert import BatchConversion, FileConversionRegistry
@@ -18,6 +19,11 @@ TEST_REGISTRY_PATH = Path("tests/test_file_registry.csv")
 TEST_FILE = Path("temp/test_file.csv")
 TEST_REGISTRY = FileConversionRegistry(path=TEST_REGISTRY_PATH)
 
+@pytest.fixture
+def caplog(caplog):
+    handler_id = logger.add(caplog.handler, format="{message}")
+    yield caplog
+    logger.remove(handler_id)
 
 class TestConfigLoad:
     def test_default_config_load(self):
@@ -484,3 +490,121 @@ class TestGenerateOutputPath:
     def test_output_with_file_stem(self, ds, ds_path):
         path = generate_output_path(ds, path=".", file_name="{source_stem}_2")
         assert str(path) == Path(ds_path).stem + "_2.nc"
+
+
+class TestBatchConvertFromInputTable:
+    @pytest.fixture(scope="class")
+    def config(self):
+        config = load_config()
+        config.pop("input_path")
+        config["input_table"] = {
+            "path": "tests/batch_test_configs/test_input_tables/*.csv",
+            "file_column": "column1",
+            "file_column_prefix": "tests/parsers_test_files/**/",
+            "file_column_suffix": "**/*",
+            "add_table_name": True,
+            "table_name_column": "table_name",
+            "columns_as_attributes": True
+        }
+        return config
+
+    def test_load_config(self, config):
+        assert config
+        assert "input_table" in config
+        batch = BatchConversion(config)
+        assert batch.config["input_table"]
+
+    def test_load_input_table_config_defaults(self):
+        config = load_config()
+        batch = BatchConversion(config)
+        assert batch.config["input_table"]
+        assert batch.config["input_table"]["path"] == None
+        assert batch.config["input_table"]["file_column"] == None
+        assert batch.config["input_table"]["file_column_prefix"] == ""
+        assert batch.config["input_table"]["file_column_suffix"] == ""
+        assert batch.config["input_table"]["add_table_name"] == False
+        assert batch.config["input_table"]["table_name_column"] == "table_name"
+        assert batch.config["input_table"]["columns_as_attributes"] == True
+
+    def test_get_files(self, config):
+        batch = BatchConversion(config)
+        files, attrs = batch.get_source_files_from_input_table()
+        assert files
+        assert isinstance(files, list)
+        assert len(files) > 0
+        assert all(isinstance(file, Path) for file in files)
+        assert attrs
+        assert isinstance(attrs, list)
+        assert len(files) == len(attrs)
+        assert len(attrs) > 0
+        assert isinstance(attrs[0], dict)
+
+    def test_get_files_with_file_column_prefix(self, config):
+        config["input_table"]["file_column_prefix"] = "tests/parsers_test_files/onset/"
+        batch = BatchConversion(config)
+        files, attrs = batch.get_source_files_from_input_table()
+        assert files
+        assert len(files) > 0
+        assert all(file.startswith("tests/parsers_test_files/onset/") for file in files)
+
+    def test_get_files_with_file_column_suffix(self, config):
+        config["input_table"]["file_column_suffix"] = "**/*.csv"
+        batch = BatchConversion(config)
+        files, attrs = batch.get_source_files_from_input_table()
+        assert files
+        assert len(files) > 0
+        assert all(file.endswith(".csv") for file in files)
+
+    def test_get_files_with_file_column_prefix_and_suffix(self, config):
+        config["input_table"]["file_column_prefix"] = "tests/parsers_test_files/onset/"
+        config["input_table"]["file_column_suffix"] = "**/*.csv"
+        batch = BatchConversion(config)
+        files, attrs = batch.get_source_files_from_input_table()
+        assert files
+        assert len(files) > 0
+        assert all(
+            file.startswith("tests/parsers_test_files/onset/") and file.endswith(".csv")
+            for file in files
+        )
+    def test_get_files_with_missing_files_warning(self, config, caplog):
+        batch = BatchConversion(config)
+        with caplog.at_level("WARNING"):
+            files, attrs = batch.get_source_files_from_input_table()
+        assert "No files detected with glob expression" in caplog.text
+        assert [record.levelname == "WARNING" for record in caplog.records if "No files detected with glob expression" in record.message]
+
+    def test_get_files_with_table_name_column(self, config):
+        batch = BatchConversion(config)
+        files, attrs = batch.get_source_files_from_input_table()
+        assert attrs
+        assert all("table_name" in attr for attr in attrs)
+
+    def test_get_files_with_table_with_exclude_columns(self, config):
+        config["input_table"]["exclude_columns"] = ["column2"]
+        batch = BatchConversion(config)
+        files, attrs = batch.get_source_files_from_input_table()
+        assert attrs
+        assert all("column2" not in attr for attr in attrs)
+        
+    def test_get_files_with_table_run(self, config, tmp_path, caplog):
+        config["input_table"]["file_column_suffix"] = "**/*.csv"
+        config['output']['path'] = str(tmp_path) + "/{column1}/{source_stem}.nc"
+        config["registry"]["path"] = str(tmp_path / "registry.csv")
+
+        with caplog.at_level("DEBUG"):
+            batch = BatchConversion(config)
+            registry = batch.run()
+        files = list(tmp_path.glob("**/*"))
+        registry = files.pop(files.index(tmp_path / "registry.csv"))
+        assert tmp_path.exists()
+        assert len(files) > 0
+        assert all(file.suffix == ".nc" for file in files if file.is_file())
+        assert Path(registry).exists()
+
+        # Rerun to see if files are skipped
+        caplog.clear()
+        with caplog.at_level("DEBUG"):
+            batch = BatchConversion(config)
+            registry = batch.run()
+        
+        assert "No file to parse. Conversion completed" in caplog.text
