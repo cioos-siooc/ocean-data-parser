@@ -518,13 +518,13 @@ class TestBatchConvertFromInputTable:
         config = load_config()
         batch = BatchConversion(config)
         assert batch.config["input_table"]
-        assert batch.config["input_table"]["path"] == None
-        assert batch.config["input_table"]["file_column"] == None
+        assert batch.config["input_table"]["path"] is None
+        assert batch.config["input_table"]["file_column"] is None
         assert batch.config["input_table"]["file_column_prefix"] == ""
         assert batch.config["input_table"]["file_column_suffix"] == ""
-        assert batch.config["input_table"]["add_table_name"] == False
+        assert not batch.config["input_table"]["add_table_name"]
         assert batch.config["input_table"]["table_name_column"] == "table_name"
-        assert batch.config["input_table"]["columns_as_attributes"] == True
+        assert batch.config["input_table"]["columns_as_attributes"]
 
     def test_get_files(self, config):
         batch = BatchConversion(config)
