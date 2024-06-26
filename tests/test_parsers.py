@@ -23,6 +23,7 @@ from ocean_data_parser.parsers import (
 )
 from ocean_data_parser.parsers.dfo.odf_source.attributes import _review_station
 from ocean_data_parser.parsers.dfo.odf_source.parser import _convert_odf_time
+from ocean_data_parser.parsers.dfo.odf_source.process import drop_path_from_header_attributes
 
 
 def search_caplog_records(caplog, message, levelname=None):
@@ -346,6 +347,31 @@ class TestODFParser:
         assert response == station, f"Failed to retrieve station={station}"
 
 
+    @pytest.mark.parametrize(
+        "path,expect",
+        [
+            ("tests/parsers_test_files/dfo/odf/bio/CTD/CTD_001.odf", "CTD_001.odf"),
+            ("tests\\\\parsers_test_files\\\\dfo\\\\odf\\\\bio\\\\CTD\\\\CTD_001.odf", "CTD_001.odf"),
+            (r"\\tests\\parsers_test_files\\dfo\\odf\\bio\\CTD\\CTD_001.odf", "CTD_001.odf"),
+        ]
+    )
+    def test_odf_header_file_description_with_no_path(self, path,expect):
+        result = drop_path_from_header_attributes({"ODF_HEADER":{"FILE_SPECIFICATION": path}})
+        assert result["ODF_HEADER"]["FILE_SPECIFICATION"] == expect, "Failed to drop path from header attributes"
+
+    
+    @pytest.mark.parametrize(
+        "path, expect",
+        [
+            ("tests/parsers_test_files/dfo/odf/bio/CTD/CTD_001.odf", "CTD_001.odf"),
+            ("tests\\\\parsers_test_files\\\\dfo\\\\odf\\\\bio\\\\CTD\\\\CTD_001.odf", "CTD_001.odf"),
+            (r"\\tests\\parsers_test_files\\dfo\\odf\\bio\\CTD\\CTD_001.odf", "CTD_001.odf"),
+        ]
+    )
+    def test_instrument_header_description_no_path(self,path,expect):
+        result = drop_path_from_header_attributes({"INSTRUMENT_HEADER":{"DESCRIPTION": path}})
+        assert result["INSTRUMENT_HEADER"]["DESCRIPTION"] == expect, "Failed to drop path from header attributes"
+
 class TestODFBIOParser:
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/dfo/odf/bio/**/CTD*.ODF", recursive=True)
@@ -354,7 +380,7 @@ class TestODFBIOParser:
         """Test DFO BIO ODF Parser"""
         ds = dfo.odf.bio_odf(path)
         review_parsed_dataset(ds, path, caplog)
-
+    
 
 class TestODFMLIParser:
     @pytest.mark.parametrize(

@@ -40,12 +40,39 @@ ODF_COMPATIBLE_DATA_TYPES = [
 ]
 
 
+def drop_path_from_header_attributes(header: dict) -> dict:
+    """Drop paths from the some of the header parsed attributes.
+
+    Args:
+        header (dict): Header attributes
+
+    Returns:
+        dict: Header attributes without the path
+    """
+    def _get_file(file_path: str) -> str:
+        return re.split(r"\\|\/",file_path)[-1]
+    
+    attributes = [
+        ("ODF_HEADER", "FILE_SPECIFICATION"),
+        ("INSTRUMENT_HEADER", "DESCRIPTION"),
+    ]
+
+    for header_key, attribute_key in attributes:
+        if header_key in header and header[header_key].get(attribute_key):
+            header[header_key][attribute_key] = _get_file(
+                header[header_key][attribute_key]
+            )
+
+    return header
+
+
 def parse_odf(
     odf_path: str,
     global_attributes: dict = None,
     vocabularies: list = None,
     add_attributes_existing_variables: bool = True,
     generate_new_vocabulary_variables: bool = True,
+    drop_path_from_attributes: bool = False,
 ) -> xr.Dataset:
     """Convert an ODF file to an xarray object.
 
@@ -59,6 +86,8 @@ def parse_odf(
             Defaults to True.
         generate_new_vocabulary_variables (bool, optional): Generate vocabulary variables.
             Defaults to True.
+        drop_path_from_attributes (bool): Drop the path from the attributes
+            ODF_HEADER FILE_SPECIFICATION and INSTRUMENT_HEADER DESCRIPTION
 
     Returns:
         xr.Dataset: Parsed dataset
@@ -72,6 +101,9 @@ def parse_odf(
             "ODF parser is not yet fully compatible with the ODF Data Type: %s",
             metadata["EVENT_HEADER"]["DATA_TYPE"],
         )
+
+    if drop_path_from_attributes:
+        metadata = drop_path_from_header_attributes(metadata)
 
     # Write global and variable attributes
     file_name_attributes = re.search(FILE_NAME_CONVENTIONS, Path(odf_path).name)

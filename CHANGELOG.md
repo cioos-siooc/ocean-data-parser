@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add odpy convert `input_table` input through config file, which gives the
 ability to list multiple file glob expression and associated metadata.
+- dfo.odf: add option to ignore full paths from ODF_HEADER FILE_DESCRIPTION and
+INSTRUMENT_HEADER DESCRIPTION attributes in odf.
+Default to True for BIO and False for IML.
 
 ## `0.5.2` - 2024-06-22
 
