@@ -130,7 +130,12 @@ def import_parser(parser: str):
     return getattr(mod, filetype)
 
 
-def file(path: str, parser: str = None, **kwargs: Union[str, int, float]) -> xr.Dataset:
+def file(
+    path: str,
+    parser: str = None,
+    global_attributes=None,
+    **kwargs: Union[str, int, float],
+) -> xr.Dataset:
     """Load compatible file format as an xarray dataset.
 
     ```python
@@ -154,4 +159,7 @@ def file(path: str, parser: str = None, **kwargs: Union[str, int, float]) -> xr.
 
     # Load the appropriate parser and read the file
     parser_func = import_parser(parser) if isinstance(parser, str) else parser
-    return parser_func(path, **kwargs)
+    ds = parser_func(path, **kwargs)
+    if global_attributes:
+        ds.attrs.update(global_attributes)
+    return ds
