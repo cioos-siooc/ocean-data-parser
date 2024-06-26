@@ -40,12 +40,41 @@ ODF_COMPATIBLE_DATA_TYPES = [
 ]
 
 
+def drop_path_from_header_attributes(header: dict) -> dict:
+    """Drop paths from the some of the header parsed attributes.
+
+    Args:
+        header (dict): Header attributes
+
+    Returns:
+        dict: Header attributes without the path
+    """
+    try:
+        header["ODF_HEADER"]["FILE_SPECIFICATION"] = Path(
+            header["ODF_HEADER"]["FILE_SPECIFICATION"]
+        ).name
+        if "INSTRUMENT_HEADER" in header and header["INSTRUMENT_HEADER"].get(
+            "DESCRIPTION"
+        ):
+            header["INSTRUMENT_HEADER"]["DESCRIPTION"] = " ".join(
+                [
+                    re.split(r"\\|\/", item)[-1]
+                    for item in header["INSTRUMENT_HEADER"]["DESCRIPTION"].split(" ")
+                ]
+            )
+    except Exception:
+        logger.error("Error while dropping path from header attributes", exc_info=True)
+
+    return header
+
+
 def parse_odf(
     odf_path: str,
     global_attributes: dict = None,
     vocabularies: list = None,
     add_attributes_existing_variables: bool = True,
     generate_new_vocabulary_variables: bool = True,
+    drop_path_from_attributes: bool = False,
 ) -> xr.Dataset:
     """Convert an ODF file to an xarray object.
 
@@ -59,6 +88,8 @@ def parse_odf(
             Defaults to True.
         generate_new_vocabulary_variables (bool, optional): Generate vocabulary variables.
             Defaults to True.
+        drop_path_from_attributes (bool): Drop the path from the attributes
+            ODF_HEADER FILE_SPECIFICATION and INSTRUMENT_HEADER DESCRIPTION
 
     Returns:
         xr.Dataset: Parsed dataset
@@ -72,6 +103,9 @@ def parse_odf(
             "ODF parser is not yet fully compatible with the ODF Data Type: %s",
             metadata["EVENT_HEADER"]["DATA_TYPE"],
         )
+
+    if drop_path_from_attributes:
+        metadata = drop_path_from_header_attributes(metadata)
 
     # Write global and variable attributes
     file_name_attributes = re.search(FILE_NAME_CONVENTIONS, Path(odf_path).name)

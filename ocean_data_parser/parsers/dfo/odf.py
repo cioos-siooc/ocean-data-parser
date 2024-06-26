@@ -57,28 +57,38 @@ bio_global_attributes = {
 }
 
 
-def bio_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
+def bio_odf(
+    path: str, global_attributes: dict = None, drop_path_from_attributes=True
+) -> xarray.Dataset:
     """Bedford Institute of Ocean ODF format parser
 
     Args:
         path (str): Path to the odf file to parse
         global_attributes (dict): file specific global attributes
+        drop_path_from_attributes (bool): Drop the path from the attributes
+            ODF_HEADER FILE_SPECIFICATION and INSTRUMENT_HEADER DESCRIPTION
     Returns:
         dataset (xarray dataset): Parsed xarray dataset
     """
-    return _odf(
+    ds = _odf(
         path,
         vocabularies=["BIO", "GF3"],
         global_attributes={**bio_global_attributes, **(global_attributes or {})},
+        drop_path_from_attributes=drop_path_from_attributes,
     )
+    return ds
 
 
-def mli_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
+def mli_odf(
+    path: str, global_attributes: dict = None, drop_path_from_attributes=False
+) -> xarray.Dataset:
     """Maurice Lamontagne Institute ODF format parser
 
     Args:
         path (str): Path to the odf file to parse
         global_attributes (dict): file specific global attributes
+        drop_path_from_attributes (bool): Drop the path from the attributes
+            ODF_HEADER FILE_SPECIFICATION and INSTRUMENT_HEADER DESCRIPTION
     Returns:
         dataset (xarray dataset): Parsed xarray dataset
     """
@@ -86,16 +96,24 @@ def mli_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
         path,
         vocabularies=["MLI", "GF3"],
         global_attributes={**mli_global_attributes, **(global_attributes or {})},
+        drop_path_from_attributes=drop_path_from_attributes,
     )
 
 
-def _odf(path: str, vocabularies: list = None, global_attributes: dict = None):
+def _odf(
+    path: str,
+    vocabularies: list = None,
+    global_attributes: dict = None,
+    drop_path_from_attributes=False,
+):
     """ODF format parser
 
     Args:
         path (str): Path to the odf file to parse
         vocabularies (str): Vocabulary list to use for the vocabulary mapping
         global_attributes (dict): file specific global attributes
+        drop_path_from_attributes (bool): Drop the path from the attributes
+            ODF_HEADER FILE_SPECIFICATION and INSTRUMENT_HEADER DESCRIPTION
     Returns:
         dataset (xarray dataset): Parsed xarray dataset
     """
@@ -103,4 +121,5 @@ def _odf(path: str, vocabularies: list = None, global_attributes: dict = None):
         path,
         vocabularies=vocabularies,
         global_attributes={**odf_global_attributes, **(global_attributes or {})},
+        drop_path_from_attributes=drop_path_from_attributes,
     )
