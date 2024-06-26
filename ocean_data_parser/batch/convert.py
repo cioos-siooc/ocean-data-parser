@@ -358,6 +358,7 @@ class BatchConversion:
 
         if self.config.get("input_path"):
             files = self.get_source_files()
+            attributes = [{}] * len(files)
         elif self.config.get("input_table"):
             files, attributes = self.get_source_files_from_input_table()
         else:
