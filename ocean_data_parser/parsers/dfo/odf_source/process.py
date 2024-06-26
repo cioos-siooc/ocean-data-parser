@@ -49,21 +49,19 @@ def drop_path_from_header_attributes(header: dict) -> dict:
     Returns:
         dict: Header attributes without the path
     """
-    try:
-        header["ODF_HEADER"]["FILE_SPECIFICATION"] = Path(
-            header["ODF_HEADER"]["FILE_SPECIFICATION"]
-        ).name
-        if "INSTRUMENT_HEADER" in header and header["INSTRUMENT_HEADER"].get(
-            "DESCRIPTION"
-        ):
-            header["INSTRUMENT_HEADER"]["DESCRIPTION"] = " ".join(
-                [
-                    re.split(r"\\|\/", item)[-1]
-                    for item in header["INSTRUMENT_HEADER"]["DESCRIPTION"].split(" ")
-                ]
+    def _get_file(file_path: str) -> str:
+        return re.split(r"\\|\/",file_path)[-1]
+    
+    attributes = [
+        ("ODF_HEADER", "FILE_SPECIFICATION"),
+        ("INSTRUMENT_HEADER", "DESCRIPTION"),
+    ]
+
+    for header_key, attribute_key in attributes:
+        if header_key in header and header[header_key].get(attribute_key):
+            header[header_key][attribute_key] = _get_file(
+                header[header_key][attribute_key]
             )
-    except Exception:
-        logger.error("Error while dropping path from header attributes", exc_info=True)
 
     return header
 
