@@ -229,7 +229,9 @@ def standardize_dataset(
     """
     # Add version to the dataset global attributes and history
     ds.attrs['ocean_data_parser_version'] = __version__ # Add version to the dataset
-    ds.attrs["history"] = f"{datetime.utcnow()} Generated with ocean_data_parser v{__version__}\n"
+    
+    ds.attrs["history"] = ds.attrs.get("history", "")
+    ds.attrs["history"] += f"{datetime.utcnow().isoformat()} Generated with ocean_data_parser v{__version__}\n"
 
     ds = get_spatial_coverage_attributes(ds, utc=utc)
     ds = standardize_variable_attributes(ds)
