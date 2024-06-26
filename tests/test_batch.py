@@ -193,10 +193,11 @@ class TestBatchCLI:
         result = self._run_cli_batch_process("--new-config", new_config_test_file)
         assert result.exit_code == 1, result.output
 
-    def test_batch_failed_cli_conversion_with_no_matching_inputs(self):
-        result = self._run_cli_batch_process("-i", "*.csv")
+    def test_batch_failed_cli_conversion_with_no_matching_inputs(self, caplog):
+        with caplog.at_level("ERROR"):
+            result = self._run_cli_batch_process("-i", "*.csv")
         assert result.exit_code == 1
-        assert "ERROR No files detected with *.csv" in result.output
+        assert any( "No files detected with *.csv" in record.message for record in caplog.records)
 
     def test_batch_failed_cli_conversion_with_argument_inputs(self):
         result = self._run_cli_batch_process("*.csv")
@@ -547,7 +548,7 @@ class TestBatchConvertFromInputTable:
         files, attrs = batch.get_source_files_from_input_table()
         assert files
         assert len(files) > 0
-        assert all(file.startswith("tests/parsers_test_files/onset/") for file in files)
+        assert all(str(file).startswith("tests/parsers_test_files/onset/") for file in files)
 
     def test_get_files_with_file_column_suffix(self, config):
         config["input_table"]["file_column_suffix"] = "**/*.csv"
@@ -555,7 +556,7 @@ class TestBatchConvertFromInputTable:
         files, attrs = batch.get_source_files_from_input_table()
         assert files
         assert len(files) > 0
-        assert all(file.endswith(".csv") for file in files)
+        assert all(file.suffix == ".csv" for file in files)
 
     def test_get_files_with_file_column_prefix_and_suffix(self, config):
         config["input_table"]["file_column_prefix"] = "tests/parsers_test_files/onset/"
@@ -565,7 +566,7 @@ class TestBatchConvertFromInputTable:
         assert files
         assert len(files) > 0
         assert all(
-            file.startswith("tests/parsers_test_files/onset/") and file.endswith(".csv")
+            str(file).startswith("tests/parsers_test_files/onset/") and file.suffix == ".csv"
             for file in files
         )
 
