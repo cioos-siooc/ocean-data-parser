@@ -357,7 +357,7 @@ class TestODFParser:
     )
     def test_odf_header_file_description_with_no_path(self, path,expect):
         result = drop_path_from_header_attributes({"ODF_HEADER":{"FILE_SPECIFICATION": path}})
-        assert result["ODF_HEADER"]["FILE_SPECIFICATION"] == expect, f"Failed to drop path from header attributes"
+        assert result["ODF_HEADER"]["FILE_SPECIFICATION"] == expect, "Failed to drop path from header attributes"
 
     
     @pytest.mark.parametrize(
@@ -370,7 +370,7 @@ class TestODFParser:
     )
     def test_instrument_header_description_no_path(self,path,expect):
         result = drop_path_from_header_attributes({"INSTRUMENT_HEADER":{"DESCRIPTION": path}})
-        assert result["INSTRUMENT_HEADER"]["DESCRIPTION"] == expect, f"Failed to drop path from header attributes"
+        assert result["INSTRUMENT_HEADER"]["DESCRIPTION"] == expect, "Failed to drop path from header attributes"
 
 class TestODFBIOParser:
     @pytest.mark.parametrize(
