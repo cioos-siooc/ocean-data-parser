@@ -37,6 +37,8 @@ jobs:
           poetry install --with dev,geo
       - name: ruff check
         run: poetry run ruff check --output-format=github .
+      - name: ruff import sorting check
+        run: poetry run ruff check --select I --output-format=github .
       - name: ruff lint
         run: poetry run ruff format --check .
       - name: Review if metadata is updated
