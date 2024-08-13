@@ -20,6 +20,7 @@ from ocean_data_parser.parsers import (
     star_oddi,
     sunburst,
     van_essen_instruments,
+    hach,
 )
 from ocean_data_parser.parsers.dfo.odf_source.attributes import _review_station
 from ocean_data_parser.parsers.dfo.odf_source.parser import _convert_odf_time
@@ -46,7 +47,7 @@ def review_parsed_dataset(
             if ignore_log_records and re.search(ignore_log_records, record.message):
                 continue
             assert record.levelno <= max_log_levelno, str(record) % record.args
-
+    
     ds.to_netcdf(source + "_test.nc", format="NETCDF4")
 
     # Test path generation input
@@ -119,6 +120,11 @@ class TestOnsetParser:
             ),
         )
 
+class TestHachTxtParser:
+    @pytest.mark.parametrize("path", glob("tests/parsers_test_files/hach/txt/**/*.txt"))
+    def test_hach_txt_parser(self, path, caplog):
+        ds = hach.txt(path)
+        review_parsed_dataset(ds, path, caplog)
 
 class TestRBRParser:
     @pytest.mark.parametrize("path", glob("tests/parsers_test_files/rbr/rtext/*.txt"))

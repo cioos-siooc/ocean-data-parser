@@ -98,6 +98,8 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
         parser = "van_essen_instruments.mon"
     elif ext == "txt" and re.match(r"\d+\-\d+\s*\nOS REV\:", header):
         parser = "pme.minidot_txt"
+    elif ext == 'txt' and re.match(r"Device Type,DR1900", header):
+        parser = "hach.txt"
     elif ext == "txt" and re.match(r"Model\=.*\nFirmware\=.*\nSerial\=.*", header):
         parser = "rbr.rtext"
     elif ext == "txt" and "Front panel parameter change:" in header:
