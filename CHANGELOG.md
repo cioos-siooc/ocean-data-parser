@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add odpy convert `input_table` input through config file, which gives the
 ability to list multiple file glob expression and associated metadata.
 - Add Onset.csv timestamp format: "\d+\/\d+\/\d\d\d\d\s+\d+\:\d+\:\d+" = "%m/%d/%Y %H:%M:%S"
+- Rely on ruff for format and linter testing
+
+### Fixed
+
+- seabird parsers module import sorting
+- nafc ruff check issues
 
 ## `0.5.2` - 2024-06-22
 
