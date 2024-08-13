@@ -9,11 +9,11 @@ import json
 import logging
 import re
 from datetime import datetime
+from pyexpat import ExpatError
 
 import pandas as pd
 import xarray
 import xmltodict
-from pyexpat import ExpatError
 
 from ocean_data_parser.parsers.utils import convert_datetime_str, standardize_dataset
 from ocean_data_parser.vocabularies.load import seabird_vocabulary
