@@ -21,6 +21,7 @@ from ocean_data_parser.parsers import (
     sunburst,
     van_essen_instruments,
     hach,
+    turner,
 )
 from ocean_data_parser.parsers.dfo.odf_source.attributes import _review_station
 from ocean_data_parser.parsers.dfo.odf_source.parser import _convert_odf_time
@@ -745,4 +746,12 @@ class TestStarOddiParsers:
     )
     def test_star_oddi_dat_parser(self, path, caplog):
         ds = star_oddi.DAT(path)
+        review_parsed_dataset(ds, path, caplog)
+
+class TestTurnerParsers:
+    @pytest.mark.parametrize(
+        "path", glob("tests/parsers_test_files/turner/**/*.xlsx", recursive=True)
+    )
+    def test_turner_xlsx_parser(self, path, caplog):
+        ds = turner.xlsx(path)
         review_parsed_dataset(ds, path, caplog)

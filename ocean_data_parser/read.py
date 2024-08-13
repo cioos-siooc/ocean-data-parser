@@ -108,6 +108,8 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
         parser = "sunburst.superCO2"
     elif all(re.search(r"\$.*,.*,", line) for line in header.split("\n") if line):
         parser = "nmea.file"
+    elif ext == "xlsx":
+        parser = "turner.xlsx"
     else:
         raise ImportError(f"Unable to match file to a specific data parser: {file}")
 
