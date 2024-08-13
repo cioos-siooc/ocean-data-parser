@@ -561,9 +561,9 @@ def pfile(
                 if apply_func not in (None, np.nan)
                 else var
             )
-            ds.attrs[
-                "history"
-            ] += f"\n{pd.Timestamp.now()} - Generated variable {name} = {apply_func}"
+            ds.attrs["history"] += (
+                f"\n{pd.Timestamp.now()} - Generated variable {name} = {apply_func}"
+            )
             attrs["source"] = f"Generated variable {name} = {apply_func}"
             ds[name] = (var.dims, new_data.data, {**var.attrs, **attrs})
 

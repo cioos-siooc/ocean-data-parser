@@ -217,14 +217,14 @@ def btl(
     # Add cell_method attribute
     for var in ds:
         if var.endswith("_sdev") and var[:-5] in ds:
-            ds[var].attrs[
-                "cell_method"
-            ] = f"scan: standard_deviation (previous {n_scan_per_bottle} scans)"
+            ds[var].attrs["cell_method"] = (
+                f"scan: standard_deviation (previous {n_scan_per_bottle} scans)"
+            )
             # TODO confirm that seabird uses the previous records from this timestamp
         elif var not in ["time", "bottle"]:
-            ds[var].attrs[
-                "cell_method"
-            ] = f"scan: mean (previous {n_scan_per_bottle} scans)"
+            ds[var].attrs["cell_method"] = (
+                f"scan: mean (previous {n_scan_per_bottle} scans)"
+            )
 
     if not save_orginal_header:
         ds.attrs.pop("seabird_header")

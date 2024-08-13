@@ -46,31 +46,23 @@ class TestPlatformVocabulary:
         duplicated = platforms_vocab.query(
             f"{column}.notna() and {column}.duplicated(keep=False)"
         )
-        assert (
-            duplicated.empty
-        ), f"{len(duplicated)} duplicated {column=} found in platform vocabulary: {duplicated[['platform_name',column]]}"
+        assert duplicated.empty, f"{len(duplicated)} duplicated {column=} found in platform vocabulary: {duplicated[['platform_name',column]]}"
 
     def test_sdn_urm_prefix(self):
         sdn_prefix = platforms_vocab.query(
             "sdn_platform_urn.str.startswith('SDN:C17::') == False and sdn_platform_urn.notna()"
         )
-        assert (
-            sdn_prefix.empty
-        ), f"SDN URN prefix not found in platform vocabulary: {sdn_prefix[['platform_name','sdn_platform_urn']]}"
+        assert sdn_prefix.empty, f"SDN URN prefix not found in platform vocabulary: {sdn_prefix[['platform_name','sdn_platform_urn']]}"
 
     def test_matching_id_ices_sdn_codes(self):
         mismatched_codes = platforms_vocab.query(
             "ices_platform_code != platform_id and (ices_platform_code.notna() or platform_id.notna())"
         )
-        assert (
-            mismatched_codes.empty
-        ), f"mismatched codes found: {mismatched_codes[['platform_name','platform_id','ices_platform_code','sdn_platform_urn']]}"
+        assert mismatched_codes.empty, f"mismatched codes found: {mismatched_codes[['platform_name','platform_id','ices_platform_code','sdn_platform_urn']]}"
         mismatched_codes = platforms_vocab.query(
             "sdn_platform_urn.str.replace('SDN:C17::','') != platform_id and (sdn_platform_urn.notna() or platform_id.notna())"
         )
-        assert (
-            mismatched_codes.empty
-        ), f"mismatched codes found: {mismatched_codes[['platform_name','platform_id','ices_platform_code','sdn_platform_urn']]}"
+        assert mismatched_codes.empty, f"mismatched codes found: {mismatched_codes[['platform_name','platform_id','ices_platform_code','sdn_platform_urn']]}"
 
     @nerc_vocabulary_test
     @pytest.mark.parametrize(

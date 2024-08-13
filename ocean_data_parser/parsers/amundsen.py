@@ -118,9 +118,9 @@ def int_format(
             elif line == "% In situ density TEOS10 ((s, t, p) - 1000) [kg/m^3]":
                 metadata["D_CT"] = "In situ density TEOS10 ((s, t, p) - 1000) [kg/m^3]"
             elif line == "% Potential density TEOS10 ((s, t, 0) - 1000) [kg/m^3]":
-                metadata[
-                    "D0CT"
-                ] = "Potential density TEOS10 ((s, t, 0) - 1000) [kg/m^3]"
+                metadata["D0CT"] = (
+                    "Potential density TEOS10 ((s, t, 0) - 1000) [kg/m^3]"
+                )
             elif line == "% Potential density TEOS10 (s, t, 0) [kg/m^3]":
                 metadata["D0CT"] = "Potential density TEOS10 (s, t, 0) [kg/m^3]"
             elif re.match(r"% .* \[.+\]", line):
