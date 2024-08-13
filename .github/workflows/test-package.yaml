@@ -73,7 +73,9 @@ jobs:
         run: poetry run pytest -W error::UserWarning -k "not test_metadata" -n auto
       - name: Run benchmark
         run: poetry run pytest tests/run_benchmark.py  --benchmark-json output.json
-      - name: Update CHANGELOG
+      - name: CHANGELOG updated check
         if: steps.changes.outputs.changelog == 'false'
-        run: exit 1
+        run: |
+          echo "CHANGELOG.md update is required."
+          exit 1
         
