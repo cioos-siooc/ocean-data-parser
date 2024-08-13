@@ -266,7 +266,7 @@ def _parse_channel_stats(lines: list) -> dict:
         dtype = _get_dtype(attrs["name"])
 
         # Use int(float(x)) method because the integers have decimals
-        func = (lambda x: int(float(x))) if dtype == int else float
+        func = (lambda x: int(float(x))) if dtype is int else float
         return tuple(
             map(
                 func,
@@ -463,7 +463,7 @@ def pfile(
         logger.error("No data found in file")
 
     # Review datatypes
-    if any([dtype == object for _, dtype in ds.dtypes.items()]):
+    if any([dtype is object for _, dtype in ds.dtypes.items()]):
         logger.warning(
             "Some columns dtype=object suggest the file data wasn't correctely parsed."
         )
