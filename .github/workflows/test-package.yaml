@@ -47,7 +47,7 @@ jobs:
       - name: Check for ruff issues 
         if: failure()
         run: |
-          echo "One or more steps have failed in the workflow." \ 
+          echo "One or more steps have failed in the workflow."
           exit 1
         
       - name: Review if metadata is updated
