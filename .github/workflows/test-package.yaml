@@ -50,9 +50,13 @@ jobs:
       - name: Check for ruff issues 
         if: steps.ruff_check.outcome == 'failure' || steps.ruff_imports.outcome == 'failure' || steps.ruff_format.outcome == 'failure'
         run: |
-          echo "One or more ruff steps have failed in the workflow."
+          echo "Some ruff steps failed. Please check the logs for more information.\n"
+          echo "Some of the issues can be fixed by running the following commands:\n"
+          echo " poetry run ruff check --fix . # for fixing all default issues"
+          echo " poetry run ruff check --fix --select I . # for fixing import sorting issues"
+          echo " poetry run ruff format . # for formatting the code"
           exit 1
-        
+          
       - name: Review if metadata is updated
         uses: dorny/paths-filter@v3
         continue-on-error: true
