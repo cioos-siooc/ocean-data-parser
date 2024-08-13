@@ -278,9 +278,9 @@ class TestFileRegistry:
         assert file_registry.data.loc[
             file_registry._is_new_file()
         ].empty, f" {file_registry._is_new_file()} didn't return an empty list of files"
-        assert file_registry.data.loc[
-            file_registry._is_different_hash()
-        ].empty, f" {file_registry._is_different_hash()} didn't return an empty list of files"
+        assert (
+            file_registry.data.loc[file_registry._is_different_hash()].empty
+        ), f" {file_registry._is_different_hash()} didn't return an empty list of files"
         assert file_registry.data.loc[
             file_registry._is_new_file() | file_registry._is_different_hash()
         ].empty

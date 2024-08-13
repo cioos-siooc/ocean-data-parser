@@ -26,8 +26,8 @@ jobs:
   testing:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
       - name: Install dependencies
@@ -35,16 +35,31 @@ jobs:
           python -m pip install --upgrade pip
           pip install poetry
           poetry install --with dev,geo
-      - name: Lint with flake8
-        run: |
-          # stop the build if there are Python syntax errors or undefined names
-          poetry run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          poetry run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-      - name: Run ruff
+      - name: ruff check
+        id: ruff_check
         run: poetry run ruff check --output-format=github .
+        continue-on-error: true
+      - name: ruff import sorting check
+        id: ruff_imports
+        run: poetry run ruff check --select I --output-format=github .
+        continue-on-error: true
+      - name: ruff format
+        id: ruff_format
+        run: poetry run ruff format --check .
+        continue-on-error: true
+      - name: Check for ruff issues 
+        if: steps.ruff_check.outcome == 'failure' || steps.ruff_imports.outcome == 'failure' || steps.ruff_format.outcome == 'failure'
+        run: |
+          echo "Some ruff steps failed. Please check the logs for more information.\n"
+          echo "Some of the issues can be fixed by running the following commands:\n"
+          echo " poetry run ruff check --fix . # for fixing all default issues"
+          echo " poetry run ruff check --fix --select I . # for fixing import sorting issues"
+          echo " poetry run ruff format . # for formatting the code"
+          exit 1
+          
       - name: Review if metadata is updated
         uses: dorny/paths-filter@v3
+        continue-on-error: true
         id: changes
         with:
           filters: |
@@ -62,7 +77,9 @@ jobs:
         run: poetry run pytest -W error::UserWarning -k "not test_metadata" -n auto
       - name: Run benchmark
         run: poetry run pytest tests/run_benchmark.py  --benchmark-json output.json
-      - name: Update CHANGELOG
+      - name: CHANGELOG updated check
         if: steps.changes.outputs.changelog == 'false'
-        run: exit 1
+        run: |
+          echo "CHANGELOG.md update is required."
+          exit 1
         

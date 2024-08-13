@@ -9,11 +9,11 @@ import json
 import logging
 import re
 from datetime import datetime
+from pyexpat import ExpatError
 
 import pandas as pd
 import xarray
 import xmltodict
-from pyexpat import ExpatError
 
 from ocean_data_parser.parsers.utils import convert_datetime_str, standardize_dataset
 from ocean_data_parser.vocabularies.load import seabird_vocabulary
@@ -217,14 +217,14 @@ def btl(
     # Add cell_method attribute
     for var in ds:
         if var.endswith("_sdev") and var[:-5] in ds:
-            ds[var].attrs[
-                "cell_method"
-            ] = f"scan: standard_deviation (previous {n_scan_per_bottle} scans)"
+            ds[var].attrs["cell_method"] = (
+                f"scan: standard_deviation (previous {n_scan_per_bottle} scans)"
+            )
             # TODO confirm that seabird uses the previous records from this timestamp
         elif var not in ["time", "bottle"]:
-            ds[var].attrs[
-                "cell_method"
-            ] = f"scan: mean (previous {n_scan_per_bottle} scans)"
+            ds[var].attrs["cell_method"] = (
+                f"scan: mean (previous {n_scan_per_bottle} scans)"
+            )
 
     if not save_orginal_header:
         ds.attrs.pop("seabird_header")
