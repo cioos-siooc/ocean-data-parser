@@ -36,18 +36,21 @@ jobs:
           pip install poetry
           poetry install --with dev,geo
       - name: ruff check
+        id: ruff_check
         run: poetry run ruff check --output-format=github .
         continue-on-error: true
       - name: ruff import sorting check
+        id: ruff_imports
         run: poetry run ruff check --select I --output-format=github .
         continue-on-error: true
-      - name: ruff lint
+      - name: ruff format
+        id: ruff_format
         run: poetry run ruff format --check .
         continue-on-error: true
       - name: Check for ruff issues 
-        if: failure()
+        if: steps.ruff_check.outcome == 'failure' || steps.ruff_imports.outcome == 'failure' || steps.ruff_format.outcome == 'failure'
         run: |
-          echo "One or more steps have failed in the workflow."
+          echo "One or more ruff steps have failed in the workflow."
           exit 1
         
       - name: Review if metadata is updated
