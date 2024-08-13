@@ -120,7 +120,7 @@ class TestOnsetParser:
             ),
         )
 
-class TestHachTxtParser:
+class TestHachParsers:
     @pytest.mark.parametrize("path", glob("tests/parsers_test_files/hach/txt/**/*.txt"))
     def test_hach_txt_parser(self, path, caplog):
         ds = hach.txt(path)
