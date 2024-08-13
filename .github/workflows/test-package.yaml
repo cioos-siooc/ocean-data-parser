@@ -44,6 +44,12 @@ jobs:
       - name: ruff lint
         run: poetry run ruff format --check .
         continue-on-error: true
+      - name: Check for ruff issues 
+        if: failure()
+        run: |
+          echo "One or more steps have failed in the workflow." \ 
+          exit 1
+        
       - name: Review if metadata is updated
         uses: dorny/paths-filter@v3
         continue-on-error: true
@@ -67,10 +73,4 @@ jobs:
       - name: Update CHANGELOG
         if: steps.changes.outputs.changelog == 'false'
         run: exit 1
-        continue-on-error: true
-      - name: Check for failures
-        if: failure()
-        run: |
-          echo "One or more steps have failed in the workflow." \ 
-          exit 1
         
