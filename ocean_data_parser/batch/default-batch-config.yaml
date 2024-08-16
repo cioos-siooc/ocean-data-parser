@@ -1,7 +1,9 @@
 ---
 
 name: Batch Conversion Name
-input_path: ""  # path or glob expression of files to convert. It can be a str or a list of str
+input_path: ""  # glob expression of files to convert.
+  # It can be a str, a list of os path separator (: for unix, ; for windows)
+  # separated list of paths or a list of paths
 input_table:  # retrieve files to convert from tables (ignore input_path if set)
   # input_table is used to retrieve files to convert from tables
   # that are listing different glob expressions to retrieve files and associated metadata
