@@ -248,9 +248,14 @@ class BatchConversion:
 
     def get_source_files(self) -> list:
         excluded_files = self.get_excluded_files()
+        paths = self.config["input_path"]
+        if isinstance(paths, str):
+            paths = [paths]
+
         return [
             Path(file)
-            for file in glob(self.config["input_path"], recursive=True)
+            for path in paths
+            for file in glob(path, recursive=True)
             if file not in excluded_files
         ]
 

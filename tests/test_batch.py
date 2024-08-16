@@ -389,6 +389,18 @@ class TestBatchConversion:
         assert len(source_files) == len(list(glob(input_path)))
         assert set(source_files) == set(Path(file) for file in glob(input_path))
 
+    def test_batch_input_path_with_list(self):
+        input_path = [
+            "tests/parsers_test_files/dfo/odf/bio/CTD/*.ODF",
+            "tests/parsers_test_files/seabird/**/*.btl",
+        ]
+        batch = BatchConversion(input_path=input_path)
+        source_files = batch.get_source_files()
+        expected_files = [file for path in input_path for file in glob(path)]
+        assert source_files
+        assert len(source_files) == len(expected_files)
+        assert set(source_files) == set(expected_files)
+
     @pytest.mark.parametrize(
         "exclude",
         (
