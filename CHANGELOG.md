@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ability to list multiple file glob expression and associated metadata.
 - Add Onset.csv timestamp format: "\d+\/\d+\/\d\d\d\d\s+\d+\:\d+\:\d+" = "%m/%d/%Y %H:%M:%S"
 - Rely on ruff for format and linter testing
+- Add option to pass a list of input_path paths via the configuration file or a 
+os path seperator list via the command line interface or the configuration
 
 ### Fixed
 

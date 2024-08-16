@@ -86,7 +86,11 @@ def validate_parser_kwargs(ctx, _, value):
     "-i",
     "--input-path",
     type=str,
-    help="Input path to file list. It can be a glob expression (ex: *.cnv)",
+    help=(
+        "Input path to file list. It can be a glob expression (ex: *.cnv)"
+        " or a list of paths separated by a colons [:] (linux,mac) "
+        "and semi-colons [;] (windows)."
+    ),
 )
 @click.option(
     "--exclude",
@@ -249,8 +253,7 @@ class BatchConversion:
     def get_source_files(self) -> list:
         excluded_files = self.get_excluded_files()
         paths = self.config["input_path"]
-        if isinstance(paths, str):
-            paths = [paths]
+        paths = paths.split(os.pathsep) if isinstance(paths, str) else paths
 
         return [
             Path(file)
