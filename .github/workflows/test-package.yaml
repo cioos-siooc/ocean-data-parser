@@ -62,6 +62,8 @@ jobs:
         continue-on-error: true
         id: changes
         with:
+          base: ${{ github.base_ref }}
+          ref: ${{ github.ref }}
           filters: |
             vocabularies:
               - 'ocean_data_parser/vocabularies/**'
