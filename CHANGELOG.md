@@ -15,6 +15,7 @@ ability to list multiple file glob expression and associated metadata.
 - Rely on ruff for format and linter testing
 - Add option to pass a list of input_path paths via the configuration file or a 
 os path seperator list via the command line interface or the configuration
+- Add test to test version within package `__init__.py`, `CHANGELOG.md`, and `pyproject.tom`
 
 ### Fixed
 
