@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import pandas as pd
@@ -388,6 +389,32 @@ class TestBatchConversion:
         assert source_files
         assert len(source_files) == len(list(glob(input_path)))
         assert set(source_files) == set(Path(file) for file in glob(input_path))
+
+    def test_batch_input_path_with_os_path_seperator(self):
+        input_path = (
+            "tests/parsers_test_files/dfo/odf/bio/CTD/*.ODF"
+            + os.pathsep
+            + "tests/parsers_test_files/seabird/**/*.btl"
+        )
+        batch = BatchConversion(input_path=input_path)
+        source_files = batch.get_source_files()
+        expected_files = [
+            file for path in input_path.split(os.pathsep) for file in glob(path)
+        ]
+        assert source_files
+        assert len(source_files) == len(expected_files)
+
+    def test_batch_input_path_with_list(self):
+        input_path = [
+            "tests/parsers_test_files/dfo/odf/bio/CTD/*.ODF",
+            "tests/parsers_test_files/seabird/**/*.btl",
+        ]
+        batch = BatchConversion(input_path=input_path)
+        source_files = batch.get_source_files()
+        expected_files = [file for path in input_path for file in glob(path)]
+        assert source_files
+        assert len(source_files) == len(expected_files)
+        assert set(source_files) == set(expected_files)
 
     @pytest.mark.parametrize(
         "exclude",
