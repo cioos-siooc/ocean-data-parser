@@ -7,8 +7,8 @@ The ocean-data-parser can be used different ways:
 
 - [ ] Python Import
 
-    - [`from ocean_data_parser import read.file`](read.md)
-    - [`from ocean_data_parser.parsers import ...`](parsers/index.md)
+  - [`from ocean_data_parser import read.file`](read.md)
+  - [`from ocean_data_parser.parsers import ...`](parsers/index.md)
 
 ## Installation
 

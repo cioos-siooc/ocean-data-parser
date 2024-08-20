@@ -86,9 +86,9 @@ def parse_odf(
         "source": odf_path,
     }
     dataset = attributes.global_attributes_from_header(dataset, metadata)
-    dataset.attrs[
-        "history"
-    ] += f"# Convert ODF to NetCDF with ocean_data_parser V {__version__}\n"
+    dataset.attrs["history"] += (
+        f"# Convert ODF to NetCDF with ocean_data_parser V {__version__}\n"
+    )
 
     # Handle ODF flag variables
     dataset = flags.rename_qqqq_flags(dataset)

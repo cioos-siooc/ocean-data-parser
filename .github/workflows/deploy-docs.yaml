@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
@@ -32,8 +34,8 @@ jobs:
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
       - run: |
           if [[ "${{github.ref_name}}" == "main" ]]; then
-              poetry run mike deploy main --push --force
+              poetry run mike deploy main --push
           else
-              poetry run mike deploy dev --push --force
+              poetry run mike deploy dev --push
           fi
-          poetry run mike set-default dev --push
+          poetry run mike set-default main --push

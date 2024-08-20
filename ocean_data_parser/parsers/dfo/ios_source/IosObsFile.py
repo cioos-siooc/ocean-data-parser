@@ -458,9 +458,9 @@ class IosFile(object):
             self.history = {}
         if "ios_transform_history" not in self.history:
             self.history["ios_transform_history"] = "IOS Transform History:\n"
-        self.history[
-            "ios_transform_history"
-        ] += f"{datetime.now().isoformat()} - {input}\n"
+        self.history["ios_transform_history"] += (
+            f"{datetime.now().isoformat()} - {input}\n"
+        )
 
     def get_data(self, formatline=None):
         # reads data using the information in FORMAT

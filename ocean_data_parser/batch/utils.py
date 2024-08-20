@@ -98,9 +98,7 @@ def generate_output_path(
 
     if "." in file_name and not output_format:
         file_name, output_format = file_name.rsplit(".", 1)
-    assert (
-        output_format
-    ), "Unknown output file format extension: define the format through the path or output_format inputs"
+    assert output_format, "Unknown output file format extension: define the format through the path or output_format inputs"
 
     # Generate path
     return Path(output_path) / (

@@ -160,9 +160,9 @@ def minidot_txt(
 
     if rename_variables:
         ds = ds.rename_vars(VARIABLE_RENAMING_MAPPING)
-    ds.attrs[
-        "history"
-    ] += f"\n{pd.Timestamp.now().isoformat()} Rename variables: {VARIABLE_RENAMING_MAPPING}"
+    ds.attrs["history"] += (
+        f"\n{pd.Timestamp.now().isoformat()} Rename variables: {VARIABLE_RENAMING_MAPPING}"
+    )
 
     ds = standardize_dataset(ds)
     return ds

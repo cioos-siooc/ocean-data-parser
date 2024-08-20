@@ -266,7 +266,7 @@ def _parse_channel_stats(lines: list) -> dict:
         dtype = _get_dtype(attrs["name"])
 
         # Use int(float(x)) method because the integers have decimals
-        func = (lambda x: int(float(x))) if dtype == int else float
+        func = (lambda x: int(float(x))) if dtype is int else float
         return tuple(
             map(
                 func,
@@ -463,7 +463,7 @@ def pfile(
         logger.error("No data found in file")
 
     # Review datatypes
-    if any([dtype == object for _, dtype in ds.dtypes.items()]):
+    if any([dtype is object for _, dtype in ds.dtypes.items()]):
         logger.warning(
             "Some columns dtype=object suggest the file data wasn't correctely parsed."
         )
@@ -561,9 +561,9 @@ def pfile(
                 if apply_func not in (None, np.nan)
                 else var
             )
-            ds.attrs[
-                "history"
-            ] += f"\n{pd.Timestamp.now()} - Generated variable {name} = {apply_func}"
+            ds.attrs["history"] += (
+                f"\n{pd.Timestamp.now()} - Generated variable {name} = {apply_func}"
+            )
             attrs["source"] = f"Generated variable {name} = {apply_func}"
             ds[name] = (var.dims, new_data.data, {**var.attrs, **attrs})
 
@@ -587,7 +587,7 @@ def _parse_lat_lon(latlon: str) -> float:
 @lru_cache
 def _get_metqa_table(file) -> pd.DataFrame:
     """Load NAFC metqa table which contains each files assoicated weather data"""
-    df = pd.read_csv(file, sep="\s*\,", engine="python")
+    df = pd.read_csv(file, sep=r"\s*\,", engine="python")
     df.columns = [
         col.lower().split("[")[0].strip().replace(" ", "_") for col in df.columns
     ]
@@ -623,7 +623,9 @@ def _add_metqa_info_to_pcvn(file: Path, match_metqa_file) -> Path:
         level = "WARNING" if match_metqa_file else "DEBUG"
         logger.log(
             level,
-            "No metqa table file found path={},glob={}", file.parent, glob_expression
+            "No metqa table file found path={},glob={}",
+            file.parent,
+            glob_expression,
         )
     return {}
 
@@ -718,7 +720,7 @@ def pcnv(
             "vnet": ds.attrs.pop("vnet", None),
             "do2": ds.attrs.pop("do2", None),
             "bottles": _int(ds.attrs.pop("bottles", None)),
-            **_add_metqa_info_to_pcvn(path,match_metqa_table),
+            **_add_metqa_info_to_pcvn(path, match_metqa_table),
             **(global_attributes or {}),
         }
     )

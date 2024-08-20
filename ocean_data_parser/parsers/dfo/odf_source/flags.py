@@ -73,9 +73,9 @@ def add_flag_attributes(dataset):
     """
 
     def _add_ancillary(ancillary, variable):
-        dataset[variable].attrs[
-            "ancillary_variables"
-        ] = f"{dataset[variable].attrs.get('ancillary_variables','')} {ancillary}".strip()
+        dataset[variable].attrs["ancillary_variables"] = (
+            f"{dataset[variable].attrs.get('ancillary_variables','')} {ancillary}".strip()
+        )
         return dataset[variable]
 
     # Add ancillary_variable attribute
@@ -88,9 +88,9 @@ def add_flag_attributes(dataset):
                     _add_ancillary(variable, var)
         elif variable.startswith("Q") and variable[1:] in dataset:
             dataset[variable[1:]] = _add_ancillary(variable, variable[1:])
-            dataset[variable].attrs[
-                "long_name"
-            ] = f"Quality Flag for Parameter: {dataset[variable[1:]].attrs['long_name']}"
+            dataset[variable].attrs["long_name"] = (
+                f"Quality Flag for Parameter: {dataset[variable[1:]].attrs['long_name']}"
+            )
         else:
             # ignore normal variables
             continue

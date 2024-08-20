@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ocean-data-parser"
-version = "0.5.0"
+version = "0.6.0"
 description = "Package used to parse different Ocean Instruments Propriatary format to an xarray dataset."
 repository = "https://github.com/cioos-siooc/ocean-data-parser"
 homepage = "https://cioos.ca"
@@ -73,13 +73,12 @@ optional = true
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.2"
-black = "^23.10.0"
 ioos-qc = "^2.1.0"
 pytest-benchmark = "^4.0.0"
 flake8 = "^6.1.0"
-ruff = "^0.3.4"
 toml = "^0.10.2"
 pytest-xdist = "^3.6.1"
+ruff = "^0.5.7"
 
 [tool.poetry.scripts]
 odpy = 'ocean_data_parser.cli:main'
@@ -87,6 +86,3 @@ odpy = 'ocean_data_parser.cli:main'
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.isort]
-profile = "black" 

@@ -14,3 +14,18 @@ title: odpy CLI
     Example: 
     - `ODPY_LOG_LEVEL=WARNING` will force `odpy` to log only the warning events.
     - `ODPY_CONVERT_OUTPUT_PATH=output` will force `odpy convert` to output to the the local directory `./output/`
+
+
+## Configuration
+
+`odpy convert` can handle a configuration file which also integrates a number of other features. To generate a new configuration, you can use the `--new-config` flag:
+
+```shell
+odpy convert --new-config new_config_file_path.yaml
+```
+
+Or copy the following yaml:
+
+```yaml
+--8<-- "ocean_data_parser/batch/default-batch-config.yaml"
+```

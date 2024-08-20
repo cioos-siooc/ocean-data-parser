@@ -62,6 +62,7 @@ IGNORED_VARIABLES = [
 
 DATETIME_REGEX_FORMATS = [
     (r"\d\d\/\d\d\/\d\d\s+\d\d\:\d\d\:\d\d\s+\w\w", r"%m/%d/%y %I:%M:%S %p"),
+    (r"\d+\/\d+\/\d\d\d\d\s+\d+\:\d+\:\d+", r"%m/%d/%Y %H:%M:%S"),
     (r"\d\d\d\d\/\d\d\/\d\d\s+\d\d\:\d\d\:\d\d\s+\w\w", r"%Y/%m/%d %I:%M:%S %p"),
     (r"\d\d\/\d\d\/\d\d\s+\d\d\:\d\d", r"%m/%d/%y %H:%M"),
     (r"\d\d\/\d\d\/\d\d\s+\d\d\:\d\d:\d\d", r"%y/%m/%d %H:%M:%S"),
