@@ -8,7 +8,10 @@
 
 [![Build documentation](https://github.com/cioos-siooc/ocean-data-parser/actions/workflows/deploy-docs.yaml/badge.svg)](https://github.com/cioos-siooc/ocean-data-parser/actions/workflows/deploy-docs.yaml)
 
-`ocean-data-parser` - a Python package for parsing oceanographic proprietary data formats to [xarray Dataset](https://docs.xarray.dev/en/stable/). Documentation [here](https://cioos-siooc.github.io/ocean-data-parser/).
+`ocean-data-parser` - a Python package for parsing oceanographic proprietary data formats to [xarray Dataset](https://docs.xarray.dev/en/stable/).
+
+[<kbd> <br> Documentation <br> </kbd>][[Link](https://cioos-siooc.github.io/ocean-data-parser/)]
+
 
 ## Installation
 
