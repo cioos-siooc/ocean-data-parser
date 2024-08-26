@@ -17,7 +17,13 @@ import xarray
 
 from ocean_data_parser.parsers.utils import standardize_dataset
 
-GLOBAL_ATTRIBUTES = {"Convention": "CF-1.6"}
+GLOBAL_ATTRIBUTES = {"instrument_manufacturer": "Onset", "Convention": "CF-1.6"}
+
+TIMEZONE_MAPPING = {
+    "GMT": "UTC",
+    "PDT": "US/Pacific",
+    "PST": "US/Pacific",
+}
 
 logger = logging.getLogger(__name__)
 VARIABLE_NAME_MAPPING = {
@@ -89,7 +95,6 @@ def _get_time_format(time):
 def _parse_onset_csv_header(header_lines):
     full_header = "\n".join(header_lines)
     header = {
-        "instrument_manufacturer": "Onset",
         "history": "",
         "timezone": re.search(r"GMT\s*([\-\+\d\:]*)", full_header),
         "plot_title": re.search(r"Plot Title\: (\w*),+", full_header),
@@ -345,3 +350,86 @@ def _farenheit_to_celsius(farenheit):
         float: Temperature in celsisus
     """
     return (farenheit - 32.0) / 1.8000
+
+
+def xlsx(path: str, timezone: str = None) -> xarray.Dataset:
+    """Parses the Onset XLSX format generate by HOBOware into a xarray object
+
+    Inputs: path: The path to the XLSX file
+    Returns: xarray.Dataset
+    """
+
+    def _format_detail_key(key):
+        """Format detail key to be more readable"""
+        key = re.sub(r"\(.*\)", "", key)
+        return (
+            key.replace(" Info", "")
+            .replace(" ", "_")
+            .replace('-', '_')
+            .lower()
+            .replace("deployment_deployment", "deployment")
+            .replace("device_device", "device")
+            .replace("app_app", "app")
+        )
+    def _get_column_and_unit(column):
+        """split column name and unit in parenthesis"""
+        column = column.split(" (")
+        if len(column) == 1:
+            return column[0], None
+        return column[0], column[1].replace(")", "")
+        
+
+    # Read the different sheets from the xlsx file
+    data = pd.read_excel(path, sheet_name="Data", engine="openpyxl")
+    events = pd.read_excel(path, sheet_name="Events", engine="openpyxl")
+    details = (
+        pd.read_excel(
+            path,
+            sheet_name="Details",
+            engine="openpyxl",
+            names=["group", "subgroup", "parameter", "value"],
+        )
+        .ffill(axis=0)
+        .dropna(subset=["parameter", "value"])
+    )
+    details_attrs = {
+        _format_detail_key(f"{row['subgroup']}_{row['parameter']}"): row["value"]
+        for id, row in details.iterrows()
+        if row["group"] == "Devices"
+    }
+
+    variable_attributes = {}
+
+    for var in data.columns:
+        column, unit = _get_column_and_unit(var)
+        column = _format_detail_key(column)
+        if column == "#":
+            column = "record_number"
+        elif column == "date_time":
+            column = "time"
+        variable_attributes[column] = {
+            "long_name": column,
+            "units": unit,
+            "original_name": var,
+        }
+    data.columns = variable_attributes.keys()
+
+    if "time" not in data.columns:
+        raise ValueError("Date Time column not found in header")
+    file_timezone = variable_attributes["time"].pop("units", None)
+    if file_timezone:
+        file_timezone = TIMEZONE_MAPPING.get(file_timezone, file_timezone)
+
+    # Convert to dataset
+    data["time"] = (
+        pd.to_datetime(data['time'], errors="coerce")
+        .dt.tz_localize(timezone or file_timezone)
+        .dt.tz_convert("UTC")
+    )
+    ds = data.to_xarray()
+    for var in variable_attributes:
+        ds[var].attrs = variable_attributes[var]
+    ds.attrs = {**GLOBAL_ATTRIBUTES, "events": events.to_json(), **details_attrs}
+    ds['instrument_type'] = _detect_instrument_type(ds)
+    ds = standardize_dataset(ds)
+    return ds

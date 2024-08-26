@@ -9,12 +9,9 @@ from click.testing import CliRunner
 from loguru import logger
 
 from ocean_data_parser.batch.config import glob
-from ocean_data_parser.batch.convert import (
-    BatchConversion,
-    FileConversionRegistry,
-    load_config,
-)
+from ocean_data_parser.batch.convert import BatchConversion, FileConversionRegistry
 from ocean_data_parser.batch.convert import cli as convert_cli
+from ocean_data_parser.batch.convert import load_config
 from ocean_data_parser.batch.utils import generate_output_path
 from ocean_data_parser.read import file
 
