@@ -365,19 +365,19 @@ def xlsx(path: str, timezone: str = None) -> xarray.Dataset:
         return (
             key.replace(" Info", "")
             .replace(" ", "_")
-            .replace('-', '_')
+            .replace("-", "_")
             .lower()
             .replace("deployment_deployment", "deployment")
             .replace("device_device", "device")
             .replace("app_app", "app")
         )
+
     def _get_column_and_unit(column):
         """split column name and unit in parenthesis"""
         column = column.split(" (")
         if len(column) == 1:
             return column[0], None
         return column[0], column[1].replace(")", "")
-        
 
     # Read the different sheets from the xlsx file
     data = pd.read_excel(path, sheet_name="Data", engine="openpyxl")
@@ -422,7 +422,7 @@ def xlsx(path: str, timezone: str = None) -> xarray.Dataset:
 
     # Convert to dataset
     data["time"] = (
-        pd.to_datetime(data['time'], errors="coerce")
+        pd.to_datetime(data["time"], errors="coerce")
         .dt.tz_localize(timezone or file_timezone)
         .dt.tz_convert("UTC")
     )
@@ -430,6 +430,6 @@ def xlsx(path: str, timezone: str = None) -> xarray.Dataset:
     for var in variable_attributes:
         ds[var].attrs = variable_attributes[var]
     ds.attrs = {**GLOBAL_ATTRIBUTES, "events": events.to_json(), **details_attrs}
-    ds['instrument_type'] = _detect_instrument_type(ds)
+    ds["instrument_type"] = _detect_instrument_type(ds)
     ds = standardize_dataset(ds)
     return ds
