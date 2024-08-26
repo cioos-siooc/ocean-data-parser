@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import pandas as pd
@@ -8,9 +9,12 @@ from click.testing import CliRunner
 from loguru import logger
 
 from ocean_data_parser.batch.config import glob
-from ocean_data_parser.batch.convert import BatchConversion, FileConversionRegistry
+from ocean_data_parser.batch.convert import (
+    BatchConversion,
+    FileConversionRegistry,
+    load_config,
+)
 from ocean_data_parser.batch.convert import cli as convert_cli
-from ocean_data_parser.batch.convert import load_config
 from ocean_data_parser.batch.utils import generate_output_path
 from ocean_data_parser.read import file
 
@@ -197,7 +201,10 @@ class TestBatchCLI:
         with caplog.at_level("ERROR"):
             result = self._run_cli_batch_process("-i", "*.csv")
         assert result.exit_code == 1
-        assert any( "No files detected with *.csv" in record.message for record in caplog.records)
+        assert any(
+            "No files detected with *.csv" in record.message
+            for record in caplog.records
+        )
 
     def test_batch_failed_cli_conversion_with_argument_inputs(self):
         result = self._run_cli_batch_process("*.csv")
@@ -383,6 +390,32 @@ class TestBatchConversion:
         assert len(source_files) == len(list(glob(input_path)))
         assert set(source_files) == set(Path(file) for file in glob(input_path))
 
+    def test_batch_input_path_with_os_path_seperator(self):
+        input_path = (
+            "tests/parsers_test_files/dfo/odf/bio/CTD/*.ODF"
+            + os.pathsep
+            + "tests/parsers_test_files/seabird/**/*.btl"
+        )
+        batch = BatchConversion(input_path=input_path)
+        source_files = batch.get_source_files()
+        expected_files = [
+            file for path in input_path.split(os.pathsep) for file in glob(path)
+        ]
+        assert source_files
+        assert len(source_files) == len(expected_files)
+
+    def test_batch_input_path_with_list(self):
+        input_path = [
+            "tests/parsers_test_files/dfo/odf/bio/CTD/*.ODF",
+            "tests/parsers_test_files/seabird/**/*.btl",
+        ]
+        batch = BatchConversion(input_path=input_path)
+        source_files = batch.get_source_files()
+        expected_files = [file for path in input_path for file in glob(path)]
+        assert source_files
+        assert len(source_files) == len(expected_files)
+        assert set(source_files) == set(expected_files)
+
     @pytest.mark.parametrize(
         "exclude",
         (
@@ -548,7 +581,9 @@ class TestBatchConvertFromInputTable:
         files, attrs = batch.get_source_files_from_input_table()
         assert files
         assert len(files) > 0
-        assert all(str(file).startswith("tests/parsers_test_files/onset/") for file in files)
+        assert all(
+            str(file).startswith("tests/parsers_test_files/onset/") for file in files
+        )
 
     def test_get_files_with_file_column_suffix(self, config):
         config["input_table"]["file_column_suffix"] = "**/*.csv"
@@ -566,7 +601,8 @@ class TestBatchConvertFromInputTable:
         assert files
         assert len(files) > 0
         assert all(
-            str(file).startswith("tests/parsers_test_files/onset/") and file.suffix == ".csv"
+            str(file).startswith("tests/parsers_test_files/onset/")
+            and file.suffix == ".csv"
             for file in files
         )
 
