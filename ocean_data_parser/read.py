@@ -112,7 +112,8 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
         sheet_names = excel_file.sheet_names
         if (
             all(sheet in sheet_names for sheet in ("Data", "Events", "Details"))
-            and "HOBOconnect" in excel_file.parse("Details", names=[0, 1, 2, 3])[3].tolist()
+            and "HOBOconnect"
+            in excel_file.parse("Details", names=[0, 1, 2, 3])[3].tolist()
         ):
             parser = "onset.xlsx"
     else:
