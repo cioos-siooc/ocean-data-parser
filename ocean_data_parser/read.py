@@ -9,6 +9,7 @@ from importlib import import_module
 from pathlib import Path
 from typing import Union
 
+import pandas as pd
 import xarray as xr
 
 logger = logging.getLogger(__name__)
@@ -107,7 +108,13 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
     elif all(re.search(r"\$.*,.*,", line) for line in header.split("\n") if line):
         parser = "nmea.file"
     elif ext == "xlsx":
-        parser = "onset.xlsx"
+        excel_file = pd.ExcelFile(file)
+        sheet_names = excel_file.sheet_names
+        if (
+            all(sheet in sheet_names for sheet in ("Data", "Events", "Details"))
+            and "HOBOconnect" in excel_file.parse("Details", names=[0, 1, 2, 3])[3].tolist()
+        ):
+            parser = "onset.xlsx"
     else:
         raise ImportError(f"Unable to match file to a specific data parser: {file}")
 
