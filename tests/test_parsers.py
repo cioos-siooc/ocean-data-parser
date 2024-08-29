@@ -119,6 +119,23 @@ class TestOnsetParser:
             ),
         )
 
+    @pytest.mark.parametrize("path", glob("tests/parsers_test_files/onset/**/*.xlsx"))
+    def test_xlsx_parser(self, path, caplog):
+        """Test Onset XLSX parser"""
+        ds = onset.xlsx(path)
+        review_parsed_dataset(
+            ds,
+            path,
+            caplog,
+            max_log_levelno=2,
+            ignore_log_records="|".join(
+                [
+                    "suggest a (Fall|Spring) daylight saving issue is present",
+                    "Date Time column is not in a consistent format",
+                ]
+            ),
+        )
+
 
 class TestRBRParser:
     @pytest.mark.parametrize("path", glob("tests/parsers_test_files/rbr/rtext/*.txt"))
