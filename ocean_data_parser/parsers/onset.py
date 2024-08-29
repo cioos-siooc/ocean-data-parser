@@ -162,7 +162,7 @@ def csv(
     encoding: str = "UTF-8",
     errors: str = "strict",
     timezone: str = None,
-    timestamp_ambiguous: str = "raise",
+    ambiguous_timestamps: str = "raise",
 ) -> xarray.Dataset:
     """Parses the Onset CSV format generate by HOBOware into a xarray object
 
@@ -174,7 +174,7 @@ def csv(
         encoding: File encoding. Defaults to "utf-8"
         errors: Error handling. Defaults to "strict"
         timezone: Timezone to localize the time variable, overwrites the timezone in header
-        timestamp_ambiguous: How to handle ambiguous time stamps. Defaults to "raise"
+        ambiguous_timestamps: How to handle ambiguous time stamps. Defaults to "raise"
     Returns:
         xarray.Dataset
     """
@@ -228,7 +228,7 @@ def csv(
             lambda x: pd.to_datetime(x, format=_get_time_format(x))
         )
     df["Date Time"] = df["Date Time"].dt.tz_localize(
-        timezone or header["timezone"], ambiguous=timestamp_ambiguous
+        timezone or header["timezone"], ambiguous=ambiguous_timestamps
     )
     check_daylight_saving(df["Date Time"])
 
