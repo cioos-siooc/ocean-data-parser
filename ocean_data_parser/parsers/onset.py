@@ -16,6 +16,7 @@ import pandas as pd
 import xarray
 
 from ocean_data_parser.parsers.utils import standardize_dataset
+from ocean_data_parser.parsers.checks import check_daylight_saving
 
 GLOBAL_ATTRIBUTES = {"instrument_manufacturer": "Onset", "Convention": "CF-1.6"}
 
@@ -160,16 +161,20 @@ def csv(
     standardize_variable_names: bool = True,
     encoding: str = "UTF-8",
     errors: str = "strict",
+    timezone: str = None,
+    timestamp_ambiguous: str="raise",
 ) -> xarray.Dataset:
     """Parses the Onset CSV format generate by HOBOware into a xarray object
 
-    Inputs:
+    Args:
         path: The path to the CSV file
         convert_units_to_si: Whether to standardize data units to SI units
         standardize_variable_names: Rename the variable names a standardize name
         convention
         encoding: File encoding. Defaults to "utf-8"
         errors: Error handling. Defaults to "strict"
+        timezone: Timezone to localize the time variable, overwrites the timezone in header
+        timestamp_ambiguous: How to handle ambiguous time stamps. Defaults to "raise"
     Returns:
         xarray.Dataset
     """
@@ -222,8 +227,8 @@ def csv(
         df["Date Time"] = df["Date Time"].apply(
             lambda x: pd.to_datetime(x, format=_get_time_format(x))
         )
-
-    df["Date Time"] = df["Date Time"].dt.tz_localize(header["timezone"])
+    df["Date Time"] = df["Date Time"].dt.tz_localize(timezone or header["timezone"], ambiguous=timestamp_ambiguous)
+    check_daylight_saving(df["Date Time"])
 
     # Convert to dataset
     ds = df.to_xarray()
@@ -261,31 +266,6 @@ def csv(
             logger.warning(
                 "Unit conversion is not supported if standardize_variable_names=False"
             )
-
-    # Test daylight saving issue
-    # TODO move this daylight saving detection test elsewhere
-    dt = ds["time"].diff("index")
-    sampling_interval = dt.median().values
-    dst_fall = -pd.Timedelta("1h") + sampling_interval
-    dst_spring = pd.Timedelta("1h") + sampling_interval
-    if any(dt == dst_fall):
-        logger.warning(
-            (
-                "Time gaps (=%s) for sampling interval of %s "
-                "suggest a Fall daylight saving issue is present"
-            ),
-            dst_fall,
-            sampling_interval,
-        )
-    if any(dt == dst_spring):
-        logger.warning(
-            (
-                "Time gaps (=%s) for sampling interval of %s "
-                "suggest a Spring daylight saving issue is present"
-            ),
-            dst_fall,
-            sampling_interval,
-        )
 
     ds = standardize_dataset(ds)
     return ds
@@ -352,11 +332,15 @@ def _farenheit_to_celsius(farenheit):
     return (farenheit - 32.0) / 1.8000
 
 
-def xlsx(path: str, timezone: str = None) -> xarray.Dataset:
+def xlsx(path: str, timezone: str = None,ambiguous_timestamps:str="infer") -> xarray.Dataset:
     """Parses the Onset XLSX format generate by HOBOware into a xarray object
 
-    Inputs: path: The path to the XLSX file
-    Returns: xarray.Dataset
+    Args: 
+        path: The path to the XLSX file
+        timezone: Timezone to localize the time variable, overwrites the timezone in header
+        ambiguous_timestamps: How to handle ambiguous time stamps. Defaults to "infer"
+    Returns: 
+        xarray.Dataset
     """
 
     def _format_detail_key(key):
@@ -423,9 +407,11 @@ def xlsx(path: str, timezone: str = None) -> xarray.Dataset:
     # Convert to dataset
     data["time"] = (
         pd.to_datetime(data["time"], errors="coerce")
-        .dt.tz_localize(timezone or file_timezone)
+        .dt.tz_localize(timezone or file_timezone, ambiguous=ambiguous_timestamps)
         .dt.tz_convert("UTC")
     )
+    check_daylight_saving(data["time"])
+
     ds = data.to_xarray()
     for var in variable_attributes:
         ds[var].attrs = variable_attributes[var]
