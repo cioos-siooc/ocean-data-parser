@@ -15,8 +15,8 @@ from datetime import datetime
 import pandas as pd
 import xarray
 
-from ocean_data_parser.parsers.utils import standardize_dataset
 from ocean_data_parser.parsers.checks import check_daylight_saving
+from ocean_data_parser.parsers.utils import standardize_dataset
 
 GLOBAL_ATTRIBUTES = {"instrument_manufacturer": "Onset", "Convention": "CF-1.6"}
 
@@ -162,7 +162,7 @@ def csv(
     encoding: str = "UTF-8",
     errors: str = "strict",
     timezone: str = None,
-    timestamp_ambiguous: str="raise",
+    timestamp_ambiguous: str = "raise",
 ) -> xarray.Dataset:
     """Parses the Onset CSV format generate by HOBOware into a xarray object
 
@@ -227,7 +227,9 @@ def csv(
         df["Date Time"] = df["Date Time"].apply(
             lambda x: pd.to_datetime(x, format=_get_time_format(x))
         )
-    df["Date Time"] = df["Date Time"].dt.tz_localize(timezone or header["timezone"], ambiguous=timestamp_ambiguous)
+    df["Date Time"] = df["Date Time"].dt.tz_localize(
+        timezone or header["timezone"], ambiguous=timestamp_ambiguous
+    )
     check_daylight_saving(df["Date Time"])
 
     # Convert to dataset
@@ -332,14 +334,16 @@ def _farenheit_to_celsius(farenheit):
     return (farenheit - 32.0) / 1.8000
 
 
-def xlsx(path: str, timezone: str = None,ambiguous_timestamps:str="infer") -> xarray.Dataset:
+def xlsx(
+    path: str, timezone: str = None, ambiguous_timestamps: str = "infer"
+) -> xarray.Dataset:
     """Parses the Onset XLSX format generate by HOBOware into a xarray object
 
-    Args: 
+    Args:
         path: The path to the XLSX file
         timezone: Timezone to localize the time variable, overwrites the timezone in header
         ambiguous_timestamps: How to handle ambiguous time stamps. Defaults to "infer"
-    Returns: 
+    Returns:
         xarray.Dataset
     """
 

@@ -1,8 +1,8 @@
 import pandas as pd
 from loguru import logger
 
-def check_daylight_saving(time:pd.Series) -> bool:
-    
+
+def check_daylight_saving(time: pd.Series) -> bool:
     # Test daylight saving issue
     dt = time.diff()
     sampling_interval = dt.median()
