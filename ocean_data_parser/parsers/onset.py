@@ -170,7 +170,7 @@ def csv(
         path: The path to the CSV file
         convert_units_to_si: Whether to standardize data units to SI units
         standardize_variable_names: Rename the variable names a standardize name
-        convention
+            convention
         encoding: File encoding. Defaults to "utf-8"
         errors: Error handling. Defaults to "strict"
         timezone: Timezone to localize the time variable, overwrites the timezone in header
