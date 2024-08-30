@@ -42,7 +42,7 @@ def check_daylight_saving(
     if not error_message:
         pass
     elif ambiguous == "raise" and error_message:
-        message += [
+        error_message += [
             "To fix this issue, set ambiguous='warn' or provide "
             "a local timezone (e.g. 'Canada/Pacific')"
         ]
