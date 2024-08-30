@@ -24,9 +24,9 @@ def get_vocabulary_term(vocab: str, id: str) -> dict:
 def get_platform_vocabulary(id: str) -> dict:
     result = get_vocabulary_term("C17", id)
     # Parse the json data in the definition field
-    attrs = json.loads(result["definition"]["@value"])["node"]
+    attrs = json.loads(result['skos:definition']["@value"])["node"]
     return {
-        "platform_name": result["prefLabel"]["@value"],
+        "platform_name": result["skos:prefLabel"]["@value"],
         "platform_type": attrs.get("platformclass"),
         "country_of_origin": attrs.get("country"),
         "platform_owner": attrs.get("title"),
@@ -34,5 +34,5 @@ def get_platform_vocabulary(id: str) -> dict:
         "ices_platform_code": id,
         "wmo_platform_code": attrs.get("IMO"),
         "call_sign": attrs.get("callsign"),
-        "sdn_platform_urn": result["identifier"],
+        "sdn_platform_urn": result["dc:identifier"],
     }
