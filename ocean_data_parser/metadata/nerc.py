@@ -24,7 +24,7 @@ def get_vocabulary_term(vocab: str, id: str) -> dict:
 def get_platform_vocabulary(id: str) -> dict:
     result = get_vocabulary_term("C17", id)
     # Parse the json data in the definition field
-    attrs = json.loads(result['skos:definition']["@value"])["node"]
+    attrs = json.loads(result["skos:definition"]["@value"])["node"]
     return {
         "platform_name": result["skos:prefLabel"]["@value"],
         "platform_type": attrs.get("platformclass"),
