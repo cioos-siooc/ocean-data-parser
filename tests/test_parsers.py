@@ -6,6 +6,7 @@ import pandas as pd
 import pytest
 import xarray as xr
 from loguru import logger
+from pytz.exceptions import AmbiguousTimeError
 
 from ocean_data_parser.batch.utils import get_path_generation_input
 from ocean_data_parser.parsers import (
@@ -105,7 +106,7 @@ class TestVanEssenParsers:
 class TestOnsetParser:
     @pytest.mark.parametrize("path", glob("tests/parsers_test_files/onset/**/*.csv"))
     def test_csv_parser(self, path, caplog):
-        ds = onset.csv(path)
+        ds = onset.csv(path, ambiguous_timestamps="ignore")
         review_parsed_dataset(
             ds,
             path,
@@ -118,6 +119,22 @@ class TestOnsetParser:
                 ]
             ),
         )
+
+    @pytest.mark.parametrize(
+        "path",
+        [
+            "tests/parsers_test_files/onset/tidbit_v2/fifth_seaweed_low_20387238_20200525_rawdata.csv",
+            "tests/parsers_test_files/onset/tidbit_v2/foggy_seaweed_high_20387235_20210525_rawdata_daylight_saving.csv",
+        ],
+    )
+    def test_csv_parser_ambiguous_timestamps_infer_daylight_issue(self, path, caplog):
+        with pytest.raises(AmbiguousTimeError):
+            onset.csv(path, ambiguous_timestamps="raise")
+
+    def test_csv_parser_ambiguous_timestamps_default_with_daylight_issue(self, caplog):
+        path = "tests/parsers_test_files/onset/tidbit_v2/foggy_seaweed_high_20387235_20210525_rawdata_daylight_saving.csv"
+        with pytest.raises(AmbiguousTimeError):
+            onset.csv(path)
 
     @pytest.mark.parametrize("path", glob("tests/parsers_test_files/onset/**/*.xlsx"))
     def test_xlsx_parser(self, path, caplog):
