@@ -51,7 +51,7 @@ class TestConfigLoad:
 
 
 def _get_config(
-    input_path: str = "tests/parsers_test_files/onset/**/*.csv",
+    input_path: str = "tests/parsers_test_files/onset/tidbit_v2/*.csv",
     cwd: Path = None,
     **kwargs,
 ):
@@ -79,7 +79,7 @@ def _save_config(cwd, config):
 def _run_batch_process(config):
     registry = BatchConversion(config=config).run()
     assert not registry.data.empty
-    assert not registry.data["error_message"].any()
+    assert not registry.data["error_message"].any(), registry.data["error_message"].dropna().tolist()
 
 
 class TestBatchMode:

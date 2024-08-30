@@ -122,10 +122,7 @@ class TestOnsetParser:
 
     @pytest.mark.parametrize(
         "path",
-        [
-            "tests/parsers_test_files/onset/tidbit_v2/fifth_seaweed_low_20387238_20200525_rawdata.csv",
-            "tests/parsers_test_files/onset/tidbit_v2/foggy_seaweed_high_20387235_20210525_rawdata_daylight_saving.csv",
-        ],
+        glob("tests/parsers_test_files/onset/daylight_saving_issue/*.csv"),
     )
     def test_csv_parser_ambiguous_timestamps_infer_daylight_issue(self, path, caplog):
         with pytest.raises(AmbiguousTimeError):
