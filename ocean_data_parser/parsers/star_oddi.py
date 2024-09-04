@@ -78,13 +78,22 @@ def DAT(path: str, encoding: str = "cp1252") -> xarray.Dataset:
 
         # Check if date & time format is supported
         if (
-            metadata["date_&_time"] != "1"
-            or metadata["date_def"] != "dd.mm.yyyy	."
-            or metadata["time_def"] != ":"
-        ):
-            raise ValueError("Date & Time format is not supported")
-        else:
+            metadata["date_&_time"] == "1"
+            and metadata["date_def"] == "dd.mm.yyyy	."
+            and metadata["time_def"] == ":"
+        ):  
+            date_format = "%d.%m.%Y\t%H:%M:%S"
             variables = {**{"time": {}}, **variables}
+        elif (
+            metadata["date_&_time"] == "1"
+            and metadata["date_def"] == "dd-mm-yyyy\t-"
+            and metadata["time_def"] == ":"
+        ):  
+            date_format = "%d-%m-%Y\t%H:%M:%S"
+            variables = {**{"time": {}}, **variables}
+        elif (metadata["date_&_time"] == "1"):
+            raise ValueError("Date & Time format is not supported")
+            
 
         # TODO parse recorder info
         # TODO rename attributes to cf standard
@@ -99,7 +108,7 @@ def DAT(path: str, encoding: str = "cp1252") -> xarray.Dataset:
             decimal=metadata.pop("decimal_point"),
             names=variables.keys(),
             parse_dates=["time"],
-            date_format="%d.%m.%Y\t%H:%M:%S",
+            date_format=date_format,
         )
         if "time" in df:
             df = df.set_index(["time"])
