@@ -81,19 +81,18 @@ def DAT(path: str, encoding: str = "cp1252") -> xarray.Dataset:
             metadata["date_&_time"] == "1"
             and metadata["date_def"] == "dd.mm.yyyy	."
             and metadata["time_def"] == ":"
-        ):  
+        ):
             date_format = "%d.%m.%Y\t%H:%M:%S"
             variables = {**{"time": {}}, **variables}
         elif (
             metadata["date_&_time"] == "1"
             and metadata["date_def"] == "dd-mm-yyyy\t-"
             and metadata["time_def"] == ":"
-        ):  
+        ):
             date_format = "%d-%m-%Y\t%H:%M:%S"
             variables = {**{"time": {}}, **variables}
-        elif (metadata["date_&_time"] == "1"):
+        elif metadata["date_&_time"] == "1":
             raise ValueError("Date & Time format is not supported")
-            
 
         # TODO parse recorder info
         # TODO rename attributes to cf standard
