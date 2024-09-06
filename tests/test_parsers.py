@@ -129,7 +129,7 @@ class TestOnsetParser:
             onset.csv(path, ambiguous_timestamps="raise")
 
     def test_csv_parser_ambiguous_timestamps_default_with_daylight_issue(self, caplog):
-        path = "tests/parsers_test_files/onset/tidbit_v2/foggy_seaweed_high_20387235_20210525_rawdata_daylight_saving.csv"
+        path = "tests/parsers_test_files/onset/daylight_saving_issue/foggy_seaweed_high_20387235_20210525_rawdata_daylight_saving.csv"
         with pytest.raises(AmbiguousTimeError):
             onset.csv(path)
 
