@@ -31,6 +31,10 @@ VARIABLES_ATTRIBUTES = {
         "long_name": "Sound Velocity",
         "standard_name": "speed_of_sound_in_sea_water",
     },
+    "pressure": {
+        "long_name": "Pressure",
+        "standard_name": "sea_water_pressure",
+    },
 }
 
 
