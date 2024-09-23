@@ -73,7 +73,7 @@ class TestPMEParsers:
         "path", glob("tests/parsers_test_files/pme/**/*.txt", recursive=True)
     )
     def test_txt_parser(self, path, caplog):
-        ds = pme.minidot_txt(path)
+        ds = pme.txt(path)
         review_parsed_dataset(ds, path, caplog)
 
 
