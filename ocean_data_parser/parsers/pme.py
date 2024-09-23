@@ -75,7 +75,8 @@ def minidot_cat(*args, **kwargs):
     logger.warning("minidot_cat is deprecated, use cat instead")
     return cat(*args, **kwargs)
 
-def _rename_variable(variable:str) -> str:
+
+def _rename_variable(variable: str) -> str:
     if variable in VARIABLE_RENAMING_MAPPING:
         return VARIABLE_RENAMING_MAPPING[variable]
     elif "I (mA)" in variable:
@@ -84,6 +85,7 @@ def _rename_variable(variable:str) -> str:
         return variable.replace(" (Volt)", "_volt").replace(" ", "_").lower()
     else:
         return variable.split("(")[0].strip().replace(" ", "_").lower()
+
 
 def txt(
     path: str,
@@ -127,7 +129,9 @@ def txt(
         metadata["serial_number"] = header[0].replace("\n", "")
         metadata["software_version"] = re.search(r"OS REV: (\d+\.\d+)\s", header[1])[1]
         if "Sensor Cal" in header[1]:
-            metadata["instrument_calibration"] = re.search(r"Sensor Cal: (\d*)",header[1])[1]
+            metadata["instrument_calibration"] = re.search(
+                r"Sensor Cal: (\d*)", header[1]
+            )[1]
         if len(header) > 2:
             for key, value in re.findall("(\w+)\: ([^,\n]+)", "".join(header[2:-1])):
                 metadata[key.lower()] = value.strip()
@@ -196,7 +200,9 @@ def txt(
         ds[var].attrs.update(VARIABLE_ATTRIBUTES[var])
 
     if rename_variables:
-        variable_mapping = {variable: _rename_variable(variable) for variable in ds.variables}
+        variable_mapping = {
+            variable: _rename_variable(variable) for variable in ds.variables
+        }
         ds = ds.rename_vars(variable_mapping)
         ds.attrs["history"] += (
             f"\n{pd.Timestamp.now().isoformat()} Rename variables: {variable_mapping}"
