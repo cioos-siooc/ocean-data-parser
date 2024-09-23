@@ -47,7 +47,7 @@ vocabulary_attributes = [
     "apply_func",
 ]
 
-ios_dtypes_to_python = {
+IOS_TYPE_MAPPING = {
     "R": "float32",
     "F": "float32",
     "I": "int32",
@@ -57,7 +57,7 @@ ios_dtypes_to_python = {
     "E": "float32",
 }
 
-global_attributes = {
+GLOBAL_ATTRIBUTES = {
     "institution": "DFO IOS",
     "ices_edmo_code": 4155,
     "sdn_institution_urn": "SDN:EDMO::4155",
@@ -83,22 +83,21 @@ global_attributes = {
 }
 
 
-def get_dtype_from_ios_type(ios_type):
-    if not ios_type or ios_type.strip() == "":
-        return
-    elif ios_type in ios_dtypes_to_python:
-        return ios_dtypes_to_python[ios_type]
-    elif ios_type[0].upper() in ios_dtypes_to_python:
-        return ios_dtypes_to_python[ios_type[0]]
-
-
-def get_dtype_from_ios_name(ios_name):
-    if re.search("flag", ios_name, re.IGNORECASE):
+def _cast_ios_variable(ios_type, ios_format, ios_name):
+    dtype = (ios_type or ios_format or "").strip().upper()
+    if dtype and dtype[0] in IOS_TYPE_MAPPING:
+        return IOS_TYPE_MAPPING[dtype[0]]
+    elif re.search("flag", ios_name, re.IGNORECASE):
         return "int32"
     elif re.search("time|date", ios_name, re.IGNORECASE):
         return str
-    else:
-        return float
+    logger.info(
+        "Unknown data type for variable %s [Type=%s, Format=%s], default to 'float32'",
+        ios_name,
+        ios_type,
+        ios_format,
+    )
+    return "float32"
 
 
 IOS_SHELL_HEADER_SECTIONS = {
@@ -112,6 +111,7 @@ IOS_SHELL_HEADER_SECTIONS = {
     "DEPLOYMENT",
     "RECOVERY",
     "CALIBRATION",
+    "RAW",
 }
 
 
@@ -149,13 +149,15 @@ class IosFile(object):
         self.obs_time = None
         self.vocabulary_attributes = None
         self.history = None
+        self.geo_code = None
+        self.raw = None
 
         # Load file
         try:
             with open(self.filename, "r", encoding="ASCII") as file:
                 self.lines = file.readlines()
         except UnicodeDecodeError:
-            logger.warning("Bad characters were encountered. We will ignore them")
+            logger.info("Bad characters were encountered. We will ignore them")
             with open(self.filename, "r", encoding="ASCII", errors="ignore") as file:
                 self.lines = file.readlines()
 
@@ -185,6 +187,8 @@ class IosFile(object):
             self.recovery = self.get_section("RECOVERY")
         if "CALIBRATION" in sections_available:
             self.calibration = self.get_section("CALIBRATION")
+        if "RAW" in sections_available:
+            self.raw = self.get_section("RAW")
 
         unparsed_sections = sections_available - IOS_SHELL_HEADER_SECTIONS
         if unparsed_sections:
@@ -292,9 +296,15 @@ class IosFile(object):
         return info
 
     def get_flag_convention(self, name: str, units: str = None) -> dict:
+        common_attrs = {
+            "ios_name": name.lower(),
+            "rename": name.lower(),
+            "standard_name": "quality_flag",
+        }
+
         if name.lower() == "flag:at_sea":
             return {
-                "rename": "flag:at_sea",
+                **common_attrs,
                 "flag_values": [0, 1, 2, 3, 4, 5],
                 "flag_meanings": " ".join(
                     [
@@ -309,6 +319,7 @@ class IosFile(object):
             }
         elif units.lower() == "igoss_flags":
             return {
+                **common_attrs,
                 "flag_values": [0, 1, 2, 3, 4, 5],
                 "flag_meanings": " ".join(
                     [
@@ -323,6 +334,7 @@ class IosFile(object):
             }
         elif name.lower() == "flag:ctd" or name.lower() == "flag":
             return {
+                **common_attrs,
                 "flag_values": [0, 2, 6],
                 "flag_meanings": " ".join(
                     [
@@ -332,16 +344,18 @@ class IosFile(object):
                     ]
                 ),
             }
-        elif name.lower().startswith("flag") and self.filename.endswith("che"):
+        elif name.lower().startswith("flag") and self.filename.endswith(("che", "bot")):
             return {
+                **common_attrs,
                 "flag_values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                 "flag_meanings": " ".join(
                     [
-                        "sample_drawn_from_water_bottle_but_not_analyzed",
-                        "acceptable_measurement",
-                        "questionable_measurement",
-                        "bad_measurement",
-                        "not_reported",
+                        "acceptable_measurement_with_no_header_comment",
+                        "sample_drawn_from_water_bottle_but_not_analyzed_sample_lost",
+                        "acceptable_measurement_with_header_comment",
+                        "questionable_measurement(probably_bad)",
+                        "poor_measurement(probably_bad)",
+                        "not_reported(bad)",
                         "mean_of_replicate_measurement",
                         "manual_chromatographic_peak_measurement",
                         "irregular_digital_chromatographic_peak_integration",
@@ -352,6 +366,7 @@ class IosFile(object):
 
         elif name.lower() == "sample_method":
             return {
+                **common_attrs,
                 "flag_values": ["UN", "US", "USM"],
                 "flag_meanings": " ".join(["no_stop", "stop_for_30s", "up_stop_mix"]),
             }
@@ -462,7 +477,7 @@ class IosFile(object):
             f"{datetime.now().isoformat()} - {input}\n"
         )
 
-    def get_data(self, formatline=None):
+    def get_data(self, formatline=None) -> list:
         # reads data using the information in FORMAT
         # if FORMAT information in file header is missing or does not work
         # then create 'struct' data format based on channel details information
@@ -508,7 +523,7 @@ class IosFile(object):
             data = data.reshape((1, -1))
         return data
 
-    def get_location(self):
+    def get_location(self) -> dict:
         # read 'LOCATION' section from ios header
         # convert lat and lon to standard format (float, -180 to +180)
         # initialize some other standard section variables if possible
@@ -528,7 +543,7 @@ class IosFile(object):
         info["LONGITUDE"] = _convert_latlong_string(info.get("LONGITUDE"))
         return info
 
-    def get_channel_detail(self):
+    def get_channel_detail(self) -> dict:
         # read channel details. create format_structure (fmt_struct)
         # based on channel details. This information may be used as backup if
         # file does not contain FORMAT specifier
@@ -538,14 +553,14 @@ class IosFile(object):
         # CHANGELOG July 2019: decipher python 'struct' format from channel details
         lines = self.get_subsection("$TABLE: CHANNEL DETAIL")
         if lines is None:
-            return None
+            return {}
         mask = lines[1].rstrip()
         ch_det = [self.apply_col_mask(line, mask) for line in lines[2:]]
         info = {
-            "Pad": [line[1] for line in ch_det],
-            "Width": [line[3] for line in ch_det],
-            "Format": [line[4] for line in ch_det],
-            "Type": [line[5] for line in ch_det],
+            "Pad": [line[1].strip() for line in ch_det],
+            "Width": [line[3].strip() for line in ch_det],
+            "Format": [line[4].strip() for line in ch_det],
+            "Type": [line[5].strip() for line in ch_det],
         }
         if int(self.file["NUMBER OF CHANNELS"]) != len(info["Pad"]):
             raise Exception(
@@ -593,17 +608,17 @@ class IosFile(object):
         logger.debug("Python compatible data format: %s", fmt)
         return info
 
-    def get_channels(self):
+    def get_channels(self) -> dict:
         # get the details of al the channels in the file
         # return as dictionary with each column as list
         lines = self.get_subsection("$TABLE: CHANNELS")
         mask = lines[1].rstrip()
         channels = [self.apply_col_mask(line, mask) for line in lines[2:]]
         return {
-            "Name": [line[1] for line in channels],
-            "Units": [line[2] for line in channels],
-            "Minimum": [line[3] for line in channels],
-            "Maximum": [line[4] for line in channels],
+            "Name": [line[1].strip() for line in channels],
+            "Units": [line[2].strip() for line in channels],
+            "Minimum": [line[3].strip() for line in channels],
+            "Maximum": [line[4].strip() for line in channels],
         }
 
     def apply_col_mask(self, data, mask):
@@ -786,7 +801,7 @@ class IosFile(object):
         # iterate over variables and find matching vocabulary
         self.vocabulary_attributes = []
         for name, units in zip(self.channels["Name"], self.channels["Units"]):
-            # Drop trailing spaces and commas
+            # Drop trailing spaces and quotes
             name = re.sub(r"^\'|[\s\']+$", "", name.lower())
             units = re.sub(r"^\'|[\s\']+$", "", units)
 
@@ -811,7 +826,9 @@ class IosFile(object):
                     name,
                     units,
                 )
-                self.vocabulary_attributes += [[{"long_name": name, "units": units}]]
+                self.vocabulary_attributes += [
+                    [{"long_name": name, "units": units, "ios_name": name}]
+                ]
                 continue
 
             # Consider only the vocabularies specific to this ios_file_extension group
@@ -819,10 +836,7 @@ class IosFile(object):
                 f'ios_file_extension == "{matched_vocab.index.get_level_values(0)[0]}"'
             )
             self.vocabulary_attributes += [
-                [
-                    row.dropna().to_dict()
-                    for _, row in matched_vocab[vocabulary_attributes].iterrows()
-                ]
+                matched_vocab[vocabulary_attributes].to_dict("records")
             ]
 
     def fix_variable_names(self):
@@ -937,12 +951,10 @@ class IosFile(object):
             **_format_attributes("deployment", "deployment_"),
             **_format_attributes("recovery", "recovery_"),
             "calibration": json.dumps(self.calibration) if self.calibration else None,
-            "comments": str(self.comments)
-            if self.comments
-            else None,  # TODO missing file_remarks
-            "remarks": str(self.remarks) if self.remarks else None,
-            "history": str(self.history) if hasattr(self, "history") else None,
-            "geographic_area": self.geo_code if hasattr(self, "geo_code") else None,
+            "comments": self.comments,
+            "remarks": self.remarks,
+            "history": self.history,
+            # "geographic_area": self.geo_code,
             "headers": json.dumps(
                 self.get_complete_header(), ensure_ascii=False, indent=False
             ),
@@ -953,14 +965,13 @@ class IosFile(object):
             "ocean_data_transform_version": VERSION,
             "product_version": f"ios_header={self.ios_header_version}; ocean-data-transform={VERSION}",
             "date_created": self.date_created.isoformat(),
-            **global_attributes,
+            **GLOBAL_ATTRIBUTES,
         }
 
     def to_xarray(
         self,
+        generate_extra_variables=True,
         rename_variables=True,
-        append_sub_variables=True,
-        replace_date_time_variables=True,
     ):
         """Convert ios class to xarray dataset
 
@@ -976,11 +987,6 @@ class IosFile(object):
             elif varname.endswith(("1", "X")):
                 return f"{varname[:-1]}{id}"
             return f"{varname}{id:02g}"
-
-        def _drop_empty_attrs(attrs):
-            if isinstance(attrs, dict):
-                return {key: value for key, value in attrs.items() if value}
-            return attrs
 
         def _flag_bad_values(dataset):
             bad_values = [-9.99, -99.9, -99.0, -99.999, -9.9, -999.0, -9.0]
@@ -1008,92 +1014,92 @@ class IosFile(object):
 
             return dataset.where(~dataset.isin(bad_values))
 
+        def _handle_duplicated_variabes(variables):
+            """Handle duplicated variables ios_name,units pairs and same variable
+            names with different units
+
+            Both cases aren't allowed in xarray dataset,
+            so we need to rename the variables.
+            """
+
+            # Detect duplicated variables ios_name,units pairs
+            duplicates = variables.duplicated(subset=["ios_name", "units"], keep=False)
+            if duplicates.any():
+                logger.warning(
+                    "Duplicated variables(Name,Units)! The first one will be considered: %s",
+                    variables.loc[duplicates][["ios_name", "units"]],
+                )
+                variables.drop_duplicates(
+                    subset=["ios_name", "units"], keep="first", inplace=True
+                )
+
+            # Detect and rename duplicated variable names with different units
+            duplicated_name = variables.duplicated(subset=["ios_name"])
+            if duplicated_name.any():
+                variables["var_index"] = variables.groupby("ios_name").cumcount()
+                to_replace = duplicated_name & (variables["var_index"] > 0)
+                new_names = variables.loc[to_replace].apply(
+                    lambda x: update_variable_index(x["ios_name"], x["var_index"] + 1),
+                    axis="columns",
+                )
+                # Update vocabulary ios_name
+                for _, row in variables.loc[to_replace].iterrows():
+                    for vocab in row["vocabularies"]:
+                        vocab["ios_name"] = update_variable_index(
+                            vocab["ios_name"], row["var_index"] + 1
+                        )
+                logger.info(
+                    "Duplicated variable names, rename variables: %s",
+                    [
+                        f"{name} [{units}] -> {new_name}"
+                        for (name, units), new_name in zip(
+                            variables.loc[to_replace, ["ios_name", "units"]].values,
+                            new_names,
+                        )
+                    ],
+                )
+                variables.loc[to_replace, "ios_name"] = new_names
+
+            return variables
+
         # Retrieve the different variable attributes
-        variables = (
-            pd.DataFrame(
-                {
-                    "ios_name": self.channels["Name"],
-                    "units": self.channels["Units"],
-                    "ios_type": self.channel_details.get("Type")
-                    if self.channel_details
-                    else "",
-                    "ios_format": self.channel_details.get("Format")
-                    if self.channel_details
-                    else "",
-                    "pad": self.channel_details.get("Pad")
-                    if self.channel_details
-                    else "",
-                }
-            )
-            .map(str.strip)
-            .replace({"": None, "n/a": None})
-        )
-        variables["matching_vocabularies"] = self.vocabulary_attributes
-        variables["dtype"] = (
-            variables["ios_type"]
-            .fillna(variables["ios_format"])
-            .apply(get_dtype_from_ios_type)
-            .fillna(variables["ios_name"].apply(get_dtype_from_ios_name))
+        variables = pd.DataFrame(
+            {
+                "ios_name": self.channels["Name"],
+                "units": self.channels["Units"],
+                "ios_type": self.channel_details.get("Type"),
+                "ios_format": self.channel_details.get("Format"),
+                "pad": self.channel_details.get("Pad"),
+                "vocabularies": self.vocabulary_attributes,
+            }
+        ).replace({"": None, "n/a": None})
+
+        # Define data type by using the ios_type, ios_format and ios_name attributes
+        variables["dtype"] = variables.apply(
+            lambda x: _cast_ios_variable(x.ios_type, x.ios_format, x.ios_name),
+            axis="columns",
         )
 
+        # cast fill values to the appropriate data type
         variables["_FillValues"] = variables.apply(
             lambda x: pd.Series(x["pad"]).astype(x["dtype"]).values[0]
             if x["pad"]
             else None,
             axis="columns",
         )
-        variables["renamed_name"] = variables.apply(
-            lambda x: x["matching_vocabularies"][-1].get("rename", x["ios_name"]),
-            axis="columns",
-        )
-
-        # Detect duplicated variables ios_name,units pairs
-        duplicates = variables.duplicated(subset=["ios_name", "units"], keep=False)
-        if duplicates.any():
-            logger.warning(
-                "Duplicated variables (Name,Units) pair detected, "
-                "only the first one will be considered:\n%s",
-                variables.loc[duplicates][["ios_name", "units"]],
-            )
-            variables.drop_duplicates(
-                subset=["ios_name", "units"], keep="first", inplace=True
-            )
-
-        # Detect and rename duplicated variable names with different units
-        col_name = "ios_name"
-        duplicated_name = variables.duplicated(subset=[col_name])
-        if duplicated_name.any():
-            variables["var_index"] = variables.groupby(col_name).cumcount()
-            to_replace = duplicated_name & (variables["var_index"] > 0)
-            new_names = variables.loc[to_replace].apply(
-                lambda x: update_variable_index(x[col_name], x["var_index"] + 1),
-                axis="columns",
-            )
-            logger.info(
-                "Duplicated variable names, will rename the variables according to: %s",
-                list(
-                    zip(
-                        variables.loc[
-                            to_replace, list(set(["ios_name", "units"] + [col_name]))
-                        ]
-                        .reset_index()
-                        .values.tolist(),
-                        "renamed -> " + new_names,
-                    )
-                ),
-            )
-            variables.loc[to_replace, col_name] = new_names
+        variables = _handle_duplicated_variabes(variables)
 
         # Parse data, assign appropriate data type, padding values
         #  and convert to xarray object
         ds = (
             pd.DataFrame.from_records(
-                self.data[:, variables.index], columns=variables[col_name]
+                self.data[:, variables.index], columns=variables["ios_name"]
             )
             .replace(r"\.$", "", regex=True)
-            .astype(dict(variables[[col_name, "dtype"]].values))
+            .astype(dict(variables[["ios_name", "dtype"]].values))
             .replace(
-                dict(variables[[col_name, "_FillValues"]].dropna().values), value=np.nan
+                dict(variables[["ios_name", "_FillValues"]].dropna().values),
+                value=np.nan,
             )
             .to_xarray()
         )
@@ -1101,86 +1107,104 @@ class IosFile(object):
         ds.attrs = self.get_global_attributes()
 
         # Add variable attributes
-        if append_sub_variables is True:
-            ds_sub = xr.Dataset()
-            ds_sub.attrs = ds.attrs
-
-        for id, row in variables.iterrows():
-            var = ds[row[col_name]]
-            var.attrs = _drop_empty_attrs(
-                {
-                    "original_ios_variable": str(
-                        {id: row[["ios_name", "units"]].to_json()}
-                    ),
-                    "original_ios_name": row["ios_name"],
-                    "long_name": row["ios_name"],
-                    "units": row["units"],
-                }
+        for _, attrs in variables.iterrows():
+            ds[attrs["ios_name"]].attrs = dict(
+                long_name=attrs["ios_name"],
+                units=attrs["units"],
+                original_ios_name=attrs["ios_name"],
+                original_ios_variable={
+                    key: value
+                    for key, value in attrs.items()
+                    if key not in ("vocabularies", "dtype", "_FillValues")
+                },
             )
-            if not append_sub_variables:
-                var.attrs["sub_variables"] = json.dumps(row["matching_vocabularies"])
+
+        # Add vocabulary attributes
+        #  sort matching vocabulary by rename, apply_func, sdn_parameter_name(length)
+        #  and keep the first one matching for each rename outputed variables
+        ds_new = xr.Dataset()
+        ds_new.attrs = ds.attrs
+        variables_vocabularies = (
+            variables.explode("vocabularies")
+            .set_index("ios_name")["vocabularies"]
+            .apply(pd.Series)
+            .sort_values(
+                ["rename", "apply_func", "sdn_parameter_name"],
+                na_position="first",
+                key=lambda col: col.fillna("").str.len()
+                if col.name == "sdn_parameter_name"
+                else col,
+            )
+            .groupby("rename")
+            .head(1)
+        )
+        for variable in ds.variables:
+            if variable == "index":
                 continue
-            elif not row["matching_vocabularies"]:
-                ds_sub.assign({var.name: var})
+            elif variable.lower().startswith(("date", "time")):
+                ds_new[variable] = ds[variable]
                 continue
+            elif variable not in variables_vocabularies.index:
+                logger.warning("Missing vocabulary for variable %s", variable)
+                ds_new[variable] = ds[variable]
+                continue
+            variable_vocabulary = variables_vocabularies.loc[[variable]]
 
-            # Generate vocabulary variables
-            for new_var_attrs in row["matching_vocabularies"]:
-                new_var = new_var_attrs.pop("rename", row[col_name])
-
-                # if variable already exist from a different source variable
-                #  append variable index
-                if new_var in ds_sub:
-                    if (
-                        ds_sub[new_var].attrs["original_ios_name"]
-                        == var.attrs["original_ios_name"]
-                    ):
-                        logger.error(
-                            "Duplicated vocabulary output for %s, will be ignored", row
-                        )
-                        continue
-                    else:
-                        new_index = (
-                            len([var for var in ds_sub if var.startswith(new_var[:-1])])
-                            + 1
-                        )
-                        logger.warning(
-                            "Duplicated variable from sub variables: %s, renamed %s",
-                            new_var,
-                            update_variable_index(new_var, new_index),
-                        )
-                        new_var = update_variable_index(new_var, new_index)
-
-                if "apply_func" in new_var_attrs:
-                    ufunc = eval(new_var_attrs["apply_func"], {"ds": ds, "gsw": gsw})
-                    new_data = xr.apply_ufunc(ufunc, var)
-                    self.add_to_history(
-                        f"Generate new variable from {row[col_name]} ->"
-                        f" apply {new_var_attrs['apply_func']}) -> {new_var}"
-                    )
-
-                else:
-                    new_data = var
-                    self.add_to_history(
-                        f"Generate new variable from {row[col_name]} -> {new_var}"
-                    )
-
-                ds_sub[new_var] = (
-                    var.dims,
-                    new_data.data,
-                    _drop_empty_attrs({**var.attrs, **new_var_attrs}),
+            if not rename_variables and not generate_extra_variables:
+                ds_new[variable] = ds[variable]
+                # ignore apply_func vocabularies and get the most precise vocabulary
+                vocab = variable_vocabulary.query("apply_func.isna()")
+                if vocab.empty:
+                    continue
+                ds_new[variable].attrs.update(
+                    vocab.iloc[-1].drop("rename").dropna().to_dict()
                 )
 
-        if append_sub_variables:
-            ds = ds_sub
+            if not generate_extra_variables:
+                # favorize not transform variables if available
+                vocab = variable_vocabulary.query("apply_func.isna()")
+                if variable_vocabulary.query("apply_func.isna()").empty:
+                    variable_vocabulary = variable_vocabulary.query(
+                        "apply_func.isna()"
+                    ).iloc[[-1]]
+                else:
+                    variable_vocabulary = variable_vocabulary.iloc[[-1]]
+
+            for variable, attrs in variable_vocabulary.iterrows():
+                new_var = attrs.pop("rename")
+
+                if pd.notna(attrs["apply_func"]):
+                    ufunc = eval(attrs["apply_func"], {"ds": ds, "gsw": gsw})
+                    new_data = xr.apply_ufunc(ufunc, ds[variable])
+                    self.add_to_history(
+                        f"Generate new variable from {variable} ->"
+                        f" apply {attrs['apply_func']}) -> {new_var}"
+                    )
+                else:
+                    new_data = ds[variable]
+                    self.add_to_history(
+                        f"Generate new variable from {variable} -> {new_var}"
+                    )
+                ds_new[new_var] = (
+                    ds[variable].dims,
+                    new_data.data,
+                    {**ds[variable].attrs, **attrs.dropna().to_dict()},
+                )
+
+        ds = ds_new
 
         # coordinates
-        if self.obs_time and replace_date_time_variables:
+        if self.obs_time:
             ds = ds.drop_vars([var for var in ds if var in ["Date", "Time"]])
             ds["time"] = (ds.dims, pd.Series(self.obs_time))
-            # ds["time"].encoding["units"] = "seconds since 1970-01-01T00:00:00Z"
         elif self.start_dateobj:
-            ds["time"] = self.start_dateobj
+            ds["time"] = pd.to_datetime(self.start_dateobj)
+        else:
+            logger.error("Unable to set time coordinate")
+        ds["time"].attrs = {
+            "long_name": "Time",
+            "standard_name": "time",
+        }
 
         ds.attrs["time_coverage_resolution"] = (
             pd.Timedelta(self.time_increment).isoformat()
@@ -1201,6 +1225,9 @@ class IosFile(object):
                 "units": "degrees_east",
                 "standard_name": "longitude",
             }
+            ds.encoding.update(
+                {"latitude": {"dtype": "float32"}, "longitude": {"dtype": "float32"}}
+            )
 
         # Define dimensions
         if "time" in ds and ds["time"].dims and ds["index"].size == ds["time"].size:
@@ -1231,12 +1258,6 @@ class IosFile(object):
         if any(var in ds for var in coordinates_variables):
             ds = ds.set_coords([var for var in coordinates_variables if var in ds])
             if "index" in ds.coords and ("time" in ds.coords or "depth" in ds.coords):
-                ds = ds.reset_coords("index").drop("index")
+                ds = ds.drop_vars("index")
 
-        # Drop empty attributes and variable attribtes
-        ds.attrs = {key: value for key, value in ds.attrs.items() if value}
-        for var in ds:
-            ds[var].attrs = {
-                key: value for key, value in ds[var].attrs.items() if value
-            }
         return ds

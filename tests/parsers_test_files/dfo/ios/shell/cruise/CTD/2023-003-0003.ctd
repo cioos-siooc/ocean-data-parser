@@ -1,0 +1,469 @@
+*2023/07/31 15:00:32.74
+*IOS HEADER VERSION 2.0      2016/04/28 2016/06/13 IVF16
+
+*FILE
+    START TIME          : UTC 2023/03/14 20:44:59.000
+    TIME INCREMENT      : 0 0 0 0.125 0  ! (day hr min sec ms)
+    NUMBER OF RECORDS   : 70
+    DATA DESCRIPTION    : CTD
+    FILE TYPE           : ASCII
+    CRC                 : 2D9C409F
+    NUMBER OF CHANNELS  : 7
+
+    $TABLE: CHANNELS
+    ! No Name                       Units           Minimum        Maximum
+    !--- -------------------------- --------------- -------------- --------------
+       1 Pressure                   decibar         0.9149565      69.76853
+       2 Depth                      metres          0.8486956      69.204
+       3 Temperature:Primary        'deg C (ITS90)' 7.335775       7.486074
+       4 Fluorescence:URU:Wetlabs   mg/m^3          1.061          14.14367
+       5 PAR                        uE/m^2/sec      0.1977778E-01  499.7496
+       6 Oxygen:Dissolved:SBE       mL/L            5.705647       10.24691
+       7 Number_of_bin_records      n/a             8              26
+    $END
+
+    $TABLE: CHANNEL DETAIL
+    ! No  Pad   Start  Width  Format  Type  Decimal_Places
+    !---  ----  -----  -----  ------  ----  --------------
+       1  -99   ' '        7  F       ' '     1
+       2  -99   ' '        7  F       ' '     1
+       3  -99   ' '        9  F       ' '     4
+       4  -99   ' '        8  F       ' '     3
+       5  -99   ' '        7  F       ' '     1
+       6  -99   ' '        7  F       ' '     2
+       7  -99   ' '        5  I       I       0
+    $END
+    $REMARKS
+        This file converted from Sea-Bird file:
+        D:\Telework\2023-003\Processing\derive\2023-003-0003.cnv
+    $END
+
+*ADMINISTRATION
+    MISSION             : 2023-003
+    AGENCY              : IOS,Ocean Sciences Division, Sidney, B.C.
+    COUNTRY             : Canada
+    PROJECT             : Strait of Georgia Plankton
+    SCIENTIST           : Young K.
+    PLATFORM            : Neocaligus
+
+*LOCATION
+    GEOGRAPHIC AREA     : Strait of Georgia
+    STATION             : SC-04
+    EVENT NUMBER        : 3
+    LATITUDE            :  48  43.52300 N  ! (deg min)
+    LONGITUDE           : 123  24.91500 W  ! (deg min)
+    WATER DEPTH         : 88
+
+*INSTRUMENT
+    TYPE                : Sea-Bird CTD
+    MODEL               : SBE-25
+    SERIAL NUMBER       : 0456
+
+    $TABLE: SENSORS
+    !   Name                                 Abs Depth       Serial No
+    !   -----------------------------------  --------------  ----------
+        Temperature                          ' '             6566
+        Conductivity                         ' '             5046
+        'Pressure:Strain Gauge'              ' '             0573
+        PAR/Irradiance:Biospherical/Licor    ' '             4565
+        'Fluorometer:WET Labs ECO-AFL/FL'    ' '             FLRTD-2216
+        'Oxygen:SBE 43'                      ' '             3779
+    $END
+    $REMARKS
+        Software Version 1.59
+    $END
+
+*HISTORY
+
+    $TABLE: PROGRAMS
+    !   Name     Vers   Date       Time     Recs In   Recs Out
+    !   -------- ------ ---------- -------- --------- ---------
+        SBE_IOS  4.3    2023/07/26 16:08:47      2792      2792
+        CLEAN    5.3    2023/07/26 16:09:14      2792      2792
+        CLIP     1.4.1  2023/07/26 16:16:07      2792      1473
+        DELETE   6.3    2023/07/26 16:49:44      1473       742
+        CTDEDIT  5.4.0  2023/07/27 16:45:29       742       707
+        BINAVE   4.2.1  2023/07/31 14:59:41       707        70
+        REMOVECH 8.2    2023/07/31 15:00:17        70        70
+        HDREDIT2 3.2    2023/07/31 15:00:32 ?         ?
+    $END
+    $REMARKS
+        -CLEAN functions: 2023/07/26 16:09:14 20
+         Reset #RECS, MIN & MAX values in header.
+         Interpolation by   Record Number, in Pressure:StrainGauge
+         Set event to last  4 characters of file name
+        -The following CLIP parameters were used.
+         Clip by Record Number Limits
+         First, Last Records =   1320, end from event list: clip.csv
+         Time Not Available in File
+        -The following DELETE parameters were used:
+         Surface Record Removal: Last Press Min
+           Maximum Surface Pressure (relative):      10.00
+           Surface Swell Pressure Tolerance:       1.00
+         Pressure NOT filtered.
+         Swells deleted. Warning message if pressure difference of      2.00
+         Drop rates <   0.30m/s (calculated over   5 points) will be deleted.
+         Drop rate applies in the range    10.00 to    60.13 dbars
+         Sample interval (from FILE section of header) =     0.125 seconds.
+        -CTDEDIT  v5.4.0   2023/07/27 16:45:29
+             35 records were deleted in this editing session.
+         No data values were changed.
+        -The following BINAVE parameters were used:
+         Bin channel = Press*
+         Averaging interval =    1.00
+         Minimum bin value =       0.000
+         Average value was used
+         Interpolated values were NOT used for empty bins
+         Channel 'NUMBER_OF_BIN_RECORDS' was added to file.
+        -REMOVECH 2023/07/31 15:00:17
+         The following CHANNEL(S) were removed:
+          Scan_Number
+          Conductivity:Primary [S/m]
+          Oxygen:Voltage:SBE [volts]
+          Descent_Rate [m/s]
+          Salinity:T0:C0 [PSS-78]
+          Flag
+        -HEADER EDITS: 2023/07/31 15:00:32
+         Applied edit header: D:\Telework\2023-003\Processing\doc\2023-003-HDR.TXT
+         Channel  1: Pressure [decibar]
+           Name:   Pressure:StrainGauge ==> Pressure
+           Format: F10.3 ==> F7.1
+         Channel  2: Depth [metres]
+           Name:   Depth:Salt_Water ==> Depth
+           Format: F10.3 ==> F7.1
+         Channel  4: Fluorescence:URU:Wetlabs [mg/m^3]
+           Name:   Fluorescence:URU:Wetlabs:ECO-AFL ==> Fluorescence:URU:Wetlabs
+         Channel  6: Oxygen:Dissolved:SBE [mL/L]
+           Format: F8.3 ==> F7.2
+         Channel  5: PAR [uE/m^2/sec]
+           Format: F11.3 ==> F7.1
+         Channel  7: Number_of_bin_records [n/a]
+           Pad:    ' ' ==> -99
+    $END
+
+*COMMENTS
+    SBE HEADER
+      Sea-Bird SBE25 Data File:
+      FileName = C:\Users\Plankton\Desktop\Neocaligus Files\2023-003 Mar Neo\CTD\202
+    3-003-0003.hex
+      Software Version 1.59
+      Temperature SN = 6566
+      Conductivity SN = 5046
+      System UpLoad Time = Mar 14 2023 14:52:55
+       Latitude: 48 43.523 N
+       Longitude: 123 24.915 W
+       Station: SC-04
+       Depth: 88 m
+      ds
+      SBE 25 CTD V 4.1c SN 0456   03/14/23  21:52:16.865
+      external pressure sensor, range = 1450 psia,  tcval = -17
+      xtal = 9437029   clk = 32767.333   vmain = 10.6   iop = 303   vlith = 5.8
+      ncasts = 3   samples = 7278   free = 637695   lwait = 0 msec
+
+      CTD configuration:
+      number of scans averaged = 1,  data stored at 8 scans per second
+      real time data transmitted at 1 scans per second
+      minimum conductivity frequency for pump turn on = 1400
+      pump delay = 45 seconds
+
+      battery type = ALKALINE
+
+      3 external voltages sampled
+      stored voltage # 0 = external voltage 0
+      stored voltage # 1 = external voltage 1
+      stored voltage # 2 = external voltage 4
+
+
+      S>
+      dh
+      cast 1  03/14 20:44:59  smpls 2271 to 5062  nv = 3  avg = 1  stp = switch of
+
+      S>
+    # nquan = 12
+    # nvalues = 2792
+    # units = specified
+    # name 0 = scan: Scan Count
+    # name 1 = prSM: Pressure, Strain Gauge [db]
+    # name 2 = depSM: Depth [salt water, m], lat = 49.00
+    # name 3 = t090C: Temperature [ITS-90, deg C]
+    # name 4 = c0S/m: Conductivity [S/m]
+    # name 5 = flECO-AFL: Fluorescence, WET Labs ECO-AFL/FL [mg/m^3]
+    # name 6 = sbeox0V: Oxygen raw, SBE 43 [V]
+    # name 7 = par: PAR/Irradiance, Biospherical/Licor
+    # name 8 = dz/dtM: Descent Rate [m/s]
+    # name 9 = sal00: Salinity, Practical [PSU]
+    # name 10 = sbeox0ML/L: Oxygen, SBE 43 [ml/l], WS = 1
+    # name 11 = flag: flag
+    # span 0 =          1,       2792
+    # span 1 =     -0.169,     70.126
+    # span 2 =     -0.334,     69.548
+    # span 3 =     0.0049,     8.2948
+    # span 4 =   0.446826,   3.718906
+    # span 5 =    -0.1031,    17.0251
+    # span 6 =     0.0073,     3.5250
+    # span 7 = 1.7358e-02, 1.5069e+03
+    # span 8 =     -1.181,      1.065
+    # span 9 =     3.6743,    36.6469
+    # span 10 =    -2.4254,    24.8116
+    # span 11 = 0.0000e+00, 0.0000e+00
+    # interval = seconds: 0.125
+    # start_time = Mar 14 2023 20:44:59 [Instrument's time stamp, header]
+    # bad_flag = -9.990e-29
+    # <Sensors count="6" >
+    #   <sensor Channel="1" >
+    #     <!-- Frequency 0, Temperature -->
+    #     <TemperatureSensor SensorID="55" >
+    #       <SerialNumber>6566</SerialNumber>
+    #       <CalibrationDate>30-Mar-21</CalibrationDate>
+    #       <UseG_J>1</UseG_J>
+    #       <A>0.00000000e+000</A>
+    #       <B>0.00000000e+000</B>
+    #       <C>0.00000000e+000</C>
+    #       <D>0.00000000e+000</D>
+    #       <F0_Old>0.000</F0_Old>
+    #       <G>4.38863047e-003</G>
+    #       <H>6.35904397e-004</H>
+    #       <I>2.17885761e-005</I>
+    #       <J>2.00806356e-006</J>
+    #       <F0>1000.000</F0>
+    #       <Slope>1.00000000</Slope>
+    #       <Offset>0.0000</Offset>
+    #     </TemperatureSensor>
+    #   </sensor>
+    #   <sensor Channel="2" >
+    #     <!-- Frequency 1, Conductivity -->
+    #     <ConductivitySensor SensorID="3" >
+    #       <SerialNumber>5046</SerialNumber>
+    #       <CalibrationDate>30-Mar-21</CalibrationDate>
+    #       <UseG_J>1</UseG_J>
+    #       <!-- Cell const and series R are applicable only for wide range sensors.
+     -->
+    #       <SeriesR>0.0000</SeriesR>
+    #       <CellConst>2000.0000</CellConst>
+    #       <ConductivityType>0</ConductivityType>
+    #       <Coefficients equation="0" >
+    #         <A>0.00000000e+000</A>
+    #         <B>0.00000000e+000</B>
+    #         <C>0.00000000e+000</C>
+    #         <D>0.00000000e+000</D>
+    #         <M>0.0</M>
+    #         <CPcor>-9.57000000e-008</CPcor>
+    #       </Coefficients>
+    #       <Coefficients equation="1" >
+    #         <G>-1.01780301e+001</G>
+    #         <H>1.44636430e+000</H>
+    #         <I>3.44987636e-004</I>
+    #         <J>6.10740135e-005</J>
+    #         <CPcor>-9.57000000e-008</CPcor>
+    #         <CTcor>3.2500e-006</CTcor>
+    #         <!-- WBOTC not applicable unless ConductivityType = 1. -->
+    #         <WBOTC>0.00000000e+000</WBOTC>
+    #       </Coefficients>
+    #       <Slope>1.00000000</Slope>
+    #       <Offset>0.00000</Offset>
+    #     </ConductivitySensor>
+    #   </sensor>
+    #   <sensor Channel="3" >
+    #     <!-- Pressure voltage, Pressure, Strain Gauge -->
+    #     <PressureSensor SensorID="49" >
+    #       <SerialNumber>0573</SerialNumber>
+    #       <CalibrationDate>04-Feb-22</CalibrationDate>
+    #       <A0>9.025408e+002</A0>
+    #       <A1>-2.514637e-001</A1>
+    #       <A2>-5.379807e-008</A2>
+    #       <Offset>0.70000</Offset>
+    #     </PressureSensor>
+    #   </sensor>
+    #   <sensor Channel="4" >
+    #     <!-- A/D voltage 0, PAR/Irradiance, Biospherical/Licor -->
+    #     <PAR_BiosphericalLicorChelseaSensor SensorID="42" >
+    #       <SerialNumber>4565</SerialNumber>
+    #       <CalibrationDate>2021-02-24</CalibrationDate>
+    #       <M>1.00000000</M>
+    #       <B>0.00000000</B>
+    #       <CalibrationConstant>3802281368.82000020</CalibrationConstant>
+    #       <Multiplier>1.00000000</Multiplier>
+    #       <Offset>-0.39620000</Offset>
+    #     </PAR_BiosphericalLicorChelseaSensor>
+    #   </sensor>
+    #   <sensor Channel="5" >
+    #     <!-- A/D voltage 1, Fluorometer, WET Labs ECO-AFL/FL -->
+    #     <FluoroWetlabECO_AFL_FL_Sensor SensorID="20" >
+    #       <SerialNumber>FLRTD-2216</SerialNumber>
+    #       <CalibrationDate>8-Mar-17</CalibrationDate>
+    #       <ScaleFactor>1.20000000e+001</ScaleFactor>
+    #       <!-- Dark output -->
+    #       <Vblank>0.0440</Vblank>
+    #     </FluoroWetlabECO_AFL_FL_Sensor>
+    #   </sensor>
+    #   <sensor Channel="6" >
+    #     <!-- A/D voltage 2, Oxygen, SBE 43 -->
+    #     <OxygenSensor SensorID="38" >
+    #       <SerialNumber>3779</SerialNumber>
+    #       <CalibrationDate>15-Oct-21</CalibrationDate>
+    #       <Use2007Equation>1</Use2007Equation>
+    #       <CalibrationCoefficients equation="0" >
+    #         <!-- Coefficients for Owens-Millard equation. -->
+    #         <Boc>0.0000</Boc>
+    #         <Soc>0.0000e+000</Soc>
+    #         <offset>0.0000</offset>
+    #         <Pcor>0.00e+000</Pcor>
+    #         <Tcor>0.0000</Tcor>
+    #         <Tau>0.0</Tau>
+    #       </CalibrationCoefficients>
+    #       <CalibrationCoefficients equation="1" >
+    #         <!-- Coefficients for Sea-Bird equation - SBE calibration in 2007 and
+    later. -->
+    #         <Soc>5.1070e-001</Soc>
+    #         <offset>-0.4978</offset>
+    #         <A>-3.7778e-003</A>
+    #         <B> 1.3556e-004</B>
+    #         <C>-1.9966e-006</C>
+    #         <D0> 2.5826e+000</D0>
+    #         <D1> 1.92634e-004</D1>
+    #         <D2>-4.64803e-002</D2>
+    #         <E> 3.6000e-002</E>
+    #         <Tau20> 1.1100</Tau20>
+    #         <H1>-3.3000e-002</H1>
+    #         <H2> 5.0000e+003</H2>
+    #         <H3> 1.4500e+003</H3>
+    #       </CalibrationCoefficients>
+    #     </OxygenSensor>
+    #   </sensor>
+    # </Sensors>
+    # datcnv_date = Jul 18 2023 15:14:47, 7.26.7.129 [datcnv_vars = 9]
+    # datcnv_in = D:\Telework\2023-003\Unprocessed\2023-003-0003.hex D:\Telework\202
+    3-003\Processing\doc\2023-003-ctd.xmlcon
+    # datcnv_skipover = 0
+    # datcnv_ox_hysteresis_correction = no
+    # filter_date = Jul 19 2023 08:44:09, 7.26.7.129
+    # filter_in = D:\Telework\2023-003\Processing\convert\2023-003-0003.cnv
+    # filter_low_pass_tc_A = 1.000
+    # filter_low_pass_tc_B = 0.500
+    # filter_low_pass_A_vars =
+    # filter_low_pass_B_vars = prSM
+    # wfilter_date = Jul 19 2023 08:45:02, 7.26.7.129
+    # wfilter_in = D:\Telework\2023-003\Processing\filter\2023-003-0003.cnv
+    # wfilter_excl_bad_scans = yes
+    # wfilter_action t090C = cosine, 8
+    # wfilter_action c0S/m = cosine, 8
+    # alignctd_date = Jul 19 2023 09:35:40, 7.26.7.129
+    # alignctd_in = D:\Telework\2023-003\Processing\wfilter\2023-003-0003.cnv
+    # alignctd_adv = sbeox0V 2.500
+    # celltm_date = Jul 19 2023 09:36:27, 7.26.7.129
+    # celltm_in = D:\Telework\2023-003\Processing\align\2023-003-0003.cnv
+    # celltm_alpha = 0.0400, 0.0000
+    # celltm_tau = 8.0000, 0.0000
+    # celltm_temp_sensor_use_for_cond = primary,
+    # Derive_date = Jul 19 2023 09:38:17, 7.26.7.129 [derive_vars = 2]
+    # Derive_in = D:\Telework\2023-003\Processing\celltm\2023-003-0003.cnv D:\Telewo
+    rk\2023-003\Processing\doc\2023-003-ctd.xmlcon
+    # derive_time_window_docdt = seconds: 1
+    # derive_ox_tau_correction = yes
+    # file_type = ascii
+     END*
+    Remarks from CTDEDIT:
+    CTDEDIT was used to remove a few records corrupted by shed wakes  from
+     the bottom of the cast.
+    --------------------------------------------------------------------------------------
+
+    Data Processing Notes:
+    ----------------------
+    Oxygen:Dissolved, Fluorescence:URU:Wetlabs and PAR data are nominal and unedited
+    except that some records were removed at the top or bottom of many casts and bad
+    Oxygen:Dissolved points were removed from the bottom of many casts between events
+    #17 and 49.
+
+    CTD conductivity and salinity data were bad and were removed from all files.
+
+    Extracted chlorophylls samples were available from the surface. The comparison of
+    fluorescence values with chlorophyll followed the usual pattern of fairly close
+    agreement for CHL <1ug/L and Fluorescence ~30-40% of CHL for most samples where
+    CHL was >1ug/L.
+
+    Oxygen:Dissolved:SBE values cannot be confirmed as there was no calibration sampling
+    for dissolved oxygen. Surface saturation values were could not be determined in the
+    absence of salinity data, but for the cases where surface salinity bottle data were
+    available, those values were combined with CTD pressure and temperature to make an
+    estimate of surface saturation. Values found were 98%,106%,125%,102% and 97%, which
+    are reasonable for this region which is subject to great variability.
+
+    For details on the processing see document: 2023-003_Processing_Report.doc.
+!--1--- --2--- ---3---- ---4--- --5--- --6--- -7--
+!Pressu Depth  Temperat Fluores  PAR   Oxygen Numb
+!re            ure:     cence:         :      er_o
+!              Primary  URU:           Dissol ~bin
+!                       Wetlabs        ved:   _rec
+!                                      SBE    ords
+!------ ------ -------- ------- ------ ------ ----
+*END OF HEADER
+    0.9    0.8   7.4861  12.270  499.8  10.25   23
+    2.0    2.0   7.4382  13.075  211.1   9.71   12
+    3.0    3.0   7.3432  14.144  102.0   8.13   12
+    4.0    4.0   7.3358  13.318   53.3   6.98   12
+    5.0    5.0   7.3406   8.983   37.9   6.49   11
+    6.0    5.9   7.3476   5.491   27.6   6.27   11
+    7.0    6.9   7.3596   2.666   21.4   6.15   12
+    8.0    7.9   7.3758   2.003   17.5   6.12   11
+    9.0    8.9   7.3827   1.948   14.2   6.11   11
+   10.0    9.9   7.3848   2.007   11.8   6.10   11
+   11.0   10.9   7.3852   1.945    9.7   6.08   12
+   12.0   11.9   7.3854   1.834    8.1   6.07   10
+   13.0   12.9   7.3859   1.962    6.7   6.06   10
+   14.0   13.8   7.3862   1.864    5.6   6.06   11
+   15.0   14.8   7.3889   1.909    4.6   6.03   10
+   16.0   15.8   7.3928   1.852    3.8   6.04   10
+   17.0   16.9   7.3920   1.864    3.1   6.05    9
+   18.0   17.9   7.3914   1.832    2.5   6.04    9
+   19.0   18.9   7.4011   1.802    2.1   6.02    9
+   20.0   19.9   7.4050   1.732    1.7   5.98    9
+   21.0   20.8   7.4032   1.566    1.4   5.96    9
+   22.0   21.8   7.4025   1.421    1.2   5.95    9
+   23.0   22.8   7.4011   1.465    1.0   5.94    9
+   24.0   23.8   7.3994   1.497    0.8   5.93    9
+   25.0   24.8   7.3983   1.407    0.7   5.92    9
+   26.0   25.8   7.3975   1.417    0.6   5.91    9
+   27.0   26.8   7.3981   1.357    0.5   5.90    9
+   28.0   27.8   7.3982   1.375    0.4   5.89    9
+   29.0   28.7   7.3989   1.425    0.4   5.89    9
+   30.0   29.8   7.3989   1.395    0.3   5.88    9
+   31.0   30.7   7.3990   1.305    0.3   5.86    9
+   32.0   31.7   7.3993   1.391    0.2   5.87   10
+   33.1   32.8   7.3995   1.331    0.2   5.87    9
+   34.0   33.8   7.3997   1.305    0.2   5.85    9
+   35.0   34.7   7.3997   1.287    0.1   5.86    8
+   36.0   35.7   7.3998   1.276    0.1   5.85    9
+   37.0   36.7   7.4004   1.317    0.1   5.85    9
+   38.0   37.7   7.4008   1.270    0.1   5.85   10
+   39.0   38.7   7.4003   1.297    0.1   5.84    9
+   40.0   39.6   7.4014   1.346    0.1   5.84    9
+   41.0   40.6   7.4014   1.295    0.1   5.83    9
+   42.0   41.6   7.4014   1.291    0.1   5.85    9
+   43.0   42.6   7.4014   1.312    0.1   5.85    9
+   44.0   43.6   7.4016   1.318    0.0   5.84    9
+   45.0   44.6   7.4015   1.273    0.0   5.84    9
+   46.0   45.6   7.4018   1.242    0.0   5.84    9
+   47.0   46.6   7.4018   1.264    0.0   5.81    9
+   48.0   47.6   7.4018   1.255    0.0   5.83    9
+   49.0   48.6   7.4018   1.267    0.0   5.83   10
+   50.0   49.5   7.4013   1.292    0.0   5.81    9
+   51.0   50.5   7.3996   1.276    0.0   5.81    9
+   52.0   51.6   7.3988   1.248    0.0   5.80    9
+   53.0   52.6   7.3983   1.279    0.0   5.78   10
+   54.0   53.6   7.3996   1.271    0.0   5.80    9
+   55.0   54.5   7.3995   1.234    0.0   5.80    8
+   56.0   55.5   7.3986   1.245    0.0   5.78   10
+   57.0   56.5   7.3978   1.300    0.0   5.78    9
+   58.0   57.5   7.3983   1.225    0.0   5.79    9
+   59.0   58.5   7.3984   1.286    0.0   5.80   10
+   60.0   59.5   7.3987   1.248    0.0   5.79    9
+   61.0   60.5   7.3992   1.318    0.0   5.76    9
+   62.0   61.5   7.4001   1.227    0.0   5.75    9
+   63.0   62.4   7.4026   1.172    0.0   5.75    9
+   64.0   63.4   7.4034   1.129    0.0   5.73    9
+   65.0   64.4   7.4034   1.198    0.0   5.74    9
+   66.0   65.4   7.4042   1.138    0.0   5.72   10
+   67.0   66.5   7.4052   1.118    0.0   5.72    9
+   68.0   67.5   7.4053   1.141    0.0   5.72   11
+   68.9   68.4   7.4060   1.095    0.0   5.71   26
+   69.8   69.2   7.4065   1.061    0.0   5.71   17
