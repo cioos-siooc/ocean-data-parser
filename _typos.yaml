@@ -1,0 +1,20 @@
+[default]
+extend-ignore-identifiers-re = [
+    # *sigh* this just isn't worth the cost of fixing
+    "ODF",
+    "odf",
+    "DOUB",
+    "LOND",
+    "LATD",
+    "FLOR",
+    "GUIDLINE",
+    "flor"
+]
+
+[files]
+extend-exclude = [
+  "tests/parsers_test_files/**/*", 
+  "ocean_data_parser/vocabularies/*.csv", 
+  "ocean_data_parser/vocabularies/*.json",
+  "ocean_data_parser/parsers/dfo/odf_source/references/*"
+]
