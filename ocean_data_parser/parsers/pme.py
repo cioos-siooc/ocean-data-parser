@@ -56,8 +56,23 @@ VARIABLE_RENAMING_MAPPING = {
 
 global_attributes = {"Conventions": "CF-1.6"}
 
+# Deprecated functions
+def minidot_txt(*args, **kwargs):
+    """Rename minidot_txt to txt"""
+    logger.warning("minidot_txt is deprecated, use txt instead")
+    return txt(*args, **kwargs)
 
-def minidot_txt(
+def minidot_txts(*args, **kwargs):
+    """Rename minidot_txts to txts"""
+    logger.warning("minidot_txts is deprecated, use txts instead")
+    return txts(*args, **kwargs)
+
+def minidot_cat(*args, **kwargs):
+    """Rename minidot_cat to cat"""
+    logger.warning("minidot_cat is deprecated, use cat instead")
+    return cat(*args, **kwargs)
+
+def txt(
     path: str,
     rename_variables: bool = True,
     encoding: str = "utf-8",
@@ -168,7 +183,7 @@ def minidot_txt(
     return ds
 
 
-def minidot_txts(
+def txts(
     paths: Union[list, str], encoding: str = "utf-8", errors: str = "strict"
 ) -> xr.Dataset:
     """Parse PME Minidots txt files
@@ -197,7 +212,7 @@ def minidot_txts(
     return xr.merge(datasets)
 
 
-def minidot_cat(
+def cat(
     path: str, encoding: str = "utf-8", errors: str = "strict"
 ) -> xr.Dataset:
     """cat reads PME MiniDot concatenated CAT files
