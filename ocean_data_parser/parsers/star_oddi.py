@@ -112,6 +112,7 @@ def DAT(path: str, encoding: str = "cp1252") -> xarray.Dataset:
             names=variables.keys(),
             parse_dates=["time"],
             date_format=date_format,
+            dayfirst=True,
         )
         if "time" in df:
             df = df.set_index(["time"])
