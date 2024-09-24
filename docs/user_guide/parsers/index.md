@@ -48,6 +48,7 @@ Ocean Data Parser includes the following data format parsers:
 [ONSET](onset.md)
 
 - [onset.csv](onset.md#ocean_data_parser.parsers.onset.csv)
+- [onset.xlsx](onset.md#ocean_data_parser.parsers.onset.xlsx)
 
 [PME](pme.md)
 

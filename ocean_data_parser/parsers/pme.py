@@ -54,15 +54,46 @@ VARIABLE_RENAMING_MAPPING = {
     "Q ()": "q",
 }
 
-global_attributes = {"Conventions": "CF-1.6"}
+default_global_attributes = {"Conventions": "CF-1.6"}
 
 
-def minidot_txt(
+# Deprecated functions
+def minidot_txt(*args, **kwargs):
+    """Rename minidot_txt to txt"""
+    logger.warning("minidot_txt is deprecated, use txt instead")
+    return txt(*args, **kwargs)
+
+
+def minidot_txts(*args, **kwargs):
+    """Rename minidot_txts to txts"""
+    logger.warning("minidot_txts is deprecated, use txts instead")
+    return txts(*args, **kwargs)
+
+
+def minidot_cat(*args, **kwargs):
+    """Rename minidot_cat to cat"""
+    logger.warning("minidot_cat is deprecated, use cat instead")
+    return cat(*args, **kwargs)
+
+
+def _rename_variable(variable: str) -> str:
+    if variable in VARIABLE_RENAMING_MAPPING:
+        return VARIABLE_RENAMING_MAPPING[variable]
+    elif "I (mA)" in variable:
+        return variable.replace("I (mA)", "current").replace(" ", "_").lower()
+    elif " (Volt)" in variable:
+        return variable.replace(" (Volt)", "_volt").replace(" ", "_").lower()
+    else:
+        return variable.split("(")[0].strip().replace(" ", "_").lower()
+
+
+def txt(
     path: str,
     rename_variables: bool = True,
     encoding: str = "utf-8",
     errors: str = "strict",
     timezone: str = "UTC",
+    global_attributes: dict = None,
 ) -> xr.Dataset:
     """Parse PME MiniDot txt file
 
@@ -71,6 +102,8 @@ def minidot_txt(
         rename_variables (bool, optional): _description_. Defaults to True.
         encoding (str, optional): File encoding. Defaults to 'utf-8'.
         errors (str, optional): Error handling. Defaults to 'strict'.
+        timezone (str, optional): Timezone to localize the time. Defaults to 'UTC'.
+        global_attributes (dict, optional): Global attributes to add to the dataset. Defaults to {}.
 
     Returns:
         xarray.Dataset
@@ -87,23 +120,28 @@ def minidot_txt(
         errors=errors,
     ) as f:
         # Read the headre
-        serial_number = f.readline().replace("\n", "")
-        logger.debug("Parse file from serial number: %s", serial_number)
-        metadata = re.search(
-            (
-                r"OS REV: (?P<software_version>\d+\.\d+)\s"
-                r"Sensor Cal: (?P<instrument_calibration>\d*)"
-            ),
-            f.readline(),
-        )
+        header = [f.readline()]
+        while "Time (sec)" not in header[-1]:
+            header += [f.readline()]
 
-        # If metadata is null than it's likely not a minidot file
+        # Parse metadata from header
+        metadata = {}
+        metadata["serial_number"] = header[0].replace("\n", "")
+        metadata["software_version"] = re.search(r"OS REV: (\d+\.\d+)\s", header[1])[1]
+        if "Sensor Cal" in header[1]:
+            metadata["instrument_calibration"] = re.search(
+                r"Sensor Cal: (\d*)", header[1]
+            )[1]
+        if len(header) > 2:
+            for key, value in re.findall("(\w+)\: ([^,\n]+)", "".join(header[2:-1])):
+                metadata[key.lower()] = value.strip()
+
         if metadata is None:
             warnings.warn("Failed to read: {path}", RuntimeWarning)
             return pd.DataFrame(), None
 
         # Parse column names
-        columns = [item.strip() for item in f.readline().split(",")]
+        columns = [item.strip() for item in header[-1].split(",")]
 
         # Read the data with pandas
         df = pd.read_csv(
@@ -124,12 +162,11 @@ def minidot_txt(
 
     # Global attributes
     ds.attrs = {
-        **global_attributes,
-        **metadata.groupdict(),
+        **default_global_attributes,
+        **metadata,
         "instrument_manufacturer": "PME",
-        "instrument_model": "MiniDot",
-        "instrument_sn": serial_number,
         "history": "",
+        **(global_attributes or {}),
     }
 
     # Retrieve raw saturation values from minidot
@@ -155,20 +192,27 @@ def minidot_txt(
     for var in ds.variables:
         if var not in VARIABLE_ATTRIBUTES:
             logger.warning("Unknown variable: %s", var)
+            if "(" in var and ")" in var:
+                variable, unit = var.split("(")
+                unit = unit.replace(")", "")
+                ds[var].attrs.update({"units": unit})
             continue
         ds[var].attrs.update(VARIABLE_ATTRIBUTES[var])
 
     if rename_variables:
-        ds = ds.rename_vars(VARIABLE_RENAMING_MAPPING)
-    ds.attrs["history"] += (
-        f"\n{pd.Timestamp.now().isoformat()} Rename variables: {VARIABLE_RENAMING_MAPPING}"
-    )
+        variable_mapping = {
+            variable: _rename_variable(variable) for variable in ds.variables
+        }
+        ds = ds.rename_vars(variable_mapping)
+        ds.attrs["history"] += (
+            f"\n{pd.Timestamp.now().isoformat()} Rename variables: {variable_mapping}"
+        )
 
     ds = standardize_dataset(ds)
     return ds
 
 
-def minidot_txts(
+def txts(
     paths: Union[list, str], encoding: str = "utf-8", errors: str = "strict"
 ) -> xr.Dataset:
     """Parse PME Minidots txt files
@@ -197,9 +241,7 @@ def minidot_txts(
     return xr.merge(datasets)
 
 
-def minidot_cat(
-    path: str, encoding: str = "utf-8", errors: str = "strict"
-) -> xr.Dataset:
+def cat(path: str, encoding: str = "utf-8", errors: str = "strict") -> xr.Dataset:
     """cat reads PME MiniDot concatenated CAT files
 
     Args:
