@@ -33,10 +33,9 @@ def test_compare_test_to_reference_netcdf(reference_file):
     # Load test file and reference file
     ref = xr.open_dataset(reference_file)
     difference_detected = compare_test_to_reference_netcdf(ref, test)
-    assert (
-        not difference_detected
-    ), f"Converted file {source_file} is different than the reference: " + "\n".join(
-        difference_detected
+    assert not difference_detected, (
+        f"Converted file {source_file} is different than the reference: "
+        + "\n".join(difference_detected)
     )
 
 

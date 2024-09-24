@@ -6,6 +6,7 @@ import pandas as pd
 import pytest
 import xarray as xr
 from loguru import logger
+from pytz.exceptions import AmbiguousTimeError
 
 from ocean_data_parser.batch.utils import get_path_generation_input
 from ocean_data_parser.parsers import (
@@ -76,7 +77,7 @@ class TestPMEParsers:
         "path", glob("tests/parsers_test_files/pme/**/*.txt", recursive=True)
     )
     def test_txt_parser(self, path, caplog):
-        ds = pme.minidot_txt(path)
+        ds = pme.txt(path)
         review_parsed_dataset(ds, path, caplog)
 
 
@@ -109,7 +110,37 @@ class TestVanEssenParsers:
 class TestOnsetParser:
     @pytest.mark.parametrize("path", glob("tests/parsers_test_files/onset/**/*.csv"))
     def test_csv_parser(self, path, caplog):
-        ds = onset.csv(path)
+        ds = onset.csv(path, ambiguous_timestamps="ignore")
+        review_parsed_dataset(
+            ds,
+            path,
+            caplog,
+            max_log_levelno=2,
+            ignore_log_records="|".join(
+                [
+                    "suggest a (Fall|Spring) daylight saving issue is present",
+                    "Date Time column is not in a consistent format",
+                ]
+            ),
+        )
+
+    @pytest.mark.parametrize(
+        "path",
+        glob("tests/parsers_test_files/onset/daylight_saving_issue/*.csv"),
+    )
+    def test_csv_parser_ambiguous_timestamps_infer_daylight_issue(self, path, caplog):
+        with pytest.raises(AmbiguousTimeError):
+            onset.csv(path, ambiguous_timestamps="raise")
+
+    def test_csv_parser_ambiguous_timestamps_default_with_daylight_issue(self, caplog):
+        path = "tests/parsers_test_files/onset/daylight_saving_issue/foggy_seaweed_high_20387235_20210525_rawdata_daylight_saving.csv"
+        with pytest.raises(AmbiguousTimeError):
+            onset.csv(path)
+
+    @pytest.mark.parametrize("path", glob("tests/parsers_test_files/onset/**/*.xlsx"))
+    def test_xlsx_parser(self, path, caplog):
+        """Test Onset XLSX parser"""
+        ds = onset.xlsx(path)
         review_parsed_dataset(
             ds,
             path,
