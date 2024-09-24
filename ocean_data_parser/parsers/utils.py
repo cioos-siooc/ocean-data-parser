@@ -8,6 +8,8 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
+from ocean_data_parser import __version__
+
 logger = logging.getLogger(__name__)
 
 time_variables_default_encoding = {
@@ -225,6 +227,13 @@ def standardize_dataset(
     Returns:
         xr.Dataset: Standardized dataset
     """
+    # Add version to the dataset global attributes and history
+    ds.attrs["ocean_data_parser_version"] = __version__  # Add version to the dataset
+
+    ds.attrs["history"] = ds.attrs.get("history", "")
+    ds.attrs["history"] += (
+        f"{datetime.utcnow().isoformat()} Generated with ocean_data_parser v{__version__}\n"
+    )
 
     ds = get_spatial_coverage_attributes(ds, utc=utc)
     ds = standardize_variable_attributes(ds)
@@ -440,6 +449,7 @@ global_attributes_order = [
     "keywords_vocabulary",
     "standard_name_vocabulary",
     "Conventions",
+    "ocean_data_parser_version",
 ]
 
 variable_attributes_order = [

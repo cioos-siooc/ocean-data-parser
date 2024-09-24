@@ -112,6 +112,7 @@ def compare_test_to_reference_netcdf(
         "history",
         r"cioos_data_trasform.odf_transform V \d+\.\d+\.\d+|"
         r"ocean_data_parser V \d+\.\d+\.\d+",
+        r"Generated with ocean_data_parser v\d+\.\d+\.\d+",
         "package_name_version",
     )
     ignore_from_attr(
@@ -121,6 +122,9 @@ def compare_test_to_reference_netcdf(
 
     reference.attrs["date_created"] = "TIMESTAMP"
     test.attrs["date_created"] = "TIMESTAMP"
+
+    reference.attrs.pop("ocean_data_parser_version", None)
+    test.attrs.pop("ocean_data_parser_version", None)
 
     reference = _standardize_dataset(reference)
     test = _standardize_dataset(test)
