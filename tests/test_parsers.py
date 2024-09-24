@@ -8,6 +8,7 @@ import xarray as xr
 from loguru import logger
 from pytz.exceptions import AmbiguousTimeError
 
+from ocean_data_parser import __version__
 from ocean_data_parser.batch.utils import get_path_generation_input
 from ocean_data_parser.parsers import (
     amundsen,
@@ -24,7 +25,7 @@ from ocean_data_parser.parsers import (
 )
 from ocean_data_parser.parsers.dfo.odf_source.attributes import _review_station
 from ocean_data_parser.parsers.dfo.odf_source.parser import _convert_odf_time
-from ocean_data_parser import __version__
+
 
 def search_caplog_records(caplog, message, levelname=None):
     """Search caplog records for a specific message and log level"""
@@ -43,8 +44,10 @@ def review_parsed_dataset(
     assert ds.attrs, "dataset do not contains any global attributes"
     assert ds.variables, "Dataset has no variables."
 
-    assert ds.attrs['ocean_data_parser_version'] == __version__
-    assert isinstance(ds.attrs.get("history",""),str), "history attribute is not a string"
+    assert ds.attrs["ocean_data_parser_version"] == __version__
+    assert isinstance(
+        ds.attrs.get("history", ""), str
+    ), "history attribute is not a string"
 
     if caplog:
         for record in caplog.records:
