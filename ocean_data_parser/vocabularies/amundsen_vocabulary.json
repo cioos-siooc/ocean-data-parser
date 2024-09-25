@@ -184,7 +184,9 @@
   "Trans": [
     {
       "long_name": "Light Transmission",
-      "units": "%"
+      "sdn_parameter_urn": "SDN:P01::POPTDR01",
+      "units": "%",
+      "rename": "TRAN"
     }
   ],
   "Fluo": [
