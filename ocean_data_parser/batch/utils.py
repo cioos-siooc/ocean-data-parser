@@ -64,10 +64,11 @@ def generate_output_path(
               - time_min: minimum time value (compatible with Timestamp formating)
               - time_max: maximum time value (compatible with Timestamp formating)
             ex: ".\\{program}\\{project}\\{source_stem}_{time_min.isoformat()}.nc"
-        defaults (dict, optional): Placeholder for any global
-            attributes or variable attributes used in output path. Defaults to None.
+        file_name (str, optional): Output file name. Defaults to None.
         file_preffix (str, optional): Preffix to add to file name. Defaults to "".
         file_suffix (str, optional): Suffix to add to file name. Defaults to "".
+        defaults (dict, optional): Placeholder for any global
+            attributes or variable attributes used in output path. Defaults to None.
         output_format (str, optional): Output File Format extension.
 
     Returns:

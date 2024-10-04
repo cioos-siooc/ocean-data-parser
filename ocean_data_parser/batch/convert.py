@@ -215,6 +215,7 @@ class BatchConversion:
 
         Args:
             config (dict, optional): Batch configuration. Defaults to None.
+            **kwargs: Key arguments passed to the function.
 
         Returns:
             dict: combined configuration
@@ -454,6 +455,7 @@ def convert_file(file: str, parser: str, config: dict, global_attributes=None) -
         file (str): file path
         parser (str): ocean_data_parser.parsers parser.
         config (dict): Configuration use to apply the conversion
+        global_attributes (dict, optional): Global attributes to add to the dataset.
 
     Returns:
         str: output_path where converted file is saved

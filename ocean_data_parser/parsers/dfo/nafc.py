@@ -378,6 +378,7 @@ def pfile(
             standard. Defaults to True.
         generate_extra_variables (bool, optional): Generate extra
             BODC mapping variables. Defaults to True.
+        encoding_errors (str, optional): Encoding errors handling.
 
     Raises:
         TypeError: File provided isn't a p file.
@@ -652,6 +653,8 @@ def pcnv(
         generate_extra_variables (bool, optional): Generate extra
             vocabulary variables. Defaults to True.
         global_attributes (dict, optional): Global attributes to add to the dataset.
+        encoding (str, optional): File encoding. Defaults to "UTF-8".
+        encoding_errors (str, optional): Encoding errors handling.
         match_metqa_table (bool, optional): Match metqa table to the file if
             available within same directory. Defaults to True.
 

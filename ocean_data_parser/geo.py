@@ -15,7 +15,7 @@ def read_geojson(
 
     Args:
         path: The path to the geojson file to read.
-        encoding [UTF-8]: The encoding of the geojson file.
+        encoding: The file encoding. Defaults to "UTF-8".
 
     Returns:
         parsed geojson dictionary (dict)
@@ -51,7 +51,8 @@ def get_geo_code(position: list, geographical_areas_collections: list) -> str:
 
     Args:
         position (float,float): [description]
-        collections (list): [description]
+        geographical_areas_collections (list): collecton of geographical areas and their
+            associated polygons.
 
     Returns:
         geographical_areas list (str): comma separated list of
@@ -83,9 +84,9 @@ def get_nearest_station(
     """Get the nearest station from a list of reference stations.
 
     Args:
-        latitude (float): target latitude
-        longigude (float): target longitude
-        stations Union[list, pd.DataFrame]: List of reference stations
+        latitude (float): target latitude: target latitude.
+        longitude (float): target longitude: target longitude.
+        stations  (list, pd.DataFrame): List of reference stations
             [(station, latitude, longitude)] or pandas DataFrame
             if a dataframe is passed, the expected colums should be
             respectively called (station, latitude,longitude)

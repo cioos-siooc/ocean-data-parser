@@ -96,7 +96,7 @@ def _add_seabird_vocabulary(variable_attributes: dict) -> dict:
     return variable_attributes
 
 
-def cnv(
+def acnv(
     file_path: str,
     encoding: str = "UTF-8",
     encoding_errors="strict",
@@ -109,10 +109,12 @@ def cnv(
     Args:
         file_path (str): file path
         encoding (str, optional): encoding to use. Defaults to "UTF-8".
+        encoding_errors (str, optional): Error handling. Defaults to "strict".
         xml_parsing_error_level (str, optional): Error level for XML parsing.
             Defaults to "ERROR".
         generate_instrument_variables (bool, optional): Generate instrument
             variables following the IOOS 1.2 standard. Defaults to False.
+        save_orginal_header (bool, optional): Save original header. Defaults to False.
 
     Returns:
         xarray.Dataset: Dataset
@@ -157,6 +159,7 @@ def btl(
         file_path (str): file path
         encoding (str, optional): Encoding to use. Defaults to "UTF-8".
         xml_parsing_error_level (str, optional): Error level for XML parsing. Defaults to "ERROR".
+        save_orginal_header (bool, optional): Save original header. Defaults to False.
 
     Returns:
         xarray.Dataset: Dataset

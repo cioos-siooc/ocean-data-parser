@@ -156,6 +156,7 @@ def file(
         path (str): File path
         parser (str, optional): Parser to use.
                 Defaults to auto `detect_file_format` output if None
+        global_attributes (dict, optional): Global attributes to add to the dataset.
         **kwargs: Keyword arguments to pass to the parser
 
     Returns:

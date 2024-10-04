@@ -136,7 +136,7 @@ def generate_variables_encoding(
         ds (xr.Dataset): Dataset
         variables (list, optional): List of time variables to encode.
             Defaults to detect automatically datetime/timestamp variables.
-        object_varaibles_encoding = Encoding to apply object variables.
+        object_variables_encoding (string, optional): Encoding to apply object variables.
             Defaults to: dtype: str
         time_variables_encoding (dict, optional): Encoding to apply.
             Defaults to:

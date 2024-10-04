@@ -28,7 +28,7 @@ logger.configure(extra={"source_file": ""})
 # Redirect logging loggers to loguru
 class InterceptHandler(logging.Handler):
     """Redirect logging loggers to loguru.
-    
+
     # https://stackoverflow.com/questions/66769431/how-to-use-loguru-with-standard-loggers.
     """
 

@@ -291,7 +291,7 @@ class Processing:
 
             Args:
                 ancillary (str): Ancillary variable, generally a flag variable.
-                variable (list,str): Variables to which to append to ancillary_variables
+                variables (list,str): Variables to which to append to ancillary_variables
             """
             variables = (
                 variables.split(" ") if isinstance(variables, str) else variables
