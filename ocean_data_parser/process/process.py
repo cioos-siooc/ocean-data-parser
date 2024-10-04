@@ -251,14 +251,14 @@ class Processing:
                 "Optional package ioos_qc is required: run `pip install ioos_qc`"
             )
 
-        QARTOD_FLAGS = {
+        qartod_flags = {
             name: value
             for name, value in QartodFlags.__dict__.items()
             if not name.startswith("__")
         }
         qartod_attributes = {
-            "flag_meaning": " ".join(QARTOD_FLAGS.keys()),
-            "flag_value": list(QARTOD_FLAGS.values()),
+            "flag_meaning": " ".join(qartod_flags.keys()),
+            "flag_value": list(qartod_flags.values()),
         }
 
         def _get_test_result(var, module, test):
