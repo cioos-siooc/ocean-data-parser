@@ -107,7 +107,6 @@ ignore = [
     "D417",  # Missing argument descriptions in the docstring
     "D205",  # 1 blank line required between summary line and description
     "PT011",  # pytest.raises(Exception)` is too broad, set the `match` parameter or use a more specific exception
-    "N801",  # variable in function should be lowercase
 ]
 
 [tool.ruff.lint.pydocstyle]

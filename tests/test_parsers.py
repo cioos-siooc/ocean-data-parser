@@ -461,7 +461,7 @@ class TestODFMLIParser:
         review_parsed_dataset(ds, path, caplog)
 
 
-class TestDFO_NAFC_PcnvFiles:
+class TestDfoNafcPcnvFiles:
     @pytest.mark.parametrize(
         "path",
         [
@@ -534,7 +534,7 @@ class TestDFO_NAFC_PcnvFiles:
 
 
 # pylint: disable=W0212
-class TestDFO_NAFC_pFiles:
+class TestDfoNafcPFiles:
     @pytest.mark.parametrize(
         "path",
         [
