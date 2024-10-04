@@ -64,6 +64,12 @@ def _format_variables(name):
     return name
 
 
+def superCO2(path: str, output: str = None) -> xarray.Dataset:  # noqa
+    """Deprecated name for super_co2 function."""
+    logger.warning("Function name superCO2 is deprecated, use super_co2 instead.")
+    return super_co2(path, output)
+
+
 def super_co2(path: str, output: str = None) -> xarray.Dataset:
     """Parse superCO2 output file txt file."""
     header = []
@@ -132,6 +138,12 @@ def super_co2(path: str, output: str = None) -> xarray.Dataset:
     ds.attrs = global_attributes
 
     return standardize_dataset(ds)
+
+
+def superCO2_notes(path: str) -> xarray.Dataset:  # noqa
+    """Deprecated name for super_co2 function."""
+    logger.warning("Function name superCO2 is deprecated, use super_co2 instead.")
+    return super_co2_notes(path)
 
 
 def super_co2_notes(path: str) -> xarray.Dataset:

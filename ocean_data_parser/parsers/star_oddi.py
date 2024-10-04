@@ -37,6 +37,12 @@ VARIABLES_ATTRIBUTES = {
 }
 
 
+def DAT(path: str, encoding: str = "cp1252") -> xarray.Dataset:  # noqa
+    """Deprecated Star-Oddi DAT files parser."""
+    logger.warning("Function name DAT is deprecated, use dat instead.")
+    return dat(path, encoding)
+
+
 def dat(path: str, encoding: str = "cp1252") -> xarray.Dataset:
     """Parse Star-Oddi DAT files.
 
