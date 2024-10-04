@@ -351,7 +351,7 @@ class TestBatchGenerateName:
     def test_generate_filename_with_missing_source(self):
         fail_ds = self._get_test_dataset()
         fail_ds.attrs["source"] = None
-        with pytest.raises(Exception):
+        with pytest.raises(RuntimeError):
             generate_output_path(fail_ds)
 
     def test_generate_filename_with_prefix(self):

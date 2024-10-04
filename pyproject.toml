@@ -104,7 +104,6 @@ ignore = [
     "D103",  # Missing docstring in public function
     "D104",  # Missing docstring in public package
     "D107",  # Missing docstring in __init__
-    "PT011",  # pytest.raises(Exception)` is too broad, set the `match` parameter or use a more specific exception
 ]
 
 [tool.ruff.lint.pydocstyle]
