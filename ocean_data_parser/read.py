@@ -64,7 +64,7 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
     ):
         parser = "electricblue.log_csv"
     elif ext == "DAT" and "Version	SeaStar" in header:
-        parser = "star_oddi.DAT"
+        parser = "star_oddi.dat"
     elif ext == "int" and "% Cruise_Number:" in header:
         parser = "amundsen.int_format"
     elif "*IOS HEADER VERSION" in header:
@@ -100,9 +100,9 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
     elif ext == "txt" and re.match(r"Model\=.*\nFirmware\=.*\nSerial\=.*", header):
         parser = "rbr.rtext"
     elif ext == "txt" and "Front panel parameter change:" in header:
-        parser = "sunburst.superCO2_notes"
+        parser = "sunburst.super_co2_notes"
     elif ext == "txt" and "CO2 surface underway data" in header:
-        parser = "sunburst.superCO2"
+        parser = "sunburst.super_co2"
     elif all(re.search(r"\$.*,.*,", line) for line in header.split("\n") if line):
         parser = "nmea.file"
     elif ext == "xlsx":

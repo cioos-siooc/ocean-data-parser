@@ -78,7 +78,7 @@ class TestFileRegistry:
         ), "Didn't return  FileConversionRegistry object"
         assert not file_registry.data.empty, "registry is an empty dataframe"
 
-    def test_load_csv_available_with_Path(self):
+    def test_load_csv_available_with_path(self):
         file_registry = FileConversionRegistry(
             path=Path("tests/test_file_registry.csv")
         )

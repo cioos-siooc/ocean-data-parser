@@ -167,15 +167,15 @@ class TestSunburstParsers:
             if "_notes_" not in path
         ],
     )
-    def test_sunburst_pCO2_parser(self, path, caplog):
-        ds = sunburst.superCO2(path)
+    def test_sunburst_pco2_parser(self, path, caplog):
+        ds = sunburst.super_co2(path)
         review_parsed_dataset(ds, path, caplog)
 
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/sunburst/superCO2/*pCO2_notes*.txt")
     )
-    def test_sunburst_pCO2_notes_parser(self, path, caplog):
-        ds = sunburst.superCO2_notes(path)
+    def test_sunburst_pco2_notes_parser(self, path, caplog):
+        ds = sunburst.superco2_notes(path)
         review_parsed_dataset(ds, path, caplog)
 
 
