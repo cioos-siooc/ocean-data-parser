@@ -582,7 +582,7 @@ class IosFile:
                 break
             else:
                 raise Exception(
-                    f"Unknown variable format Format: {info["Format"][i]}, Type: {info["Type"][i]}"
+                    f"Unknown variable format Format: {info['Format'][i]}, Type: {info['Type'][i]}"
                 )
         else:
             info["fmt_struct"] = fmt
