@@ -222,12 +222,17 @@ def manual_qc_interface(
     netcdf_output_kwargs=None,
 ):
     """Manually QC interface to manually QC oceanographic data, through a Jupyter notebook.
-    :param default_flag:
-    :param comment_column:
-    :param df: DataFrame input to QC
-    :param variable_list: Variable List to review
-    :param flags: Flag convention used
-    :param review_flag:
+
+    Args:
+        ds (xarray.Dataset): Dataset to review
+        variable_list (list): List of variables to review
+        convention (Union[dict, str]): Flag convention to use
+        manual_flag_suffix (str, optional): Suffix to add to the flag column. Defaults to "_review_flag".
+        comment_column (str, optional): Column to add comments. Defaults to "comment".
+        default_flag (None, optional): Default flag to apply. Defaults to None.
+        start_flag (str, optional): Flag to start with. Defaults to None.
+        agg_flag_method (None, optional): Method to aggregate flags. Defaults to None.
+        netcdf_output_kwargs (None, optional): NetCDF output kwargs. Defaults to None.
     """
     try:
         import plotly.graph_objects as go
@@ -426,10 +431,7 @@ def manual_qc_interface(
         update_axes(xaxis.value, yaxis.value)
 
     def update_axes(xvar, yvar):
-        """Update figure, based on x,y axis provided
-        :param xvar:
-        :param yvar:
-        """
+        """Update figure, based on x,y axis provided."""
         kk = 0
         with figure.batch_update():
             figure.layout.xaxis.title = xvar

@@ -1,4 +1,4 @@
-"""The ODF format is a common standard format used by different govermental and academic organisation:
+"""DFO ODF format is a common standard format used by different govermental and academic organisation.
 
 - [Bedford Institute of Ocean Sciences (BIO)](https://www.bio.gc.ca/)
 - [Institute Maurice Lamontagne (MLI)](https://www.qc.dfo-mpo.gc.ca/institut-maurice-lamontagne)
