@@ -4,7 +4,7 @@ import logging
 
 import xarray
 
-from ocean_data_parser.parsers.dfo.ios_source.IosObsFile import IosFile
+from ocean_data_parser.parsers.dfo.ios_source.ios_obs_file import IosFile
 from ocean_data_parser.parsers.utils import standardize_dataset
 
 logger = logging.getLogger(__name__)

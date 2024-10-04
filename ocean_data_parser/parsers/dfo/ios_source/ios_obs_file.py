@@ -1,4 +1,5 @@
-"""Python class to read IOS data files and store data for conversion to netcdf format
+"""Python class to read IOS data files and store data for conversion to netcdf format.
+
 Changelog Version
     0.1: July 15 2019:
         Convert python scripts and functions into a python class

@@ -112,7 +112,6 @@ ignore = [
     "N805",  # First argument of a method should be named `self`
     "N806",  # variable in class scope should be lowercase
     "N816",  # variable in class scope should not be mixedCase
-    "N999",  # Ignore all naming convention
 ]
 
 [tool.ruff.lint.pydocstyle]
