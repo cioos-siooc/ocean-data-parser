@@ -1,4 +1,6 @@
-"""This page provides functions for parsing data files in Seabird Scientific format.
+"""Seabird Scientific data parsers.
+
+This page provides functions for parsing data files in Seabird Scientific format.
 The Seabird Scientific format is commonly used for oceanographic data collection
 and is supported by [Seabird Scientific](https://www.seabird.com).
 """
@@ -626,7 +628,9 @@ def _get_sbe_instrument_type(instrument: str) -> str:
 
 
 def _get_seabird_processing_history(seabird_header: str) -> str:
-    """Retrieve the different rows within a Seabird header associated
+    """Retrieve Seabird Processing History.
+
+    Retrieve the different rows within a Seabird header associated
     with the sbe data processing tool.
     """
     if "# datcnv" in seabird_header:
@@ -640,7 +644,9 @@ def _get_seabird_processing_history(seabird_header: str) -> str:
 def _generate_binned_attributes(
     ds: xarray.Dataset, seabird_header: str
 ) -> xarray.Dataset:
-    """Retrieve from the Seabird header binned information and
+    """Reterieved Binned Attributes from Seabird header.
+
+    Retrieve from the Seabird header binned information and
     apply it to the different related attributes and variable attributes.
     """
     binavg = re.search(
@@ -698,7 +704,9 @@ def _update_attributes_from_seabird_header(
 def _generate_instruments_variables_from_xml(
     ds: xarray.Dataset, seabird_header: str
 ) -> xarray.Dataset:
-    """Generate IOOS 1.2 standard instrument variables and associated variables
+    """Generate IOOS 1.2 standard instrument variables.
+
+    Also generate associated variables
     instrument attribute based on Seabird XML header.
     """
     # Retrieve Sensors xml section within seabird header
@@ -817,7 +825,9 @@ def _generate_instruments_variables_from_sensor(
 def _add_seabird_instruments(
     ds: xarray.Dataset, seabird_header: str, match_by: str = "long_name"
 ) -> xarray.Dataset:
-    """Extract seabird sensor information and generate instrument variables which
+    """Extract seabird sensor information.
+
+    Generate instrument variables which
     follow the IOOS 1.2 convention.
     """
     # Retrieve sensors information

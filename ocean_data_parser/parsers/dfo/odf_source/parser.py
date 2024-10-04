@@ -1,4 +1,6 @@
-"""odf_parser is a module that regroup a different set of tools used to
+"""ODF Data Format.
+
+odf_parser is a module that regroup a different set of tools used to
 parse the ODF format which is use, maintain and developped
 by the DFO offices BIO and MLI.
 """
@@ -47,7 +49,9 @@ ORIGINAL_PREFIX_VAR_ATTRIBUTE = "original_"
 
 
 class GF3Code:
-    """ODF GF3 Class split terms in their different components and
+    """ODF GF3 Class.
+
+    Class is used to split terms in their different components and
     standardize the convention (CODE_XX).
     """
 
@@ -104,8 +108,9 @@ def history_input(comment, date=datetime.now(timezone.utc)):
 
 
 def read(filename, encoding_format="Windows-1252"):
-    """Read_odf
-    Read_odf parse the odf format used by some DFO organisation to python list of
+    """Read ODF file format.
+
+    `odf_source.parser.read` parse the odf format used by some DFO organisation to python list of
     dictionary format and pandas dataframe. Once converted, the output can easily
     be converted to netcdf format.
 
@@ -132,7 +137,9 @@ def read(filename, encoding_format="Windows-1252"):
     """
 
     def _cast_value(value: str):
-        """Attemp to cast value in line "key=value" of ODF header:
+        """Cast ODF Header value.
+
+        Cast the value to the appropriate type:
         - integer
         - float
         - date
@@ -278,7 +285,9 @@ def add_vocabulary_attributes(
     add_attributes_existing_variables=True,
     generate_new_vocabulary_variables=True,
 ):
-    """This method is use to retrieve from an ODF variable code, units and units,
+    """Add vocabulary attributes to the dataset.
+
+    This method is use to retrieve from an ODF variable code, units and units,
     matching vocabulary terms available.
     """
 
@@ -300,7 +309,9 @@ def add_vocabulary_attributes(
                 ds[var].attrs["scale"] = scale
 
     def _review_term(term, accepted_terms, regexp=False, search_flag=None):
-        """Simple tool to compare "|" separated units in the Vocabulary expected unit list.
+        """Compare term to vocabulary accepted terms.
+
+        Compare "|" separated units in the Vocabulary expected unit list.
         - First unit if any is matching.
         - True if empty or expected to be empty
         - unknown if unit exists but the "accepted_units" input is empty.
@@ -316,7 +327,9 @@ def add_vocabulary_attributes(
         )
 
     def _get_matching_vocabularies():
-        """Match variable to vocabulary by:
+        """Match variable to vocabulary.
+
+        The matching is done based on the following terms:
         - vocabulary
         - gf3 code
         - units

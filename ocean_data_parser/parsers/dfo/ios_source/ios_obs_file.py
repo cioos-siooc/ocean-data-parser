@@ -116,7 +116,9 @@ IOS_SHELL_HEADER_SECTIONS = {
 
 
 class IosFile:
-    """Class template for all the different data file types
+    """IOS File format parser.
+
+    Class template for all the different data file types
     Contains data from the IOS file and methods to read the IOS format
     Specific improvements/modifications required
     to read filetypes will be make in derived classes
@@ -967,9 +969,7 @@ class IosFile:
         """
 
         def update_variable_index(varname, id):
-            """Replace variable index (1,01,X,XX) by the given index or append
-            0 padded index if no index exist in original variable name.
-            """
+            """Update variable index (1,01,X,XX) by the given index or append."""
             if varname.endswith(("01", "XX")):
                 return f"{varname[:-2]}{id:02g}"
             elif varname.endswith(("1", "X")):

@@ -1,7 +1,3 @@
-"""Attribute module regroup all the different tools used to standardize the ODFs
-attribtutes to the different conventions (CF, ACDD).
-"""
-
 import json
 import logging
 import re
@@ -65,7 +61,9 @@ def _generate_platform_attributes(platform: str) -> dict:
 
 
 def _generate_cf_history_from_odf(odf_header) -> dict:
-    """Generate from ODF HISTORY_HEADER, CF recommended format history attribute.
+    """Generate CF compatible history from ODF header.
+
+    Follow the CF conventions for history attribute: iso timestamp - description.
     If a Seabird instrument csv header is provided, it will be converted to a CF standard and
     made available within the instrument_manufacturer_header attribute.
     Processing steps associated with the SBE Processing toolbox will also be
@@ -204,7 +202,9 @@ def _review_event_number(global_attributes, odf_header) -> int:
 
 
 def _standardize_station_names(station: str) -> str:
-    """Standardize stations with convention:
+    """Standardize stations.
+
+    Standardize station name with convention:
     - ABC01: capital letters two digits
     - 001: 3 digits numbers
     - Otherwise unchanged.
@@ -220,7 +220,9 @@ def _standardize_station_names(station: str) -> str:
 
 
 def _review_station(global_attributes, odf_header):
-    """Review station attribute,
+    """Review station attribute.
+
+    The station attribute is reviewed based on the following rules:
     - If not available search in original odf header for "station... : STATION_NAME"
     - Standardize station name
     - Make sure station != event_number.
@@ -255,7 +257,9 @@ def _review_station(global_attributes, odf_header):
 
 
 def _generate_instrument_attributes(odf_header, instrument_manufacturer_header=None):
-    """Generate instrument attributes based on:
+    """Generate instrument attributes.
+
+    The generated attributes are  based on:
     - ODF instrument attribute
     - manufacturer header.
     """
@@ -325,7 +329,9 @@ def _generate_title_from_global_attributes(attributes):
 
 
 def _generate_program_specific_attritutes(global_attributes):
-    """Generate program specific attributes
+    """Generate program specific attributes.
+
+    Specific attributes are generated for the following programs:
     Bedford Institute of Oceanography
     - AZMP
         + Program specific -> cruise_name = None
@@ -369,7 +375,9 @@ def _map_odf_to_cf_globals(attrs):
 
 
 def global_attributes_from_header(dataset, odf_header):
-    """Method use to define the standard global attributes from an ODF Header
+    """Retrieve global attributes from ODF Header and apply corrections.
+
+    Method use to define the standard global attributes from an ODF Header
     parsed by the read function.
     """
     # Generate Global attributes
@@ -483,7 +491,9 @@ def generate_coordinates_variables(dataset):
 
 
 def _standardize_chief_scientist(name):
-    """Apply minor corrections to chief_scientist
+    """Apply minor corrections to chief_scientist.
+
+    The following corrections are applied:
     - replace separator ~, / by ,
     - Ignore Dr.
     """

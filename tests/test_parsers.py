@@ -667,7 +667,8 @@ class TestDfoNafcPFiles:
         assert caplog.records[0].levelname == "WARNING"
 
     def test_pfile_with_already_existing_depth(self):
-        """Test pfile with already existing depth variable
+        """Test pfile with already existing depth variable.
+
         Make sure that the parser does derive a new depth variable.
         """
         ds = dfo.nafc.pfile(

@@ -1,11 +1,8 @@
 import pandas as pd
 
 
-def get_standard_names(version=81):
-    """get_standard_names return a pandas dataframe of the specificied
-    version of the cf convention standard_names table.
-    Table specific information are made available within the attrs.
-    """
+def get_standard_names(version=81) -> pd.DataFrame:
+    """Load CF convention Standard Names table."""
 
     def _get_value(column):
         return standard_names[column].dropna().unique()[0]

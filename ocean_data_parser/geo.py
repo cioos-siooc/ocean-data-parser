@@ -44,8 +44,9 @@ def read_geojson(
 
 
 def get_geo_code(position: list, geographical_areas_collections: list) -> str:
-    """get_geo_code generate for a given position (longitude, latitude)
-    the list of associated geographical areas available
+    """Get geocode for a given position (longitude, latitude).
+
+    The list of associated geographical areas available
     within the collections.
 
     Args:

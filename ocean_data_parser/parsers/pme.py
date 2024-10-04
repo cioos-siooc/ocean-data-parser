@@ -1,5 +1,6 @@
-"""[Precision Measurement Engineering (PME)](https://www.pme.com/)
-is a company that manufactures instruments to measure different water properties.
+"""[Precision Measurement Engineering (PME)](https://www.pme.com/).
+
+PME is a company that manufactures instruments to measure different water properties.
 """
 
 import logging

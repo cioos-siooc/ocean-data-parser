@@ -67,7 +67,9 @@ def rename_qqqq_flags(dataset: xr.Dataset) -> xr.Dataset:
 
 
 def add_flag_attributes(dataset):
-    """odf_flag_variables handle the different conventions used within the ODF files
+    """Add flag attributes to the dataset.
+
+    odf_flag_variables handle the different conventions used within the ODF files
     over the years and map them to the CF standards.
     """
 

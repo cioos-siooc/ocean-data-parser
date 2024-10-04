@@ -1,4 +1,6 @@
-"""[Onset](https://www.onsetcomp.com/) is a company that manufactures
+"""[Onset](https://www.onsetcomp.com/).
+
+Onset is a company that manufactures
 data loggers and sensors for environmental monitoring.
 Their Hobo data loggers are widely used for monitoring water
 quality parameters such as temperature, conductivity, and light
@@ -322,7 +324,8 @@ def _detect_instrument_type(ds):
 
 
 def _farenheit_to_celsius(farenheit):
-    """Convert temperature in Farenheit to Celcius
+    """Convert temperature in Farenheit to Celcius.
+
     Args:
         farenheit (float): Temperature in Farenheint.
 

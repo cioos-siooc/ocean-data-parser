@@ -195,7 +195,8 @@ def get_manual_flag_attributes(convention, var=None):
 
 
 def compare_flags(flags, convention=None, flag_priority=None):
-    """General method that compare flags from the different flag conventions
+    """Compare flags from the different flag conventions.
+
     present in the flag_conventions dictionary by apply the priority list which is ordered from  the
     least to most prioritized flag.
 
@@ -363,7 +364,9 @@ def manual_qc_interface(
             return df, "Failed"
 
     def _get_plots():
-        """Generate plots based on the dataframe df, yaxis and xaxis values present
+        """Generate plots.
+
+        Based on the dataframe df, yaxis and xaxis values present
         within the respective widgets and flags in seperate colors.
         """
         plots = []
@@ -503,9 +506,7 @@ def manual_qc_interface(
             ds_out.process.to_netcdf(suffix="_L1b_flagged", **netcdf_output_kwargs)
 
     def update_flag_apply_to_selection(yaxis_value):
-        """Update variable to flag selection when one flag is
-        previously selected and apply same as y axis.
-        """
+        """Update variable to flag selection when one flag is previously selected and apply same as y axis."""
         selected_flag_variables = flag_apply_to.value
         if len(selected_flag_variables) <= 1 and yaxis_value in flag_apply_to.options:
             flag_apply_to.value = [yaxis_value]

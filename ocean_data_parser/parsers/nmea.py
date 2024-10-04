@@ -1,4 +1,6 @@
-"""The NMEA 0183 protocol is a standard communication protocol used in marine
+"""NMEA 0183 protocol parser.
+
+The NMEA 0183 protocol is a standard communication protocol used in marine
 and navigation systems to exchange data between different electronic devices.
 It stands for "National Marine Electronics Association 0183.".
 """
@@ -144,7 +146,8 @@ NMEA_0183_DTYPES = {
 
 
 def _generate_extra_terms(nmea):
-    """Generate extra terms from NMEA information
+    """Generate extra terms from NMEA information.
+
     Output is a dictionary with the keys following the convention:
     Args: pynmea2 object
     Return {

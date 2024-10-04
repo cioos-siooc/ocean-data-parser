@@ -1,4 +1,6 @@
-"""[Sunburst Sensors LLC](http://www.sunburstsensors.com/) manufacture autonomous
+"""[Sunburst Sensors LLC](http://www.sunburstsensors.com/).
+
+Sunburst manufacture autonomous
 instruments that measure the marine and freshwater inorganic carbon parameters
 pCO2 (partial pressure of carbon dioxide) and pH using our patented drift-free
 technology.

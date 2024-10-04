@@ -251,20 +251,18 @@ class Processing:
                 "Optional package ioos_qc is required: run `pip install ioos_qc`"
             )
 
-        qartod_flags = {
+        QARTOD_FLAGS = {
             name: value
             for name, value in QartodFlags.__dict__.items()
             if not name.startswith("__")
         }
         qartod_attributes = {
-            "flag_meaning": " ".join(qartod_flags.keys()),
-            "flag_value": list(qartod_flags.values()),
+            "flag_meaning": " ".join(QARTOD_FLAGS.keys()),
+            "flag_value": list(QARTOD_FLAGS.values()),
         }
 
         def _get_test_result(var, module, test):
-            """Retrieve a specific test from ioos_qc collection
-            of results in dict format.
-            """
+            """Retrieve a specific test from ioos_qc collection of results in dict format."""
             return results[var][module][test]
 
         def _get_aggregated_flag(tests: list) -> xr.DataArray:

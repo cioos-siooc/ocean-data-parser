@@ -105,7 +105,6 @@ ignore = [
     "D104",  # Missing docstring in public package
     "D107",  # Missing docstring in __init__
     "D417",  # Missing argument descriptions in the docstring
-    "D205",  # 1 blank line required between summary line and description
     "PT011",  # pytest.raises(Exception)` is too broad, set the `match` parameter or use a more specific exception
 ]
 

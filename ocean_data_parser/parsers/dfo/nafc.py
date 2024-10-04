@@ -1,4 +1,6 @@
-"""The Fisheries and Oceans Canada - Newfoundland and Labrador Region -
+"""DFO NARC data format parser.
+
+The Fisheries and Oceans Canada - Newfoundland and Labrador Region -
 North Atlantic Fisheries Centre (NAFC) is a research facility located in St. John's, Newfoundland and Labrador.
 """
 
@@ -385,8 +387,10 @@ def pfile(
     """
 
     def _parse_ship_trip_stn():
-        """Review if the ship,trip,stn string is the same
-        accorss the 3 metadata rows and the file name.
+        """Review ship,trip,stn string.
+
+        Each pfile should have the same ship,trip,stn
+        in the 3 metadata rows and the file name.
         """
         ship_trip_stn = [line[:8] for line in metadata_lines[1:] if line.strip()] + [
             file.stem

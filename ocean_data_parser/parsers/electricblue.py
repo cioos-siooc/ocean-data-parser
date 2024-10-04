@@ -1,5 +1,6 @@
-"""[ElectricBlue](https://electricblue.eu/envloggers)
-is a non-profit technology transfer startup creating
+"""[ElectricBlue](https://electricblue.eu/envloggers).
+
+ElectricBlue is a non-profit technology transfer startup creating
 research-oriented solutions for the scientific community.
 """
 

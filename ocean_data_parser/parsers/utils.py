@@ -76,7 +76,9 @@ def _consider_attribute(value):
 
 
 def standardize_attributes(attrs) -> dict:
-    """Standardize attributes with the following steps:
+    """Standardize attributes.
+
+    The following  dtype mapping is applied:
         - datetime, timestamps -> ISO format text string
         - dict ->  JSON strings
         - list -> np.array
@@ -205,8 +207,9 @@ def sort_attributes(attrs: dict, attribute_order: list) -> dict:
 def standardize_dataset(
     ds: xr.Dataset, time_variables_encoding: dict = None, utc: bool = True
 ) -> xr.Dataset:
-    """Standardize dataset to be easily serializable to netcdf
-    and compatible with ERDDAP. Apply the following steps:
+    """Standardize dataset to be easily serializable to netcdf.
+
+    Standardization apply the following steps to be compatible with ERDDAP:
         - Generate geospatial attributes
         - Apply standardize_variable_attributes
         - Apply standardize_global_attributes

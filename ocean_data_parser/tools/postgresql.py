@@ -8,13 +8,16 @@ logger = logging.getLogger(__name__)
 def update_database_table(
     df, table, conn, distinct_columns=None, schema=None, if_row_exist="UPDATE"
 ):
-    """Method use to update database table, it first upload to
-    a temporary table, which then update the original table with any new
+    """Update database table.
+
+    It first upload to a temporary table, which then update the original table with any new
     sample that aren't available already.
     """
 
     def psql_insert_copy(table, conn, keys, data_iter):
-        """Execute SQL statement inserting data into a postgresql db with using
+        """Execute SQL statement inserting data into a postgresql db.
+
+        This function used the postgresql method
         COPY from CSV to a temporary table and then update on conflict or nothing.
 
         Parameters
