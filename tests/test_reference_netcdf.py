@@ -1,5 +1,4 @@
-"""
-This test compare the *_reference.nc files made available within the repository
+"""This test compare the *_reference.nc files made available within the repository
 tests folder to the present associated parser.
 
 Any differences observed between the generated xarray
@@ -88,7 +87,8 @@ def compare_test_to_reference_netcdf(
 
     def ignore_from_attr(attr, expression, placeholder):
         """Replace expression in both reference and test files which are
-        expected to be different."""
+        expected to be different.
+        """
         if attr not in reference.attrs or attr not in test.attrs:
             reference[attr] = placeholder
             test[attr] = placeholder

@@ -1,5 +1,4 @@
-"""
-[Onset](https://www.onsetcomp.com/) is a company that manufactures
+"""[Onset](https://www.onsetcomp.com/) is a company that manufactures
 data loggers and sensors for environmental monitoring.
 Their Hobo data loggers are widely used for monitoring water
 quality parameters such as temperature, conductivity, and light
@@ -178,7 +177,6 @@ def csv(
     Returns:
         xarray.Dataset
     """
-
     raw_header = []
     line = ""
     with open(
@@ -361,7 +359,7 @@ def xlsx(
         )
 
     def _get_column_and_unit(column):
-        """split column name and unit in parenthesis"""
+        """Split column name and unit in parenthesis"""
         column = column.split(" (")
         if len(column) == 1:
             return column[0], None

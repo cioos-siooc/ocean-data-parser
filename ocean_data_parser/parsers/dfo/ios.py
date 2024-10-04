@@ -1,6 +1,4 @@
-"""
-Fisheries and Ocean Canada - Pacific Region - Institute of Ocean Sciences
-"""
+"""Fisheries and Ocean Canada - Pacific Region - Institute of Ocean Sciences"""
 
 import logging
 

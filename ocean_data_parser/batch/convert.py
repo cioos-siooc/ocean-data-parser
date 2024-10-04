@@ -264,7 +264,6 @@ class BatchConversion:
 
     def load_input_table(self, table: dict) -> pd.DataFrame:
         """Load input table and apply pipe if needed"""
-
         if "path" not in table:
             raise ValueError("No path detected in input table")
         tables = []

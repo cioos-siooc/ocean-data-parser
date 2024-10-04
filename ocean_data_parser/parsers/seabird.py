@@ -1,5 +1,4 @@
-"""
-This page provides functions for parsing data files in Seabird Scientific format.
+"""This page provides functions for parsing data files in Seabird Scientific format.
 The Seabird Scientific format is commonly used for oceanographic data collection
 and is supported by [Seabird Scientific](https://www.seabird.com).
 """
@@ -160,7 +159,6 @@ def btl(
     Returns:
         xarray.Dataset: Dataset
     """
-
     with open(file_path, encoding=encoding) as f:
         header = _parse_seabird_file_header(
             f, xml_parsing_error_level=xml_parsing_error_level
@@ -628,8 +626,7 @@ def _get_sbe_instrument_type(instrument: str) -> str:
 
 
 def _get_seabird_processing_history(seabird_header: str) -> str:
-    """
-    Retrieve the different rows within a Seabird header associated
+    """Retrieve the different rows within a Seabird header associated
     with the sbe data processing tool
     """
     if "# datcnv" in seabird_header:
@@ -644,8 +641,8 @@ def _generate_binned_attributes(
     ds: xarray.Dataset, seabird_header: str
 ) -> xarray.Dataset:
     """Retrieve from the Seabird header binned information and
-    apply it to the different related attributes and variable attributes."""
-
+    apply it to the different related attributes and variable attributes.
+    """
     binavg = re.search(
         r"\# binavg_bintype \= (?P<bintype>.*)\n\# binavg_binsize \= (?P<binsize>\d+)\n",
         seabird_header,
@@ -702,7 +699,8 @@ def _generate_instruments_variables_from_xml(
     ds: xarray.Dataset, seabird_header: str
 ) -> xarray.Dataset:
     """Generate IOOS 1.2 standard instrument variables and associated variables
-    instrument attribute based on Seabird XML header."""
+    instrument attribute based on Seabird XML header.
+    """
     # Retrieve Sensors xml section within seabird header
     calibration_xml = re.sub(
         r"\n\#\s",
@@ -819,8 +817,7 @@ def _generate_instruments_variables_from_sensor(
 def _add_seabird_instruments(
     ds: xarray.Dataset, seabird_header: str, match_by: str = "long_name"
 ) -> xarray.Dataset:
-    """
-    Extract seabird sensor information and generate instrument variables which
+    """Extract seabird sensor information and generate instrument variables which
     follow the IOOS 1.2 convention
     """
     # Retrieve sensors information

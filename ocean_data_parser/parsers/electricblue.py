@@ -1,5 +1,4 @@
-"""
-[ElectricBlue](https://electricblue.eu/envloggers)
+"""[ElectricBlue](https://electricblue.eu/envloggers)
 is a non-profit technology transfer startup creating
 research-oriented solutions for the scientific community.
 """
@@ -136,7 +135,6 @@ def log_csv(
     Returns:
         xarray.Dataset
     """
-
     df = pd.read_csv(path, encoding=encoding, parse_dates=True, index_col=["time"])
     ds = df.to_xarray()
     # add default attributes

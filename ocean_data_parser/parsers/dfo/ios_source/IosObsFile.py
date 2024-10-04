@@ -1,5 +1,4 @@
-"""
-Python class to read IOS data files and store data for conversion to netcdf format
+"""Python class to read IOS data files and store data for conversion to netcdf format
 Changelog Version
     0.1: July 15 2019:
         Convert python scripts and functions into a python class
@@ -115,9 +114,8 @@ IOS_SHELL_HEADER_SECTIONS = {
 }
 
 
-class IosFile(object):
-    """
-    Class template for all the different data file types
+class IosFile:
+    """Class template for all the different data file types
     Contains data from the IOS file and methods to read the IOS format
     Specific improvements/modifications required
     to read filetypes will be make in derived classes
@@ -152,11 +150,11 @@ class IosFile(object):
 
         # Load file
         try:
-            with open(self.filename, "r", encoding="ASCII") as file:
+            with open(self.filename, encoding="ASCII") as file:
                 self.lines = file.readlines()
         except UnicodeDecodeError:
             logger.warning("Bad characters were encountered. We will ignore them")
-            with open(self.filename, "r", encoding="ASCII", errors="ignore") as file:
+            with open(self.filename, encoding="ASCII", errors="ignore") as file:
                 self.lines = file.readlines()
 
         self.ios_header_version = self.get_header_version()
@@ -584,8 +582,7 @@ class IosFile(object):
                 break
             else:
                 raise Exception(
-                    "Unknown variable format Format: %s, Type: %s"
-                    % (info["Format"][i], info["Type"][i])
+                    f"Unknown variable format Format: {info["Format"][i]}, Type: {info["Type"][i]}"
                 )
         else:
             info["fmt_struct"] = fmt
@@ -658,7 +655,7 @@ class IosFile(object):
                 break
             else:
                 logger.debug(line)
-                info["{:d}".format(count)] = line.rstrip()
+                info[f"{count:d}"] = line.rstrip()
         return info
 
     def get_list_of_sections(self):
@@ -970,7 +967,8 @@ class IosFile(object):
 
         def update_variable_index(varname, id):
             """Replace variable index (1,01,X,XX) by the given index or append
-            0 padded index if no index exist in original variable name"""
+            0 padded index if no index exist in original variable name
+            """
             if varname.endswith(("01", "XX")):
                 return f"{varname[:-2]}{id:02g}"
             elif varname.endswith(("1", "X")):

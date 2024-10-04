@@ -146,7 +146,6 @@ def generate_variables_encoding(
     Returns:
         xr..Dataset: Dataset with encoding attribute generated.
     """
-
     for var in variables or ds.variables:
         ds.encoding[var] = {}
         if "datetime" in ds[var].dtype.name:
@@ -225,7 +224,6 @@ def standardize_dataset(
     Returns:
         xr.Dataset: Standardized dataset
     """
-
     ds = get_spatial_coverage_attributes(ds, utc=utc)
     ds = standardize_variable_attributes(ds)
     ds.attrs = standardize_global_attributes(ds.attrs)
@@ -243,9 +241,7 @@ def standardize_global_attributes(attrs):
 
 
 def standardize_variable_attributes(ds):
-    """
-    Method to generate simple generic variable attributes and reorder attributes in a consistent order.
-    """
+    """Method to generate simple generic variable attributes and reorder attributes in a consistent order."""
     for var in ds.variables:
         # Generate min/max values attributes
         if (
@@ -271,9 +267,7 @@ def get_spatial_coverage_attributes(
     depth="depth",
     utc=False,
 ):
-    """
-    This method generates the geospatial and time coverage attributes associated to an xarray dataset.
-    """
+    """This method generates the geospatial and time coverage attributes associated to an xarray dataset."""
     # TODO add resolution attributes
     # time
     if time in ds.variables and ds[time].size > 0:

@@ -1,5 +1,4 @@
-"""
-The Fisheries and Oceans Canada - Newfoundland and Labrador Region -
+"""The Fisheries and Oceans Canada - Newfoundland and Labrador Region -
 North Atlantic Fisheries Centre (NAFC) is a research facility located in St. John's, Newfoundland and Labrador.
 """
 
@@ -130,7 +129,6 @@ def _parse_ll(deg: float, min: float) -> float:
 
 def _parse_pfile_header_line1(line: str) -> dict:
     """Parse first row of the p file format which contains location and instrument information."""
-
     if line[44:46] == "60":
         # Fix some dates are using 60 minutes which is not compatible with pandas datetime
         dt = pd.Timedelta("1min")
@@ -320,7 +318,6 @@ def _pfile_history_to_cf(lines: list) -> str:
     Returns:
         str:
     """
-
     # """Convert history to cf format: 2022-02-02T00:00:00Z - ..."""
     if not lines:
         return ""
@@ -389,7 +386,8 @@ def pfile(
 
     def _parse_ship_trip_stn():
         """Review if the ship,trip,stn string is the same
-        accorss the 3 metadata rows and the file name."""
+        accorss the 3 metadata rows and the file name.
+        """
         ship_trip_stn = [line[:8] for line in metadata_lines[1:] if line.strip()] + [
             file.stem
         ]
@@ -601,7 +599,6 @@ def _get_metqa_table(file) -> pd.DataFrame:
 
 def _add_metqa_info_to_pcvn(file: Path, match_metqa_file) -> Path:
     """Find the matching metqa table to the pcnv file"""
-
     glob_expression = f"{file.stem.rsplit('_',1)[0]}_metqa_*.csv"
     metqa_file = list(file.parent.glob(glob_expression))
     if metqa_file and len(metqa_file) == 1:

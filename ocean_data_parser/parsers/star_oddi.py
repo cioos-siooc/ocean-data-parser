@@ -1,5 +1,4 @@
-"""
-[Star-Oddi](https://www.star-oddi.com/) is a company that specializes in manufacturing and providing data
+"""[Star-Oddi](https://www.star-oddi.com/) is a company that specializes in manufacturing and providing data
 loggers and sensors for oceanographic research. Their DAT files contain recorded
 data from various oceanographic parameters such as temperature, salinity, conductivity, and sound velocity.
 """
@@ -56,7 +55,7 @@ def DAT(path: str, encoding: str = "cp1252") -> xarray.Dataset:
     metadata = {}
     variables = {}
     original_header = ""
-    with open(path, "r", encoding=encoding) as f:
+    with open(path, encoding=encoding) as f:
         line = "#"
 
         # Loop through the header lines

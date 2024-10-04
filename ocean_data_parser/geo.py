@@ -16,10 +16,10 @@ def read_geojson(
     Args:
         path: The path to the geojson file to read.
         encoding [UTF-8]: The encoding of the geojson file.
+
     Returns:
         parsed geojson dictionary (dict)
     """
-
     try:
         from shapely.geometry import shape
     except ImportError:
@@ -31,7 +31,7 @@ def read_geojson(
     if not os.path.exists(path):
         return None
 
-    with open(path, "r", encoding=encoding) as f:
+    with open(path, encoding=encoding) as f:
         geojson = json.load(f)
 
     # Add shapely geometry
@@ -51,6 +51,7 @@ def get_geo_code(position: list, geographical_areas_collections: list) -> str:
     Args:
         position (float,float): [description]
         collections (list): [description]
+
     Returns:
         geographical_areas list (str): comma separated list of
             matching geographical areas

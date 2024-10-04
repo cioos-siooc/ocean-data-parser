@@ -59,7 +59,7 @@ class Processing:
         )
 
     def get_filename_from_convention(self, suffix=None):
-        return eval('f"{}"'.format(self.filename_convention), {}, {"ds": self._obj}) + (
+        return eval(f'f"{self.filename_convention}"', {}, {"ds": self._obj}) + (
             suffix or ""
         )
 
@@ -188,7 +188,6 @@ class Processing:
         Returns:
             xr.DataArray: New
         """
-
         try:
             import gsw_xarray as gsw
         except ImportError:
@@ -263,8 +262,7 @@ class Processing:
         }
 
         def _get_test_result(var, module, test):
-            """
-            Retrieve a specific test from ioos_qc collection
+            """Retrieve a specific test from ioos_qc collection
             of results in dict format
             """
             return results[var][module][test]

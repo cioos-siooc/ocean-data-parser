@@ -1,5 +1,4 @@
-"""
-[Sunburst Sensors LLC](http://www.sunburstsensors.com/) manufacture autonomous
+"""[Sunburst Sensors LLC](http://www.sunburstsensors.com/) manufacture autonomous
 instruments that measure the marine and freshwater inorganic carbon parameters
 pCO2 (partial pressure of carbon dioxide) and pH using our patented drift-free
 technology.
@@ -147,7 +146,7 @@ def superCO2_notes(path: str) -> xarray.Dataset:
     """Parse superCO2 notes files and return an xarray Dataset"""
     line = True
     notes = []
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         while line:
             line = f.readline()
             if line in (""):

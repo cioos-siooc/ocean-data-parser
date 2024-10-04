@@ -24,7 +24,7 @@ TEST_FILE = Path("temp/test_file.csv")
 TEST_REGISTRY = FileConversionRegistry(path=TEST_REGISTRY_PATH)
 
 
-@pytest.fixture
+@pytest.fixture()
 def caplog(caplog):
     handler_id = logger.add(caplog.handler, format="{message}")
     yield caplog
@@ -445,12 +445,12 @@ class TestBatchConversion:
 
 class TestGenerateOutputPath:
     @staticmethod
-    @pytest.fixture
+    @pytest.fixture()
     def ds_path():
         return "tests/parsers_test_files/pme/minidot/2022-03-01 233900Z.txt"
 
     @staticmethod
-    @pytest.fixture
+    @pytest.fixture()
     def ds(ds_path):
         ds = file(ds_path)
         ds.attrs["source"] = ds_path

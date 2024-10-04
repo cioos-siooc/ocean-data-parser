@@ -1,6 +1,4 @@
-"""
-QC Module present a set of tools to manually qc data.
-"""
+"""QC Module present a set of tools to manually qc data."""
 
 import logging
 from typing import Union
@@ -197,8 +195,7 @@ def get_manual_flag_attributes(convention, var=None):
 
 
 def compare_flags(flags, convention=None, flag_priority=None):
-    """
-    General method that compare flags from the different flag conventions
+    """General method that compare flags from the different flag conventions
     present in the flag_conventions dictionary by apply the priority list which is ordered from  the
     least to most prioritized flag.
 
@@ -224,8 +221,7 @@ def manual_qc_interface(
     agg_flag_method=None,
     netcdf_output_kwargs=None,
 ):
-    """
-    Manually QC interface to manually QC oceanographic data, through a Jupyter notebook.
+    """Manually QC interface to manually QC oceanographic data, through a Jupyter notebook.
     :param default_flag:
     :param comment_column:
     :param df: DataFrame input to QC
@@ -233,7 +229,6 @@ def manual_qc_interface(
     :param flags: Flag convention used
     :param review_flag:
     """
-
     try:
         import plotly.graph_objects as go
     except ImportError:
@@ -287,7 +282,7 @@ def manual_qc_interface(
     )
 
     filter_by_result = filter_by_result = widgets.HTML(
-        value="{0} records available".format(len(df)),
+        value=f"{len(df)} records available",
     )
 
     flag_selection = widgets.Dropdown(
@@ -364,7 +359,8 @@ def manual_qc_interface(
 
     def _get_plots():
         """Generate plots based on the dataframe df, yaxis and xaxis values present
-        within the respective widgets and flags in seperate colors"""
+        within the respective widgets and flags in seperate colors
+        """
         plots = []
         for flag_name, flag_value in convention.items():
             if isinstance(flag_value, dict) and "Color" in flag_value:
@@ -423,15 +419,14 @@ def manual_qc_interface(
             filter_by_result.value = "<p style='color:red;'>0 records found</p>"
         else:
             # Update text back and update plot with selection
-            filter_by_result.value = "{0} records found".format(len(df_temp))
+            filter_by_result.value = f"{len(df_temp)} records found"
 
     def update_figure(_):
         """Update figure with present x and y items in menu"""
         update_axes(xaxis.value, yaxis.value)
 
     def update_axes(xvar, yvar):
-        """
-        Update figure, based on x,y axis provided
+        """Update figure, based on x,y axis provided
         :param xvar:
         :param yvar:
         """
@@ -507,7 +502,8 @@ def manual_qc_interface(
 
     def update_flag_apply_to_selection(yaxis_value):
         """Update variable to flag selection when one flag is
-        previously selected and apply same as y axis"""
+        previously selected and apply same as y axis
+        """
         selected_flag_variables = flag_apply_to.value
         if len(selected_flag_variables) <= 1 and yaxis_value in flag_apply_to.options:
             flag_apply_to.value = [yaxis_value]

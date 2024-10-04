@@ -1,5 +1,4 @@
-"""
-[Precision Measurement Engineering (PME)](https://www.pme.com/)
+"""[Precision Measurement Engineering (PME)](https://www.pme.com/)
 is a company that manufactures instruments to measure different water properties.
 """
 
@@ -115,7 +114,6 @@ def txt(
     # Read MiniDot
     with open(
         path,
-        "r",
         encoding=encoding,
         errors=errors,
     ) as f:
@@ -133,7 +131,7 @@ def txt(
                 r"Sensor Cal: (\d*)", header[1]
             )[1]
         if len(header) > 2:
-            for key, value in re.findall("(\w+)\: ([^,\n]+)", "".join(header[2:-1])):
+            for key, value in re.findall("(\\w+)\\: ([^,\n]+)", "".join(header[2:-1])):
                 metadata[key.lower()] = value.strip()
 
         if metadata is None:
@@ -242,7 +240,7 @@ def txts(
 
 
 def cat(path: str, encoding: str = "utf-8", errors: str = "strict") -> xr.Dataset:
-    """cat reads PME MiniDot concatenated CAT files
+    """Cat reads PME MiniDot concatenated CAT files
 
     Args:
         path (str): File path to read
@@ -252,7 +250,7 @@ def cat(path: str, encoding: str = "utf-8", errors: str = "strict") -> xr.Datase
     Returns:
         xr.Dataset: xarray dataset which is compliant with CF-1.6
     """
-    with open(path, "r", encoding=encoding, errors=errors) as f:
+    with open(path, encoding=encoding, errors=errors) as f:
         header = f.readline()
 
         if header != "MiniDOT Logger Concatenated Data File\n":

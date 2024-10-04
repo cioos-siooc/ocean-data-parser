@@ -49,7 +49,7 @@ def generate_output_path(
     output_format: str = ".nc",
     defaults: dict = None,
 ) -> Path:
-    """Generate output path where to save Dataset.
+    r"""Generate output path where to save Dataset.
 
     Args:
         ds (xr.Dataset): Dataset
@@ -73,7 +73,6 @@ def generate_output_path(
     Returns:
         Path (Path): Generated path
     """
-
     # handle defaults
     original_source = Path(ds.attrs.get("source")) if ds.attrs.get("source") else None
     if file_name is None and original_source:

@@ -1,5 +1,4 @@
-"""
-The NMEA 0183 protocol is a standard communication protocol used in marine
+"""The NMEA 0183 protocol is a standard communication protocol used in marine
 and navigation systems to exchange data between different electronic devices.
 It stands for "National Marine Electronics Association 0183."
 """

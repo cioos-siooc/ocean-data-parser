@@ -41,7 +41,7 @@ def load_config(config_path: str = None, encoding="UTF-8"):
     if config_path is None:
         config_path = Path(__file__).parent / "default-batch-config.yaml"
 
-    with open(config_path, "r", encoding=encoding) as file:
+    with open(config_path, encoding=encoding) as file:
         config = yaml.load(file, Loader=yaml.SafeLoader)
 
     # Load geojson regions

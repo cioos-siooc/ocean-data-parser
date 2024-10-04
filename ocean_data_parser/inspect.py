@@ -74,7 +74,6 @@ def variables(
         output_erddap_xml (str, optional): Path to where to ouput
             erddap dataset xml. Defaults to console.
     """
-
     # Get file list
     logger.debug("Retrieve files to compile")
     files = glob(input, recursive=True)

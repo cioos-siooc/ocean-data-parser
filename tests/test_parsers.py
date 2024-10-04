@@ -61,7 +61,7 @@ def review_parsed_dataset(
         assert isinstance(path_generation_input["time_max"], pd.Timestamp)
 
 
-@pytest.fixture
+@pytest.fixture()
 def caplog(caplog):
     handler_id = logger.add(caplog.handler, format="{message}")
     yield caplog

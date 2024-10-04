@@ -1,5 +1,4 @@
-"""
-Attribute module regroup all the different tools used to standardize the ODFs
+"""Attribute module regroup all the different tools used to standardize the ODFs
 attribtutes to the different conventions (CF, ACDD).
 """
 
@@ -66,8 +65,7 @@ def _generate_platform_attributes(platform: str) -> dict:
 
 
 def _generate_cf_history_from_odf(odf_header) -> dict:
-    """
-    Generate from ODF HISTORY_HEADER, CF recommended format history attribute.
+    """Generate from ODF HISTORY_HEADER, CF recommended format history attribute.
     If a Seabird instrument csv header is provided, it will be converted to a CF standard and
     made available within the instrument_manufacturer_header attribute.
     Processing steps associated with the SBE Processing toolbox will also be
@@ -206,11 +204,10 @@ def _review_event_number(global_attributes, odf_header) -> int:
 
 
 def _standardize_station_names(station: str) -> str:
-    """
-    Standardize stations with convention:
-        - ABC01: capital letters two digits
-        - 001: 3 digits numbers
-        - Otherwise unchanged
+    """Standardize stations with convention:
+    - ABC01: capital letters two digits
+    - 001: 3 digits numbers
+    - Otherwise unchanged
     """
     if re.match(r"[A-Za-z]+\_*\d+", station):
         station_items = re.search(r"([A-Za-z]+)_*(\d+)", station).groups()
@@ -258,8 +255,7 @@ def _review_station(global_attributes, odf_header):
 
 
 def _generate_instrument_attributes(odf_header, instrument_manufacturer_header=None):
-    """
-    Generate instrument attributes based on:
+    """Generate instrument attributes based on:
     - ODF instrument attribute
     - manufacturer header
     """
@@ -373,11 +369,9 @@ def _map_odf_to_cf_globals(attrs):
 
 
 def global_attributes_from_header(dataset, odf_header):
-    """
-    Method use to define the standard global attributes from an ODF Header
+    """Method use to define the standard global attributes from an ODF Header
     parsed by the read function.
     """
-
     # Generate Global attributes
     dataset.attrs = {
         # CRUISE_HEADER
@@ -439,8 +433,7 @@ def global_attributes_from_header(dataset, odf_header):
 
 
 def generate_coordinates_variables(dataset):
-    """
-    Method use to generate metadata variables from the ODF Header to a xarray Dataset.
+    """Method use to generate metadata variables from the ODF Header to a xarray Dataset.
     """
     if "cdm_data_type" not in dataset.attrs:
         logging.error("No cdm_data_type attribute")
