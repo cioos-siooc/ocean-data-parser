@@ -47,7 +47,7 @@ class FileConversionRegistry:
             self.load()
 
     def load(self, overwrite=False):
-        """Load file registry if available otherwise return an empty dataframe"""
+        """Load file registry if available otherwise return an empty dataframe."""
 
         def _as_path(path):
             return Path(path) if pd.notna(path) else path
@@ -71,7 +71,7 @@ class FileConversionRegistry:
         return self
 
     def save(self):
-        """_summary_"""
+        """_summary_."""
         df = self.data.drop(columns=[col for col in self.data if col.endswith("_new")])
         if not self.path:
             return
@@ -89,7 +89,7 @@ class FileConversionRegistry:
         return copy.deepcopy(self)
 
     def _get_hash(self, file: Union[str, Path]) -> str:
-        """Retriveve file hash
+        """Retriveve file hash.
 
         Args:
             file (str, Path): path to file
@@ -110,7 +110,7 @@ class FileConversionRegistry:
 
     @staticmethod
     def _get_mtime(source: str) -> float:
-        """Get file modified time
+        """Get file modified time.
 
         Args:
             source (str): source file path
@@ -126,7 +126,7 @@ class FileConversionRegistry:
         return Path(file).exists() if isinstance(file, (str, Path)) else False
 
     def add(self, sources: list):
-        """Add add sources to file registry and ignore already known sources
+        """Add add sources to file registry and ignore already known sources.
 
         Args:
             sources (str): list of files to get parameters form
@@ -192,7 +192,7 @@ class FileConversionRegistry:
         return self.data["error_message"].isna()
 
     def update(self, sources: list = None):
-        """Update registry hash and mtime attributes
+        """Update registry hash and mtime attributes.
 
         Args:
             sources (list, optional): Subset of file sources to update.
@@ -209,7 +209,7 @@ class FileConversionRegistry:
         dataframe: Union[list, pd.DataFrame] = None,
         **kwargs,
     ):
-        """Update registry sources with given values
+        """Update registry sources with given values.
 
         Args:
             sources (list): list of source files to update
@@ -247,7 +247,7 @@ class FileConversionRegistry:
         self.data.update(dataframe, overwrite=True)
 
     def get_modified_source_files(self, overwrite: bool = True) -> list:
-        """Return the list of files that needs to be parsed
+        """Return the list of files that needs to be parsed.
 
         Args:
             overwrite (bool, optional): overwrite files already parsed
@@ -267,7 +267,7 @@ class FileConversionRegistry:
         return self.data.loc[self._is_new_file() | is_modified].index.to_list()
 
     def get_missing_sources(self) -> list:
-        """Get list of missing sources
+        """Get list of missing sources.
 
         Returns:
             list: missing sources
@@ -276,7 +276,7 @@ class FileConversionRegistry:
         return self.data.loc[is_missing].index.tolist()
 
     def summarize(self, sources=None, by="error_message", output=None):
-        """Generate a summary of the file registry errors"""
+        """Generate a summary of the file registry errors."""
         if sources:
             data = self.data.loc[sources]
         else:

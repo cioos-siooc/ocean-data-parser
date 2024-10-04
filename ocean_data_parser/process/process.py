@@ -220,7 +220,7 @@ class Processing:
     def qartod(
         self, config: Union[dict, str], agg: Union[dict, str] = "all"
     ) -> xr.Dataset:
-        """Run ioos_qc tests on datasets
+        """Run ioos_qc tests on datasets.
 
         Args:
             config (dict,str): Path to a file (*.yaml or *.json) or
@@ -263,12 +263,12 @@ class Processing:
 
         def _get_test_result(var, module, test):
             """Retrieve a specific test from ioos_qc collection
-            of results in dict format
+            of results in dict format.
             """
             return results[var][module][test]
 
         def _get_aggregated_flag(tests: list) -> xr.DataArray:
-            """Aggregate multiple QARTOD tests
+            """Aggregate multiple QARTOD tests.
 
             Args:
                 tests (list): List of same size numpy.arrays
@@ -289,7 +289,7 @@ class Processing:
             )
 
         def _add_ancillary(ancillary, variables):
-            """Append too variable ancillary_variables attribute
+            """Append too variable ancillary_variables attribute.
 
             Args:
                 ancillary (str): Ancillary variable, generally a flag variable.

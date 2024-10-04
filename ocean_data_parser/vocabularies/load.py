@@ -14,7 +14,7 @@ def amundsen_vocabulary() -> dict:
 
 
 def seabird_vocabulary() -> dict:
-    """Load Seabird Vocabulary"""
+    """Load Seabird Vocabulary."""
     with open(
         VOCABULARIES_DIRECTORY / "seabird_vocabulary.json", encoding="UTF-8"
     ) as file:

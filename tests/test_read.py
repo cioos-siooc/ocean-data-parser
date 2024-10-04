@@ -44,10 +44,10 @@ onset_file = (
 
 
 @pytest.mark.parametrize(
-    "file_path,parser",
+    ("file_path", "parser"),
     [(onset_file, None), (onset_file, "onset.csv"), (onset_file, onset.csv)],
 )
 def test_read_file_parser_inputs(file_path, parser):
-    """Test if read.file can accept parsers as None, string and parser it self"""
+    """Test if read.file can accept parsers as None, string and parser it self."""
     dataset = read.file(file_path, parser=parser)
     assert isinstance(dataset, Dataset), "Output isn't an xarray dataset"

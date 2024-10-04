@@ -19,7 +19,7 @@ object_variables_default_encoding = {"dtype": "str"}
 
 
 def test_attribute_names(dataset):
-    """Test if attributes names are valid"""
+    """Test if attributes names are valid."""
     attribute_checker = re.compile(r"[a-zA-Z_\$][a-zA-Z0-9_\.\@\$]*")
     invalid_global_attributes = []
     invalid_variable_attributes = []
@@ -54,7 +54,7 @@ def rename_variables_to_valid_netcdf(dataset):
 
 
 def get_history_handler():
-    """Generate a history handler to be use to generate a CF History attribute"""
+    """Generate a history handler to be use to generate a CF History attribute."""
     nc_logger = StringIO()
     nc_handler = logging.StreamHandler(nc_logger)
     nc_handler.setFormatter(
@@ -81,7 +81,7 @@ def standardize_attributes(attrs) -> dict:
         - dict ->  JSON strings
         - list -> np.array
         - bool -> str True/False
-        - Drop empty attributes pd.isna !=0 and ==""
+        - Drop empty attributes pd.isna !=0 and =="".
 
     Args:
         attrs (dict): Attributes dictionary
@@ -128,7 +128,7 @@ def generate_variables_encoding(
     time_variables_encoding: dict = None,
     utc: bool = True,
 ):
-    """Generate time variables encoding
+    """Generate time variables encoding.
 
     Args:
         ds (xr.Dataset): Dataset
@@ -211,7 +211,7 @@ def standardize_dataset(
         - Apply standardize_variable_attributes
         - Apply standardize_global_attributes
         - Define time variables encoding
-        - Verify attribute names
+        - Verify attribute names.
 
     Args:
         ds (xr.Dataset): Dataset to standardized
@@ -235,7 +235,7 @@ def standardize_dataset(
 
 
 def standardize_global_attributes(attrs):
-    """Standardize global attributes order"""
+    """Standardize global attributes order."""
     attrs = standardize_attributes(attrs)
     return sort_attributes(attrs, global_attributes_order)
 
@@ -318,7 +318,7 @@ def get_spatial_coverage_attributes(
 
 
 def convert_datetime_str(time_str: str, **to_datetime_kwargs) -> pd.Timestamp:
-    """Parse time stamp string  to a pandas Timestamp"""
+    """Parse time stamp string  to a pandas Timestamp."""
     date_format = None
     if time_str is None:
         return pd.NaT

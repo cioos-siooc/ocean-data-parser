@@ -5,7 +5,7 @@ import requests
 
 
 def get_vocabulary(vocab: str) -> pd.DataFrame:
-    """Retrieve NERC vocabulary full list"""
+    """Retrieve NERC vocabulary full list."""
     df = pd.read_json(
         f"http://vocab.nerc.ac.uk/collection/{vocab.upper()}/current/?_profile=dd&_mediatype=application/json"
     )

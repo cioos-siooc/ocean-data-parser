@@ -59,7 +59,7 @@ class GF3Code:
 
 
 def _convert_odf_time(time_string: str) -> pd.Timestamp:
-    """Convert ODF timestamps to a datetime object"""
+    """Convert ODF timestamps to a datetime object."""
     if time_string == "17-NOV-1858 00:00:00.00" or time_string is None:
         return pd.NaT
 
@@ -99,7 +99,7 @@ def _convert_odf_time(time_string: str) -> pd.Timestamp:
 
 
 def history_input(comment, date=datetime.now(timezone.utc)):
-    """Genereate a CF standard history line: Timstamp comment"""
+    """Genereate a CF standard history line: Timstamp comment."""
     return f"{date.strftime('%Y-%m-%dT%H:%M:%SZ')} {comment}\n"
 
 
@@ -136,7 +136,7 @@ def read(filename, encoding_format="Windows-1252"):
         - integer
         - float
         - date
-        - else string
+        - else string.
         """
         # Drop quotes and comma
         value = re.sub(r"^'|,$|',$|'$", "", value)
@@ -283,7 +283,7 @@ def add_vocabulary_attributes(
     """
 
     def _add_scale_attribute():
-        """Retrieve scale information from  either units or long_name"""
+        """Retrieve scale information from  either units or long_name."""
         scales = {
             "IPTS-48": r"IPTS\-48",
             "IPTS-68": r"IPTS\-68|ITS\-68",
@@ -304,7 +304,7 @@ def add_vocabulary_attributes(
         - First unit if any is matching.
         - True if empty or expected to be empty
         - unknown if unit exists but the "accepted_units" input is empty.
-        - False if not matching units
+        - False if not matching units.
         """
         return bool(
             accepted_terms is None
@@ -322,7 +322,7 @@ def add_vocabulary_attributes(
         - units
         - scale
         - long_name
-        - global instrument_type instrument_model
+        - global instrument_type instrument_model.
         """
         # Among these matching terms find matching ones
         match_vocabulary = odf_vocabulary["Vocabulary"].isin(vocabularies)
@@ -360,7 +360,7 @@ def add_vocabulary_attributes(
         ]
 
     def _update_variable_index(varname, index):
-        """Standardize variables trailing number to two digits"""
+        """Standardize variables trailing number to two digits."""
         if not varname:
             return varname
         elif varname.endswith(("XX", "01")):

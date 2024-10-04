@@ -79,7 +79,7 @@ def get_nearest_station(
     max_distance_from_station_km: float = None,
     geod: str = "WGS84",
 ) -> str:
-    """Get the nearest station from a list of reference stations
+    """Get the nearest station from a list of reference stations.
 
     Args:
         latitude (float): target latitude

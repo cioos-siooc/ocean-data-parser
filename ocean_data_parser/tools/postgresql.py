@@ -15,7 +15,7 @@ def update_database_table(
 
     def psql_insert_copy(table, conn, keys, data_iter):
         """Execute SQL statement inserting data into a postgresql db with using
-        COPY from CSV to a temporary table and then update on conflict or nothing
+        COPY from CSV to a temporary table and then update on conflict or nothing.
 
         Parameters
         ----------

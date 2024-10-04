@@ -44,12 +44,12 @@ FLAG_CONVENTION = {
 
 
 def history_input(comment, date=datetime.now(timezone.utc)):
-    """Genereate a CF standard history line: Timstamp comment"""
+    """Genereate a CF standard history line: Timstamp comment."""
     return f"{date.strftime('%Y-%m-%dT%H:%M:%SZ')} {comment}\n"
 
 
 def rename_qqqq_flags(dataset: xr.Dataset) -> xr.Dataset:
-    """Convert QQQQ flags to Q{GF3} flag convention"""
+    """Convert QQQQ flags to Q{GF3} flag convention."""
     variables = list(dataset.variables)
 
     # Rename QQQQ flag convention

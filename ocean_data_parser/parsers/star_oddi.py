@@ -38,7 +38,7 @@ VARIABLES_ATTRIBUTES = {
 
 
 def DAT(path: str, encoding: str = "cp1252") -> xarray.Dataset:
-    """Parse Star-Oddi DAT files
+    """Parse Star-Oddi DAT files.
 
     Args:
         path (str): DAT file path

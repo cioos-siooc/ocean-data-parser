@@ -351,7 +351,7 @@ def manual_qc_interface(
     selected_table = widgets.Output()
 
     def get_filtered_data(df):
-        """Apply query if available otherwise give back the full dataframe"""
+        """Apply query if available otherwise give back the full dataframe."""
         try:
             return df.query(filter_by.value) if filter_by.value else df, None
         except ValueError:
@@ -359,7 +359,7 @@ def manual_qc_interface(
 
     def _get_plots():
         """Generate plots based on the dataframe df, yaxis and xaxis values present
-        within the respective widgets and flags in seperate colors
+        within the respective widgets and flags in seperate colors.
         """
         plots = []
         for flag_name, flag_value in convention.items():
@@ -409,7 +409,7 @@ def manual_qc_interface(
     figure.update_yaxes(mirror=True, ticks="outside", showline=True)
 
     def update_filter(query_string=None):
-        """Update filter report below the filter_by cell"""
+        """Update filter report below the filter_by cell."""
         df_temp, error = get_filtered_data(df)
 
         if error:
@@ -422,7 +422,7 @@ def manual_qc_interface(
             filter_by_result.value = f"{len(df_temp)} records found"
 
     def update_figure(_):
-        """Update figure with present x and y items in menu"""
+        """Update figure with present x and y items in menu."""
         update_axes(xaxis.value, yaxis.value)
 
     def update_axes(xvar, yvar):
@@ -502,7 +502,7 @@ def manual_qc_interface(
 
     def update_flag_apply_to_selection(yaxis_value):
         """Update variable to flag selection when one flag is
-        previously selected and apply same as y axis
+        previously selected and apply same as y axis.
         """
         selected_flag_variables = flag_apply_to.value
         if len(selected_flag_variables) <= 1 and yaxis_value in flag_apply_to.options:

@@ -22,7 +22,7 @@ def _get_paths(paths: str) -> list:
 
 
 def glob(paths: str) -> Generator[Path]:
-    """Create a generator of paths from a glob path expression
+    """Create a generator of paths from a glob path expression.
 
     Args:
         paths (str): glob type apth

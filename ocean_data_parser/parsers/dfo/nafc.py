@@ -64,7 +64,7 @@ def _traceback_error_line():
 
 
 def _int(value: str, null_values=None, level="WARNING", match: str = None) -> int:
-    """Attemp to convert string to int, return None if empty or failed"""
+    """Attemp to convert string to int, return None if empty or failed."""
     if not value or not value.strip() or value in (null_values or []):
         return
     if match:
@@ -99,7 +99,7 @@ def _int(value: str, null_values=None, level="WARNING", match: str = None) -> in
 
 
 def _float(value: str, null_values=None, level="WARNING") -> float:
-    """Attemp to convert string to float, return None if empty or failed"""
+    """Attemp to convert string to float, return None if empty or failed."""
     if not value or not value.strip() or value in (null_values or []):
         return
     try:
@@ -120,7 +120,7 @@ def _get_dtype(var: str):
 
 
 def _parse_ll(deg: float, min: float) -> float:
-    """Combine deg and min values from latitude and longitude to decimal degrees"""
+    """Combine deg and min values from latitude and longitude to decimal degrees."""
     if pd.isna(deg) or pd.isna(min):
         return
     dir = -1 if deg < 0 else 1
@@ -199,7 +199,7 @@ def _parse_pfile_header_line2(line: str) -> dict:
 
 
 def _parse_pfile_header_line3(line: str) -> dict:
-    """Parse P file 3 metadata line which present environment metadata"""
+    """Parse P file 3 metadata line which present environment metadata."""
     if not line or not line.strip() or len(line) < 79:
         logger.warning("Missing pfile header line 3")
         return {}
@@ -257,10 +257,10 @@ def _parse_pfile_header_line3(line: str) -> dict:
 
 
 def _parse_channel_stats(lines: list) -> dict:
-    """Parse p file CHANNEL STATISTIC header section to cf variable dictionary"""
+    """Parse p file CHANNEL STATISTIC header section to cf variable dictionary."""
 
     def _get_range(attrs: dict) -> tuple:
-        """Convert range to the variable dtype"""
+        """Convert range to the variable dtype."""
         dtype = _get_dtype(attrs["name"])
 
         # Use int(float(x)) method because the integers have decimals
@@ -339,7 +339,7 @@ def _pfile_history_to_cf(lines: list) -> str:
 
 
 def _get_pfile_variable_vocabulary(variable: str, instrument: str = None) -> dict:
-    """Retrieve variable vocabulary"""
+    """Retrieve variable vocabulary."""
     if variable == "xxx":
         return []
     matched_legacy_p_code = p_file_vocabulary.apply(
@@ -367,7 +367,7 @@ def pfile(
     generate_extra_variables: bool = True,
     encoding_errors: str = "strict",
 ) -> xr.Dataset:
-    """Parse DFO NAFC oceanography p-file format
+    """Parse DFO NAFC oceanography p-file format.
 
     Args:
         file (str): file path
@@ -573,7 +573,7 @@ def pfile(
 
 @logger.catch
 def _parse_lat_lon(latlon: str) -> float:
-    """Parse latitude and longitude string to float"""
+    """Parse latitude and longitude string to float."""
     if not latlon:
         logger.error("No latitude or longitude provided")
         return
@@ -584,7 +584,7 @@ def _parse_lat_lon(latlon: str) -> float:
 @logger.catch
 @lru_cache
 def _get_metqa_table(file) -> pd.DataFrame:
-    """Load NAFC metqa table which contains each files assoicated weather data"""
+    """Load NAFC metqa table which contains each files assoicated weather data."""
     df = pd.read_csv(file, sep=r"\s*\,", engine="python")
     df.columns = [
         col.lower().split("[")[0].strip().replace(" ", "_") for col in df.columns
@@ -598,7 +598,7 @@ def _get_metqa_table(file) -> pd.DataFrame:
 
 
 def _add_metqa_info_to_pcvn(file: Path, match_metqa_file) -> Path:
-    """Find the matching metqa table to the pcnv file"""
+    """Find the matching metqa table to the pcnv file."""
     glob_expression = f"{file.stem.rsplit('_',1)[0]}_metqa_*.csv"
     metqa_file = list(file.parent.glob(glob_expression))
     if metqa_file and len(metqa_file) == 1:
@@ -636,7 +636,7 @@ def pcnv(
     encoding_errors: str = "strict",
     match_metqa_table: bool = False,
 ) -> xr.Dataset:
-    """DFO NAFC pcnv file format parser
+    """DFO NAFC pcnv file format parser.
 
     The pcnv format  essentially a seabird cnv file format
     with NAFC specific inputs within the manual section.
@@ -656,7 +656,7 @@ def pcnv(
     """
 
     def _pop_attribute_from(names: list):
-        """Pop attribute from dataset"""
+        """Pop attribute from dataset."""
         for name in names:
             if name in ds.attrs:
                 return ds.attrs.pop(name)

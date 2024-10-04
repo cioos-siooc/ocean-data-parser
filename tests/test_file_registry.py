@@ -45,7 +45,7 @@ class TestFileRegistry:
             file_registry, FileConversionRegistry
         ), "Didn't return  FileConversionRegistry object"
 
-    def test_empty_registry(slef):
+    def test_empty_registry(self):
         file_registry = FileConversionRegistry(path="temp/test_empty_registry.csv")
         file_registry.save()
         file_registry.load()

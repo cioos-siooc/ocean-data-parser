@@ -1,4 +1,4 @@
-"""Fisheries and Ocean Canada - Pacific Region - Institute of Ocean Sciences"""
+"""Fisheries and Ocean Canada - Pacific Region - Institute of Ocean Sciences."""
 
 import logging
 
@@ -25,7 +25,7 @@ TRACJECTORY_DATA_TYPES = ("tob", "drf", "loop")
 
 
 def shell(fname: str, config: dict = {}) -> xarray.Dataset:
-    """Parse DFO-IOS Shell format
+    """Parse DFO-IOS Shell format.
 
     Args:
         fname (str): file path

@@ -65,7 +65,7 @@ def _format_variables(name):
 
 
 def superCO2(path: str, output: str = None) -> xarray.Dataset:
-    """Parse superCO2 output file txt file"""
+    """Parse superCO2 output file txt file."""
     header = []
     line = 1
     with open(path, encoding="utf-8") as f:
@@ -135,7 +135,7 @@ def superCO2(path: str, output: str = None) -> xarray.Dataset:
 
 
 def superCO2_notes(path: str) -> xarray.Dataset:
-    """Parse superCO2 notes files and return an xarray Dataset
+    """Parse superCO2 notes files and return an xarray Dataset.
 
     Args:
         path (str): file path

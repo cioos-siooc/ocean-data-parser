@@ -6,7 +6,7 @@ Changelog Version
         Migrate the code to the ocean-data-parser package and reduce code base
 Authors:
     Pramod Thupaki (pramod.thupaki@hakai.org)
-    Jessy Barrette
+    Jessy Barrette.
 
 """
 
@@ -120,7 +120,7 @@ class IosFile:
     Specific improvements/modifications required
     to read filetypes will be make in derived classes
     Author: Pramod Thupaki pramod.thupaki@hakai.org
-    Incorporates functions from earlier versions of this toolbox
+    Incorporates functions from earlier versions of this toolbox.
     """
 
     def __init__(self, filename):
@@ -959,7 +959,7 @@ class IosFile:
         append_sub_variables=True,
         replace_date_time_variables=True,
     ):
-        """Convert ios class to xarray dataset
+        """Convert ios class to xarray dataset.
 
         Returns:
             xarray dataset
@@ -967,7 +967,7 @@ class IosFile:
 
         def update_variable_index(varname, id):
             """Replace variable index (1,01,X,XX) by the given index or append
-            0 padded index if no index exist in original variable name
+            0 padded index if no index exist in original variable name.
             """
             if varname.endswith(("01", "XX")):
                 return f"{varname[:-2]}{id:02g}"

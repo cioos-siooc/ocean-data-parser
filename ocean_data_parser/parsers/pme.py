@@ -58,19 +58,19 @@ default_global_attributes = {"Conventions": "CF-1.6"}
 
 # Deprecated functions
 def minidot_txt(*args, **kwargs):
-    """Rename minidot_txt to txt"""
+    """Rename minidot_txt to txt."""
     logger.warning("minidot_txt is deprecated, use txt instead")
     return txt(*args, **kwargs)
 
 
 def minidot_txts(*args, **kwargs):
-    """Rename minidot_txts to txts"""
+    """Rename minidot_txts to txts."""
     logger.warning("minidot_txts is deprecated, use txts instead")
     return txts(*args, **kwargs)
 
 
 def minidot_cat(*args, **kwargs):
-    """Rename minidot_cat to cat"""
+    """Rename minidot_cat to cat."""
     logger.warning("minidot_cat is deprecated, use cat instead")
     return cat(*args, **kwargs)
 
@@ -94,7 +94,7 @@ def txt(
     timezone: str = "UTC",
     global_attributes: dict = None,
 ) -> xr.Dataset:
-    """Parse PME MiniDot txt file
+    """Parse PME MiniDot txt file.
 
     Args:
         path (str): txt file path to read
@@ -213,7 +213,7 @@ def txt(
 def txts(
     paths: Union[list, str], encoding: str = "utf-8", errors: str = "strict"
 ) -> xr.Dataset:
-    """Parse PME Minidots txt files
+    """Parse PME Minidots txt files.
 
     Args:
         paths (listorstr): List of file paths to read.
@@ -240,7 +240,7 @@ def txts(
 
 
 def cat(path: str, encoding: str = "utf-8", errors: str = "strict") -> xr.Dataset:
-    """Cat reads PME MiniDot concatenated CAT files
+    """Cat reads PME MiniDot concatenated CAT files.
 
     Args:
         path (str): File path to read

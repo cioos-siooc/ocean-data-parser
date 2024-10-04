@@ -57,7 +57,7 @@ bio_global_attributes = {
 
 
 def bio_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
-    """Bedford Institute of Ocean ODF format parser
+    """Bedford Institute of Ocean ODF format parser.
 
     Args:
         path (str): Path to the odf file to parse
@@ -73,7 +73,7 @@ def bio_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
 
 
 def mli_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
-    """Maurice Lamontagne Institute ODF format parser
+    """Maurice Lamontagne Institute ODF format parser.
 
     Args:
         path (str): Path to the odf file to parse
@@ -89,7 +89,7 @@ def mli_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
 
 
 def _odf(path: str, vocabularies: list = None, global_attributes: dict = None):
-    """ODF format parser
+    """ODF format parser.
 
     Args:
         path (str): Path to the odf file to parse

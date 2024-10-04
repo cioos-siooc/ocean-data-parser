@@ -51,7 +51,7 @@ def get_parser_list_string():
 
 
 def validate_parser(ctx, _, value):
-    """Test if given parser is available within parser list"""
+    """Test if given parser is available within parser list."""
     if value in PARSERS or value is None:
         return value
     raise click.BadParameter(
@@ -70,7 +70,7 @@ def get_parser_list(ctx, _, value):
 
 
 def validate_parser_kwargs(ctx, _, value):
-    """Test if given parser_kwargs is a valid JSON string and return the parsed JSON object"""
+    """Test if given parser_kwargs is a valid JSON string and return the parsed JSON object."""
     if not value:
         return value
     try:
@@ -211,7 +211,7 @@ class BatchConversion:
 
     @staticmethod
     def _get_config(config: dict = None, **kwargs) -> dict:
-        """Combine configuration dictionary and key arguments passed
+        """Combine configuration dictionary and key arguments passed.
 
         Args:
             config (dict, optional): Batch configuration. Defaults to None.
@@ -263,7 +263,7 @@ class BatchConversion:
         ]
 
     def load_input_table(self, table: dict) -> pd.DataFrame:
-        """Load input table and apply pipe if needed"""
+        """Load input table and apply pipe if needed."""
         if "path" not in table:
             raise ValueError("No path detected in input table")
         tables = []
@@ -356,7 +356,7 @@ class BatchConversion:
 
     @logger.catch(reraise=True)
     def run(self):
-        """Run Batch conversion"""
+        """Run Batch conversion."""
         logger.info(
             "Run ocean-data-parser[{}] convert {}",
             __version__,
@@ -425,7 +425,7 @@ class BatchConversion:
 
 
 def _convert_file(args):
-    """Run file conversion while adding logging context
+    """Run file conversion while adding logging context.
 
     Args:
         args (tuple): tuple [input file path, parser and configuration]
@@ -448,7 +448,7 @@ def _convert_file(args):
 
 
 def convert_file(file: str, parser: str, config: dict, global_attributes=None) -> str:
-    """Parse file with given parser and configuration
+    """Parse file with given parser and configuration.
 
     Args:
         file (str): file path

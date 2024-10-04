@@ -55,7 +55,7 @@ def _get_config(
     cwd: Path = None,
     **kwargs,
 ):
-    """Generate a batch configuration file"""
+    """Generate a batch configuration file."""
     config = {
         **load_config(),
         **kwargs,
@@ -85,20 +85,20 @@ def _run_batch_process(config):
 
 
 class TestBatchMode:
-    @pytest.mark.parametrize("multiprocessing", (1, 2, None))
+    @pytest.mark.parametrize("multiprocessing", [1, 2, None])
     def test_batch_conversion_multiprocessing(self, tmpdir, multiprocessing):
         config = _get_config(cwd=tmpdir, multiprocessing=multiprocessing)
         _run_batch_process(config)
 
     @pytest.mark.parametrize(
         "key",
-        (
+        [
             "output_path",
             "output_file_name",
             "output_file_preffix",
             "output_file_suffix",
             "output_format",
-        ),
+        ],
     )
     def test_batch_conversion_output_kwargs(self, key):
         batch = BatchConversion(**{key: "test"})
@@ -107,7 +107,7 @@ class TestBatchMode:
 
     @pytest.mark.parametrize(
         "key",
-        ("registry_path", "registry_hashtype", "registry_block_size"),
+        ["registry_path", "registry_hashtype", "registry_block_size"],
     )
     def test_batch_conversion_registry_kwargs(self, key):
         batch = BatchConversion(**{key: "test"})
@@ -146,7 +146,7 @@ class TestBatchMode:
 class TestBatchCLI:
     @staticmethod
     def _run_cli_batch_process(*args, isolated_directory=None):
-        """Run Click cli code"""
+        """Run Click cli code."""
         runner = CliRunner()
         if not isolated_directory:
             return runner.invoke(convert_cli, args)
@@ -304,13 +304,13 @@ class TestBatchGenerateName:
         assert str(name) == "source_file.csv.nc"
 
     @pytest.mark.parametrize(
-        "input,expected_path",
-        (
+        ("input", "expected_path"),
+        [
             ({"path": "output"}, "output/source_file.csv.nc"),
             ({"file_name": "test"}, "test.nc"),
             ({"file_preffix": "test_"}, "test_source_file.csv.nc"),
             ({"file_suffix": "_test"}, "source_file.csv_test.nc"),
-        ),
+        ],
     )
     def test_generate_filename_with_unique_input(self, input, expected_path):
         name = generate_output_path(
@@ -380,10 +380,10 @@ class TestBatchGenerateName:
 class TestBatchConversion:
     @pytest.mark.parametrize(
         "input_path",
-        (
+        [
             "tests/parsers_test_files/dfo/odf/bio/**/*.ODF",
             "tests/parsers_test_files/dfo/odf/bio/CTD/*.ODF",
-        ),
+        ],
     )
     def test_batch_input_path(self, input_path):
         batch = BatchConversion(input_path=input_path)
@@ -420,11 +420,11 @@ class TestBatchConversion:
 
     @pytest.mark.parametrize(
         "exclude",
-        (
+        [
             "tests/parsers_test_files/dfo/odf/bio/**/*.nc",
             "tests/parsers_test_files/dfo/odf/bio/CTD/*.nc",
             "tests/**/*.nc",
-        ),
+        ],
     )
     def test_batch_exclude_path(self, exclude):
         batch = BatchConversion(

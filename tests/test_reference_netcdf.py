@@ -22,7 +22,7 @@ from ocean_data_parser import read
     glob("tests/parsers_test_files/**/*_reference.nc", recursive=True),
 )
 def test_compare_test_to_reference_netcdf(reference_file):
-    """Test DFO BIO ODF conversion to NetCDF vs reference files"""
+    """Test DFO BIO ODF conversion to NetCDF vs reference files."""
     # Generate test bio odf netcdf files
 
     # Run Test conversion

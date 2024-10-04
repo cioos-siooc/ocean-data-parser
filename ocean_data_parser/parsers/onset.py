@@ -145,7 +145,7 @@ def _parse_onset_csv_header(header_lines):
 
 
 def _standardized_variable_mapping(variables):
-    """Standardize onset variable names"""
+    """Standardize onset variable names."""
     return {
         var: VARIABLE_NAME_MAPPING[var]
         if var in VARIABLE_NAME_MAPPING
@@ -163,7 +163,7 @@ def csv(
     timezone: str = None,
     ambiguous_timestamps: str = "raise",
 ) -> xarray.Dataset:
-    """Parses the Onset CSV format generate by HOBOware into a xarray object
+    """Parses the Onset CSV format generate by HOBOware into a xarray object.
 
     Args:
         path: The path to the CSV file
@@ -324,7 +324,7 @@ def _detect_instrument_type(ds):
 def _farenheit_to_celsius(farenheit):
     """Convert temperature in Farenheit to Celcius
     Args:
-        farenheit (float): Temperature in Farenheint
+        farenheit (float): Temperature in Farenheint.
 
     Returns:
         float: Temperature in celsisus
@@ -335,7 +335,7 @@ def _farenheit_to_celsius(farenheit):
 def xlsx(
     path: str, timezone: str = None, ambiguous_timestamps: str = "infer"
 ) -> xarray.Dataset:
-    """Parses the Onset XLSX format generate by HOBOware into a xarray object
+    """Parses the Onset XLSX format generate by HOBOware into a xarray object.
 
     Args:
         path: The path to the XLSX file
@@ -346,7 +346,7 @@ def xlsx(
     """
 
     def _format_detail_key(key):
-        """Format detail key to be more readable"""
+        """Format detail key to be more readable."""
         key = re.sub(r"\(.*\)", "", key)
         return (
             key.replace(" Info", "")
@@ -359,7 +359,7 @@ def xlsx(
         )
 
     def _get_column_and_unit(column):
-        """Split column name and unit in parenthesis"""
+        """Split column name and unit in parenthesis."""
         column = column.split(" (")
         if len(column) == 1:
             return column[0], None

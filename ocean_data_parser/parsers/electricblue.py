@@ -42,7 +42,7 @@ def csv(
     path: str,
     encoding: str = "utf-8",
 ) -> xarray.Dataset:
-    """ElectricBlue csv data format parser
+    """ElectricBlue csv data format parser.
 
     Args:
         path (str): path to the csv file to parse
@@ -124,7 +124,7 @@ def csv(
 def log_csv(
     path: str, encoding: str = "UTF-8", rename_variables: bool = True
 ) -> xarray.Dataset:
-    """Parse ElectricBlue log csv file
+    """Parse ElectricBlue log csv file.
 
     Args:
         path (str): path to the csv file

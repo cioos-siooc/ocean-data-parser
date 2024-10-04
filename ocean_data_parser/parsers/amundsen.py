@@ -39,7 +39,7 @@ def _standardize_attribute_name(name: str) -> str:
 
 
 def _standardize_attribute_value(value: str, name: str = None):
-    """Cast attribute value to the appropriate format
+    """Cast attribute value to the appropriate format.
 
     Args:
         value (string): [description]

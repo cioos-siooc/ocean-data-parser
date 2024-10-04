@@ -1,6 +1,6 @@
 """The NMEA 0183 protocol is a standard communication protocol used in marine
 and navigation systems to exchange data between different electronic devices.
-It stands for "National Marine Electronics Association 0183."
+It stands for "National Marine Electronics Association 0183.".
 """
 
 import logging
@@ -150,7 +150,7 @@ def _generate_extra_terms(nmea):
     Return {
         (long_name, short_name):value,
         ...
-    }
+    }.
     """
     extra = {}
     if nmea["sentence_type"] in ("GGA", "RMC", "GLL"):
@@ -213,7 +213,7 @@ global_attributes = {"Convention": "CF-1.6"}
 def nmea_0183(
     path: str, encoding: str = "UTF-8", nmea_delimiter: str = "$"
 ) -> xarray.Dataset:
-    """Parse NMEA 0183 standard protocol file into a pandas dataframe
+    """Parse NMEA 0183 standard protocol file into a pandas dataframe.
 
     Args:
         path (str): [description]
@@ -226,7 +226,7 @@ def nmea_0183(
     """Parse a file containing NMEA information into a pandas dataframe"""
 
     def rename_variable(name):
-        """Rename variable based on variable mapping dictionary or return name"""
+        """Rename variable based on variable mapping dictionary or return name."""
         if name == ("Heave", "heading"):
             # fix in https://github.com/Knio/pynmea2/pull/129 but not included in pipy yet
             return ("Heave", "heave")
