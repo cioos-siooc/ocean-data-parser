@@ -28,7 +28,7 @@ notes_dtype_mapping = {
     "num_Stds": float,
     "min_btw_stds": float,
 }
-superCO2_dtypes = {
+super_co2_dtypes = {
     "DOY_UTC": float,
     "CO2_ppm": float,
     "CO2_abs": float,
@@ -85,7 +85,7 @@ def superCO2(path: str, output: str = None) -> xarray.Dataset:
             f,
             sep=r"\t",
             engine="python",
-            dtype=superCO2_dtypes,
+            dtype=super_co2_dtypes,
             na_values=[-999, "NaN"],
         )
     if "Collected beginning on" in header[2]:

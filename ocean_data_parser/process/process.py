@@ -251,14 +251,14 @@ class Processing:
                 "Optional package ioos_qc is required: run `pip install ioos_qc`"
             )
 
-        QARTOD_FLAGS = {
+        qartod_flags = {
             name: value
             for name, value in QartodFlags.__dict__.items()
             if not name.startswith("__")
         }
-        QARTOD_ATTRIBUTES = {
-            "flag_meaning": " ".join(QARTOD_FLAGS.keys()),
-            "flag_value": list(QARTOD_FLAGS.values()),
+        qartod_attributes = {
+            "flag_meaning": " ".join(qartod_flags.keys()),
+            "flag_value": list(qartod_flags.values()),
         }
 
         def _get_test_result(var, module, test):
@@ -283,7 +283,7 @@ class Processing:
                 {
                     "long_name": "Aggregated Flag",
                     "standard_name": "aggregate_quality_flag",
-                    **QARTOD_ATTRIBUTES,
+                    **qartod_attributes,
                     "ioos_qc_tests": ";".join("-".join(test) for test in tests),
                 },
             )
@@ -331,7 +331,7 @@ class Processing:
                 self._obj[ancillary] = (
                     self._obj[result.stream_id].dims,
                     result.results,
-                    {**result.function.__dict__, **QARTOD_ATTRIBUTES},
+                    {**result.function.__dict__, **qartod_attributes},
                 )
                 _add_ancillary(ancillary, result.stream_id)
                 self.add_to_history(

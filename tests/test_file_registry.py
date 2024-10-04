@@ -294,15 +294,15 @@ class TestFileRegistry:
 
     def test_get_sources_with_modified_hash(self, tmp_path):
         file_registry = self._get_test_registry()
-        TEST_SAVE_PATH = self.make_test_file(
+        test_saved_path = self.make_test_file(
             tmp_path / "test_get_sources_with_modified_hash.csv"
         )
-        file_registry.add([TEST_SAVE_PATH])
-        self.make_test_file(TEST_SAVE_PATH, " this is more content", mode="a")
+        file_registry.add([test_saved_path])
+        self.make_test_file(test_saved_path, " this is more content", mode="a")
         modified_sources = file_registry._is_different_hash()
         assert modified_sources.any()
-        assert modified_sources[TEST_SAVE_PATH]
-        assert file_registry.get_modified_source_files() == [TEST_SAVE_PATH]
+        assert modified_sources[test_saved_path]
+        assert file_registry.get_modified_source_files() == [test_saved_path]
 
     def update_test_file(
         self,
@@ -320,11 +320,11 @@ class TestFileRegistry:
 
     def test_get_missing_files(self):
         file_registry = self._get_test_registry()
-        TEST_SAVE_PATH = self.make_test_file(Path("test_get_missing_files.csv"))
-        file_registry.add([TEST_SAVE_PATH])
+        test_saved_path = self.make_test_file(Path("test_get_missing_files.csv"))
+        file_registry.add([test_saved_path])
         file_registry.update()
         assert file_registry.get_missing_sources() == []
-        TEST_SAVE_PATH.unlink()
+        test_saved_path.unlink()
         missing_files = file_registry.get_missing_sources()
         assert missing_files, "failed to detect missing file"
-        assert missing_files == [TEST_SAVE_PATH]
+        assert missing_files == [test_saved_path]

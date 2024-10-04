@@ -209,10 +209,10 @@ class IosFile:
 
         # time variable
         self.rename_date_time_variables()
-        chnList = [
+        chn_list = [
             channel_name.strip().lower() for channel_name in self.channels["Name"]
         ]
-        if "date" in chnList and ("time" in chnList or "time:utc" in chnList):
+        if "date" in chn_list and ("time" in chn_list or "time:utc" in chn_list):
             self.get_obs_time_from_date_time()
         elif self.get_file_extension().lower() in ("cur", "loop", "drf"):
             self.get_obs_time_from_time_increment()
@@ -697,24 +697,24 @@ class IosFile:
 
     def get_obs_time_from_date_time(self):
         # Return a timeseries
-        chnList = [i.strip().lower() for i in self.channels["Name"]]
+        chn_list = [i.strip().lower() for i in self.channels["Name"]]
 
-        if "time:utc" in chnList:
-            chnList[chnList.index("time:utc")] = "time"
+        if "time:utc" in chn_list:
+            chn_list[chn_list.index("time:utc")] = "time"
 
-        if "date" in chnList and "time" in chnList:
-            if isinstance(self.data[0, chnList.index("date")], bytes):
+        if "date" in chn_list and "time" in chn_list:
+            if isinstance(self.data[0, chn_list.index("date")], bytes):
                 dates = [
                     i.decode("utf8").strip()
-                    for i in self.data[:, chnList.index("date")]
+                    for i in self.data[:, chn_list.index("date")]
                 ]
                 times = [
                     i.decode("utf8").strip()
-                    for i in self.data[:, chnList.index("time")]
+                    for i in self.data[:, chn_list.index("time")]
                 ]
             else:
-                dates = [i.strip() for i in self.data[:, chnList.index("date")]]
-                times = [i.strip() for i in self.data[:, chnList.index("time")]]
+                dates = [i.strip() for i in self.data[:, chn_list.index("date")]]
+                times = [i.strip() for i in self.data[:, chn_list.index("time")]]
             datetime = pd.to_datetime(
                 [date.replace(" ", "") + " " + time for date, time in zip(dates, times)]
             )
@@ -722,14 +722,14 @@ class IosFile:
             self.obs_time = [
                 timezone("UTC").localize(i + timedelta(hours=0)) for i in self.obs_time
             ]
-        elif "date" in chnList:
-            if isinstance(self.data[0, chnList.index("date")], bytes):
+        elif "date" in chn_list:
+            if isinstance(self.data[0, chn_list.index("date")], bytes):
                 dates = [
                     i.decode("utf8").strip()
-                    for i in self.data[:, chnList.index("date")]
+                    for i in self.data[:, chn_list.index("date")]
                 ]
             else:
-                dates = [i.strip() for i in self.data[:, chnList.index("date")]]
+                dates = [i.strip() for i in self.data[:, chn_list.index("date")]]
             datetime = pd.to_datetime(dates)
             self.obs_time = datetime
             self.obs_time = [
@@ -1215,15 +1215,15 @@ class IosFile:
                 and "longitude" in ds
                 and "time" in ds["longitude"].dims
             ):
-                featureType = "trajectory"
+                feature_type = "trajectory"
             else:
-                featureType = "timeSeries"
+                feature_type = "timeSeries"
         else:
-            featureType = ""
+            feature_type = ""
         if "depth" in ds.dims:
-            featureType += "Profile" if featureType else "profile"
-        ds.attrs["featureType"] = featureType
-        ds.attrs["cdm_data_type"] = featureType.title()
+            feature_type += "Profile" if feature_type else "profile"
+        ds.attrs["featureType"] = feature_type
+        ds.attrs["cdm_data_type"] = feature_type.title()
 
         # Set coordinate variables
         coordinates_variables = ["time", "latitude", "longitude", "depth"]
