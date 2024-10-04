@@ -96,7 +96,7 @@ def _add_seabird_vocabulary(variable_attributes: dict) -> dict:
     return variable_attributes
 
 
-def acnv(
+def cnv(
     file_path: str,
     encoding: str = "UTF-8",
     encoding_errors="strict",
