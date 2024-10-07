@@ -56,6 +56,11 @@ class GF3Code:
     """
 
     def __init__(self, code):
+        """Create a GF3 code object.
+
+        Args:
+            code (str): ODF code
+        """
         self.code = re.search(r"^[^_]*", code)[0]
         index = re.search(r"\d+$", code)
         self.index = int(index[0]) if index else 1

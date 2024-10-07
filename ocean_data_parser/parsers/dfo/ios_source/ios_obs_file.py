@@ -126,11 +126,12 @@ class IosFile:
     Incorporates functions from earlier versions of this toolbox.
     """
 
-    def __init__(self, filename):
-        # initializes object by reading *FILE and ios_header_version
-        # reads entire file to memory for all subsequent processing
-        # inputs are filename and debug state
+    def __init__(self, filename: str):
+        """Create an IOS file object.
 
+        Args:
+            filename (str): IOS file to read.
+        """
         logger.extra["file"] = filename
         self.type = filename.split(".", 1)[1]
         self.filename = filename

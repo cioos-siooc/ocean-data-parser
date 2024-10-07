@@ -38,6 +38,16 @@ class FileConversionRegistry:
         hashtype: str = "sha256",
         block_size: int = 65536,
     ):
+        """Initialize a file registry.
+
+        Args:
+            path (str, optional): path to save the registry. Defaults to None.
+            data (pd.DataFrame, optional): Dataframe to use as registry.
+                Defaults to generate_registry().
+            hashtype (str, optional): Hash type to use. Defaults to "sha256".
+            block_size (int, optional): Block size to use when hashing.
+                Defaults to 65536.
+        """
         self.path = Path(path) if path else None
         self.data = data
         self.hashtype = hashtype

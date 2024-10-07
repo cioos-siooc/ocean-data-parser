@@ -102,8 +102,6 @@ ignore = [
     "D101",  # Missing docstring in public class
     "D102",  # Missing docstring in public method
     "D103",  # Missing docstring in public function
-    "D104",  # Missing docstring in public package
-    "D107",  # Missing docstring in __init__
 ]
 
 [tool.ruff.lint.pydocstyle]

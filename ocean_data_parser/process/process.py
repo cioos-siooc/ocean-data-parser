@@ -22,6 +22,16 @@ class Processing:
         z="depth",
         file_name_convention=None,
     ):
+        """Create a new processing object.
+
+        Args:
+            xarray_obj (_type_): _description_
+            lat (str, optional): _description_. Defaults to "latitude".
+            lon (str, optional): _description_. Defaults to "longitude".
+            time (str, optional): _description_. Defaults to "time".
+            z (str, optional): _description_. Defaults to "depth".
+            file_name_convention (_type_, optional): _description_. Defaults to None.
+        """
         self._obj = xarray_obj
         self.lat = lat
         self.lon = lon

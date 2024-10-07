@@ -109,11 +109,24 @@ def generate_output_path(
 class VariableLevelLogger:
     def __init__(
         self,
-        level,
-        format="{level}|{file.path}:{line} - {message}",
-        backtrace=False,
+        level: str,
+        format: str = "{level}|{file.path}:{line} - {message}",
+        backtrace: bool = False,
         filter=None,
     ):
+        """Create a logger for a specific level.
+
+        Args:
+            level (str): Level use for the logger
+                (DEBUG, INFO, WARNING, ERROR, CRITICAL).
+            format (str, optional): Format use by the logger.
+                Defaults to "{level}|{file.path}:{line} - {message}".
+            backtrace (bool, optional): Add backtrace on error.
+                Defaults to False.
+            filter (str, optional): A directive optionally used to
+                decide for each logged message whether it should be
+                sent to the sink or not. Defaults to None.
+        """
         self.io = StringIO()
         self.level = level
         self.id = logger.add(

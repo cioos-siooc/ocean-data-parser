@@ -206,6 +206,14 @@ def convert(**kwargs):
 
 class BatchConversion:
     def __init__(self, config=None, **kwargs):
+        """Create a batch conversion object.
+
+        Args:
+            config (dict, optional): Configuration use to apply
+                the batch correction. Defaults to None.
+            **kwargs: Key arguments passed to the class which
+                overwrites the configuration file.
+        """
         self.config = self._get_config(config, **kwargs)
         self.registry = FileConversionRegistry(**self.config.get("registry", {}))
 
