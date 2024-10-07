@@ -45,7 +45,7 @@ qartod_test_config = {
 
 
 def load_test_dataset():
-    """Load seabird cnv and apply conversion
+    """Load seabird cnv and apply conversion.
 
     Args:
         file (str): _description_

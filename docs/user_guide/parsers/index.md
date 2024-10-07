@@ -52,7 +52,7 @@ Ocean Data Parser includes the following data format parsers:
 
 [PME](pme.md)
 
-- [pme.minidot_txt](pme.md#ocean_data_parser.parsers.pme.minidot_txt)
+- [pme.txt](pme.md#ocean_data_parser.parsers.pme.txt)
 
 [RBR](rbr.md)
 
@@ -65,12 +65,12 @@ Ocean Data Parser includes the following data format parsers:
 
 [STAR_ODDI](star-oddi.md)
 
-- [star_oddi.DAT](star-oddi.md#ocean_data_parser.parsers.star_oddi.DAT)
+- [star_oddi.dat](star-oddi.md#ocean_data_parser.parsers.star_oddi.dat)
 
 [SUNBURST](sunburst.md)
 
-- [sunburst.superCO2_notes](sunburst.md#ocean_data_parser.parsers.sunburst.superCO2_notes)
-- [sunburst.superCO2](sunburst.md#ocean_data_parser.parsers.sunburst.superCO2)
+- [sunburst.super_co2_notes](sunburst.md#ocean_data_parser.parsers.sunburst.super_co2_notes)
+- [sunburst.super_co2](sunburst.md#ocean_data_parser.parsers.sunburst.super_co2)
 
 [VAN_ESSEN_INSTRUMENTS](van-essen-instruments.md)
 

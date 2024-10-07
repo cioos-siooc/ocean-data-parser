@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed warning regarding star_oddi dayfirst=True missing input
 - Rename pme parsers by removing `minidot_`. New functions are called `pme.txt`,
 `pme.txts`, `pme.cat`. Maintain still a placeholder for those functions.
+- Major refactor the whole code base to handle a number of issues raised by Ruff.
 
 ## `0.6.1` - 2024-08-30
 
