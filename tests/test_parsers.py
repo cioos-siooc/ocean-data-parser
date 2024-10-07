@@ -175,7 +175,7 @@ class TestSunburstParsers:
         "path", glob("tests/parsers_test_files/sunburst/superCO2/*pCO2_notes*.txt")
     )
     def test_sunburst_pco2_notes_parser(self, path, caplog):
-        ds = sunburst.superco2_notes(path)
+        ds = sunburst.super_co2_notes(path)
         review_parsed_dataset(ds, path, caplog)
 
 
