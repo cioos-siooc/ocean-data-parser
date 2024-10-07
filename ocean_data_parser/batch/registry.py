@@ -31,6 +31,8 @@ def generate_registry(sources=None):
 
 
 class FileConversionRegistry:
+    """File registry to keep track of file conversion status."""
+
     def __init__(
         self,
         path: str = None,

@@ -13,6 +13,8 @@ logger = logging.getLogger(__name__)
 
 @xr.register_dataset_accessor("process")
 class Processing:
+    """Processing class to handle batch processing of xarray datasets."""
+
     def __init__(
         self,
         xarray_obj,

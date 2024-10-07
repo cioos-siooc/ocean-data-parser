@@ -107,6 +107,8 @@ def generate_output_path(
 
 
 class VariableLevelLogger:
+    """Class use to create a logger for a specific level."""
+
     def __init__(
         self,
         level: str,

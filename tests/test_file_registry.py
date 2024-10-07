@@ -24,6 +24,8 @@ HASH_PLACEHOLDER = "0"
 
 
 class TestFileRegistry:
+    """Series of tests related to the FileConversionRegistry class."""
+
     def _get_test_registry(self, update=True):
         registry = FileConversionRegistry(path=TEST_REGISTRY_PATH)
         if update:

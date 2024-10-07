@@ -205,6 +205,8 @@ def convert(**kwargs):
 
 
 class BatchConversion:
+    """Batch Conversion class to convert multiple files via a configuration file."""
+
     def __init__(self, config=None, **kwargs):
         """Create a batch conversion object.
 

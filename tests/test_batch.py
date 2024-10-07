@@ -32,6 +32,8 @@ def caplog(caplog):
 
 
 class TestConfigLoad:
+    """Test the loading of the configuration file."""
+
     def test_default_config_load(self):
         config = load_config()
         assert isinstance(
@@ -85,6 +87,8 @@ def _run_batch_process(config):
 
 
 class TestBatchMode:
+    """Series of tests related to the batch conversion process."""
+
     @pytest.mark.parametrize("multiprocessing", [1, 2, None])
     def test_batch_conversion_multiprocessing(self, tmpdir, multiprocessing):
         config = _get_config(cwd=tmpdir, multiprocessing=multiprocessing)
@@ -144,6 +148,8 @@ class TestBatchMode:
 
 
 class TestBatchCLI:
+    """Series of tests related to the batch conversion process using the CLI."""
+
     @staticmethod
     def _run_cli_batch_process(*args, isolated_directory=None):
         """Run Click cli code."""
@@ -279,6 +285,8 @@ test_ds["time"].attrs["timezone"] = "UTC"
 
 
 class TestBatchGenerateName:
+    """Series of tests related to the generation of output file names."""
+
     @staticmethod
     def _get_test_dataset():
         ds = xr.Dataset()
@@ -378,6 +386,8 @@ class TestBatchGenerateName:
 
 
 class TestBatchConversion:
+    """Series of tests related to the batch conversion process."""
+
     @pytest.mark.parametrize(
         "input_path",
         [
@@ -444,6 +454,8 @@ class TestBatchConversion:
 
 
 class TestGenerateOutputPath:
+    """Series of tests related to the generation of output file names."""
+
     @staticmethod
     @pytest.fixture()
     def ds_path():
