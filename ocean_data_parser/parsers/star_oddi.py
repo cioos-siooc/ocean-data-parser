@@ -1,5 +1,6 @@
-"""
-[Star-Oddi](https://www.star-oddi.com/) is a company that specializes in manufacturing and providing data
+"""[Star-Oddi](https://www.star-oddi.com/).
+
+Star-oddi is a company that specializes in manufacturing and providing data
 loggers and sensors for oceanographic research. Their DAT files contain recorded
 data from various oceanographic parameters such as temperature, salinity, conductivity, and sound velocity.
 """
@@ -38,8 +39,14 @@ VARIABLES_ATTRIBUTES = {
 }
 
 
-def DAT(path: str, encoding: str = "cp1252") -> xarray.Dataset:
-    """Parse Star-Oddi DAT files
+def DAT(path: str, encoding: str = "cp1252") -> xarray.Dataset:  # noqa
+    """Deprecated Star-Oddi DAT files parser."""
+    logger.warning("Function name DAT is deprecated, use dat instead.")
+    return dat(path, encoding)
+
+
+def dat(path: str, encoding: str = "cp1252") -> xarray.Dataset:
+    """Parse Star-Oddi DAT files.
 
     Args:
         path (str): DAT file path
@@ -56,7 +63,7 @@ def DAT(path: str, encoding: str = "cp1252") -> xarray.Dataset:
     metadata = {}
     variables = {}
     original_header = ""
-    with open(path, "r", encoding=encoding) as f:
+    with open(path, encoding=encoding) as f:
         line = "#"
 
         # Loop through the header lines

@@ -1,6 +1,4 @@
-"""
-This test compare the *_reference.nc files made available within the repository
-tests folder to the present associated parser.
+"""Compare *_reference.nc files.
 
 Any differences observed between the generated xarray
 object and the reference netcdf will raise an issue.
@@ -23,7 +21,7 @@ from ocean_data_parser import read
     glob("tests/parsers_test_files/**/*_reference.nc", recursive=True),
 )
 def test_compare_test_to_reference_netcdf(reference_file):
-    """Test DFO BIO ODF conversion to NetCDF vs reference files"""
+    """Test DFO BIO ODF conversion to NetCDF vs reference files."""
     # Generate test bio odf netcdf files
 
     # Run Test conversion
@@ -87,8 +85,7 @@ def compare_test_to_reference_netcdf(
         return ds
 
     def ignore_from_attr(attr, expression, placeholder):
-        """Replace expression in both reference and test files which are
-        expected to be different."""
+        """Replace expression in both reference and test files which are expected to be different."""
         if attr not in reference.attrs or attr not in test.attrs:
             reference[attr] = placeholder
             test[attr] = placeholder

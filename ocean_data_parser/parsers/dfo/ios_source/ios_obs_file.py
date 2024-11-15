@@ -1,5 +1,5 @@
-"""
-Python class to read IOS data files and store data for conversion to netcdf format
+"""Python class to read IOS data files and store data for conversion to netcdf format.
+
 Changelog Version
     0.1: July 15 2019:
         Convert python scripts and functions into a python class
@@ -7,7 +7,7 @@ Changelog Version
         Migrate the code to the ocean-data-parser package and reduce code base
 Authors:
     Pramod Thupaki (pramod.thupaki@hakai.org)
-    Jessy Barrette
+    Jessy Barrette.
 
 """
 
@@ -115,21 +115,23 @@ IOS_SHELL_HEADER_SECTIONS = {
 }
 
 
-class IosFile(object):
-    """
+class IosFile:
+    """IOS File format parser.
+
     Class template for all the different data file types
     Contains data from the IOS file and methods to read the IOS format
     Specific improvements/modifications required
     to read filetypes will be make in derived classes
     Author: Pramod Thupaki pramod.thupaki@hakai.org
-    Incorporates functions from earlier versions of this toolbox
+    Incorporates functions from earlier versions of this toolbox.
     """
 
-    def __init__(self, filename):
-        # initializes object by reading *FILE and ios_header_version
-        # reads entire file to memory for all subsequent processing
-        # inputs are filename and debug state
+    def __init__(self, filename: str):
+        """Create an IOS file object.
 
+        Args:
+            filename (str): IOS file to read.
+        """
         logger.extra["file"] = filename
         self.type = filename.split(".", 1)[1]
         self.filename = filename
@@ -152,11 +154,11 @@ class IosFile(object):
 
         # Load file
         try:
-            with open(self.filename, "r", encoding="ASCII") as file:
+            with open(self.filename, encoding="ASCII") as file:
                 self.lines = file.readlines()
         except UnicodeDecodeError:
             logger.warning("Bad characters were encountered. We will ignore them")
-            with open(self.filename, "r", encoding="ASCII", errors="ignore") as file:
+            with open(self.filename, encoding="ASCII", errors="ignore") as file:
                 self.lines = file.readlines()
 
         self.ios_header_version = self.get_header_version()
@@ -210,10 +212,10 @@ class IosFile(object):
 
         # time variable
         self.rename_date_time_variables()
-        chnList = [
+        chn_list = [
             channel_name.strip().lower() for channel_name in self.channels["Name"]
         ]
-        if "date" in chnList and ("time" in chnList or "time:utc" in chnList):
+        if "date" in chn_list and ("time" in chn_list or "time:utc" in chn_list):
             self.get_obs_time_from_date_time()
         elif self.get_file_extension().lower() in ("cur", "loop", "drf"):
             self.get_obs_time_from_time_increment()
@@ -584,8 +586,7 @@ class IosFile(object):
                 break
             else:
                 raise Exception(
-                    "Unknown variable format Format: %s, Type: %s"
-                    % (info["Format"][i], info["Type"][i])
+                    f"Unknown variable format Format: {info['Format'][i]}, Type: {info['Type'][i]}"
                 )
         else:
             info["fmt_struct"] = fmt
@@ -658,7 +659,7 @@ class IosFile(object):
                 break
             else:
                 logger.debug(line)
-                info["{:d}".format(count)] = line.rstrip()
+                info[f"{count:d}"] = line.rstrip()
         return info
 
     def get_list_of_sections(self):
@@ -699,24 +700,24 @@ class IosFile(object):
 
     def get_obs_time_from_date_time(self):
         # Return a timeseries
-        chnList = [i.strip().lower() for i in self.channels["Name"]]
+        chn_list = [i.strip().lower() for i in self.channels["Name"]]
 
-        if "time:utc" in chnList:
-            chnList[chnList.index("time:utc")] = "time"
+        if "time:utc" in chn_list:
+            chn_list[chn_list.index("time:utc")] = "time"
 
-        if "date" in chnList and "time" in chnList:
-            if isinstance(self.data[0, chnList.index("date")], bytes):
+        if "date" in chn_list and "time" in chn_list:
+            if isinstance(self.data[0, chn_list.index("date")], bytes):
                 dates = [
                     i.decode("utf8").strip()
-                    for i in self.data[:, chnList.index("date")]
+                    for i in self.data[:, chn_list.index("date")]
                 ]
                 times = [
                     i.decode("utf8").strip()
-                    for i in self.data[:, chnList.index("time")]
+                    for i in self.data[:, chn_list.index("time")]
                 ]
             else:
-                dates = [i.strip() for i in self.data[:, chnList.index("date")]]
-                times = [i.strip() for i in self.data[:, chnList.index("time")]]
+                dates = [i.strip() for i in self.data[:, chn_list.index("date")]]
+                times = [i.strip() for i in self.data[:, chn_list.index("time")]]
             datetime = pd.to_datetime(
                 [date.replace(" ", "") + " " + time for date, time in zip(dates, times)]
             )
@@ -724,14 +725,14 @@ class IosFile(object):
             self.obs_time = [
                 timezone("UTC").localize(i + timedelta(hours=0)) for i in self.obs_time
             ]
-        elif "date" in chnList:
-            if isinstance(self.data[0, chnList.index("date")], bytes):
+        elif "date" in chn_list:
+            if isinstance(self.data[0, chn_list.index("date")], bytes):
                 dates = [
                     i.decode("utf8").strip()
-                    for i in self.data[:, chnList.index("date")]
+                    for i in self.data[:, chn_list.index("date")]
                 ]
             else:
-                dates = [i.strip() for i in self.data[:, chnList.index("date")]]
+                dates = [i.strip() for i in self.data[:, chn_list.index("date")]]
             datetime = pd.to_datetime(dates)
             self.obs_time = datetime
             self.obs_time = [
@@ -962,15 +963,14 @@ class IosFile(object):
         append_sub_variables=True,
         replace_date_time_variables=True,
     ):
-        """Convert ios class to xarray dataset
+        """Convert ios class to xarray dataset.
 
         Returns:
             xarray dataset
         """
 
         def update_variable_index(varname, id):
-            """Replace variable index (1,01,X,XX) by the given index or append
-            0 padded index if no index exist in original variable name"""
+            """Update variable index (1,01,X,XX) by the given index or append."""
             if varname.endswith(("01", "XX")):
                 return f"{varname[:-2]}{id:02g}"
             elif varname.endswith(("1", "X")):
@@ -1216,15 +1216,15 @@ class IosFile(object):
                 and "longitude" in ds
                 and "time" in ds["longitude"].dims
             ):
-                featureType = "trajectory"
+                feature_type = "trajectory"
             else:
-                featureType = "timeSeries"
+                feature_type = "timeSeries"
         else:
-            featureType = ""
+            feature_type = ""
         if "depth" in ds.dims:
-            featureType += "Profile" if featureType else "profile"
-        ds.attrs["featureType"] = featureType
-        ds.attrs["cdm_data_type"] = featureType.title()
+            feature_type += "Profile" if feature_type else "profile"
+        ds.attrs["featureType"] = feature_type
+        ds.attrs["cdm_data_type"] = feature_type.title()
 
         # Set coordinate variables
         coordinates_variables = ["time", "latitude", "longitude", "depth"]

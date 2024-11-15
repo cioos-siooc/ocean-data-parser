@@ -24,7 +24,7 @@ TEST_FILE = Path("temp/test_file.csv")
 TEST_REGISTRY = FileConversionRegistry(path=TEST_REGISTRY_PATH)
 
 
-@pytest.fixture
+@pytest.fixture()
 def caplog(caplog):
     handler_id = logger.add(caplog.handler, format="{message}")
     yield caplog
@@ -32,6 +32,8 @@ def caplog(caplog):
 
 
 class TestConfigLoad:
+    """Test the loading of the configuration file."""
+
     def test_default_config_load(self):
         config = load_config()
         assert isinstance(
@@ -55,7 +57,7 @@ def _get_config(
     cwd: Path = None,
     **kwargs,
 ):
-    """Generate a batch configuration file"""
+    """Generate a batch configuration file."""
     config = {
         **load_config(),
         **kwargs,
@@ -85,20 +87,22 @@ def _run_batch_process(config):
 
 
 class TestBatchMode:
-    @pytest.mark.parametrize("multiprocessing", (1, 2, None))
+    """Series of tests related to the batch conversion process."""
+
+    @pytest.mark.parametrize("multiprocessing", [1, 2, None])
     def test_batch_conversion_multiprocessing(self, tmpdir, multiprocessing):
         config = _get_config(cwd=tmpdir, multiprocessing=multiprocessing)
         _run_batch_process(config)
 
     @pytest.mark.parametrize(
         "key",
-        (
+        [
             "output_path",
             "output_file_name",
             "output_file_preffix",
             "output_file_suffix",
             "output_format",
-        ),
+        ],
     )
     def test_batch_conversion_output_kwargs(self, key):
         batch = BatchConversion(**{key: "test"})
@@ -107,7 +111,7 @@ class TestBatchMode:
 
     @pytest.mark.parametrize(
         "key",
-        ("registry_path", "registry_hashtype", "registry_block_size"),
+        ["registry_path", "registry_hashtype", "registry_block_size"],
     )
     def test_batch_conversion_registry_kwargs(self, key):
         batch = BatchConversion(**{key: "test"})
@@ -144,9 +148,11 @@ class TestBatchMode:
 
 
 class TestBatchCLI:
+    """Series of tests related to the batch conversion process using the CLI."""
+
     @staticmethod
     def _run_cli_batch_process(*args, isolated_directory=None):
-        """Run Click cli code"""
+        """Run Click cli code."""
         runner = CliRunner()
         if not isolated_directory:
             return runner.invoke(convert_cli, args)
@@ -279,6 +285,8 @@ test_ds["time"].attrs["timezone"] = "UTC"
 
 
 class TestBatchGenerateName:
+    """Series of tests related to the generation of output file names."""
+
     @staticmethod
     def _get_test_dataset():
         ds = xr.Dataset()
@@ -304,13 +312,13 @@ class TestBatchGenerateName:
         assert str(name) == "source_file.csv.nc"
 
     @pytest.mark.parametrize(
-        "input,expected_path",
-        (
+        ("input", "expected_path"),
+        [
             ({"path": "output"}, "output/source_file.csv.nc"),
             ({"file_name": "test"}, "test.nc"),
             ({"file_preffix": "test_"}, "test_source_file.csv.nc"),
             ({"file_suffix": "_test"}, "source_file.csv_test.nc"),
-        ),
+        ],
     )
     def test_generate_filename_with_unique_input(self, input, expected_path):
         name = generate_output_path(
@@ -351,7 +359,7 @@ class TestBatchGenerateName:
     def test_generate_filename_with_missing_source(self):
         fail_ds = self._get_test_dataset()
         fail_ds.attrs["source"] = None
-        with pytest.raises(Exception):
+        with pytest.raises(RuntimeError):
             generate_output_path(fail_ds)
 
     def test_generate_filename_with_prefix(self):
@@ -378,12 +386,14 @@ class TestBatchGenerateName:
 
 
 class TestBatchConversion:
+    """Series of tests related to the batch conversion process."""
+
     @pytest.mark.parametrize(
         "input_path",
-        (
+        [
             "tests/parsers_test_files/dfo/odf/bio/**/*.ODF",
             "tests/parsers_test_files/dfo/odf/bio/CTD/*.ODF",
-        ),
+        ],
     )
     def test_batch_input_path(self, input_path):
         batch = BatchConversion(input_path=input_path)
@@ -420,11 +430,11 @@ class TestBatchConversion:
 
     @pytest.mark.parametrize(
         "exclude",
-        (
+        [
             "tests/parsers_test_files/dfo/odf/bio/**/*.nc",
             "tests/parsers_test_files/dfo/odf/bio/CTD/*.nc",
             "tests/**/*.nc",
-        ),
+        ],
     )
     def test_batch_exclude_path(self, exclude):
         batch = BatchConversion(
@@ -444,13 +454,15 @@ class TestBatchConversion:
 
 
 class TestGenerateOutputPath:
+    """Series of tests related to the generation of output file names."""
+
     @staticmethod
-    @pytest.fixture
+    @pytest.fixture()
     def ds_path():
         return "tests/parsers_test_files/pme/minidot/2022-03-01 233900Z.txt"
 
     @staticmethod
-    @pytest.fixture
+    @pytest.fixture()
     def ds(ds_path):
         ds = file(ds_path)
         ds.attrs["source"] = ds_path

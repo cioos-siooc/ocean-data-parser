@@ -49,7 +49,7 @@ def generate_output_path(
     output_format: str = ".nc",
     defaults: dict = None,
 ) -> Path:
-    """Generate output path where to save Dataset.
+    r"""Generate output path where to save Dataset.
 
     Args:
         ds (xr.Dataset): Dataset
@@ -64,16 +64,16 @@ def generate_output_path(
               - time_min: minimum time value (compatible with Timestamp formating)
               - time_max: maximum time value (compatible with Timestamp formating)
             ex: ".\\{program}\\{project}\\{source_stem}_{time_min.isoformat()}.nc"
-        defaults (dict, optional): Placeholder for any global
-            attributes or variable attributes used in output path. Defaults to None.
+        file_name (str, optional): Output file name. Defaults to None.
         file_preffix (str, optional): Preffix to add to file name. Defaults to "".
         file_suffix (str, optional): Suffix to add to file name. Defaults to "".
+        defaults (dict, optional): Placeholder for any global
+            attributes or variable attributes used in output path. Defaults to None.
         output_format (str, optional): Output File Format extension.
 
     Returns:
         Path (Path): Generated path
     """
-
     # handle defaults
     original_source = Path(ds.attrs.get("source")) if ds.attrs.get("source") else None
     if file_name is None and original_source:
@@ -107,13 +107,28 @@ def generate_output_path(
 
 
 class VariableLevelLogger:
+    """Class use to create a logger for a specific level."""
+
     def __init__(
         self,
-        level,
-        format="{level}|{file.path}:{line} - {message}",
-        backtrace=False,
+        level: str,
+        format: str = "{level}|{file.path}:{line} - {message}",
+        backtrace: bool = False,
         filter=None,
     ):
+        """Create a logger for a specific level.
+
+        Args:
+            level (str): Level use for the logger
+                (DEBUG, INFO, WARNING, ERROR, CRITICAL).
+            format (str, optional): Format use by the logger.
+                Defaults to "{level}|{file.path}:{line} - {message}".
+            backtrace (bool, optional): Add backtrace on error.
+                Defaults to False.
+            filter (str, optional): A directive optionally used to
+                decide for each logged message whether it should be
+                sent to the sink or not. Defaults to None.
+        """
         self.io = StringIO()
         self.level = level
         self.id = logger.add(

@@ -87,3 +87,24 @@ odpy = 'ocean_data_parser.cli:main'
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.ruff.lint]
+extend-select = [
+  "UP",  # pyupgrade
+  "D",   # pydocstyle
+  "W",   # Warning
+  "N",   # pep8-naming
+  "PT",  # flake8-pytest
+]
+ignore = [
+    "D100",  # Missing docstring in public module
+    "D102",  # Missing docstring in public method
+    "D103",  # Missing docstring in public function
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D101"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"

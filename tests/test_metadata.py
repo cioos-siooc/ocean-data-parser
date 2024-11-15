@@ -50,7 +50,7 @@ class TestNERCVocabularies:
             assert id_info is not None, "term vocabulary retrieved is None"
             assert isinstance(id_info, dict), "term vocabulary isn't a dictionary"
 
-    @pytest.mark.parametrize("id,expected", [("18DL", "Amundsen")])
+    @pytest.mark.parametrize(("id", "expected"), [("18DL", "Amundsen")])
     def test_retrieve_platform(self, id, expected):
         platform = nerc.get_platform_vocabulary(id)
         assert (

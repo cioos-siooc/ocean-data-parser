@@ -22,7 +22,7 @@ def _get_paths(paths: str) -> list:
 
 
 def glob(paths: str) -> Generator[Path]:
-    """Create a generator of paths from a glob path expression
+    """Create a generator of paths from a glob path expression.
 
     Args:
         paths (str): glob type apth
@@ -41,7 +41,7 @@ def load_config(config_path: str = None, encoding="UTF-8"):
     if config_path is None:
         config_path = Path(__file__).parent / "default-batch-config.yaml"
 
-    with open(config_path, "r", encoding=encoding) as file:
+    with open(config_path, encoding=encoding) as file:
         config = yaml.load(file, Loader=yaml.SafeLoader)
 
     # Load geojson regions

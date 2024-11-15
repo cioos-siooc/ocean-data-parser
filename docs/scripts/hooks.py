@@ -22,7 +22,7 @@ def add_vocabularies_dir():
 def get_dfo_pfile_vocab_markdown(
     output="docs/user_guide/vocabularies/dfo-nafc-p-files.md",
 ):
-    """Convert P file vocabulary to markdown table"""
+    """Convert P file vocabulary to markdown table."""
     df = load.dfo_nafc_p_file_vocabulary()
     for column in ["accepted_instruments"]:
         df[column] = quote_column(df[column])
@@ -83,7 +83,7 @@ def get_seabird_vocab_markdown(output="docs/user_guide/vocabularies/seabird.md")
 
 
 def copy_notebooks(output="docs/notebooks"):
-    """Copy notebooks to docs"""
+    """Copy notebooks to docs."""
     notebooks = Path("notebooks").glob("*.ipynb")
     docs_notebooks = Path(output)
     docs_notebooks.mkdir(parents=True, exist_ok=True)

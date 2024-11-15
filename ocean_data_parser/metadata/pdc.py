@@ -33,8 +33,7 @@ def fgdc_to_acdd(url=None, xml=None):
     metadata = {
         "title": id_info["citation"]["citeinfo"]["title"],
         "summary": id_info["descript"]["abstract"],
-        "comment": "Purpose: %s \n\n Supplementary information: %s"
-        % (
+        "comment": "Purpose: {} \n\n Supplementary information: {}".format(
             id_info["descript"]["purpose"],
             id_info["descript"]["supplinf"],
         ),
