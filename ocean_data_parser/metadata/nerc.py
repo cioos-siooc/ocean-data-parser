@@ -17,16 +17,13 @@ def get_vocabulary(vocab: str) -> pd.DataFrame:
     url = f"http://vocab.nerc.ac.uk/collection/{vocab}/current/?_profile=dd&_mediatype=application/json"
     logger.info("Load vocabulary: {}", url)
     df = pd.read_json(url)
-    df["sdn_parameter_urn"] = f"SDN:{vocab.upper()}" + df["uri"].str.extract(
-        ".*/([^/]*)/$"
-    )
+    df["sdn_parameter_urn"] = f"SDN:{vocab.upper()}" + df["uri"].str.extract(".*/([^/]*)/$")
     logger.info("Save vocabulary: {}", local_file)
     return df
 
 
 def get_vocabulary_term(vocab: str, id: str) -> dict:
-    url = f"http://vocab.nerc.ac.uk/collection/{vocab}/current/{
-        id}/?_profile=nvs&_mediatype=application/ld+json"
+    url = f"http://vocab.nerc.ac.uk/collection/{vocab}/current/{id}/?_profile=nvs&_mediatype=application/ld+json"
     logger.info("Load vocabulary term: {}", url)
     with requests.get(url) as response:
         return response.json()

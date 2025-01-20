@@ -18,12 +18,10 @@ def get_standard_names(version=DEFAULT_STANDARD_NAMES_VERSION) -> pd.DataFrame:
     if local_file.exists():
         return pd.read_csv(local_file)
 
-    url = f"https://cfconventions.org/Data/cf-standard-names/{
-            version}/src/cf-standard-name-table.xml"
+    url = f"https://cfconventions.org/Data/cf-standard-names/{version}/src/cf-standard-name-table.xml"
     logger.info("Load cf-standard-names: {}", url)
     standard_names = pd.read_xml(
-        f"https://cfconventions.org/Data/cf-standard-names/{
-            version}/src/cf-standard-name-table.xml"
+        f"https://cfconventions.org/Data/cf-standard-names/{version}/src/cf-standard-name-table.xml"
     )
     standard_names.attrs = {item: _get_value(item) for item in unique_value_columns}
     return (
