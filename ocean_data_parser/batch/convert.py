@@ -256,7 +256,7 @@ class BatchConversion:
 
     def get_excluded_files(self) -> list:
         return (
-            glob(self.config["exclude"], recursive=True)
+            [Path(file) for file in glob(self.config["exclude"], recursive=True)]
             if self.config.get("exclude")
             else []
         )
@@ -270,7 +270,7 @@ class BatchConversion:
             Path(file)
             for path in paths
             for file in glob(path, recursive=True)
-            if file not in excluded_files
+            if Path(file) not in excluded_files
         ]
 
     def load_input_table(self, table: dict) -> pd.DataFrame:

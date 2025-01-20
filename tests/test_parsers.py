@@ -750,7 +750,7 @@ class TestBlueElectricParse:
         [
             path
             for path in glob("tests/parsers_test_files/electricblue/*.csv")
-            if "/log" not in path
+            if "log" not in path
         ],
     )
     def test_blue_electric_csv_parser(self, path, caplog):

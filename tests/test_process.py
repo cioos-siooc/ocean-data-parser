@@ -130,7 +130,7 @@ class ProcessGSWTests(unittest.TestCase):
 
     def test_gsw_z_from_p_to_depth_ufunc(self):
         ds = load_test_dataset()
-        extra_attrs = {"long_name": "depth", "standard_name": "depth", "units": "m"}
+        extra_attrs = {"long_name": "depth", "standard_name": "depth", "units": "m", "positive": "up"}
         ds = ds.process.gsw(
             "z_from_p",
             gsw_args=("prdM", 75),

@@ -244,7 +244,7 @@ class TestFileRegistry:
         file_registry = self._get_test_registry(update=False)
 
         file_registry.path = Path(str(file_registry.path).replace(".csv", "_temp.csv"))
-        file_registry.save()
+        file_registry.save(force_posix=True)
         differences = compare_text_files(
             str(self._get_test_registry().path), str(file_registry.path)
         )
@@ -253,7 +253,8 @@ class TestFileRegistry:
         ), f"Saving registry didn't produce a similar file: {differences}"
 
         file_registry.data.loc[file_registry.data.index[-1], "mtime"] += 100
-        file_registry.save()
+        file_registry.save(force_posix=True)
+        
         differences = compare_text_files(
             str(self._get_test_registry().path), str(file_registry.path)
         )
