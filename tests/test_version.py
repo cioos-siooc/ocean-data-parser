@@ -8,7 +8,7 @@ from ocean_data_parser import __version__
 def test_pyproject():
     """Test the Python package version."""
     pyproject = toml.loads(Path("pyproject.toml").read_text())
-    assert __version__ == pyproject["tool"]["poetry"]["version"]
+    assert __version__ == pyproject["project"]["version"]
 
 
 def test_changelog_version():
