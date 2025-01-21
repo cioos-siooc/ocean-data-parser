@@ -1,14 +1,20 @@
 import json
+from pathlib import Path
 
+import click
 import pandas as pd
 import requests
-from pathlib import Path
 from loguru import logger
-import click
 
 
 class Nerc:
+    """NERC vocabulary class.
+
+    This class is used to interact with the NERC vocabulary server.
+    """
+
     def __init__(self, base_url: str = "http://vocab.nerc.ac.uk/collection/"):
+        """Initialize the NERC vocabulary class."""
         self.base_url = base_url
 
     def download_vocabulary(
@@ -47,6 +53,7 @@ class Nerc:
     def get_vocabulary_term(
         self, vocabulary: str, id: str, version: str = "current"
     ) -> dict:
+        """Retrieve a specific NERC vocabulary term."""
         url = f"{self.base_url}/{vocabulary}/{version}/{id}/?_profile=nvs&_mediatype=application/ld+json"
         logger.info("Load vocabulary term: {}", url)
         with requests.get(url) as response:
@@ -54,20 +61,24 @@ class Nerc:
             return response.json()
 
     def get_urn_from_uri(self, uri: str) -> str:
+        """Method to extract the URN from the URI."""
         _, vocabulary, _, id, _ = uri.rsplit("/", 4)
         return f"SDN:{vocabulary}::{id}"
 
     def get_p01_vocabulary(self) -> pd.DataFrame:
+        """Load the P01 vocabulary."""
         df = self.get_vocabulary("P01")
         df["sdn_parameter_urn"] = df["uri"].apply(self.get_urn_from_uri)
         return df.rename(columns={"prefLabel": "sdn_parameter_name"})
 
     def get_p06_vocabulary(self) -> pd.DataFrame:
+        """Load the P06 vocabulary."""
         df = self.get_vocabulary("P06")
         df["sdn_uom_urn"] = df["uri"].apply(self.get_urn_from_uri)
         return df.rename(columns={"prefLabel": "sdn_uom_name"})
 
     def get_platform_vocabulary(self, id: str) -> dict:
+        """Retrieve the platform vocabulary term."""
         result = self.get_vocabulary_term("C17", id)
         # Parse the json data in the definition field
         attrs = json.loads(result["skos:definition"]["@value"])["node"]

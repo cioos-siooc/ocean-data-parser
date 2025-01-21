@@ -1,8 +1,9 @@
-import pandas as pd
-import pytest
 import re
 
-from ocean_data_parser.metadata import nerc, cf
+import pandas as pd
+import pytest
+
+from ocean_data_parser.metadata import cf, nerc
 from ocean_data_parser.vocabularies import load
 
 nerc_vocabulary_test = pytest.mark.skipif("not config.getoption('nerc_vocab')")
