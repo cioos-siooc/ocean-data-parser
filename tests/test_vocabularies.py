@@ -172,14 +172,18 @@ class TestVocabularies:
             "sdn_parameter_name.notna() and sdn_parameter_name not in @nerc_p01['sdn_parameter_name']"
         )
         assert unknown_names.empty, (
-            f"{len(unknown_names)} unknown parameter names found: {unknown_names.to_dict(orient='records')}"
+            f"{len(unknown_names)} unknown parameter names found [{unknown_names['sdn_parameter_name'].unique()}]: {unknown_names.to_dict(orient='records')}"
         )
 
-        bad_urn_label_match = vocab[["sdn_parameter_name", "sdn_parameter_urn"]].notin(
-            nerc_p01[["sdn_parameter_name", "sdn_parameter_urn"]]
-        )
-        assert bad_urn_label_match.empty, (
-            f"Bad matches found: {bad_urn_label_match.to_dict(orient='records')}"
+        comparison = vocab.merge(
+            nerc_p01[["sdn_parameter_urn", "sdn_parameter_name"]],
+            on=["sdn_parameter_name", "sdn_parameter_urn"],
+            how="left",
+            indicator=True,
+        ).dropna(subset=["sdn_parameter_name", "sdn_parameter_urn"], how="all")
+        mismatches = comparison[comparison["_merge"] == "left_only"]
+        assert mismatches.empty, (
+            f"Bad {len(mismatches)} mismatches found: {mismatches.to_dict(orient='records')}"
         )
 
     @pytest.mark.parametrize("vocabulary", vocabularies)
