@@ -502,7 +502,7 @@ def convert_file(file: str, parser: str, config: dict, global_attributes=None) -
     ds = read.file(
         file,
         parser=parser,
-        **config.get("parser_kwargs", {}),
+        **(config.get("parser_kwargs") or {}),
         global_attributes=global_attributes,
     )
     if not isinstance(ds, Dataset):
