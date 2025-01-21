@@ -177,7 +177,7 @@ class TestVocabularies:
             "standard_name.notna() and standard_name not in @standard_names['id']"
         )
         assert unknown_standard_names.empty, (
-            f"{len(unknown_standard_names)} unknown standard names found: {unknown_standard_names.to_dict(orient='records')}"
+            f"{len(unknown_standard_names)} unknown standard names found {unknown_standard_names['standard_name'].unique()}: {unknown_standard_names.to_dict(orient='records')}"
         )
 
     def test_sdn_parameter_urn(self, vocabulary):
