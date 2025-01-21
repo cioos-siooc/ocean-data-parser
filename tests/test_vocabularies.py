@@ -181,23 +181,15 @@ class TestVocabularies:
     def test_sdn_uom_name(self, vocabulary):
         """Test that the sdn_uom_name column is correctly formatted."""
         vocab = vocabulary()
-        # make sure both columns are present
-        if "sdn_uom_name" not in vocab.columns and "sdn_uom_urn" not in vocab.columns:
-            return
-        if "sdn_uom_name" not in vocab.columns:
-            assert "sdn_uom_name" not in vocab.columns
-        if "sdn_uom_urn" not in vocab.columns:
-            assert "sdn_uom_urn" not in vocab.columns
 
         unknown_names = vocab.query(
-            "sdn_uom_name.notna() and sdn_uom_name not in @nerc_p06['prefLabel']"
+            "sdn_uom_name.notna() and sdn_uom_name not in @nerc_p06['sdn_uom_name']"
         )
         assert unknown_names.empty, f"{len(unknown_names)} unknown UOM names found [{set(unknown_names.sdn_uom_name.to_list())}]: {unknown_names.to_records()}"
 
-        comparison = vocab[['sdn_uom_name', 'sdn_uom_urn']].merge(
-            nerc_p06[['prefLabel', 'sdn_parameter_urn']],
-            left_on=['sdn_uom_name', 'sdn_uom_urn'],
-            right_on=['prefLabel', 'sdn_parameter_urn'],
+        comparison = vocab.merge(
+            nerc_p06[['sdn_uom_urn', 'sdn_uom_name']],
+            on=['sdn_uom_name', 'sdn_uom_urn'],
             how='left',
             indicator=True
         ).dropna(subset=['sdn_uom_name', 'sdn_uom_urn'], how='all')
