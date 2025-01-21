@@ -13,8 +13,8 @@ platforms_vocab["wmo_platform_code"] = platforms_vocab["wmo_platform_code"].appl
 
 
 standard_names = cf.get_standard_names()
-nerc_p01 = nerc.Nerc().get_vocabulary("P01")
-nerc_p06 = nerc.Nerc().get_vocabulary("P06")
+nerc_p01 = nerc.Nerc().get_p01_vocabulary()
+nerc_p06 = nerc.Nerc().get_p06_vocabulary()
 
 
 class TestVocabularyLoad:

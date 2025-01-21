@@ -41,6 +41,7 @@ class Nerc:
         json_file = self.download_vocabulary(
             vocabulary, version=version, overwrite=ignore_cache
         )
+        logger.info("Load vocabulary from file: {}", json_file)
         return pd.read_json(json_file)
 
     def get_vocabulary_term(
@@ -96,10 +97,8 @@ def update_package_reference_vocabularies(output_dir: Path):
         output_dir = Path(__file__).parent
     Path(output_dir).mkdir(parents=True, exist_ok=True)
     nerc = Nerc()
-    nerc.get_p01_vocabulary().to_csv(
-        output_dir / "nerc_P01_vocabulary.csv", index=False
-    )
-    nerc.get_p06_vocabulary().to_csv(output_dir / "nerc_P06_vocabulary.csv")
+    nerc.get_p01_vocabulary()
+    nerc.get_p06_vocabulary()
 
 
 if __name__ == "__main__":
