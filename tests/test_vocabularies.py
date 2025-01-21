@@ -146,17 +146,22 @@ def is_valid_urn(urn, urns):
             return True
     return False
 
-def get_matching_urn(urn, urns):
+
+def get_matching_urn(urn: str, name: str, urns: list, names: list):
     if pd.isna(urn):
-        return pd.NA
+        return
     if urn in urns:
         return urn
     if not re.search(r"\d+$", urn):
-        return None
+        return
     for variance in ACCEPTED_URN_VARIANCE:
-        if re.sub(r"\d+$", variance, urn) in urns:
+        if re.sub(r"\d+$", variance, urn) not in urns:
+            continue
+        # test if name is the same as the one in the reference
+        if names[urns.index(re.sub(r"\d+$", variance, urn))] == name:
             return re.sub(r"\d+$", variance, urn)
-    return pd.NA
+
+    return
 
 
 @pytest.mark.parametrize("load_vocabulary", vocabularies)
@@ -195,8 +200,15 @@ class TestVocabularies:
         assert valid_p01_urn.all(), (
             f"{len(unknown_urns)} unknown parameter URNs found [{unknown_urns['sdn_parameter_urn'].unique()}]: {unknown_urns.to_dict(orient='records')}"
         )
-        vocabulary["matched_urn"] = vocabulary["sdn_parameter_urn"].apply(
-            lambda urn: get_matching_urn(urn, nerc_p01["sdn_parameter_urn"].to_list())
+        # convert vocabulary sdn_parameter_urn et sdn_parameter_name to a dictionary
+        vocabulary["matched_urn"] = vocabulary.apply(
+            lambda urn: get_matching_urn(
+                urn["sdn_parameter_urn"],
+                urn["sdn_parameter_name"],
+                nerc_p01["sdn_parameter_urn"].to_list(),
+                nerc_p01["sdn_parameter_name"].to_list(),
+            ),
+            axis=1,
         )
 
         comparison = vocabulary.merge(
@@ -205,11 +217,11 @@ class TestVocabularies:
             left_on=["sdn_parameter_name", "matched_urn"],
             how="left",
             indicator=True,
-            suffixes=("_reference", ""),
+            suffixes=("", "_reference"),
         ).dropna(subset=["sdn_parameter_name", "sdn_parameter_urn"], how="all")
         mismatches = comparison[comparison["_merge"] == "left_only"]
         assert mismatches.empty, (
-            f"Bad {len(mismatches)} mismatches found {mismatches['sdn_parameter_urn'].unique()}: {mismatches.to_dict(orient='records')}"
+            f"Bad {len(mismatches)} mismatches found {mismatches['sdn_parameter_urn'].unique()}: {mismatches.to_json(orient='index')}"
         )
 
     def test_sdn_parameter_name(self, vocabulary):
@@ -224,9 +236,8 @@ class TestVocabularies:
             "sdn_parameter_name.notna() and sdn_parameter_name not in @nerc_p01['sdn_parameter_name']"
         )
         assert unknown_names.empty, (
-            f"{len(unknown_names)} unknown parameter names found [{unknown_names['sdn_parameter_name'].unique()}]: {unknown_names.to_dict(orient='records')}"
+            f"{len(unknown_names)} unknown parameter names found [{unknown_names['sdn_parameter_name'].unique()}]: {unknown_names.to_json(orient='index')}"
         )
-
 
     def test_sdn_uom_urn(self, vocabulary):
         """Test that the sdn_uom_urn column is correctly formatted."""
