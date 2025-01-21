@@ -148,7 +148,7 @@ def is_valid_urn(urn, urns):
 
 def get_matching_urn(urn, urns):
     if pd.isna(urn):
-        return
+        return pd.NA
     if urn in urns:
         return urn
     if not re.search(r"\d+$", urn):
@@ -156,7 +156,7 @@ def get_matching_urn(urn, urns):
     for variance in ACCEPTED_URN_VARIANCE:
         if re.sub(r"\d+$", variance, urn) in urns:
             return re.sub(r"\d+$", variance, urn)
-    return None
+    return pd.NA
 
 
 @pytest.mark.parametrize("load_vocabulary", vocabularies)
@@ -201,10 +201,11 @@ class TestVocabularies:
 
         comparison = vocabulary.merge(
             nerc_p01[["sdn_parameter_urn", "sdn_parameter_name"]],
-            left_on=["sdn_parameter_name", "sdn_parameter_urn"],
-            right_on=["sdn_parameter_name", "matched_urn"],
+            right_on=["sdn_parameter_name", "sdn_parameter_urn"],
+            left_on=["sdn_parameter_name", "matched_urn"],
             how="left",
             indicator=True,
+            suffixes=("_reference", ""),
         ).dropna(subset=["sdn_parameter_name", "sdn_parameter_urn"], how="all")
         mismatches = comparison[comparison["_merge"] == "left_only"]
         assert mismatches.empty, (
