@@ -16,10 +16,7 @@ def get_vocabulary(vocab: str) -> pd.DataFrame:
 
     url = f"http://vocab.nerc.ac.uk/collection/{vocab}/current/?_profile=dd&_mediatype=application/json"
     logger.info("Load vocabulary: {}", url)
-    df = pd.read_json(url)
-    df["sdn_parameter_urn"] = f"SDN:{vocab.upper()}" + df["uri"].str.extract(".*/([^/]*)/$")
-    logger.info("Save vocabulary: {}", local_file)
-    return df
+    return pd.read_json(url)
 
 
 def get_vocabulary_term(vocab: str, id: str) -> dict:
@@ -27,6 +24,16 @@ def get_vocabulary_term(vocab: str, id: str) -> dict:
     logger.info("Load vocabulary term: {}", url)
     with requests.get(url) as response:
         return response.json()
+
+def get_p01_vocabulary() -> pd.DataFrame:
+    df = get_vocabulary("P01")
+    df["sdn_parameter_urn"] = df["sdn_parameter_urn"].str.replace(":P01", ":P01::")
+    return df.rename(columns={"prefLabel": "sdn_parameter_name"})
+
+def get_p06_vocabulary() -> pd.DataFrame:
+    df = get_vocabulary("P06")
+    df["sdn_uom_urn"] = df["sdn_parameter_urn"].str.replace(":P06", ":P06::")
+    return df.rename(columns={"prefLabel": "sdn_uom_name"})
 
 
 def get_platform_vocabulary(id: str) -> dict:
@@ -59,8 +66,8 @@ def update_package_reference_vocabularies(output_dir: Path):
         output_dir = Path(__file__).parent
     Path(output_dir).mkdir(parents=True, exist_ok=True)
 
-    get_vocabulary("P01").to_csv(output_dir / "nerc_P01_vocabulary.csv", index=False)
-    get_vocabulary("P06").to_csv(output_dir / "nerc_P06_vocabulary.csv")
+    get_p01_vocabulary().to_csv(output_dir / "nerc_P01_vocabulary.csv", index=False)
+    get_p06_vocabulary().to_csv(output_dir / "nerc_P06_vocabulary.csv")
 
 
 if __name__ == "__main__":
