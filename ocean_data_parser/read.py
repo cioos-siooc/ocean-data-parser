@@ -169,7 +169,7 @@ def file(
 
     # Load the appropriate parser and read the file
     parser_func = import_parser(parser) if isinstance(parser, str) else parser
-    ds = parser_func(path, **kwargs)
+    ds = parser_func(path, **(kwargs or {}))
     if global_attributes:
         ds.attrs.update(global_attributes)
     return ds
