@@ -89,7 +89,7 @@ class FileConversionRegistry:
         if force_posix:
             df.index = df.index.map(lambda x: x.as_posix())
             df["output_path"] = df["output_path"].map(lambda x: x.as_posix())
-            
+
         if not self.path:
             return
         elif self.path.suffix == ".csv":
@@ -242,7 +242,7 @@ class FileConversionRegistry:
         """
         if dataframe is not None and kwargs:
             raise ValueError(
-                "Can't update fields with a mix of arguments " "and keyword arguments"
+                "Can't update fields with a mix of arguments and keyword arguments"
             )
 
         # If unique source is given convert it to a string

@@ -106,12 +106,12 @@ class ProcessDatasetDeploymentTests(unittest.TestCase):
         )
         assert isinstance(ds, xr.Dataset)
         assert "deployment_flag" not in ds
-        assert ds["time"].min() == pd.to_datetime(
-            "2022-05-10T22:00:01"
-        ), "Failed to crop te start up to the 8th record"
-        assert ds["time"].max() == pd.to_datetime(
-            "2023-05-14T20:30:31"
-        ), "Failed to crop the end after the 17717th record"
+        assert ds["time"].min() == pd.to_datetime("2022-05-10T22:00:01"), (
+            "Failed to crop te start up to the 8th record"
+        )
+        assert ds["time"].max() == pd.to_datetime("2023-05-14T20:30:31"), (
+            "Failed to crop the end after the 17717th record"
+        )
 
 
 class ProcessGSWTests(unittest.TestCase):
@@ -122,15 +122,20 @@ class ProcessGSWTests(unittest.TestCase):
             gsw_args=("prdM", 75),
             extra_attrs={"long_name": "Depth"},
         )
-        assert (
-            "height_above_mean_sea_level" in ds
-        ), "height_above_mean_sea_level variable was not generated"
+        assert "height_above_mean_sea_level" in ds, (
+            "height_above_mean_sea_level variable was not generated"
+        )
         assert isinstance(ds["height_above_mean_sea_level"], xr.DataArray)
         assert ds["height_above_mean_sea_level"].min().round() == -94
 
     def test_gsw_z_from_p_to_depth_ufunc(self):
         ds = load_test_dataset()
-        extra_attrs = {"long_name": "depth", "standard_name": "depth", "units": "m", "positive": "up"}
+        extra_attrs = {
+            "long_name": "depth",
+            "standard_name": "depth",
+            "units": "m",
+            "positive": "up",
+        }
         ds = ds.process.gsw(
             "z_from_p",
             gsw_args=("prdM", 75),
@@ -161,9 +166,9 @@ class ProcessQartodTests(unittest.TestCase):
         )
         assert isinstance(ds, xr.Dataset)
         assert "sal00_flag" in ds
-        assert (
-            len(ds["sal00"].attrs.get("ancillary_variables", "").split(" ")) == 1
-        ), "sal00 ancillary_variables attribute wasn't appropriately generated"
+        assert len(ds["sal00"].attrs.get("ancillary_variables", "").split(" ")) == 1, (
+            "sal00 ancillary_variables attribute wasn't appropriately generated"
+        )
         assert all(
             var in ds
             for var in ds["sal00"].attrs.get("ancillary_variables", "").split(" ")
@@ -174,12 +179,12 @@ class ProcessQartodTests(unittest.TestCase):
         ds = ds.process.qartod(qartod_test_config, agg="all")
         assert isinstance(ds, xr.Dataset)
         assert "sal00_flag" not in ds
-        assert (
-            len([var for var in ds if "qartod" in var]) == 5
-        ), "Missing some flag variables"
-        assert (
-            len(ds["sal00"].attrs.get("ancillary_variables", "").split(" ")) == 4
-        ), "sal00 ancillary_variables attribute wasn't appropriately generated"
+        assert len([var for var in ds if "qartod" in var]) == 5, (
+            "Missing some flag variables"
+        )
+        assert len(ds["sal00"].attrs.get("ancillary_variables", "").split(" ")) == 4, (
+            "sal00 ancillary_variables attribute wasn't appropriately generated"
+        )
         assert all(
             var in ds
             for var in ds["sal00"].attrs.get("ancillary_variables", "").split(" ")
@@ -208,9 +213,9 @@ class ProcessQartodTests(unittest.TestCase):
         ds = ds.process.drop_flagged_data(flags=[4], drop_flags=True)
         assert isinstance(ds, xr.Dataset)
         assert "sal00_flag" not in ds
-        assert (
-            len([var for var in ds if "qartod" in var]) == 0
-        ), "Flag variables were not dropped"
+        assert len([var for var in ds if "qartod" in var]) == 0, (
+            "Flag variables were not dropped"
+        )
         assert (
             len(
                 [
@@ -223,9 +228,9 @@ class ProcessQartodTests(unittest.TestCase):
             )
             == 0
         ), "sal00 ancillary_variables attribute wasn't appropriately removed"
-        assert (
-            ds["sal00"][test_records].isnull().all()
-        ), "Flagged record wasn't replaced by NaN"
+        assert ds["sal00"][test_records].isnull().all(), (
+            "Flagged record wasn't replaced by NaN"
+        )
 
     def test_drop_flagged_multiple_flag_variables(self):
         ds = load_test_dataset()

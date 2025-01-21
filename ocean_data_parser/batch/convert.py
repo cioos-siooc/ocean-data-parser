@@ -128,8 +128,7 @@ def validate_parser_kwargs(ctx, _, value):
     "--multiprocessing",
     type=int,
     help=(
-        "Run conversion in parallel on N processors."
-        " None == all processors available"
+        "Run conversion in parallel on N processors. None == all processors available"
     ),
 )
 @click.option(

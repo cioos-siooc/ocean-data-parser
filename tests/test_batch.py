@@ -36,9 +36,9 @@ class TestConfigLoad:
 
     def test_default_config_load(self):
         config = load_config()
-        assert isinstance(
-            config, dict
-        ), "Default loaded configuration is not a dictionary"
+        assert isinstance(config, dict), (
+            "Default loaded configuration is not a dictionary"
+        )
 
     def test_default_config_logging(self):
         load_config()
@@ -191,9 +191,9 @@ class TestBatchCLI:
     def test_batch_cli_new_config_creation_output(self, tmpdir: Path):
         new_config_test_file = tmpdir / "test_config_copy.yaml"
         result = self._run_cli_batch_process("--new-config", str(new_config_test_file))
-        assert (
-            result.exit_code == 0
-        ), f"new config failed with exit_code={result.exit_code}, result={result}"
+        assert result.exit_code == 0, (
+            f"new config failed with exit_code={result.exit_code}, result={result}"
+        )
         assert new_config_test_file.exists()
 
     def test_batch_cli_new_config_failed_creation_already_existing_file(
@@ -217,9 +217,9 @@ class TestBatchCLI:
     def test_batch_failed_cli_conversion_with_argument_inputs(self):
         result = self._run_cli_batch_process("*.csv")
         assert result.exit_code == 2
-        assert (
-            "Error: Got unexpected extra argument" in result.output
-        ), f"Unexpected output {result.output=}"
+        assert "Error: Got unexpected extra argument" in result.output, (
+            f"Unexpected output {result.output=}"
+        )
 
     def test_failed_cli_batch_conversion_with_ignore_errors(self, tmp_path):
         test_file_path = tmp_path / "failed_cli_test_file.cnv"
@@ -596,7 +596,8 @@ class TestBatchConvertFromInputTable:
         assert files
         assert len(files) > 0
         assert all(
-            file.as_posix().startswith("tests/parsers_test_files/onset/") for file in files
+            file.as_posix().startswith("tests/parsers_test_files/onset/")
+            for file in files
         )
 
     def test_get_files_with_file_column_suffix(self, config):

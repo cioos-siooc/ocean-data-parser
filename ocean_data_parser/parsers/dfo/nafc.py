@@ -604,7 +604,7 @@ def _get_metqa_table(file) -> pd.DataFrame:
 
 def _add_metqa_info_to_pcvn(file: Path, match_metqa_file) -> Path:
     """Find the matching metqa table to the pcnv file."""
-    glob_expression = f"{file.stem.rsplit('_',1)[0]}_metqa_*.csv"
+    glob_expression = f"{file.stem.rsplit('_', 1)[0]}_metqa_*.csv"
     metqa_file = list(file.parent.glob(glob_expression))
     if metqa_file and len(metqa_file) == 1:
         logger.debug("Load weather data from metqa file={}", metqa_file[0])

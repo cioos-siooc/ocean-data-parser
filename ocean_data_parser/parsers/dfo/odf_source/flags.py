@@ -54,7 +54,7 @@ def rename_qqqq_flags(dataset: xr.Dataset) -> xr.Dataset:
 
     # Rename QQQQ flag convention
     qqqq_flags = {
-        var: f"Q{variables[id-1]}"
+        var: f"Q{variables[id - 1]}"
         for id, var in enumerate(variables)
         if var.startswith("QQQQ")
     }
@@ -75,7 +75,7 @@ def add_flag_attributes(dataset):
 
     def _add_ancillary(ancillary, variable):
         dataset[variable].attrs["ancillary_variables"] = (
-            f"{dataset[variable].attrs.get('ancillary_variables','')} {ancillary}".strip()
+            f"{dataset[variable].attrs.get('ancillary_variables', '')} {ancillary}".strip()
         )
         return dataset[variable]
 

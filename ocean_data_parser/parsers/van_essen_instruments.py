@@ -108,7 +108,7 @@ def mon(
 
     # If there's less data then expected send a warning
     if len(df) < info["n_records"]:
-        msg = f'Missing data, expected {info["n_records"]} and found only {len(df)}'
+        msg = f"Missing data, expected {info['n_records']} and found only {len(df)}"
         if errors == "raise":
             assert RuntimeWarning(
                 msg,

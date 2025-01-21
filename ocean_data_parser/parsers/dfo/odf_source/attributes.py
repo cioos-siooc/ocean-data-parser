@@ -308,7 +308,7 @@ def _generate_title_from_global_attributes(attributes):
     title = (
         f"{attributes['odf_data_type']} profile data collected "
         + (
-            f"from the {attributes['platform']} {attributes.get('platform_name','')}"
+            f"from the {attributes['platform']} {attributes.get('platform_name', '')}"
             if "platform" in attributes
             else ""
         )
@@ -396,7 +396,7 @@ def global_attributes_from_header(dataset, odf_header):
         },
         # INSTRUMENT_HEADER
         **{
-            f"instrument_{name.replace('inst_','')}".lower(): value
+            f"instrument_{name.replace('inst_', '')}".lower(): value
             for name, value in odf_header.get("INSTRUMENT_HEADER", {}).items()
         },
         **_generate_cf_history_from_odf(odf_header),

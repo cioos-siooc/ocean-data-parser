@@ -172,7 +172,7 @@ def _generate_extra_terms(nmea):
     if nmea["sentence_type"] == "ZDA":
         extra[("GPS Time", "gps_datetime")] = datetime.strptime(
             f"{nmea['year']}-{nmea['month']}-{nmea['day']}T{nmea['timestamp']} UTC",
-            f"%Y-%m-%dT%H%M%S{'.%f' if len(nmea['timestamp'])>6 else''} %Z",
+            f"%Y-%m-%dT%H%M%S{'.%f' if len(nmea['timestamp']) > 6 else ''} %Z",
         )
     if (
         nmea["sentence_type"] == "RMC"
@@ -181,7 +181,7 @@ def _generate_extra_terms(nmea):
     ):
         extra[("GPS Time", "gps_datetime")] = datetime.strptime(
             f"{nmea['datestamp']}T{nmea['timestamp']} UTC",
-            f"%d%m%yT%H%M%S{'.%f' if len(nmea['timestamp'])>6 else''} %Z",
+            f"%d%m%yT%H%M%S{'.%f' if len(nmea['timestamp']) > 6 else ''} %Z",
         )
 
     if nmea["sentence_type"] == "MWV" and nmea["reference"] == "R":

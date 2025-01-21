@@ -33,9 +33,9 @@ def test_automated_parser_detection(file):
     assert parser, "No parser was associated"
     parser = parser.replace("_format", "")
     assert parser, f"Test file {file} doesn't match any parser"
-    assert all(
-        item.lower() in file.lower() for item in re.split(r"\.|_", parser)
-    ), f"Parser wasn't match to the right parser: {parser}"
+    assert all(item.lower() in file.lower() for item in re.split(r"\.|_", parser)), (
+        f"Parser wasn't match to the right parser: {parser}"
+    )
 
 
 onset_file = (
