@@ -7,50 +7,80 @@ from loguru import logger
 import click
 
 
-@logger.catch(reraise=True)
-def get_vocabulary(vocab: str) -> pd.DataFrame:
-    """Retrieve NERC vocabulary full list."""
-    local_file = Path(__file__).parent / f"nerc_{vocab}_vocabulary.csv"
-    if local_file.exists():
-        return pd.read_csv(local_file)
+class Nerc:
+    def __init__(self, base_url: str = "http://vocab.nerc.ac.uk/collection/"):
+        self.base_url = base_url
 
-    url = f"http://vocab.nerc.ac.uk/collection/{vocab}/current/?_profile=dd&_mediatype=application/json"
-    logger.info("Load vocabulary: {}", url)
-    return pd.read_json(url)
+    def download_vocabulary(
+        self,
+        vocabulary: str,
+        version: str = "current",
+        cache_dir: Path = Path(__file__).parent,
+        overwrite: bool = True,
+    ) -> pd.DataFrame:
+        """Download NERC vocabulary full list."""
+        cached_file = cache_dir / f"nerc_{vocabulary}_vocabulary.json"
+        if cached_file.exists() and not overwrite:
+            return cached_file
+        url = f"{self.base_url}/{vocabulary}/{version}/?_profile=dd&_mediatype=application/json"
+        logger.info("Dowonload vocabulary: {}", url)
+        # Save file locally
+        with requests.get(url) as response:
+            response.raise_for_status()
+            with open(cached_file, "wb") as f:
+                f.write(response.content)
 
+        return cached_file
 
-def get_vocabulary_term(vocab: str, id: str) -> dict:
-    url = f"http://vocab.nerc.ac.uk/collection/{vocab}/current/{id}/?_profile=nvs&_mediatype=application/ld+json"
-    logger.info("Load vocabulary term: {}", url)
-    with requests.get(url) as response:
-        return response.json()
+    @logger.catch(reraise=True)
+    def get_vocabulary(
+        self, vocabulary: str, version: str = "current", ignore_cache: bool = False
+    ) -> pd.DataFrame:
+        """Retrieve NERC vocabulary full list."""
+        logger.info("Load vocabulary: {}", vocabulary)
+        json_file = self.download_vocabulary(
+            vocabulary, version=version, overwrite=ignore_cache
+        )
+        return pd.read_json(json_file)
 
-def get_p01_vocabulary() -> pd.DataFrame:
-    df = get_vocabulary("P01")
-    df["sdn_parameter_urn"] = df["sdn_parameter_urn"].str.replace(":P01", ":P01::")
-    return df.rename(columns={"prefLabel": "sdn_parameter_name"})
+    def get_vocabulary_term(
+        self, vocabulary: str, id: str, version: str = "current"
+    ) -> dict:
+        url = f"{self.base_url}/{vocabulary}/{version}/{id}/?_profile=nvs&_mediatype=application/ld+json"
+        logger.info("Load vocabulary term: {}", url)
+        with requests.get(url) as response:
+            response.raise_for_status()
+            return response.json()
 
-def get_p06_vocabulary() -> pd.DataFrame:
-    df = get_vocabulary("P06")
-    df["sdn_uom_urn"] = df["sdn_parameter_urn"].str.replace(":P06", ":P06::")
-    return df.rename(columns={"prefLabel": "sdn_uom_name"})
+    def get_urn_from_uri(self, uri: str) -> str:
+        _, vocabulary, version, id, _ = uri.rsplit("/", 4)
+        return f"{vocabulary}:{version}::{id}"
 
+    def get_p01_vocabulary(self) -> pd.DataFrame:
+        df = self.get_vocabulary("P01")
+        df["sdn_parameter_urn"] = df["uri"].apply(self.get_urn_from_uri)
+        return df.rename(columns={"prefLabel": "sdn_parameter_name"})
 
-def get_platform_vocabulary(id: str) -> dict:
-    result = get_vocabulary_term("C17", id)
-    # Parse the json data in the definition field
-    attrs = json.loads(result["skos:definition"]["@value"])["node"]
-    return {
-        "platform_name": result["skos:prefLabel"]["@value"],
-        "platform_type": attrs.get("platformclass"),
-        "country_of_origin": attrs.get("country"),
-        "platform_owner": attrs.get("title"),
-        "platform_id": id,
-        "ices_platform_code": id,
-        "wmo_platform_code": attrs.get("IMO"),
-        "call_sign": attrs.get("callsign"),
-        "sdn_platform_urn": result["dc:identifier"],
-    }
+    def get_p06_vocabulary(self) -> pd.DataFrame:
+        df = self.get_vocabulary("P06")
+        df["sdn_uom_urn"] = df["uri"].apply(self.get_urn_from_uri)
+        return df.rename(columns={"prefLabel": "sdn_uom_name"})
+
+    def get_platform_vocabulary(self, id: str) -> dict:
+        result = self.get_vocabulary_term("C17", id)
+        # Parse the json data in the definition field
+        attrs = json.loads(result["skos:definition"]["@value"])["node"]
+        return {
+            "platform_name": result["skos:prefLabel"]["@value"],
+            "platform_type": attrs.get("platformclass"),
+            "country_of_origin": attrs.get("country"),
+            "platform_owner": attrs.get("title"),
+            "platform_id": id,
+            "ices_platform_code": id,
+            "wmo_platform_code": attrs.get("IMO"),
+            "call_sign": attrs.get("callsign"),
+            "sdn_platform_urn": result["dc:identifier"],
+        }
 
 
 @click.command()
@@ -65,9 +95,11 @@ def update_package_reference_vocabularies(output_dir: Path):
     if not output_dir:
         output_dir = Path(__file__).parent
     Path(output_dir).mkdir(parents=True, exist_ok=True)
-
-    get_p01_vocabulary().to_csv(output_dir / "nerc_P01_vocabulary.csv", index=False)
-    get_p06_vocabulary().to_csv(output_dir / "nerc_P06_vocabulary.csv")
+    nerc = Nerc()
+    nerc.get_p01_vocabulary().to_csv(
+        output_dir / "nerc_P01_vocabulary.csv", index=False
+    )
+    nerc.get_p06_vocabulary().to_csv(output_dir / "nerc_P06_vocabulary.csv")
 
 
 if __name__ == "__main__":
