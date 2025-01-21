@@ -7,8 +7,7 @@
     },
     "accF": {
         "long_name": "Acceleration",
-        "units": "ft/s^2",
-        "sdn_uom_urn": "SDN:P06::MPS2"
+        "units": "ft/s^2"
     },
     "altM": {
         "long_name": "Altimeter",
