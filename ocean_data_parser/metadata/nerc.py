@@ -54,8 +54,8 @@ class Nerc:
             return response.json()
 
     def get_urn_from_uri(self, uri: str) -> str:
-        _, vocabulary, version, id, _ = uri.rsplit("/", 4)
-        return f"{vocabulary}:{version}::{id}"
+        _, vocabulary, _, id, _ = uri.rsplit("/", 4)
+        return f"SDN:{vocabulary}::{id}"
 
     def get_p01_vocabulary(self) -> pd.DataFrame:
         df = self.get_vocabulary("P01")
