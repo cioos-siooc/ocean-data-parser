@@ -52,7 +52,7 @@ class TestNERCVocabularies:
 
     @pytest.mark.parametrize(("id", "expected"), [("18DL", "Amundsen")])
     def test_retrieve_platform(self, id, expected):
-        platform = nerc.get_platform_vocabulary(id)
+        platform = nerc.Nerc().get_platform_vocabulary(id)
         assert platform["platform_name"] == expected, (
             f"platform name {platform['platform_name']} doesn't match expected {expected}"
         )
