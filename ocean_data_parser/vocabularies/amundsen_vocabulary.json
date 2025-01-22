@@ -130,7 +130,7 @@
       "accepted_units": "PSU|psu|1e-3",
       "standard_name": "sea_water_practical_salinity",
       "sdn_parameter_urn": "SDN:P01::PSALST01",
-      "sdn_uom_urn": "SDN:P006::PSUX",
+      "sdn_uom_urn": "SDN:P06::PSUX",
       "rename": "P_sal_CTD",
       "rename_gf3": "PSAL"
     }
@@ -142,7 +142,7 @@
       "accepted_units": "PSU|psu|1e-3",
       "standard_name": "sea_water_practical_salinity",
       "sdn_parameter_urn": "SDN:P01::PSALST01",
-      "sdn_uom_urn": "SDN:P006::PSUX",
+      "sdn_uom_urn": "SDN:P06::PSUX",
       "rename": "P_sal_CTD",
       "rename_gf3": "PSAL"
     }
@@ -177,22 +177,6 @@
       "sdn_uom_urn": "SDN:P06::UYMD",
       "units": "YYYY-MM-DDThh:mm:ss.sssZ",
       "rename": "time"
-    }
-  ],
-  "Date": [
-    {
-      "sdn_parameter_urn": "",
-      "sdn_uom_urn": "",
-      "units": "",
-      "rename": ""
-    }
-  ],
-  "Hour": [
-    {
-      "sdn_parameter_urn": "",
-      "sdn_uom_urn": "",
-      "units": "",
-      "rename": ""
     }
   ],
   "Lat": [
@@ -237,50 +221,12 @@
       "sdn_parameter_urn": "SDN:P01::EWSBSS01"
     }
   ],
-  "Air temp": [
-    {
-      "long_name": "Air Temperature",
-      "units": "degC",
-      "standard_name": "air_temperature",
-      "sdn_parameter_urn": "",
-      "sdn_uom_urn": "SDN:P06::UPAA",
-      "accepted_units": "degC|deg C"
-    }
-  ],
-  "Dew point": [
-    {
-      "long_name": "Dew Point",
-      "units": "degC",
-      "standard_name": "dew_point_temperature",
-      "sdn_parameter_urn": "",
-      "sdn_uom_urn": "SDN:P06::UPAA",
-      "accepted_units": "degC|deg C"
-    }
-  ],
   "Pressure": [
     {
       "long_name": "Atmospheric Pressure",
       "units": "hPa",
       "standard_name": "air_pressure",
-      "sdn_parameter_urn": "",
       "sdn_uom_urn": "SDN:P06::HPAX"
-    }
-  ],
-  "Humidity": [
-    {
-      "long_name": "Air Humidity",
-      "units": "%",
-      "sdn_parameter_urn": "",
-      "sdn_uom_urn": "SDN:P06::UPCT"
-    }
-  ],
-  "SV": [
-    {
-      "long_name": "Sound Velocity",
-      "units": "m/s",
-      "standard_name": "speed_of_sound_in_sea_water",
-      "sdn_parameter_urn": "SDN:P01::SVELCA01",
-      "sdn_uom_urn": "SDN:P06::UVAA"
     }
   ],
   "Trans": [
@@ -437,48 +383,6 @@
       "rename_gf3": "SIGP"
     }
   ],
-  "Tem-TSG": [
-    {
-      "long_name": "Temperature From Thermo-Salinometer",
-      "units": "degrees_celcius",
-      "accepted_units": "\u00a1c",
-      "standard_name": "sea_surface_temperature"
-    }
-  ],
-  "Sal-TSG": [
-    {
-      "long_name": "Salinity From Thermo-Salinometer",
-      "units": "1e-3",
-      "standard_name": "sea_surface_salinity",
-      "accepted_units": "PSU|psu|1e-3"
-    }
-  ],
-  "Speed": [
-    {
-      "long_name": "Vessel Speed",
-      "units": "Knt",
-      "standard_name": "platform_speed_wrt_sea_water"
-    },
-    {
-      "long_name": "Vessel True Speed",
-      "units": "Knt",
-      "standard_name": "platform_speed_wrt_ground"
-    }
-  ],
-  "Tem-Water": [
-    {
-      "long_name": "Temperature From Sensor SBE38",
-      "units": "degrees_celcius",
-      "accepted_units": "\u00c2\u00b0c|\u00b0c|\u00a1c",
-      "standard_name": "sea_water_temperature"
-    }
-  ],
-  "Flow": [
-    {
-      "long_name": "Water Flow Rate",
-      "units": "L/min"
-    }
-  ],
   "Dens": [
     {
       "long_name": "Sigma-T (Rho (S, T, 0) - 1000)",
@@ -526,7 +430,6 @@
       "long_name": "Fluorescence Of CDOM (Colored Dissolved Organic Matter)",
       "units": "mg/m^3",
       "standard_name": "concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate",
-      "sdn_parameter_urn": "",
       "sdn_uom_urn": "SDN:P06::UMMC",
       "rename": "CDOM_fluor_WETLabs",
       "rename_gf3": "CDOM"
@@ -612,59 +515,6 @@
       "rename_gf3": "SPAR"
     }
   ],
-  "Heading": [
-    {
-      "long_name": "Vessel Heading",
-      "units": "degrees N",
-      "standard_name": "platform_orientation",
-      "sdn_parameter_urn": "",
-      "sdn_uom_urn": "SDN:P06::DEGN"
-    }
-  ],
-  "Roll": [
-    {
-      "long_name": "Vessel Roll",
-      "units": "degrees N",
-      "standard_name": "platform_roll",
-      "sdn_parameter_urn": "",
-      "sdn_uom_urn": "SDN:P06::DEGN"
-    }
-  ],
-  "Pitch": [
-    {
-      "long_name": "Vessel Pitch",
-      "units": "degrees N",
-      "standard_name": "platform_pitch",
-      "sdn_parameter_urn": "",
-      "sdn_uom_urn": "SDN:P06::DEGN"
-    }
-  ],
-  "Heave": [
-    {
-      "long_name": "Vessel Heave",
-      "units": "meter",
-      "standard_name": "platform_heave",
-      "sdn_parameter_urn": "",
-      "sdn_uom_urn": "SDN:P06::ULAA"
-    }
-  ],
-  "Track": [
-    {
-      "long_name": "Vessel True Direction",
-      "units": "degrees N",
-      "standard_name": "platform_course",
-      "sdn_parameter_urn": "",
-      "sdn_uom_urn": "SDN:P06::DEGN"
-    }
-  ],
-  "GPS": [
-    {
-      "long_name": "GPS Source",
-      "units": null,
-      "comments": "=1 for POS-MV and =0 for CNAV",
-      "accepted_units": "=1 for POS-MV and =0 for CNAV"
-    }
-  ],
   "Depth": [
     {
       "long_name": "Bottom Depth",
@@ -684,89 +534,6 @@
       "standard_name": "depth",
       "sdn_parameter_urn": "SDN:P01::ADEPZZ01",
       "sdn_uom_urn": "SDN:P06::ULAA"
-    }
-  ],
-  "Tem-TSG": [
-    {
-      "long_name": "Temperature From Thermosalinograph",
-      "units": "degrees_celcius",
-      "accepted_units": "\u00a1c",
-      "standard_name": "sea_surface_temperature",
-      "sdn_parameter_urn": "SDN:P01::TEMPSZ01",
-      "sdn_uom_urn": "SDN:P06::UPAA",
-      "rename": "TSGTmp"
-    }
-  ],
-  "Sal-TSG": [
-    {
-      "long_name": "Salinity From Thermosalinograph",
-      "units": "1e-3",
-      "standard_name": "sea_surface_salinity",
-      "sdn_parameter_urn": "SDN:P01::PSALSZ01",
-      "sdn_uom_urn": "SDN:P06::PSUX",
-      "accepted_units": "PSU|psu|1e-3",
-      "rename": "P_sal_TSG"
-    }
-  ],
-  "Speed": [
-    {
-      "long_name": "Vessel Speed",
-      "units": "Knt",
-      "standard_name": "platform_speed",
-      "sdn_parameter_urn": "",
-      "sdn_uom_urn": "SDN:P06::UKNT"
-    },
-    {
-      "long_name": "Vessel True Speed",
-      "units": "Knt",
-      "standard_name": "platform_speed",
-      "sdn_parameter_urn": "",
-      "sdn_uom_urn": "SDN:P06::UKNT"
-    }
-  ],
-  "vessel_speed": [
-    {
-      "long_name": "Vessel Speed",
-      "units": "Knt",
-      "standard_name": "platform_speed",
-      "sdn_parameter_urn": "",
-      "sdn_uom_urn": "SDN:P06::UKNT"
-    }
-  ],
-  "Tem-Water": [
-    {
-      "long_name": "Temperature From Sensor SBE38",
-      "units": "degrees_celcius",
-      "accepted_units": "\u00c2\u00b0c|\u00b0c|\u00a1c",
-      "standard_name": "sea_surface_temperature",
-      "sdn_uom_urn": "SDN:P06::UPAA"
-    }
-  ],
-  "water_temperature": [
-    {
-      "long_name": "Temperature From Sensor SBE38",
-      "units": "degrees_celcius",
-      "accepted_units": "\u00c2\u00b0c|\u00b0c|\u00a1c",
-      "standard_name": "sea_surface_temperature",
-      "sdn_uom_urn": "SDN:P06::UPAA"
-    }
-  ],
-  "Flow": [
-    {
-      "long_name": "Water Flow Rate",
-      "units": "L/min",
-      "sdn_parameter_urn": "SDN:P01::INFLTF01",
-      "sdn_uom_urn": "SDN:P06::ULPM",
-      "rename": "TSG+Fl_Flow"
-    }
-  ],
-  "flow_rate": [
-    {
-      "long_name": "Water Flow Rate",
-      "units": "L/min",
-      "sdn_parameter_urn": "SDN:P01::INFLTF01",
-      "sdn_uom_urn": "SDN:P06::ULPM",
-      "rename": "TSG+Fl_Flow"
     }
   ]
 }
