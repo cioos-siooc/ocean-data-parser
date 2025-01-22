@@ -117,8 +117,7 @@
       "long_name": "Latitude",
       "standard_name": "latitude",
       "sdn_parameter_urn": "SDN:P01::ALATZZ01",
-      "sdn_uom_urn": "SDN:P06::DEGN",
-      "rename": "Lat"
+      "sdn_uom_urn": "SDN:P06::DEGN"
     }
   ],
   "Long": [
@@ -352,7 +351,6 @@
       "standard_name": "mole_concentration_of_nitrate_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::NTRAZZXX",
       "sdn_uom_urn": "SDN:P06::MMCM",
-      "rename": "NO3",
       "rename_gf3": "NTRA"
     }
   ],
