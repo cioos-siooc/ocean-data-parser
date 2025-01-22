@@ -3,7 +3,7 @@ import logging
 import pandas as pd
 import pytest
 
-from ocean_data_parser.metadata import cf, nerc, pdc
+from ocean_data_parser.metadata import cf, pdc
 from ocean_data_parser.metadata.nerc import Nerc
 
 logging.basicConfig(level=logging.DEBUG)
