@@ -10,73 +10,6 @@
     "notes_SV": "Add filter not to include SV (sound velocity) in all CTD files as there is not any sound sensor installed on the CTD Rosette (SV was derived from Temperature and salinity mostly). However, it should be included in all MVP and TSG data as sound velocity sensors are installed on them.",
     "notes_O2": "All O2 units from before the year 2018 has mL/L. Since 2018, the units was updated to uM. All Dissolved Oxygen unit before 2018 should be converted into μM. An apply_function x*44.661 has been added in order to help for the conversion from mL/L to the unit μM, where x is the variable representing the Dissolved Oxygen before 2018."
   },
-  "Net": [
-    {
-      "long_name": "Net Number"
-    }
-  ],
-  "Pres_open": [
-    {
-      "long_name": "Net Open Pressure",
-      "units": "db"
-    }
-  ],
-  "Pres_close": [
-    {
-      "long_name": "Net Close Pressure",
-      "units": "db"
-    }
-  ],
-  "Duration": [
-    {
-      "long_name": "Sample Duration",
-      "sdn_parameter_urn": "SDN:P01::AZDRZZ01",
-      "sdn_uom_urn": "SDN:P06::UTBB",
-      "units": "s"
-    }
-  ],
-  "Volume": [
-    {
-      "long_name": "Sample Volume",
-      "units": "m^3",
-      "sdn_parameter_urn": "SDN:P01::TOKGPR02",
-      "sdn_uom_urn": "SDN:P06::MCUB"
-    }
-  ],
-  "Tem_mean": [
-    {
-      "long_name": "Mean Temperature (ITS-90)",
-      "units": "degC",
-      "standard_name": "sea_water_temperature",
-      "sdn_uom_urn": "SDN:P06::UPAA",
-      "accepted_units": "degC|degrees C"
-    }
-  ],
-  "Tem_std": [
-    {
-      "long_name": "Standard Deviation Temperature (ITS-90)",
-      "units": "degC",
-      "standard_name": "sea_water_temperature",
-      "accepted_units": "degC|degrees C"
-    }
-  ],
-  "Sal_mean": [
-    {
-      "long_name": "Mean Salinity (PSS-78)",
-      "units": "1e-3",
-      "accepted_units": "PSU|psu|1e-3",
-      "standard_name": "sea_water_practical_salinity"
-    }
-  ],
-  "Sal_std": [
-    {
-      "long_name": "Standard Deviation Salinity (PSS-78)",
-      "units": "1e-3",
-      "accepted_units": "PSU|psu|1e-3",
-      "sdn_parameter_urn": "SDN:P01::PSSDCU01",
-      "sdn_uom_urn": "SDN:P06::PSUX"
-    }
-  ],
   "Pres": [
     {
       "long_name": "Sea Pressure (Sea Surface - 0)",
@@ -504,13 +437,6 @@
       "standard_name": "sea_water_ph_reported_on_total_scale",
       "sdn_parameter_urn": "SDN:P01::PHMASSXX",
       "sdn_uom_urn": "SDN:P06::UUPH"
-    }
-  ],
-  "instrument_depth": [
-    {
-      "standard_name": "depth",
-      "sdn_parameter_urn": "SDN:P01::ADEPZZ01",
-      "sdn_uom_urn": "SDN:P06::ULAA"
     }
   ]
 }
