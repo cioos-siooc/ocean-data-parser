@@ -4,9 +4,12 @@ import pandas as pd
 import pytest
 
 from ocean_data_parser.metadata import cf, nerc, pdc
+from ocean_data_parser.metadata.nerc import Nerc
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
+
+nerc = Nerc()
 
 
 class TestPDCMetadatas:
@@ -52,7 +55,7 @@ class TestNERCVocabularies:
 
     @pytest.mark.parametrize(("id", "expected"), [("18DL", "Amundsen")])
     def test_retrieve_platform(self, id, expected):
-        platform = nerc.Nerc().get_platform_vocabulary(id)
+        platform = nerc.get_platform_vocabulary(id)
         assert platform["platform_name"] == expected, (
             f"platform name {platform['platform_name']} doesn't match expected {expected}"
         )
