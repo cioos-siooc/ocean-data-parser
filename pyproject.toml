@@ -12,7 +12,7 @@ dependencies = [
     "fortranformat>=2.0.0",
     "gsw-xarray>=0.4.0",
     "loguru>=0.7.3",
-    "lxml>=5.3.0",
+    "lxml>=4.9.3",
     "netcdf4>=1.7.2",
     "numpy>=1.26.1",
     "o2conversion",
