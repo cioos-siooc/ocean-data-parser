@@ -242,7 +242,7 @@
       "long_name": "Air Temperature",
       "units": "degC",
       "standard_name": "air_temperature",
-      "sdn_parameter_urn": "SDN:P07::CFSN0023",
+      "sdn_parameter_urn": "",
       "sdn_uom_urn": "SDN:P06::UPAA",
       "accepted_units": "degC|deg C"
     }
@@ -270,7 +270,7 @@
     {
       "long_name": "Air Humidity",
       "units": "%",
-      "sdn_parameter_urn": "SDN:OD1::HUMI",
+      "sdn_parameter_urn": "",
       "sdn_uom_urn": "SDN:P06::UPCT"
     }
   ],
