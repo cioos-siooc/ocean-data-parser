@@ -114,7 +114,7 @@ def validate_parser_kwargs(ctx, _, value):
         "Parser key word arguments to pass to the parser. Expect a JSON string."
         ' (ex: \'{"globa_attributes": {"project": "test"}\')'
     ),
-    default=None,
+    default="{}",
     callback=validate_parser_kwargs,
 )
 @click.option(
