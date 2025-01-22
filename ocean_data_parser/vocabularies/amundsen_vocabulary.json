@@ -413,7 +413,7 @@
   "SPAR": [
     {
       "long_name": "Surface Photosynthetic Active Radiation",
-      "units": "µEinsteins/s/m^2",
+      "units": "uEinsteins/s/m^2",
       "accepted_units": "uEinsteins/s/m\\^2|µeinsteins/s/m\\^2",
       "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::IRRDSV01",
