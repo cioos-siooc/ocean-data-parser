@@ -20,22 +20,22 @@ nerc_p06 = nerc.Nerc().get_p06_vocabulary()
 
 
 class TestVocabularyLoad:
-    def test_amundsen_vocabulary_load():
+    def test_amundsen_vocabulary_load(self):
         vocab = load.amundsen_vocabulary()
         assert vocab
         assert isinstance(vocab, dict)
 
-    def test_seabird_vocabulary_load():
+    def test_seabird_vocabulary_load(self):
         vocab = load.seabird_vocabulary()
         assert vocab
         assert isinstance(vocab, dict)
 
-    def test_dfo_odf_vocabulary_load():
+    def test_dfo_odf_vocabulary_load(self):
         vocab = load.dfo_odf_vocabulary()
         assert isinstance(vocab, pd.DataFrame)
         assert not vocab.empty
 
-    def test_dfo_nafc_pfile_vocabulary_load():
+    def test_dfo_nafc_pfile_vocabulary_load(self):
         vocab = load.dfo_nafc_p_file_vocabulary()
         assert isinstance(vocab, pd.DataFrame)
         assert not vocab.empty
