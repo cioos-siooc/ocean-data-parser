@@ -581,7 +581,7 @@ class IosFile:
                 fmt += re.match(r"I(\d+)", info["Format"][i], re.IGNORECASE)[1] + "s"
             elif info["Format"][i].strip() in ("F", "I", "f", "i"):
                 logger.info(
-                    "Unable to retrieve the fmt format from " "the CHANNEL DETAIL Table"
+                    "Unable to retrieve the fmt format from the CHANNEL DETAIL Table"
                 )
                 break
             else:

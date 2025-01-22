@@ -61,7 +61,7 @@ def review_parsed_dataset(
         assert isinstance(path_generation_input["time_max"], pd.Timestamp)
 
 
-@pytest.fixture()
+@pytest.fixture
 def caplog(caplog):
     handler_id = logger.add(caplog.handler, format="{message}")
     yield caplog
@@ -750,7 +750,7 @@ class TestBlueElectricParse:
         [
             path
             for path in glob("tests/parsers_test_files/electricblue/*.csv")
-            if "/log" not in path
+            if "log" not in path
         ],
     )
     def test_blue_electric_csv_parser(self, path, caplog):

@@ -253,7 +253,7 @@ def csv(
                 ds.attrs["history"] += " ".join(
                     [
                         f"{datetime.now()}",
-                        f"Convert temperature ({ ds['temperature'].attrs['units']}) to"
+                        f"Convert temperature ({ds['temperature'].attrs['units']}) to"
                         "degree Celsius [(degF-32)/1.8000]",
                     ]
                 )

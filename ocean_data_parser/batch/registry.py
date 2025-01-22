@@ -82,9 +82,14 @@ class FileConversionRegistry:
         self.data["output_path"] = self.data["output_path"].apply(_as_path)
         return self
 
-    def save(self):
+    def save(self, force_posix=False):
         """_summary_."""
         df = self.data.drop(columns=[col for col in self.data if col.endswith("_new")])
+
+        if force_posix:
+            df.index = df.index.map(lambda x: x.as_posix())
+            df["output_path"] = df["output_path"].map(lambda x: x.as_posix())
+
         if not self.path:
             return
         elif self.path.suffix == ".csv":
@@ -237,7 +242,7 @@ class FileConversionRegistry:
         """
         if dataframe is not None and kwargs:
             raise ValueError(
-                "Can't update fields with a mix of arguments " "and keyword arguments"
+                "Can't update fields with a mix of arguments and keyword arguments"
             )
 
         # If unique source is given convert it to a string

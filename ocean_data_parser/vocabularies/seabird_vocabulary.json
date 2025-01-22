@@ -7,8 +7,7 @@
     },
     "accF": {
         "long_name": "Acceleration",
-        "units": "ft/s^2",
-        "sdn_uom_urn": "SDN:P06::MPS2"
+        "units": "ft/s^2"
     },
     "altM": {
         "long_name": "Altimeter",
@@ -557,7 +556,7 @@
         "long_name": "Density 2 [sigma-t]",
         "units": "kg/m^3",
         "standard_name": "sea_water_sigma_t",
-        "sdn_parameter_urn": "SDN:P01::SIGTEQST2",
+        "sdn_parameter_urn": "SDN:P01::SIGTEQST",
         "sdn_parameter_name": "Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm",
         "sdn_uom_urn": "SDN:P06::UKMC",
         "sdn_uom_name": "Kilograms per cubic metre",
@@ -2655,8 +2654,9 @@
     "svDF": {
         "long_name": "Sound Velocity [Delgrosso]",
         "units": "ft/s",
-        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by Delgrosso algorithm",
-        "comments": "1st sensor"
+        "comments": "1st sensor",
+        "sdn_parameter_urn": "SDN:P01::SVELCT01",
+        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by unspecified algorithm"
     },
     "svWM": {
         "long_name": "Sound Velocity [Wilson]",
@@ -2672,38 +2672,65 @@
     "svWF": {
         "long_name": "Sound Velocity [Wilson]",
         "units": "ft/s",
-        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by Wilson algorithm",
-        "comments": "1st sensor"
+        "comments": "1st sensor",
+        "sdn_parameter_urn": "SDN:P01::SVELCT01",
+        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by unspecified algorithm",
+        "sdn_uom_urn": "SDN:P06::UVAA",
+        "sdn_uom_name": "Metres per second"
     },
     "svCM1": {
         "long_name": "Sound Velocity, 2 [Chen-Millero]",
         "units": "m/s",
-        "comments": "2nd sensor"
+        "comments": "2nd sensor",
+        "sdn_parameter_urn": "SDN:P01::SVELCT02",
+        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by unspecified algorithm",
+        "sdn_uom_urn": "SDN:P06::UVAA",
+        "sdn_uom_name": "Metres per second"
     },
     "svCF1": {
         "long_name": "Sound Velocity, 2 [Chen-Millero]",
         "units": "ft/s",
-        "comments": "2nd sensor"
+        "comments": "2nd sensor",
+        "sdn_parameter_urn": "SDN:P01::SVELCT02",
+        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by unspecified algorithm",
+        "sdn_uom_urn": "SDN:P06::UVAA",
+        "sdn_uom_name": "Metres per second"
     },
     "svDM1": {
         "long_name": "Sound Velocity, 2 [Delgrosso]",
         "units": "m/s",
-        "comments": "2nd sensor"
+        "comments": "2nd sensor",
+        "sdn_parameter_urn": "SDN:P01::SVELCT02",
+        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by unspecified algorithm",
+        "sdn_uom_urn": "SDN:P06::UVAA",
+        "sdn_uom_name": "Metres per second"
     },
     "svDF1": {
         "long_name": "Sound Velocity, 2 [Delgrosso]",
         "units": "ft/s",
-        "comments": "2nd sensor"
+        "comments": "2nd sensor",
+        "sdn_parameter_urn": "SDN:P01::SVELCT02",
+        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by unspecified algorithm",
+        "sdn_uom_urn": "SDN:P06::UVAA",
+        "sdn_uom_name": "Metres per second"
     },
     "svWM1": {
         "long_name": "Sound Velocity, 2 [Wilson]",
         "units": "m/s",
-        "comments": "2nd sensor"
+        "comments": "2nd sensor",
+        "sdn_parameter_urn": "SDN:P01::SVELCT02",
+        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by unspecified algorithm",
+        "sdn_uom_urn": "SDN:P06::UVAA",
+        "sdn_uom_name": "Metres per second"
     },
     "svWF1": {
         "long_name": "Sound Velocity, 2 [Wilson]",
         "units": "ft/s",
-        "comments": "2nd sensor"
+        "comments": "2nd sensor",
+        "sdn_parameter_urn": "SDN:P01::SVELCT02",
+        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by unspecified algorithm",
+        "sdn_uom_urn": "SDN:P06::UVAA",
+        "sdn_uom_name": "Metres per second"
     },
     "iowSv": {
         "long_name": "Sound Velocity, Iow",
@@ -2738,7 +2765,7 @@
     "par/sat/log": {
         "name": "parPersatPerlog",
         "long_name": "PAR/Logarithmic, Satlantic",
-        "units":"umol photons/m^2/sec"
+        "units": "umol photons/m^2/sec"
     },
     "specc": {
         "long_name": "Specific Conductance",
@@ -3688,7 +3715,7 @@
         "definition": "The square root of the average of the squares of deviations about the mean of a set of values of the specified measurement."
     },
     "time": {
-        "long_name": "Time", 
+        "long_name": "Time",
         "standard_name": "time"
     }
 }

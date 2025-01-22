@@ -24,7 +24,7 @@ TEST_FILE = Path("temp/test_file.csv")
 TEST_REGISTRY = FileConversionRegistry(path=TEST_REGISTRY_PATH)
 
 
-@pytest.fixture()
+@pytest.fixture
 def caplog(caplog):
     handler_id = logger.add(caplog.handler, format="{message}")
     yield caplog
@@ -36,9 +36,9 @@ class TestConfigLoad:
 
     def test_default_config_load(self):
         config = load_config()
-        assert isinstance(
-            config, dict
-        ), "Default loaded configuration is not a dictionary"
+        assert isinstance(config, dict), (
+            "Default loaded configuration is not a dictionary"
+        )
 
     def test_default_config_logging(self):
         load_config()
@@ -191,9 +191,9 @@ class TestBatchCLI:
     def test_batch_cli_new_config_creation_output(self, tmpdir: Path):
         new_config_test_file = tmpdir / "test_config_copy.yaml"
         result = self._run_cli_batch_process("--new-config", str(new_config_test_file))
-        assert (
-            result.exit_code == 0
-        ), f"new config failed with exit_code={result.exit_code}, result={result}"
+        assert result.exit_code == 0, (
+            f"new config failed with exit_code={result.exit_code}, result={result}"
+        )
         assert new_config_test_file.exists()
 
     def test_batch_cli_new_config_failed_creation_already_existing_file(
@@ -217,9 +217,9 @@ class TestBatchCLI:
     def test_batch_failed_cli_conversion_with_argument_inputs(self):
         result = self._run_cli_batch_process("*.csv")
         assert result.exit_code == 2
-        assert (
-            "Error: Got unexpected extra argument" in result.output
-        ), f"Unexpected output {result.output=}"
+        assert "Error: Got unexpected extra argument" in result.output, (
+            f"Unexpected output {result.output=}"
+        )
 
     def test_failed_cli_batch_conversion_with_ignore_errors(self, tmp_path):
         test_file_path = tmp_path / "failed_cli_test_file.cnv"
@@ -442,7 +442,7 @@ class TestBatchConversion:
         )
         excluded_files = batch.get_excluded_files()
         assert excluded_files
-        assert set(excluded_files) == {str(file) for file in glob(exclude)}
+        assert set(excluded_files) == {Path(file) for file in glob(exclude)}
 
         source_files = batch.get_source_files()
         assert source_files
@@ -457,12 +457,12 @@ class TestGenerateOutputPath:
     """Series of tests related to the generation of output file names."""
 
     @staticmethod
-    @pytest.fixture()
+    @pytest.fixture
     def ds_path():
         return "tests/parsers_test_files/pme/minidot/2022-03-01 233900Z.txt"
 
     @staticmethod
-    @pytest.fixture()
+    @pytest.fixture
     def ds(ds_path):
         ds = file(ds_path)
         ds.attrs["source"] = ds_path
@@ -471,7 +471,7 @@ class TestGenerateOutputPath:
     def test_output(self, ds, ds_path):
         path = generate_output_path(ds)
         assert isinstance(path, Path)
-        assert str(path) == ds_path + ".nc"
+        assert path.as_posix() == ds_path + ".nc"
 
     def test_output_with_file_name(self, ds, ds_path):
         path = generate_output_path(ds, path=Path(ds_path).parent, file_name="test")
@@ -479,19 +479,19 @@ class TestGenerateOutputPath:
 
     def test_output_with_file_name_and_path(self, ds):
         path = generate_output_path(ds, file_name="test", path="tests")
-        assert str(path) == "tests/test.nc"
+        assert path.as_posix() == "tests/test.nc"
 
     def test_output_with_file_name_and_path_and_suffix(self, ds):
         path = generate_output_path(
             ds, file_name="test", path="tests", file_suffix="_suffix"
         )
-        assert str(path) == "tests/test_suffix.nc"
+        assert path.as_posix() == "tests/test_suffix.nc"
 
     def test_output_with_file_name_and_path_and_prefix(self, ds):
         path = generate_output_path(
             ds, file_name="test", path="tests", file_preffix="prefix_"
         )
-        assert str(path) == "tests/prefix_test.nc"
+        assert path.as_posix() == "tests/prefix_test.nc"
 
     def test_output_with_file_name_and_path_and_suffix_and_preffix(self, ds):
         path = generate_output_path(
@@ -501,7 +501,7 @@ class TestGenerateOutputPath:
             file_suffix="_suffix",
             file_preffix="preffix_",
         )
-        assert str(path) == "tests/preffix_test_suffix.nc"
+        assert path.as_posix() == "tests/preffix_test_suffix.nc"
 
     def test_output_with_file_name_and_path_and_suffix_and_preffix_and_output_format(
         self, ds
@@ -514,32 +514,32 @@ class TestGenerateOutputPath:
             file_preffix="preffix_",
             output_format=".csv",
         )
-        assert str(path) == "tests/preffix_test_suffix.csv"
+        assert path.as_posix() == "tests/preffix_test_suffix.csv"
 
     def test_output_with_global(self, ds):
         ds.attrs["test_attr"] = "test_value"
         path = generate_output_path(ds, path=".", file_name="test_{test_attr}")
-        assert str(path) == "test_test_value.nc"
+        assert path.as_posix() == "test_test_value.nc"
 
     def test_output_with_time_min(self, ds):
         path = generate_output_path(ds, path=".", file_name="{time_min.year}/test")
-        assert str(path) == "2022/test.nc"
+        assert path.as_posix() == "2022/test.nc"
 
     def test_output_with_time_max_year(self, ds):
         path = generate_output_path(ds, path=".", file_name="{time_max.year}/test")
-        assert str(path) == "2022/test.nc"
+        assert path.as_posix() == "2022/test.nc"
 
     def test_output_with_time_min_year(self, ds):
         path = generate_output_path(ds, path=".", file_name="{time_min.year}/test")
-        assert str(path) == "2022/test.nc"
+        assert path.as_posix() == "2022/test.nc"
 
     def test_output_with_time_max_date_format(self, ds):
         path = generate_output_path(ds, path=".", file_name="{time_max:%Y-%m-%d}/test")
-        assert str(path) == "2022-03-02/test.nc"
+        assert path.as_posix() == "2022-03-02/test.nc"
 
     def test_output_with_file_stem(self, ds, ds_path):
         path = generate_output_path(ds, path=".", file_name="{source_stem}_2")
-        assert str(path) == Path(ds_path).stem + "_2.nc"
+        assert path.as_posix() == Path(ds_path).stem + "_2.nc"
 
 
 class TestBatchConvertFromInputTable:
@@ -596,7 +596,8 @@ class TestBatchConvertFromInputTable:
         assert files
         assert len(files) > 0
         assert all(
-            str(file).startswith("tests/parsers_test_files/onset/") for file in files
+            file.as_posix().startswith("tests/parsers_test_files/onset/")
+            for file in files
         )
 
     def test_get_files_with_file_column_suffix(self, config):
@@ -615,7 +616,7 @@ class TestBatchConvertFromInputTable:
         assert files
         assert len(files) > 0
         assert all(
-            str(file).startswith("tests/parsers_test_files/onset/")
+            file.as_posix().startswith("tests/parsers_test_files/onset/")
             and file.suffix == ".csv"
             for file in files
         )

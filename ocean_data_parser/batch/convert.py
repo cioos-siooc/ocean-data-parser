@@ -114,7 +114,7 @@ def validate_parser_kwargs(ctx, _, value):
         "Parser key word arguments to pass to the parser. Expect a JSON string."
         ' (ex: \'{"globa_attributes": {"project": "test"}\')'
     ),
-    default=None,
+    default="{}",
     callback=validate_parser_kwargs,
 )
 @click.option(
@@ -128,8 +128,7 @@ def validate_parser_kwargs(ctx, _, value):
     "--multiprocessing",
     type=int,
     help=(
-        "Run conversion in parallel on N processors."
-        " None == all processors available"
+        "Run conversion in parallel on N processors. None == all processors available"
     ),
 )
 @click.option(
@@ -256,7 +255,7 @@ class BatchConversion:
 
     def get_excluded_files(self) -> list:
         return (
-            glob(self.config["exclude"], recursive=True)
+            [Path(file) for file in glob(self.config["exclude"], recursive=True)]
             if self.config.get("exclude")
             else []
         )
@@ -270,7 +269,7 @@ class BatchConversion:
             Path(file)
             for path in paths
             for file in glob(path, recursive=True)
-            if file not in excluded_files
+            if Path(file) not in excluded_files
         ]
 
     def load_input_table(self, table: dict) -> pd.DataFrame:
@@ -503,7 +502,7 @@ def convert_file(file: str, parser: str, config: dict, global_attributes=None) -
     ds = read.file(
         file,
         parser=parser,
-        **config.get("parser_kwargs", {}),
+        **(config.get("parser_kwargs") or {}),
         global_attributes=global_attributes,
     )
     if not isinstance(ds, Dataset):

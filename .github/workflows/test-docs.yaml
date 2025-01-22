@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: astral-sh/setup-uv@v5
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
@@ -21,11 +22,9 @@ jobs:
           path: .cache
           restore-keys: |
             mkdocs-material-
-      - run: |
-          pip install poetry
-          poetry install --with docs,geo
+      - run: uv sync --extra docs --extra geo
       - run: |
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
       - run: |
-          poetry run mkdocs build -s -d test
+          uv run mkdocs build -s -d test

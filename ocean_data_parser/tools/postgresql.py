@@ -67,7 +67,7 @@ def update_database_table(
 
     # Sort columns to be same as datbase ignore the extra variables
     table_columns = list(
-        conn.execute(f"SELECT * FROM {schema+'.' or ''}{table}").keys()
+        conn.execute(f"SELECT * FROM {schema + '.' or ''}{table}").keys()
     )
     available_columns = [
         col for col in table_columns if col in df or col in df.index.names
