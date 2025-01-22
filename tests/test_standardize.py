@@ -8,7 +8,7 @@ from ocean_data_parser.parsers import utils
 
 
 @pytest.mark.parametrize(
-    "value,expected",
+    ("value", "expected"),
     [
         ("str", True),
         (123, True),
@@ -26,7 +26,7 @@ def test_consider_attribute(value, expected):
 
 
 @pytest.mark.parametrize(
-    "value,dtype,expected_value",
+    ("value", "dtype", "expected_value"),
     [
         ("str", str, "str"),
         (123, int, 123),
@@ -53,15 +53,15 @@ def test_consider_attribute(value, expected):
     ],
 )
 def test_standardize_attribute(value, dtype, expected_value):
-    """Test standardize_attributes function"""
+    """Test standardize_attributes function."""
     response = utils.standardize_attributes({"test": value})
-    assert dtype is None or isinstance(
-        response["test"], dtype
-    ), "Attribute was not converted to expected dtype"
-    assert (
-        "test" not in response if dtype is None else True
-    ), "Null attribute was not removed"
+    assert dtype is None or isinstance(response["test"], dtype), (
+        "Attribute was not converted to expected dtype"
+    )
+    assert "test" not in response if dtype is None else True, (
+        "Null attribute was not removed"
+    )
     is_equal = response.get("test") == expected_value
-    assert (
-        all(is_equal) if isinstance(expected_value, np.ndarray) else is_equal
-    ), "Attribute was not converted to expected value"
+    assert all(is_equal) if isinstance(expected_value, np.ndarray) else is_equal, (
+        "Attribute was not converted to expected value"
+    )

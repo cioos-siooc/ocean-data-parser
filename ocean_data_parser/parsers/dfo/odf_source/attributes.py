@@ -1,8 +1,3 @@
-"""
-Attribute module regroup all the different tools used to standardize the ODFs
-attribtutes to the different conventions (CF, ACDD).
-"""
-
 import json
 import logging
 import re
@@ -43,7 +38,7 @@ global_odf_to_cf = {
 
 
 def _generate_platform_attributes(platform: str) -> dict:
-    """Review ODF CRUISE_HEADER:PLATFORM and match to closest"""
+    """Review ODF CRUISE_HEADER:PLATFORM and match to closest."""
     if reference_platforms is None:
         return {}
     platform = re.sub(
@@ -66,8 +61,9 @@ def _generate_platform_attributes(platform: str) -> dict:
 
 
 def _generate_cf_history_from_odf(odf_header) -> dict:
-    """
-    Generate from ODF HISTORY_HEADER, CF recommended format history attribute.
+    """Generate CF compatible history from ODF header.
+
+    Follow the CF conventions for history attribute: iso timestamp - description.
     If a Seabird instrument csv header is provided, it will be converted to a CF standard and
     made available within the instrument_manufacturer_header attribute.
     Processing steps associated with the SBE Processing toolbox will also be
@@ -182,7 +178,7 @@ def _define_cdm_data_type_from_odf(odf_header: dict) -> dict:
 
 
 def _review_event_number(global_attributes, odf_header) -> int:
-    """Review event_number which should be number otherwise get rid of it"""
+    """Review event_number which should be number otherwise get rid of it."""
     # If interger already return that same value
     if isinstance(global_attributes["event_number"], int):
         return global_attributes["event_number"]
@@ -206,11 +202,12 @@ def _review_event_number(global_attributes, odf_header) -> int:
 
 
 def _standardize_station_names(station: str) -> str:
-    """
-    Standardize stations with convention:
-        - ABC01: capital letters two digits
-        - 001: 3 digits numbers
-        - Otherwise unchanged
+    """Standardize stations.
+
+    Standardize station name with convention:
+    - ABC01: capital letters two digits
+    - 001: 3 digits numbers
+    - Otherwise unchanged.
     """
     if re.match(r"[A-Za-z]+\_*\d+", station):
         station_items = re.search(r"([A-Za-z]+)_*(\d+)", station).groups()
@@ -223,10 +220,12 @@ def _standardize_station_names(station: str) -> str:
 
 
 def _review_station(global_attributes, odf_header):
-    """Review station attribute,
+    """Review station attribute.
+
+    The station attribute is reviewed based on the following rules:
     - If not available search in original odf header for "station... : STATION_NAME"
     - Standardize station name
-    - Make sure station != event_number
+    - Make sure station != event_number.
     """
     # If station is already available return it back
     if global_attributes.get("station"):
@@ -258,10 +257,11 @@ def _review_station(global_attributes, odf_header):
 
 
 def _generate_instrument_attributes(odf_header, instrument_manufacturer_header=None):
-    """
-    Generate instrument attributes based on:
+    """Generate instrument attributes.
+
+    The generated attributes are  based on:
     - ODF instrument attribute
-    - manufacturer header
+    - manufacturer header.
     """
     # Instrument Specific Information
     attributes = {}
@@ -308,7 +308,7 @@ def _generate_title_from_global_attributes(attributes):
     title = (
         f"{attributes['odf_data_type']} profile data collected "
         + (
-            f"from the {attributes['platform']} {attributes.get('platform_name','')}"
+            f"from the {attributes['platform']} {attributes.get('platform_name', '')}"
             if "platform" in attributes
             else ""
         )
@@ -329,12 +329,14 @@ def _generate_title_from_global_attributes(attributes):
 
 
 def _generate_program_specific_attritutes(global_attributes):
-    """Generate program specific attributes
+    """Generate program specific attributes.
+
+    Specific attributes are generated for the following programs:
     Bedford Institute of Oceanography
     - AZMP
         + Program specific -> cruise_name = None
     - MARES
-    - AZOMP
+    - AZOMP.
     """
     # Standardize project and cruise_name (AZMP, AZOMP and MARES)
     if "program" not in global_attributes:
@@ -368,16 +370,16 @@ def _generate_program_specific_attritutes(global_attributes):
 
 
 def _map_odf_to_cf_globals(attrs):
-    """Map ODF attributes to cf,acdd names"""
+    """Map ODF attributes to cf,acdd names."""
     return {global_odf_to_cf.get(name, name): value for name, value in attrs.items()}
 
 
 def global_attributes_from_header(dataset, odf_header):
-    """
+    """Retrieve global attributes from ODF Header and apply corrections.
+
     Method use to define the standard global attributes from an ODF Header
     parsed by the read function.
     """
-
     # Generate Global attributes
     dataset.attrs = {
         # CRUISE_HEADER
@@ -394,7 +396,7 @@ def global_attributes_from_header(dataset, odf_header):
         },
         # INSTRUMENT_HEADER
         **{
-            f"instrument_{name.replace('inst_','')}".lower(): value
+            f"instrument_{name.replace('inst_', '')}".lower(): value
             for name, value in odf_header.get("INSTRUMENT_HEADER", {}).items()
         },
         **_generate_cf_history_from_odf(odf_header),
@@ -439,9 +441,7 @@ def global_attributes_from_header(dataset, odf_header):
 
 
 def generate_coordinates_variables(dataset):
-    """
-    Method use to generate metadata variables from the ODF Header to a xarray Dataset.
-    """
+    """Method use to generate metadata variables from the ODF Header to a xarray Dataset."""
     if "cdm_data_type" not in dataset.attrs:
         logging.error("No cdm_data_type attribute")
 
@@ -491,7 +491,9 @@ def generate_coordinates_variables(dataset):
 
 
 def _standardize_chief_scientist(name):
-    """Apply minor corrections to chief_scientist
+    """Apply minor corrections to chief_scientist.
+
+    The following corrections are applied:
     - replace separator ~, / by ,
     - Ignore Dr.
     """

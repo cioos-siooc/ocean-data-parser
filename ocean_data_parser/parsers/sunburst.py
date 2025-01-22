@@ -1,5 +1,6 @@
-"""
-[Sunburst Sensors LLC](http://www.sunburstsensors.com/) manufacture autonomous
+"""[Sunburst Sensors LLC](http://www.sunburstsensors.com/).
+
+Sunburst manufacture autonomous
 instruments that measure the marine and freshwater inorganic carbon parameters
 pCO2 (partial pressure of carbon dioxide) and pH using our patented drift-free
 technology.
@@ -29,7 +30,7 @@ notes_dtype_mapping = {
     "num_Stds": float,
     "min_btw_stds": float,
 }
-superCO2_dtypes = {
+super_co2_dtypes = {
     "DOY_UTC": float,
     "CO2_ppm": float,
     "CO2_abs": float,
@@ -65,8 +66,14 @@ def _format_variables(name):
     return name
 
 
-def superCO2(path: str, output: str = None) -> xarray.Dataset:
-    """Parse superCO2 output file txt file"""
+def superCO2(path: str, output: str = None) -> xarray.Dataset:  # noqa
+    """Deprecated name for super_co2 function."""
+    logger.warning("Function name superCO2 is deprecated, use super_co2 instead.")
+    return super_co2(path, output)
+
+
+def super_co2(path: str, output: str = None) -> xarray.Dataset:
+    """Parse superCO2 output file txt file."""
     header = []
     line = 1
     with open(path, encoding="utf-8") as f:
@@ -86,7 +93,7 @@ def superCO2(path: str, output: str = None) -> xarray.Dataset:
             f,
             sep=r"\t",
             engine="python",
-            dtype=superCO2_dtypes,
+            dtype=super_co2_dtypes,
             na_values=[-999, "NaN"],
         )
     if "Collected beginning on" in header[2]:
@@ -135,8 +142,14 @@ def superCO2(path: str, output: str = None) -> xarray.Dataset:
     return standardize_dataset(ds)
 
 
-def superCO2_notes(path: str) -> xarray.Dataset:
-    """Parse superCO2 notes files and return an xarray Dataset
+def superCO2_notes(path: str) -> xarray.Dataset:  # noqa
+    """Deprecated name for super_co2 function."""
+    logger.warning("Function name superCO2 is deprecated, use super_co2 instead.")
+    return super_co2_notes(path)
+
+
+def super_co2_notes(path: str) -> xarray.Dataset:
+    """Parse superCO2 notes files and return an xarray Dataset.
 
     Args:
         path (str): file path
@@ -147,7 +160,7 @@ def superCO2_notes(path: str) -> xarray.Dataset:
     """Parse superCO2 notes files and return an xarray Dataset"""
     line = True
     notes = []
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         while line:
             line = f.readline()
             if line in (""):
