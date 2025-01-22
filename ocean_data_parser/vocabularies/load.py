@@ -20,11 +20,13 @@ def amundsen_vocabulary_df() -> pd.DataFrame:
 
 
 def amundsen_vocabulary() -> dict:
+    """Load Amundsen Vocabulary."""
     with open(VOCABULARIES_DIRECTORY / "amundsen_vocabulary.json") as file:
         return json.load(file)
 
 
 def seabird_vocabulary_df() -> pd.DataFrame:
+    """Retrieve Seabird Vocabulary as DataFrame."""
     vocabulary = seabird_vocabulary()
     vocab = []
     for name, attrs in vocabulary.items():
@@ -44,6 +46,7 @@ def seabird_vocabulary() -> dict:
 
 
 def dfo_platforms() -> pd.DataFrame:
+    """Retrieve DFO Platforms vocabulary."""
     df = (
         pd.read_csv(
             VOCABULARIES_DIRECTORY / "dfo_platforms.csv",
