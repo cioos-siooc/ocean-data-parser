@@ -232,7 +232,7 @@
       "units": "g/kg",
       "standard_name": "sea_water_absolute_salinity",
       "sdn_parameter_urn": "SDN:P01::ASLTZZ01",
-      "sdn_uom_name": "SDN:P06::UGKG",
+      "sdn_uom_urn": "SDN:P06::UGKG",
       "rename": "A_sal",
       "rename_gf3": "ASAL"
     }
@@ -243,7 +243,7 @@
       "units": "g/kg",
       "standard_name": "sea_water_absolute_salinity",
       "sdn_parameter_urn": "SDN:P01::ASLTZZ01",
-      "sdn_uom_name": "SDN:P06::UGKG",
+      "sdn_uom_urn": "SDN:P06::UGKG",
       "rename": "A_sal",
       "rename_gf3": "ASAL"
     }
