@@ -210,7 +210,7 @@
       "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::DOXYZZ01",
       "sdn_uom_urn": "SDN:P06::UPOX",
-      "rename": "WC_dissO2_IS ",
+      "rename": "WC_dissO2_IS",
       "rename_gf3": "OXYM",
       "apply_function": "x*44.661"
     }
@@ -222,7 +222,7 @@
       "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::DOXYZZ01",
       "sdn_uom_urn": "SDN:P06::UPOX",
-      "rename": "WC_dissO2_IS ",
+      "rename": "WC_dissO2_IS",
       "rename_gf3": "OXYM"
     }
   ],
