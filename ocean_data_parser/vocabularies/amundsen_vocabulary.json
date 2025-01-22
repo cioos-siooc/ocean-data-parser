@@ -182,7 +182,7 @@
   "FLOR": [
     {
       "long_name": "Fluorescence of Chlorophyll-a in Sea Water",
-      "units": "\u00b5g/L",
+      "units": "ug/L",
       "standard_name": "mass_concentration_of_chlorophyll_a_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::CPHLPR01",
       "sdn_uom_urn": "SDN:P06::UGPL",
@@ -191,10 +191,10 @@
       "rename_gf3": "FLOR"
     }
   ],
-  "DOXY":[
+  "DOXY": [
     {
       "long_name": "Dissolved Oxygen",
-      "units": "\u00b5M",
+      "units": "uM",
       "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::DOXYZZXX",
       "sdn_uom_urn": "SDN:P06::UPOX",
@@ -206,9 +206,9 @@
   "O2": [
     {
       "long_name": "Dissolved Oxygen",
-      "units": "\u00b5M",
+      "units": "uM",
       "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
-      "sdn_parameter_urn":"SDN:P01::DOXYZZ01",
+      "sdn_parameter_urn": "SDN:P01::DOXYZZ01",
       "sdn_uom_urn": "SDN:P06::UPOX",
       "rename": "WC_dissO2_IS ",
       "rename_gf3": "OXYM",
@@ -218,9 +218,9 @@
   "OXYM": [
     {
       "long_name": "Dissolved Oxygen",
-      "units": "\u00b5M",
+      "units": "uM",
       "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
-      "sdn_parameter_urn":"SDN:P01::DOXYZZ01",
+      "sdn_parameter_urn": "SDN:P01::DOXYZZ01",
       "sdn_uom_urn": "SDN:P06::UPOX",
       "rename": "WC_dissO2_IS ",
       "rename_gf3": "OXYM"
@@ -306,7 +306,6 @@
       "standard_name": "square_of_brunt_vaisala_frequency_in_sea_water"
     }
   ],
-
   "Theta": [
     {
       "long_name": "Potential Temperature",
@@ -380,7 +379,7 @@
     {
       "long_name": "Photosynthetic Active Radiation",
       "units": "µEinsteins/s/m^2",
-      "accepted_units": "\u00b5einsteins/s/m\\^2|µeinsteins/s/m\\^2",
+      "accepted_units": "uEinsteins/s/m\\^2|µeinsteins/s/m\\^2",
       "standard_name": "downwelling_photosynthetic_photon_flux_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::IRRDUV01",
       "sdn_uom_urn": "SDN:P06::UMES",
@@ -403,7 +402,7 @@
     {
       "long_name": "Surface Photosynthetic Active Radiation",
       "units": "µEinsteins/s/m^2",
-      "accepted_units": "\u00b5einsteins/s/m\\^2|µeinsteins/s/m\\^2",
+      "accepted_units": "uEinsteins/s/m\\^2|µeinsteins/s/m\\^2",
       "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::IRRDSV01",
       "sdn_uom_urn": "SDN:P06::UMES",
@@ -415,7 +414,7 @@
     {
       "long_name": "Surface Photosynthetic Active Radiation",
       "units": "µEinsteins/s/m^2",
-      "accepted_units": "\u00b5einsteins/s/m\\^2|µeinsteins/s/m\\^2",
+      "accepted_units": "uEinsteins/s/m\\^2|µeinsteins/s/m\\^2",
       "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::IRRDSV01",
       "sdn_uom_urn": "SDN:P06::UMES",
