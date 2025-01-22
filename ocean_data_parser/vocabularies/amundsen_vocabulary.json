@@ -6,7 +6,9 @@
     "sdn_parameter_urn": "SeaDataNet URN (SDN:{listid}::{termid}) for variables following NVS2.0",
     "sdn_uom_urn": "SeaDataNet URN (SDN:{listid}::{termid}) for variable units following NVS2.0",
     "accepted_units": "regex of the accepted units, if true, the units attribute will overwrite the present units attribute.",
-    "rename": "Name to rename the variable"
+    "rename": "Name to rename the variable. It is the corresponding alternative name on BODC.",
+    "notes_SV": "Add filter not to include SV (sound velocity) in all CTD files as there is not any sound sensor installed on the CTD Rosette (SV was derived from Temperature and salinity mostly). However, it should be included in all MVP and TSG data as sound velocity sensors are installed on them.",
+    "notes_O2": "All O2 units from before the year 2018 has mL/L. Since 2018, the units was updated to uM. All Dissolved Oxygen unit before 2018 should be converted into μM. An apply_function x*44.661 has been added in order to help for the conversion from mL/L to the unit μM, where x is the variable representing the Dissolved Oxygen before 2018."
   },
   "Net": [
     {
@@ -80,8 +82,21 @@
       "long_name": "Sea Pressure (Sea Surface - 0)",
       "units": "decibars",
       "standard_name": "sea_water_pressure_due_to_sea_water",
-      "sdn_paramater_urn": "SDN:P07::CIEIIDJF",
-      "sdn_uom_urn": "SDN:P06::UPDB"
+      "sdn_paramater_urn": "SDN:P01::PRESPR01",
+      "sdn_uom_urn": "SDN:P06::UPDB",
+      "rename": "Pres_Z",
+      "rename_gf3": "PRES"
+    }
+  ],
+  "PRES": [
+    {
+      "long_name": "Sea Pressure (Sea Surface - 0)",
+      "units": "decibars",
+      "standard_name": "sea_water_pressure_due_to_sea_water",
+      "sdn_paramater_urn": "SDN:P01::PRESPR01",
+      "sdn_uom_urn": "SDN:P06::UPDB",
+      "rename": "Pres_Z",
+      "rename_gf3": "PRES"
     }
   ],
   "Temp": [
@@ -91,46 +106,93 @@
       "units": "degC",
       "standard_name": "sea_water_temperature",
       "sdn_paramater_urn": "SDN:P01::TEMPS901",
-      "sdn_instrument_urn": "SDN:L22::TOOL0058",
-      "sdn_uom_urn": "SDN:P06::UPAA"
+      "sdn_uom_urn": "SDN:P06::UPAA",
+      "rename": "CTDTmp90",
+      "rename_gf3": "TE90"
+    }
+  ],
+  "TE90": [
+    {
+      "long_name": "Temperature (ITS-90)",
+      "accepted_units": "degC|deg C|degrees C",
+      "units": "degC",
+      "standard_name": "sea_water_temperature",
+      "sdn_paramater_urn": "SDN:P01::TEMPS901",
+      "sdn_uom_urn": "SDN:P06::UPAA",
+      "rename": "CTDTmp90",
+      "rename_gf3": "TE90"
     }
   ],
   "Sal": [
     {
       "long_name": "Practical Salinity (PSS-78)",
-      "units": "psu",
+      "units": "PSU",
       "accepted_units": "PSU|psu|1e-3",
       "standard_name": "sea_water_practical_salinity",
       "sdn_paramater_urn": "SDN:P01::PSALST01",
-      "sdn_instrument_urn": "SDN:L22::TOOL0058",
-      "sdn_uom_urn": "SDN:P006::PSUX"
+      "sdn_uom_urn": "SDN:P006::PSUX",
+      "rename": "P_sal_CTD",
+      "rename_gf3": "PSAL"
     }
   ],
-  "Date": [
+  "PSAL": [
     {
-      "long_name": "Acquisition Date",
-      "sdn_parameter_urn": "SDN:P01::ADATAA01",
-      "sdn_uom_urn": "SDN:P06::UYMD",
-      "units": "yyyymmdd"
-    },
-    {
-      "long_name": "Acquisition Date",
-      "units": "yyyy/mm/dd"
+      "long_name": "Practical Salinity (PSS-78)",
+      "units": "PSU",
+      "accepted_units": "PSU|psu|1e-3",
+      "standard_name": "sea_water_practical_salinity",
+      "sdn_paramater_urn": "SDN:P01::PSALST01",
+      "sdn_uom_urn": "SDN:P006::PSUX",
+      "rename": "P_sal_CTD",
+      "rename_gf3": "PSAL"
     }
   ],
-  "Hour": [
+  "TRB_": [
     {
-      "long_name": "Acquisition time",
-      "standard_name": "time",
-      "sdn_parameter_urn": "SDN:P01::AHMSAA01",
-      "sdn_uom_urn": "SDN:P006::UHMS",
-      "rename": "TIME"
+      "long_name": "Turbidity of water in the water body",
+      "units": "NTU",
+      "accepted_units": "NTU",
+      "standard_name": "sea_water_turbidity",
+      "sdn_paramater_urn": "SDN:P01::TURBXXXX",
+      "sdn_uom_urn": "SDN:P06::USTU",
+      "rename": "Turbidity",
+      "rename_gf3": "TRB"
+    }
+  ],
+  "TURB": [
+    {
+      "long_name": "Turbidity of water in the water body",
+      "units": "FTU",
+      "accepted_units": "FTU",
+      "standard_name": "sea_water_turbidity",
+      "sdn_paramater_urn": "SDN:P01::TURBXXXX",
+      "sdn_uom_urn": "SDN:P06::UFNU",
+      "rename": "Turbidity",
+      "rename_gf3": "TURB"
     }
   ],
   "DateTime": [
     {
-      "sdn_parameter_urn": "SDN:P01::STRT8601",
-      "sdn_uom_urn": "SDN:P06::TISO"
+      "sdn_parameter_urn": "SDN:P01::DTUT8601",
+      "sdn_uom_urn": "SDN:P06::UYMD",
+      "units": "YYYY-MM-DDThh:mm:ss.sssZ",
+      "rename": "time"
+    }
+  ],
+  "Date": [
+    {
+      "sdn_parameter_urn": "",
+      "sdn_uom_urn": "",
+      "units": "",
+      "rename": ""
+    }
+  ],
+  "Hour": [
+    {
+      "sdn_parameter_urn": "",
+      "sdn_uom_urn": "",
+      "units": "",
+      "rename": ""
     }
   ],
   "Lat": [
@@ -138,7 +200,8 @@
       "long_name": "Latitude",
       "standard_name": "latitude",
       "sdn_paramater_urn": "SDN:P01::ALATZZ01",
-      "sdn_uom_urn": "SDN:P06::UAAA"
+      "sdn_uom_urn": "SDN:P06::DEGN",
+      "rename": "Lat"
     }
   ],
   "Long": [
@@ -146,7 +209,7 @@
       "long_name": "Longitude",
       "standard_name": "longitude",
       "sdn_paramater_urn": "SDN:P01::ALONZZ01",
-      "sdn_uom_urn": "SDN:P06::UAAA",
+      "sdn_uom_urn": "SDN:P06::DEGE",
       "rename": "Lon"
     }
   ],
@@ -155,7 +218,8 @@
       "long_name": "Longitude",
       "standard_name": "longitude",
       "sdn_paramater_urn": "SDN:P01::ALONZZ01",
-      "sdn_uom_urn": "SDN:P06::UAAA"
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "rename": "Lon"
     }
   ],
   "Wind dir": [
@@ -223,48 +287,88 @@
     {
       "long_name": "Light Transmission",
       "units": "%",
-      "sdn_parameter_urn": "SDN:P01::ATTNMS01",
+      "sdn_parameter_urn": "SDN:P01::POPTDR01",
       "sdn_uom_urn": "SDN:P06::UPCT",
-      "rename": "TRAN"
+      "rename": "Trans_Red_25cm",
+      "rename_gf3": "TRAN"
     }
   ],
   "Tran": [
     {
       "long_name": "Light Transmission",
       "units": "%",
-      "sdn_parameter_urn": "SDN:P01::ATTNMS01",
+      "sdn_parameter_urn": "SDN:P01::POPTDR01",
       "sdn_uom_urn": "SDN:P06::UPCT",
-      "rename": "TRAN"
+      "rename": "Trans_Red_25cm",
+      "rename_gf3": "TRAN"
     }
   ],
   "TRAN": [
     {
       "long_name": "Light Transmission",
       "units": "%",
-      "sdn_parameter_urn": "SDN:P01::ATTNMS01",
-      "sdn_uom_urn": "SDN:P06::UPCT"
+      "sdn_parameter_urn": "SDN:P01::POPTDR01",
+      "sdn_uom_urn": "SDN:P06::UPCT",
+      "rename": "Trans_Red_25cm"
     }
   ],
   "Fluo": [
     {
-      "long_name": "Fluorescence",
+      "long_name": "Fluorescence of Chlorophyll-a in Sea Water",
       "units": "ug/L",
-      "sdn_parameter_urn": "SDN:P07::CF12S21",
+      "standard_name": "mass_concentration_of_chlorophyll_a_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::CPHLPR01",
       "sdn_uom_urn": "SDN:P06::UGPL",
-      "accepted_units": "ug/L|mg/m\\^3"
+      "accepted_units": "ug/L|mg/m\\^3",
+      "rename": "chl-a_water_ISfluor",
+      "rename_gf3": "FLOR"
+    }
+  ],
+  "FLOR": [
+    {
+      "long_name": "Fluorescence of Chlorophyll-a in Sea Water",
+      "units": "\u00b5g/L",
+      "standard_name": "mass_concentration_of_chlorophyll_a_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::CPHLPR01",
+      "sdn_uom_urn": "SDN:P06::UGPL",
+      "accepted_units": "ug/L|mg/m\\^3",
+      "rename": "chl-a_water_ISfluor",
+      "rename_gf3": "FLOR"
+    }
+  ],
+  "DOXY":[
+    {
+      "long_name": "Dissolved Oxygen",
+      "units": "\u00b5M",
+      "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::DOXYZZXX",
+      "sdn_uom_urn": "SDN:P06::UPOX",
+      "rename": "WC_dissO2_IS",
+      "rename_gf3": "OXYM",
+      "apply_function": "x*44.661"
     }
   ],
   "O2": [
     {
       "long_name": "Dissolved Oxygen",
-      "units": "ml/l",
-      "sdn_parameter_urn": "SDN:P07::CF12N801",
-      "sdn_uom_urn": "SDN:P06::UMLL"
-    },
+      "units": "\u00b5M",
+      "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
+      "sdn_parameter_urn":"SDN:P01::DOXYZZ01",
+      "sdn_uom_urn": "SDN:P06::UPOX",
+      "rename": "WC_dissO2_IS ",
+      "rename_gf3": "OXYM",
+      "apply_function": "x*44.661"
+    }
+  ],
+  "OXYM": [
     {
       "long_name": "Dissolved Oxygen",
       "units": "\u00b5M",
-      "rename": "O2M"
+      "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
+      "sdn_parameter_urn":"SDN:P01::DOXYZZ01",
+      "sdn_uom_urn": "SDN:P06::UPOX",
+      "rename": "WC_dissO2_IS ",
+      "rename_gf3": "OXYM"
     }
   ],
   "ASAL": [
@@ -273,7 +377,9 @@
       "units": "g/kg",
       "standard_name": "sea_water_absolute_salinity",
       "sdn_parameter_urn": "SDN:P01::ASLTZZ01",
-      "sdn_uom_name": "SDN:P06::UGKG"
+      "sdn_uom_name": "SDN:P06::UGKG",
+      "rename": "A_sal",
+      "rename_gf3": "ASAL"
     }
   ],
   "Asal": [
@@ -283,93 +389,30 @@
       "standard_name": "sea_water_absolute_salinity",
       "sdn_parameter_urn": "SDN:P01::ASLTZZ01",
       "sdn_uom_name": "SDN:P06::UGKG",
-      "rename": "ASAL"
-    }
-  ],
-  "CONT": [
-    {
-      "long_name": "Conservative Temperature (TEOS-10)",
-      "units": "degC",
-      "standard_name": "sea_water_conservative_temperature",
-      "sdn_paramater_urn": "SDN:P07::IFEDAFIE",
-      "sdn_uom_urn": "SDN:P06::UPAA",
-      "sdn_uom_name": "Degrees Celsius",
-      "accepted_units": "degC|deg C"
-    }
-  ],
-  "Cont": [
-    {
-      "long_name": "Conservative Temperature TEOS-10",
-      "units": "degC",
-      "standard_name": "sea_water_conservative_temperature",
-      "sdn_paramater_urn": "SDN:P07::IFEDAFIE",
-      "sdn_uom_urn": "SDN:P06::UPAA",
-      "rename": "CONT",
-      "accepted_units": "degC|deg C"
-    }
-  ],
-  "D_CT": [
-    {
-      "long_name": "In Situ Density TEOS-10 ((S, T, P) - 1000)",
-      "units": "kg/m^3",
-      "standard_name": "sea_water_sigma_t",
-      "sdn_parameter_urn": "SDN:P07::CFSN0392",
-      "sdn_uom_urn": "SDN:P06::UKMC"
-    }
-  ],
-  "D_ct": [
-    {
-      "long_name": "In Situ Density TEOS-10 ((S, T, P) - 1000)",
-      "units": "kg/m^3",
-      "standard_name": "sea_water_sigma_t",
-      "sdn_parameter_urn": "SDN:P07::CFSN0392",
-      "sdn_uom_urn": "SDN:P06::UKMC",
-      "rename": "D_CT"
-    }
-  ],
-  "D0CT": [
-    {
-      "long_name": "In Situ Density TEOS-10 (S, T, 0)",
-      "units": "kg/m^3",
-      "standard_name": "sea_water_density",
-      "sdn_parameter_urn": "SDN:P07::CFSN0393",
-      "sdn_uom_urn": "SDN:P06::UKMC"
-    }
-  ],
-  "D0ct": [
-    {
-      "long_name": "In Situ Density TEOS-10 (S, T, 0)",
-      "units": "kg/m^3",
-      "standard_name": "sea_water_density",
-      "sdn_parameter_urn": "SDN:P07::CFSN0393",
-      "sdn_uom_urn": "SDN:P06::UKMC",
-      "rename": "D0CT"
+      "rename": "A_sal",
+      "rename_gf3": "ASAL"
     }
   ],
   "Sigt": [
     {
-      "long_name": "Sigma-T Rho(S, T, P)",
+      "long_name": "Sigma-T Rho(S, T, 0)-1000",
       "units": "kg/m^3",
-      "standard_name": "sea_water_potential_density",
-      "sdn_parameter_urn": "SDN:P07::CFSN0395",
+      "standard_name": "sea_water_sigma_t",
+      "sdn_parameter_urn": "SDN:P01::SIGTEQST",
       "sdn_uom_urn": "SDN:P06::UKMC",
-      "rename": "sigt"
+      "rename": "Sigma-T",
+      "rename_gf3": "SIGT"
     }
   ],
   "sigt": [
     {
-      "long_name": "Sigma-T Rho (S, T, P)",
+      "long_name": "Sigma-T Rho(S, T, 0)-1000",
       "units": "kg/m^3",
-      "standard_name": "sea_water_potential_density",
-      "sdn_parameter_urn": "SDN:P07::CFSN0395",
-      "sdn_uom_urn": "SDN:P06::UKMC"
-    }
-  ],
-  "Dens": [
-    {
-      "long_name": "Sigma-T (Rho (S, T, 0) - 1000)",
-      "units": "kg/m^3",
-      "standard_name": "sea_water_sigma_t"
+      "standard_name": "sea_water_sigma_t",
+      "sdn_parameter_urn": "SDN:P01::SIGTEQST",
+      "sdn_uom_urn": "SDN:P06::UKMC",
+      "rename": "Sigma-T",
+      "rename_gf3": "SIGT"
     }
   ],
   "sigthe": [
@@ -377,8 +420,10 @@
       "long_name": "Sigma-Theta (Rho(S, Theta, 0)-1000)",
       "units": "kg/m^3",
       "standard_name": "sea_water_sigma_theta",
-      "sdn_parameter_urn": "SDN:P07::CFSN0333",
-      "sdn_uom_urn": "SDN:P06::UKMC"
+      "sdn_parameter_urn": "SDN:P01::SIGTEQ01",
+      "sdn_uom_urn": "SDN:P06::UKMC",
+      "rename": "SigmaTheta",
+      "rename_gf3": "SIGP"
     }
   ],
   "Sigthe": [
@@ -386,91 +431,10 @@
       "long_name": "Sigma-Theta (Rho(S, Theta, 0)-1000)",
       "units": "kg/m^3",
       "standard_name": "sea_water_sigma_theta",
-      "sdn_parameter_urn": "SDN:P07::CFSN0333",
+      "sdn_parameter_urn": "SDN:P01::SIGTEQ01",
       "sdn_uom_urn": "SDN:P06::UKMC",
-      "rename": "sigthe"
-    }
-  ],
-  "Tem-TSG": [
-    {
-      "long_name": "Temperature From Thermo-Salinometer",
-      "units": "degrees_celcius",
-      "accepted_units": "\u00a1c",
-      "standard_name": "sea_surface_temperature",
-      "sdn_instrument_urn": "SDN:L22::TOOL0190",
-      "sdn_uom_urn": "SDN:P06::UPAA"
-    }
-  ],
-  "Sal-TSG": [
-    {
-      "long_name": "Salinity From Thermo-Salinometer",
-      "units": "1e-3",
-      "standard_name": "sea_surface_practical_salinity",
-      "sdn_parameter_urn": "SDN:P07::CFSN0376",
-      "sdn_instrument_urn": "SDN:L22::TOOL0190",
-      "sdn_uom_urn": "SDN:P06::PSUX",
-      "accepted_units": "PSU|psu|1e-3"
-    }
-  ],
-  "Speed": [
-    {
-      "long_name": "Vessel Speed",
-      "units": "Knt",
-      "standard_name": "platform_speed",
-      "sdn_parameter_urn": "SDN:P07::CFSN0445",
-      "sdn_uom_urn": "SDN:P06::UKNT"
-    },
-    {
-      "long_name": "Vessel True Speed",
-      "units": "Knt",
-      "standard_name": "platform_speed",
-      "sdn_parameter_urn": "SDN:P07::CFSN0445",
-      "sdn_uom_urn": "SDN:P06::UKNT"
-    }
-  ],
-  "Tem-Water": [
-    {
-      "long_name": "Temperature From Sensor SBE38",
-      "units": "degrees_celcius",
-      "accepted_units": "\u00c2\u00b0c|\u00b0c|\u00a1c",
-      "standard_name": "sea_water_temperature",
-      "sdn_instrument_urn": "SDN:L22::TOOL0191",
-      "sdn_uom_urn": "SDN:P06::UPAA"
-    }
-  ],
-  "Flow": [
-    {
-      "long_name": "Water Flow Rate",
-      "units": "L/min"
-    }
-  ],
-  "N2": [
-    {
-      "long_name": "Brunt-Vaisala Frequency",
-      "units": "s^-2",
-      "standard_name": "square_of_brunt_vaisala_frequency_in_sea_water",
-      "sdn_paramater_urn": "SDN:P07::1V0G0U9J",
-      "sdn_uom_urn": "SDN:P06::UPSS"
-    }
-  ],
-  "Theta": [
-    {
-      "long_name": "Potential Temperature",
-      "units": "degC",
-      "standard_name": "sea_water_potential_temperature",
-      "sdn_parameter_urn": "SDN:P07::CFSN0329",
-      "sdn_uom_urn": "SDN:P06::UPAA",
-      "rename": "theta",
-      "accepted_units": "degC|deg C"
-    }
-  ],
-  "theta": [
-    {
-      "long_name": "Potential Temperature",
-      "units": "degC",
-      "standard_name": "sea_water_potential_temperature",
-      "sdn_parameter_urn": "SDN:P07::CFSN0329",
-      "sdn_uom_urn": "SDN:P06::UPAA"
+      "rename": "SigmaTheta",
+      "rename_gf3": "SIGP"
     }
   ],
   "CDOM": [
@@ -478,8 +442,10 @@
       "long_name": "Fluorescence Of CDOM (Colored Dissolved Organic Matter)",
       "units": "mg/m^3",
       "standard_name": "concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate",
-      "sdn_parameter_urn": "SDN:P07::6OP5LKSX",
-      "sdn_uom_urn": "SDN:P06::UMMC"
+      "sdn_parameter_urn": "SDN:P01::CCOMD002",
+      "sdn_uom_urn": "SDN:P06::UMMC",
+      "rename": "CDOM_fluor_WETLabs",
+      "rename_gf3": "CDOM"
     }
   ],
   "Cdom": [
@@ -489,7 +455,8 @@
       "standard_name": "concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate",
       "sdn_parameter_urn": "SDN:P07::6OP5LKSX",
       "sdn_uom_urn": "SDN:P06::UMMC",
-      "rename": "CDOM"
+      "rename": "CDOM_fluor_WETLabs",
+      "rename_gf3": "CDOM"
     }
   ],
   "NO3": [
@@ -497,70 +464,79 @@
       "long_name": "Nitrate (NO3-N) Content",
       "units": "mmol/m^3",
       "standard_name": "mole_concentration_of_nitrate_in_sea_water",
-      "sdn_parameter_urn": "SDN:P07::CFSN0806",
-      "sdn_uom_urn": "SDN:P06::MMCM"
+      "sdn_parameter_urn": "SDN:P01::NTRAZZXX",
+      "sdn_uom_urn": "SDN:P06::MMCM",
+      "rename": "NO3",
+      "rename_gf3": "NTRA"
+    }
+  ],
+  "Ntra": [
+    {
+      "long_name": "Nitrate (NO3-N) Content",
+      "units": "mmol/m^3",
+      "standard_name": "mole_concentration_of_nitrate_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::NTRAZZXX",
+      "sdn_uom_urn": "SDN:P06::MMCM",
+      "rename": "NO3",
+      "rename_gf3": "NTRA"
+    }
+  ],
+  "Nitrate": [
+    {
+      "long_name": "Nitrate (NO3-N) Content",
+      "units": "mmol/m^3",
+      "standard_name": "mole_concentration_of_nitrate_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::NTRAZZXX",
+      "sdn_uom_urn": "SDN:P06::MMCM",
+      "rename": "NO3",
+      "rename_gf3": "NTRA"
     }
   ],
   "Par": [
     {
       "long_name": "Photosynthetic Active Radiation",
-      "units": "uEinsteins/s/m^2",
+      "units": "µEinsteins/s/m^2",
       "accepted_units": "\u00b5einsteins/s/m\\^2|µeinsteins/s/m\\^2",
       "standard_name": "downwelling_photosynthetic_photon_flux_in_sea_water",
-      "sdn_parameter_urn": "SDN:P07::CFSN0676",
-      "sdn_uom_urn": "SDN:P06::UMES"
+      "sdn_parameter_urn": "SDN:P01::IRRDUV01",
+      "sdn_uom_urn": "SDN:P06::UMES",
+      "rename": "SubsurVPAR",
+      "rename_gf3": "PSAR"
+    }
+  ],
+  "PSAR": [
+    {
+      "long_name": "Photosynthetic Active Radiation",
+      "units": "µEinsteins/s/m^2",
+      "standard_name": "downwelling_photosynthetic_photon_flux_in_sea_water",
+      "sdn_paramater_urn": "SDN:P01::IRRDUV01",
+      "sdn_uom_urn": "SDN:P06::UMES",
+      "rename": "SubsurVPAR",
+      "rename_gf3": "PSAR"
     }
   ],
   "SPar": [
     {
       "long_name": "Surface Photosynthetic Active Radiation",
-      "units": "uEinsteins/s/m^2",
+      "units": "µEinsteins/s/m^2",
       "accepted_units": "\u00b5einsteins/s/m\\^2|µeinsteins/s/m\\^2",
       "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_sea_water",
       "sdn_paramater_urn": "SDN:P01::IRRDSV01",
-      "sdn_instrument_urn": "SDN:S04::S04143",
-      "sdn_uom_urn": "SDN:P06::UMES"
+      "sdn_uom_urn": "SDN:P06::UMES",
+      "rename": "SurfVPAR",
+      "rename_gf3": "SPAR"
     }
   ],
-  "PSAR": [
+  "SPAR": [
     {
+      "long_name": "Surface Photosynthetic Active Radiation",
+      "units": "µEinsteins/s/m^2",
+      "accepted_units": "\u00b5einsteins/s/m\\^2|µeinsteins/s/m\\^2",
       "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_sea_water",
-      "sdn_paramater_urn": "SDN:P01::DWIRRXUD",
-      "sdn_instrument_urn": "SDN:S04::S04143",
-      "sdn_uom_urn": "SDN:P06::UMES"
-    }
-  ],
-  "svan": [
-    {
-      "long_name": "Specific Volume Anomaly",
-      "units": "m^3/kg"
-    }
-  ],
-  "Svan": [
-    {
-      "long_name": "Specific Volume Anomaly",
-      "units": "m^3/kg",
-      "rename": "svan"
-    }
-  ],
-  "FreezT": [
-    {
-      "long_name": "Freezing Temperature",
-      "units": "degC",
-      "standard_name": "freezing_temperature_of_sea_water",
-      "sdn_papameter_urn": "SDN:P07::CFSN0625",
-      "sdn_uom_urn": "SDN:P06::UPAA",
-      "accepted_units": "degC|deg C"
-    }
-  ],
-  "FreezT-": [
-    {
-      "long_name": "Freezing Temperature",
-      "units": "degC",
-      "standard_name": "freezing_temperature_of_sea_water",
-      "sdn_papameter_urn": "SDN:P07::CFSN0625",
-      "sdn_uom_urn": "SDN:P06::UPAA",
-      "rename": "FreezT"
+      "sdn_paramater_urn": "SDN:P01::IRRDSV01",
+      "sdn_uom_urn": "SDN:P06::UMES",
+      "rename": "SurfVPAR",
+      "rename_gf3": "SPAR"
     }
   ],
   "Heading": [
@@ -626,15 +602,8 @@
     {
       "long_name": "pH",
       "standard_name": "sea_water_ph_reported_on_total_scale",
-      "sdn_parameter_urn": "SDN:P07::CF14N56",
-      "sdn_uom_urn": "SDN:P06::UUUU"
-    }
-  ],
-  "PresPar": [
-    {
-      "long_name": "Pressure Par",
-      "units": "dbar",
-      "sdn_uom_urn": "SDN:P06::UPDB"
+      "sdn_parameter_urn": "SDN:P01::PHMASSXX",
+      "sdn_uom_urn": "SDN:P06::UUPH"
     }
   ],
   "instrument_depth": [
@@ -642,6 +611,89 @@
       "standard_name": "depth",
       "sdn_paramater_urn": "SDN:P01::ADEPZZ01",
       "sdn_uom_urn": "SDN:P06::ULAA"
+    }
+  ],
+  "Tem-TSG": [
+    {
+      "long_name": "Temperature From Thermosalinograph",
+      "units": "degrees_celcius",
+      "accepted_units": "\u00a1c",
+      "standard_name": "sea_surface_temperature",
+      "sdn_parameter_urn": "SDN:P01::TEMPSZ01",
+      "sdn_uom_urn": "SDN:P06::UPAA",
+      "rename": "TSGTmp"
+    }
+  ],
+  "Sal-TSG": [
+    {
+      "long_name": "Salinity From Thermosalinograph",
+      "units": "1e-3",
+      "standard_name": "sea_surface_salinity",
+      "sdn_parameter_urn": "SDN:P01::PSALSZ01",
+      "sdn_uom_urn": "SDN:P06::PSUX",
+      "accepted_units": "PSU|psu|1e-3",
+      "rename": "P_sal_TSG"
+    }
+  ],
+  "Speed": [
+    {
+      "long_name": "Vessel Speed",
+      "units": "Knt",
+      "standard_name": "platform_speed",
+      "sdn_parameter_urn": "SDN:P07::CFSN0445",
+      "sdn_uom_urn": "SDN:P06::UKNT"
+    },
+    {
+      "long_name": "Vessel True Speed",
+      "units": "Knt",
+      "standard_name": "platform_speed",
+      "sdn_parameter_urn": "SDN:P07::CFSN0445",
+      "sdn_uom_urn": "SDN:P06::UKNT"
+    }
+  ],
+  "vessel_speed": [
+    {
+      "long_name": "Vessel Speed",
+      "units": "Knt",
+      "standard_name": "platform_speed",
+      "sdn_parameter_urn": "SDN:P07::CFSN0445",
+      "sdn_uom_urn": "SDN:P06::UKNT"
+    }
+  ],
+  "Tem-Water": [
+    {
+      "long_name": "Temperature From Sensor SBE38",
+      "units": "degrees_celcius",
+      "accepted_units": "\u00c2\u00b0c|\u00b0c|\u00a1c",
+      "standard_name": "sea_surface_temperature",
+      "sdn_uom_urn": "SDN:P06::UPAA"
+    }
+  ],
+  "water_temperature": [
+    {
+      "long_name": "Temperature From Sensor SBE38",
+      "units": "degrees_celcius",
+      "accepted_units": "\u00c2\u00b0c|\u00b0c|\u00a1c",
+      "standard_name": "sea_surface_temperature",
+      "sdn_uom_urn": "SDN:P06::UPAA"
+    }
+  ],
+  "Flow": [
+    {
+      "long_name": "Water Flow Rate",
+      "units": "L/min",
+      "sdn_parameter_urn": "SDN:P01::INFLTF01",
+      "sdn_uom_urn": "SDN:P06::ULPM",
+      "rename": "TSG+Fl_Flow"
+    }
+  ],
+  "flow_rate": [
+    {
+      "long_name": "Water Flow Rate",
+      "units": "L/min",
+      "sdn_parameter_urn": "SDN:P01::INFLTF01",
+      "sdn_uom_urn": "SDN:P06::ULPM",
+      "rename": "TSG+Fl_Flow"
     }
   ]
 }
