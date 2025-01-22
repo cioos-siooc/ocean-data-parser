@@ -106,7 +106,7 @@ class TestPlatformVocabulary:
             "sdn_platform_urn",
         ]
 
-        nerc_platform = nerc.get_platform_vocabulary(id)
+        nerc_platform = nerc.Nerc().get_platform_vocabulary(id)
         nerc_platform = {
             attr: nerc_platform.get(attr)
             for attr in attrs
