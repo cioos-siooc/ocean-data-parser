@@ -8,7 +8,7 @@
     "accepted_units": "regex of the accepted units, if true, the units attribute will overwrite the present units attribute.",
     "rename": "Name to rename the variable. It is the corresponding alternative name on BODC.",
     "notes_SV": "Add filter not to include SV (sound velocity) in all CTD files as there is not any sound sensor installed on the CTD Rosette (SV was derived from Temperature and salinity mostly). However, it should be included in all MVP and TSG data as sound velocity sensors are installed on them.",
-    "notes_O2": "All O2 units from before the year 2018 has mL/L. Since 2018, the units was updated to uM. All Dissolved Oxygen unit before 2018 should be converted into μM. An apply_function x*44.661 has been added in order to help for the conversion from mL/L to the unit μM, where x is the variable representing the Dissolved Oxygen before 2018."
+    "notes_O2": "All O2 units from before the year 2018 has mL/L. Since 2018, the units was updated to uM. All Dissolved Oxygen unit before 2018 should be converted into uM. An apply_function x*44.661 has been added in order to help for the conversion from mL/L to the unit uM, where x is the variable representing the Dissolved Oxygen before 2018."
   },
   "Pres": [
     {
