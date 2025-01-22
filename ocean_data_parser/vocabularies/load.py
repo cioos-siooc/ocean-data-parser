@@ -22,7 +22,8 @@ def amundsen_vocabulary_df() -> pd.DataFrame:
 def amundsen_vocabulary() -> dict:
     """Load Amundsen Vocabulary."""
     with open(VOCABULARIES_DIRECTORY / "amundsen_vocabulary.json") as file:
-        return json.load(file)
+        with open(VOCABULARIES_DIRECTORY / "amundsen_vocabulary.json", encoding="UTF-8") as file:
+            return json.load(file)
 
 
 def seabird_vocabulary_df() -> pd.DataFrame:
