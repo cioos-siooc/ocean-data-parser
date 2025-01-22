@@ -206,29 +206,6 @@
       "rename": "Lon"
     }
   ],
-  "Wind dir": [
-    {
-      "long_name": "True Wind Direction",
-      "units": "degrees N",
-      "standard_name": "wind_from_direction"
-    }
-  ],
-  "Wind speed": [
-    {
-      "long_name": "True Wind Speed",
-      "units": "Knt",
-      "standard_name": "wind_speed",
-      "sdn_parameter_urn": "SDN:P01::EWSBSS01"
-    }
-  ],
-  "Pressure": [
-    {
-      "long_name": "Atmospheric Pressure",
-      "units": "hPa",
-      "standard_name": "air_pressure",
-      "sdn_uom_urn": "SDN:P06::HPAX"
-    }
-  ],
   "Trans": [
     {
       "long_name": "Light Transmission",
