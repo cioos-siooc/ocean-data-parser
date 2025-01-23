@@ -205,7 +205,7 @@
       "sdn_parameter_urn": "SDN:P01::CPHLPR01",
       "sdn_uom_urn": "SDN:P06::UGPL",
       "accepted_units": "ug/L|mg/m\\^3",
-      "rename": "chl-a_water_ISfluor",
+      "rename": "chla_water_ISfluor",
       "rename_gf3": "FLOR",
       "sdn_parameter_name": "Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate >unknown phase] by in-situ chlorophyll fluorometer",
       "sdn_uom_name": "Micrograms per litre"
@@ -219,7 +219,7 @@
       "sdn_parameter_urn": "SDN:P01::CPHLPR01",
       "sdn_uom_urn": "SDN:P06::UGPL",
       "accepted_units": "ug/L|mg/m\\^3",
-      "rename": "chl-a_water_ISfluor",
+      "rename": "chla_water_ISfluor",
       "rename_gf3": "FLOR",
       "sdn_parameter_name": "Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate >unknown phase] by in-situ chlorophyll fluorometer",
       "sdn_uom_name": "Micrograms per litre"
@@ -299,7 +299,7 @@
       "standard_name": "sea_water_sigma_t",
       "sdn_parameter_urn": "SDN:P01::SIGTEQST",
       "sdn_uom_urn": "SDN:P06::UKMC",
-      "rename": "Sigma-T",
+      "rename": "SigmaT",
       "rename_gf3": "SIGT",
       "sdn_parameter_name": "Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm",
       "sdn_uom_name": "Kilograms per cubic metre"
