@@ -56,7 +56,7 @@ def validate_parser(ctx, _, value):
         return value
     raise click.BadParameter(
         click.style(
-            f"parser should match one of the following options: {get_parser_list_string()}",
+            f"parser should match options: {get_parser_list_string()}",
             fg="bright_red",
         )
     )
@@ -69,8 +69,8 @@ def get_parser_list(ctx, _, value):
     ctx.exit()
 
 
-def validate_parser_kwargs(ctx, _, value):
-    """Test if given parser_kwargs is a valid JSON string and return the parsed JSON object."""
+def validate_parser_kwargs(ctx, _, value) -> dict:
+    """Test parser_kwargs is a valid JSON string."""
     if not value:
         return value
     try:
@@ -182,7 +182,10 @@ def validate_parser_kwargs(ctx, _, value):
     flag_value="True",
     type=click.Choice(["stop", "True"]),
     default=None,
-    help="Print present argument values. If  stop argument is given, do not run the conversion.",
+    help=(
+        "Print present argument values."
+        " If stop argument is given, do not run the conversion."
+    ),
 )
 @click.version_option(version=__version__, package_name="ocean-data-parser.convert")
 def cli(**kwargs):
@@ -291,7 +294,10 @@ class BatchConversion:
         return pd.concat(tables, ignore_index=True)
 
     def get_source_files_from_input_table(self) -> ([], []):
-        """Retrieve list of source files from input table. If input table is a dictionary, it will be loaded and processed."""
+        """Retrieve list of source files from input table.
+
+        If input table is a dictionary, it will be loaded and processed.
+        """
         input_table_config = self.config.get("input_table")
         if not input_table_config:
             logger.warning("No input table detected")

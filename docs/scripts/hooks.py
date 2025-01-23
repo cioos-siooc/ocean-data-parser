@@ -98,7 +98,7 @@ def get_parser_list(output="docs/user_guide/parsers/index.md"):
         parser_module, _ = parser.rsplit(".", 1)
         return (
             parser_module,
-            f"[{parser}]({parser_module.replace('.', '/').replace('_', '-')}.md#ocean_data_parser.parsers.{parser})",
+            f"[{parser}]({parser_module.replace('.', '/').replace('_', '-')}.md#ocean_data_parser.parsers.{parser})",  # noqa
         )
 
     index_html = Path("docs/user_guide/parsers/header-index.md").read_text()
@@ -110,7 +110,7 @@ def get_parser_list(output="docs/user_guide/parsers/index.md"):
         table_parser[parser_module].append(link)
     parsers_toc = ""
     for parser_module in sorted(table_parser):
-        parsers_toc += f"[{parser_module.upper()}]({parser_module.replace('.', '/').replace('_', '-')}.md)\n\n- "
+        parsers_toc += f"[{parser_module.upper()}]({parser_module.replace('.', '/').replace('_', '-')}.md)\n\n- "  # noqa
         parsers_toc += "\n- ".join(table_parser[parser_module]) + "\n\n"
     index_html = index_html.replace("{{ parsers_list }}", parsers_toc)
     Path(output).write_text(index_html)

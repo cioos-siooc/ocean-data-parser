@@ -1,4 +1,4 @@
-"""This is the main module of the package. It contains the version number and the list of parsers available in the package."""
+"""Main module for ocean_data_parser package."""
 
 import re
 from pathlib import Path
