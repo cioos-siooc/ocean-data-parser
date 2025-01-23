@@ -748,7 +748,9 @@ class IosFile:
         # Test result
         self.compare_obs_time_to_star_date()
 
-    def compare_obs_time_to_star_date(self, dt=pd.Timedelta("1minute")):
+    def compare_obs_time_to_star_date(self, dt=None):
+        if dt is None:
+            dt = pd.Timedelta("1minute")
         if not (-dt < self.obs_time[0] - self.start_dateobj < dt):
             logger.error(
                 "First record does not match start date: obs_time[0]-start_dateobj=%s",
