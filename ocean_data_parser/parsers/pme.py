@@ -270,9 +270,9 @@ def cat(path: str, encoding: str = "utf-8", errors: str = "strict") -> xr.Datase
         ).to_xarray()
 
     # Include units
-    for name, units in zip(names, units):
-        if units:
-            ds[name].attrs[units] = units
+    for name, var_units in zip(names, units):
+        if var_units:
+            ds[name].attrs["units"] = var_units
 
     # Extract metadata from header
     ds.attrs = re.search(
