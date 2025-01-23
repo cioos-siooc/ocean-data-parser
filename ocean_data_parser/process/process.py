@@ -333,11 +333,11 @@ class Processing:
         # Add flag variables to dataset
         if isinstance(agg, dict):
             results = collect_results(runner, how="dict")
-            for ancillary, agg in agg.items():
-                self._obj[ancillary] = _get_aggregated_flag(agg["tests"])
-                _add_ancillary(ancillary, agg["streams"])
+            for ancillary, aggregator in agg.items():
+                self._obj[ancillary] = _get_aggregated_flag(aggregator["tests"])
+                _add_ancillary(ancillary, aggregator["streams"])
                 self.add_to_history(
-                    f"Generate QARTOD Aggregated Tests variable: '{agg}' which applies to {agg['streams']}"
+                    f"Generate QARTOD Aggregated Tests variable: '{agg}' which applies to {aggregator['streams']}"
                 )
 
         elif agg == "all":
