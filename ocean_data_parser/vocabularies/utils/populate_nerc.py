@@ -14,13 +14,18 @@ vocabulary_path = Path("ocean_data_parser/vocabularies/amundsen_vocabulary.json"
 
 def populate_amundsen_vocab():
     """Load the Amundsen vocabulary and populate it with the P01 and P06 vocabularies names."""
+
     def _set_names(attrs):
         if "sdn_parameter_urn" in attrs:
-            attrs["sdn_parameter_name"] = p01_vocabulary.at[attrs["sdn_parameter_urn"], "sdn_parameter_name"]
+            attrs["sdn_parameter_name"] = p01_vocabulary.at[
+                attrs["sdn_parameter_urn"], "sdn_parameter_name"
+            ]
         if "sdn_uom_urn" in attrs:
-            attrs["sdn_uom_name"] = p06_vocabulary.at[attrs["sdn_uom_urn"], "sdn_uom_name"]
+            attrs["sdn_uom_name"] = p06_vocabulary.at[
+                attrs["sdn_uom_urn"], "sdn_uom_name"
+            ]
         return attrs
-    
+
     with open(vocabulary_path) as f:
         amundsen = json.load(f)
 
@@ -31,7 +36,7 @@ def populate_amundsen_vocab():
         if isinstance(attrs, dict):
             attrs = _set_names(attrs)
             continue
-            
+
         for attr in attrs:
             attr = _set_names(attr)
 
