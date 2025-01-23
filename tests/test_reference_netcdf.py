@@ -142,11 +142,7 @@ def compare_test_to_reference_netcdf(
 
         # Sort variable attributes by reference order
         test.attrs = {
-            **{
-                key: test.attrs[key]
-                for key in reference.attrs
-                if key in test.attrs
-            },
+            **{key: test.attrs[key] for key in reference.attrs if key in test.attrs},
             **{
                 key: value
                 for key, value in test.attrs.items()
@@ -199,4 +195,4 @@ def compare_test_to_reference_netcdf(
     differences = compare_xarray_datasets(
         reference, test, fromfile="reference", tofile="test", n=0
     )
-    return "Unknown differences" if not differences else differences
+    return differences or "Unknown differences"

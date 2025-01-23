@@ -796,7 +796,7 @@ class IosFile:
             units = re.sub(r"^'|'$", "", units)
             name_match_type = vocab["ios_name"] == name.strip().lower()
             match_units = vocab["accepted_units"].apply(
-                lambda x: match_term(x, units.strip())
+                lambda x, units=units: match_term(x, units.strip())
             )
 
             matched_vocab = vocab.loc[name_match_type & match_units]

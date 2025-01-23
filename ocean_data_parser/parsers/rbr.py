@@ -42,7 +42,7 @@ def rtext(
             line = fid.readline()
 
             if re.match(r"\s*.*(=).*", line):
-                key, item = re.split(r"\s*[:=]\s*", line, 1)
+                key, item = re.split(r"\s*[:=]\s*", line, maxsplit=1)
 
                 # If line has key[index].subkey format
                 if re.match(r".*\[\d+\]\..*", key):

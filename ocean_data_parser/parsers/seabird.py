@@ -321,15 +321,15 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             header["calibration"][sensor_calibration["variable"]] = {
                 "calibration_date": sensor_calibration["calibration_date"]
             }
-        elif pressure_sensor := re.match(
-            r"\* pressure sensor = (?P<type>[\w\s]+), range = (?P<range>.*)", line
-        ):
-            if "pressure" not in header["calibration"]:
-                header["calibration"]["pressure"] = {}
-            header["calibration"]["pressure"].update(pressure_sensor.groupdict())
-        elif pressure_sensor := re.match(
-            r"\* pressure S\/N = (?P<serial_number>\d+), range = (?P<range>[^:]):(?P<calibration_date>.+)",
-            line,
+        elif (
+            pressure_sensor := re.match(
+                r"\* pressure sensor = (?P<type>[\w\s]+), range = (?P<range>.*)", line
+            )
+        ) or (
+            pressure_sensor := re.match(
+                r"\* pressure S\/N = (?P<serial_number>\d+), range = (?P<range>[^:]):(?P<calibration_date>.+)",
+                line,
+            )
         ):
             if "pressure" not in header["calibration"]:
                 header["calibration"]["pressure"] = {}
