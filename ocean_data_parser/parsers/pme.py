@@ -5,7 +5,6 @@ PME is a company that manufactures instruments to measure different water proper
 
 import logging
 import re
-import warnings
 from typing import Union
 
 import pandas as pd
@@ -136,8 +135,9 @@ def txt(
                 metadata[key.lower()] = value.strip()
 
         if metadata is None:
-            warnings.warn("Failed to read: {path}", RuntimeWarning)
-            return pd.DataFrame(), None
+            raise RuntimeError(
+                "Failed to read txt file. Can't find metadata in the header"
+            )
 
         # Parse column names
         columns = [item.strip() for item in header[-1].split(",")]
