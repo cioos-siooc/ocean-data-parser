@@ -370,7 +370,7 @@ class IosFile:
         # used as interface for data actually read into dictionary by get_section
         # provides some useful debug information
         # returns lines that make up 'subsection' if all is well
-        if name not in self.file.keys():
+        if name not in self.file:
             logger.info("Unvailable subsection:%s", name)
             return None
         return self.file[name]

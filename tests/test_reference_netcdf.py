@@ -144,7 +144,7 @@ def compare_test_to_reference_netcdf(
         test.attrs = {
             **{
                 key: test.attrs[key]
-                for key in reference.attrs.keys()
+                for key in reference.attrs
                 if key in test.attrs
             },
             **{
@@ -159,7 +159,7 @@ def compare_test_to_reference_netcdf(
             test[var].attrs = {
                 **{
                     key: test[var].attrs[key]
-                    for key in reference[var].attrs.keys()
+                    for key in reference[var].attrs
                     if key in test[var].attrs
                 },
                 **{

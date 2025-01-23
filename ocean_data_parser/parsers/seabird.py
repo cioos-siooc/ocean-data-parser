@@ -82,13 +82,13 @@ def _convert_to_netcdf_var_name(var_name):
 
 
 def _add_seabird_vocabulary(variable_attributes: dict) -> dict:
-    for var in variable_attributes.keys():
+    for var in variable_attributes:
         var_lower = var.lower()
         if var_lower in seabird_variable_attributes:
             variable_attributes[var].update(seabird_variable_attributes[var_lower])
         elif (
             var.endswith("_sdev")
-            and var_lower[:-5] in seabird_variable_attributes.keys()
+            and var_lower[:-5] in seabird_variable_attributes
         ):
             variable_attributes[var].update(seabird_variable_attributes[var_lower[:-5]])
         else:
