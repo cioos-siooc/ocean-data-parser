@@ -119,14 +119,20 @@ class Processing:
         self,
         depth_threshold: float = None,
         std_factor_threshold: float = 2,
-        deployment_time_buffer: pd.Timedelta = pd.Timedelta(0),
-        retrieval_time_buffer: pd.Timedelta = pd.Timedelta(0),
+        deployment_time_buffer: pd.Timedelta = None,
+        retrieval_time_buffer: pd.Timedelta = None,
         depth: str = "depth",
         time: str = "time",
         dim=None,
         output: str = "crop",
         deployment_flag="deployement_flag",
     ) -> xr.Dataset:
+        # Set default values for buffers
+        if deployment_time_buffer is None:
+            deployment_time_buffer = pd.Timedelta(0)
+        if retrieval_time_buffer is None:
+            retrieval_time_buffer = pd.Timedelta(0)
+
         # Retrieve variables
         depth = self._obj[depth]
         time = self._obj[time]
@@ -203,7 +209,7 @@ class Processing:
         try:
             import gsw_xarray as gsw
         except ImportError:
-            raise RuntimeError("Optional package gsw_xarray is required.")
+            raise RuntimeError("Optional package gsw_xarray is required.") from None
 
         def _get_arg(arg):
             if arg in self._obj or arg in self._obj.coords:
@@ -261,7 +267,7 @@ class Processing:
         except ImportError:
             raise RuntimeError(
                 "Optional package ioos_qc is required: run `pip install ioos_qc`"
-            )
+            ) from None
 
         qartod_flags = {
             name: value

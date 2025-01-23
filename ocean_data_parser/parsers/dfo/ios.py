@@ -24,7 +24,7 @@ HANDLED_DATA_TYPES = (
 TRACJECTORY_DATA_TYPES = ("tob", "drf", "loop")
 
 
-def shell(fname: str, config: dict = {}) -> xarray.Dataset:
+def shell(fname: str, config: dict = None) -> xarray.Dataset:
     """Parse DFO-IOS Shell format.
 
     Args:
@@ -37,6 +37,9 @@ def shell(fname: str, config: dict = {}) -> xarray.Dataset:
     Returns:
         xarray.Dataset: Parsed xarray dataset
     """
+    if config is None:
+        config = {}
+
     # read file based on file type
     extension = fname.rsplit(".", 1)[1].lower()
     if extension not in HANDLED_DATA_TYPES:

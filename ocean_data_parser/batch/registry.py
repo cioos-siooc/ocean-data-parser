@@ -36,7 +36,7 @@ class FileConversionRegistry:
     def __init__(
         self,
         path: str = None,
-        data: pd.DataFrame = generate_registry(),
+        data: pd.DataFrame = EMPTY_FILE_REGISTRY,
         hashtype: str = "sha256",
         block_size: int = 65536,
     ):

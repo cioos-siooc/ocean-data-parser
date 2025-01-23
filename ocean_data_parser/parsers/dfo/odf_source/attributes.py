@@ -70,7 +70,9 @@ def _generate_cf_history_from_odf(odf_header) -> dict:
     incorporated within the history attribute.
     """
 
-    def _add_to_history(comment, date=datetime.now(timezone.utc)):
+    def _add_to_history(comment, date=None):
+        if date is None:
+            date = datetime.now(timezone.utc)
         """Generate a CF standard history line."""
         date_str = (
             date.strftime("%Y-%m-%dT%H:%M:%SZ")
