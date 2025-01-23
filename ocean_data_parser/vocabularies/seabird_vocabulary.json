@@ -78,12 +78,12 @@
         "long_name": "Beam Attenuation, Wet Labs C-Star",
         "instrument": "WET Labs C-Star",
         "units": "1/m",
-        "sdn_parameter_urn": "SDN:P01::ATTNZS01",
-        "sdn_parameter_name": "Attenuation (red light wavelength) per unit length of the water body by WET Labs transmissometer and calibration to read zero in clear water",
+        "sdn_parameter_urn": "SDN:P01::ATTNMS01",
+        "sdn_parameter_name": "Attenuation (red light wavelength) per unit length of the water body by WET Labs 25cm path length transmissometer and calibration to read zero in clear water",
         "comments": "1st sensor",
         "sdn_uom_urn": "SDN:P06::UPRM",
         "sdn_uom_name": "per metre",
-        "bodc_alternative_label": "RedPWCorr",
+        "bodc_alternative_label": "RedMedPWCorr",
         "definition": "WET Labs transmissometer calibrated to zero in clear water"
     },
     "CStarAt1": {
@@ -171,7 +171,10 @@
         "units": "%",
         "comments": "1st sensor",
         "sdn_uom_urn": "SDN:P06::UPCT",
-        "sdn_uom_name": "Percent"
+        "sdn_uom_name": "Percent",
+        "sdn_parameter_name": "Attenuation (red light wavelength) per unit length of the water body by WET Labs 25cm path length transmissometer and calibration to read zero in clear water",
+        "sdn_parameter_urn": "SDN:P01::ATTNMS01",
+        "bodc_alternative_label": "RedMedPWCorr"
     },
     "CStarTr1": {
         "long_name": "Beam Transmission, Wet Labs C-Star, 2",
@@ -225,7 +228,7 @@
         "long_name": "Bottle Position In Carousel",
         "sdn_parameter_urn": "SDN:P01::ROSPOSID",
         "sdn_parameter_name": "Bottle rosette position identifier",
-        "bodc_alternative_label": "RosPos",
+        "bodc_alternative_label": "BOPO",
         "definition": "The numeric identifer of the physical location where a water bottle is mounted on a CTD rosette"
     },
     "bpos": {
@@ -418,34 +421,34 @@
         "long_name": "Conductivity, 2",
         "units": "S/m",
         "standard_name": "sea_water_electrical_conductivity",
-        "sdn_parameter_urn": "SDN:P01::CNDCST02",
-        "sdn_parameter_name": "Electrical conductivity of the water body by CTD (sensor 2)",
+        "sdn_parameter_urn": "SDN:P01::CNDCST01",
+        "sdn_parameter_name": "Electrical conductivity of the water body by CTD",
         "sdn_uom_urn": "SDN:P06::UECA",
         "sdn_uom_name": "Siemens per metre",
         "comments": "2nd sensor",
-        "bodc_alternative_label": "CTDCond2"
+        "bodc_alternative_label": "CTDCond"
     },
     "c1mS/cm": {
         "name": "c1mSPercm",
         "long_name": "Conductivity, 2",
         "units": "mS/cm",
         "standard_name": "sea_water_electrical_conductivity",
-        "sdn_parameter_urn": "SDN:P01::CNDCST02",
-        "sdn_parameter_name": "Electrical conductivity of the water body by CTD (sensor 2)",
+        "sdn_parameter_urn": "SDN:P01::CNDCST01",
+        "sdn_parameter_name": "Electrical conductivity of the water body by CTD",
         "sdn_uom_urn": "SDN:P06::MSCM",
         "sdn_uom_name": "MilliSiemens per centimetre",
         "comments": "2nd sensor",
-        "bodc_alternative_label": "CTDCond2"
+        "bodc_alternative_label": "CTDCond"
     },
     "c1uS/cm": {
         "name": "c1uSPercm",
         "long_name": "Conductivity, 2",
         "units": "uS/cm",
         "standard_name": "sea_water_electrical_conductivity",
-        "sdn_parameter_urn": "SDN:P01::CNDCST02",
-        "sdn_parameter_name": "Electrical conductivity of the water body by CTD (sensor 2)",
+        "sdn_parameter_urn": "SDN:P01::CNDCST01",
+        "sdn_parameter_name": "Electrical conductivity of the water body by CTD",
         "comments": "2nd sensor",
-        "bodc_alternative_label": "CTDCond2"
+        "bodc_alternative_label": "CTDCond"
     },
     "C2-C1S/m": {
         "name": "C2-C1SPerm",
@@ -499,9 +502,12 @@
         "standard_name": "sea_water_density",
         "sdn_uom_urn": "SDN:P06::UKMC",
         "sdn_uom_name": "Kilograms per cubic metre",
-        "comments": "1st sensor"
+        "comments": "1st sensor",
+        "sdn_parameter_name": "ToBeDefined",
+        "sdn_parameter_urn": "ToBeDefined",
+        "bodc_alternative_label": "DensityToBeDefined"
     },
-    "sigma-\u00ef\u00bf\u00bd00": {
+    "sigma-�00": {
         "name": "sigma-theta00",
         "long_name": "Density [sigma-theta]",
         "units": "kg/m^3",
@@ -546,7 +552,7 @@
         "units": "kg/m^3",
         "comments": "2nd sensor"
     },
-    "sigma-\u00ef\u00bf\u00bd11": {
+    "sigma-�11": {
         "name": "sigma-theta11",
         "long_name": "Density, 2 [sigma-theta]",
         "units": "kg/m^3",
@@ -780,7 +786,7 @@
         "sdn_uom_urn": "SDN:P06::UMMC",
         "sdn_uom_name": "Milligrams per cubic metre",
         "comments": "1st sensor",
-        "bodc_alternative_label": "Fluor_CDOM",
+        "bodc_alternative_label": "Fluo_CDOM",
         "definition": "This code is under review due to its ambiguity. It is likely to be deprecated at the end of the review period. Please use terms stating 'Concentration of%' for calibrated CDOM fluorometer output or 'Raw signal% of%' for the raw fluorescence signal [updated 30/07/2019]. Definition was: The amount of violet to low ultra-violet radiation generated in the water column in response to high ultra-violet radiation transmission expressed relative to an unspecified baseline using fluorometer designed to detect CDOM, crude oil or UV-fluorescent dyes."
     },
     "flSPuv1": {
@@ -1611,7 +1617,10 @@
         "standard_name": "volume_fraction_of_oxygen_in_sea_water",
         "sdn_uom_urn": "SDN:P06::UMLL",
         "sdn_uom_name": "Millilitres per litre",
-        "comments": "1st sensor"
+        "comments": "1st sensor",
+        "sdn_parameter_name": "ToBeDefined",
+        "sdn_parameter_urn": "ToBeDefined",
+        "bodc_alternative_label": "Sbeox0ML_per_L"
     },
     "sbeox0Mg/L": {
         "name": "sbeox0MgPerL",
@@ -1636,7 +1645,10 @@
         "standard_name": "moles_of_oxygen_per_unit_mass_in_sea_water",
         "comments": "1st sensor",
         "sdn_uom_urn": "SDN:P06::KGUM",
-        "sdn_uom_name": "Micromoles per kilogram"
+        "sdn_uom_name": "Micromoles per kilogram",
+        "sdn_parameter_name": "Concentration of oxygen {O2 CAS 7782-44-7} per unit mass of the water body [dissolved plus reactive particulate phase]",
+        "sdn_parameter_urn": "SDN:P01::DOXMZZ01",
+        "bodc_alternative_label": "DissO2_Mass"
     },
     "sbeox0Mm/L": {
         "name": "sbeox0MmPerL",
@@ -1646,7 +1658,10 @@
         "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
         "comments": "1st sensor",
         "sdn_uom_urn": "SDN:P06::UPOX",
-        "sdn_uom_name": "Micromoles per litre"
+        "sdn_uom_name": "Micromoles per litre",
+        "sdn_parameter_name": "Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase] by in-situ sensor",
+        "sdn_parameter_urn": "SDN:P01::DOXYZZ01",
+        "bodc_alternative_label": "WC_dissO2_IS"
     },
     "sbeox0dOV/dT": {
         "name": "sbeox0dOVPerdT",
@@ -2094,7 +2109,10 @@
         "instrument": "Weiss",
         "units": "ml/l",
         "sdn_uom_urn": "SDN:P06::UMLL",
-        "sdn_uom_name": "Millilitres per litre"
+        "sdn_uom_name": "Millilitres per litre",
+        "sdn_parameter_name": "ToBeDefined",
+        "sdn_parameter_urn": "ToBeDefined",
+        "bodc_alternative_label": "OxsatML_per_L"
     },
     "oxsatMg/L": {
         "name": "oxsatMgPerL",
@@ -2114,7 +2132,7 @@
     },
     "par": {
         "long_name": "Par/Irradiance, Biospherical/Licor",
-        "units": "\u00b5einsteins/s/m^2",
+        "units": "�einsteins/s/m^2",
         "instrument": "Biospherical/Licor",
         "bodc_alternative_label": "SubSurDWVectPAR",
         "sdn_parameter_urn": "SDN:P01::DWIRRXUD",
@@ -2188,7 +2206,7 @@
         "units": "deg C",
         "standard_name": "sea_water_potential_temperature",
         "sdn_parameter_urn": "SDN:P01::POTMS601",
-        "sdn_parameter_name": "Potential temperature of the water body by CTD and computation from pressure, salinity and IPTS-68 temperature using UNESCO algorithm",
+        "sdn_parameter_name": "Potential temperature of the water body by CTD and computation from pressure",
         "sdn_uom_urn": "SDN:P06::UPAA",
         "sdn_uom_name": "Degrees Celsius",
         "comments": "1st sensor",
@@ -2205,7 +2223,7 @@
         "units": "deg C",
         "standard_name": "sea_water_potential_temperature",
         "sdn_parameter_urn": "SDN:P01::POTMS601",
-        "sdn_parameter_name": "Potential temperature of the water body by CTD and computation from pressure, salinity and IPTS-68 temperature using UNESCO algorithm",
+        "sdn_parameter_name": "Potential temperature of the water body by CTD and computation from pressure",
         "sdn_uom_urn": "SDN:P06::UPAA",
         "sdn_uom_name": "Degrees Celsius",
         "comments": "1st sensor",
@@ -2222,7 +2240,7 @@
         "units": "deg C",
         "standard_name": "sea_water_potential_temperature",
         "sdn_parameter_urn": "SDN:P01::POTMS601",
-        "sdn_parameter_name": "Potential temperature of the water body by CTD and computation from pressure, salinity and IPTS-68 temperature using UNESCO algorithm",
+        "sdn_parameter_name": "Potential temperature of the water body by CTD and computation from pressure",
         "sdn_uom_urn": "SDN:P06::UPAA",
         "sdn_uom_name": "Degrees Celsius",
         "comments": "2nd sensor",
@@ -2239,7 +2257,7 @@
         "units": "deg C",
         "standard_name": "sea_water_potential_temperature",
         "sdn_parameter_urn": "SDN:P01::POTMS601",
-        "sdn_parameter_name": "Potential temperature of the water body by CTD and computation from pressure, salinity and IPTS-68 temperature using UNESCO algorithm",
+        "sdn_parameter_name": "Potential temperature of the water body by CTD and computation from pressure",
         "sdn_uom_urn": "SDN:P06::UPAA",
         "sdn_uom_name": "Degrees Celsius",
         "comments": "2nd sensor",
@@ -2601,7 +2619,10 @@
         "comments": "2nd sensor - 1st sensor"
     },
     "scan": {
-        "long_name": "Scan Count"
+        "long_name": "Scan Count",
+        "sdn_parameter_name": "ToBeDefined",
+        "sdn_parameter_urn": "ToBeDefined",
+        "bodc_alternative_label": "Scan"
     },
     "nbin": {
         "long_name": "Scans Per Bin",
@@ -2632,7 +2653,7 @@
         "sdn_uom_urn": "SDN:P06::UVAA",
         "sdn_uom_name": "Metres per second",
         "comments": "1st sensor",
-        "bodc_alternative_label": "Cmpval",
+        "bodc_alternative_label": "CTD_Sound_Vel",
         "definition": "The rate at which sound travels through the water column computed from salinity and temperature using UNESCO algorithm"
     },
     "svCF": {
@@ -2643,40 +2664,42 @@
     "svDM": {
         "long_name": "Sound Velocity [Delgrosso]",
         "units": "m/s",
-        "sdn_parameter_urn": "SDN:P01::SVELCT01",
-        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by unspecified algorithm",
+        "sdn_parameter_urn": "ToBeDefined",
+        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by Delgrosso algorithm",
         "sdn_uom_urn": "SDN:P06::UVAA",
         "sdn_uom_name": "Metres per second",
         "comments": "1st sensor",
-        "bodc_alternative_label": "CTD_Sound_Vel",
+        "bodc_alternative_label": "Sound_Veloucity_DM",
         "definition": "Computed value from CTD temperature and salinity data"
     },
     "svDF": {
         "long_name": "Sound Velocity [Delgrosso]",
         "units": "ft/s",
         "comments": "1st sensor",
-        "sdn_parameter_urn": "SDN:P01::SVELCT01",
-        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by unspecified algorithm"
+        "sdn_parameter_urn": "ToBeDefined",
+        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by Delgrosso algorithm",
+        "bodc_alternative_label": "Sound_Veloucity_DF"
     },
     "svWM": {
         "long_name": "Sound Velocity [Wilson]",
         "units": "m/s",
-        "sdn_parameter_urn": "SDN:P01::SVELCT01",
-        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by unspecified algorithm",
+        "sdn_parameter_urn": "ToBeDefined",
+        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by Wilson algorithm",
         "sdn_uom_urn": "SDN:P06::UVAA",
         "sdn_uom_name": "Metres per second",
         "comments": "1st sensor",
-        "bodc_alternative_label": "CTD_Sound_Vel",
+        "bodc_alternative_label": "Sound_Veloucity_WM",
         "definition": "Computed value from CTD temperature and salinity data"
     },
     "svWF": {
         "long_name": "Sound Velocity [Wilson]",
         "units": "ft/s",
         "comments": "1st sensor",
-        "sdn_parameter_urn": "SDN:P01::SVELCT01",
-        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by unspecified algorithm",
+        "sdn_parameter_urn": "ToBeDefined",
+        "sdn_parameter_name": "Sound velocity in the water body by CTD and computation from temperature and salinity by Wilson algorithm",
         "sdn_uom_urn": "SDN:P06::UVAA",
-        "sdn_uom_name": "Metres per second"
+        "sdn_uom_name": "Metres per second",
+        "bodc_alternative_label": "Sound_Veloucity_WF"
     },
     "svCM1": {
         "long_name": "Sound Velocity, 2 [Chen-Millero]",
@@ -2750,7 +2773,10 @@
     },
     "spar": {
         "long_name": "Spar/Surface Irradiance",
-        "comments": "Biospherical or Licor sensor"
+        "comments": "Biospherical or Licor sensor",
+        "sdn_parameter_name": "Downwelling vector irradiance as photons of electromagnetic radiation (PAR wavelengths) in the atmosphere by cosine-collector radiometer",
+        "sdn_parameter_urn": "SDN:P01::IRRDSV01",
+        "bodc_alternative_label": "SurfVPAR"
     },
     "spar/sat/lin": {
         "name": "sparPersatPerlin",
@@ -2787,7 +2813,10 @@
     },
     "sva": {
         "long_name": "Specific Volume Anomaly",
-        "units": "10^-8 * m^3/kg"
+        "units": "10^-8 * m^3/kg",
+        "sdn_parameter_name": "ToBeDefined",
+        "sdn_parameter_urn": "ToBeDefined",
+        "bodc_alternative_label": "Sva"
     },
     "E": {
         "long_name": "Stability",
@@ -3351,7 +3380,10 @@
         "units": "V",
         "sdn_uom_urn": "SDN:P06::UVLT",
         "sdn_uom_name": "Volts",
-        "comments": "7th voltage sensor"
+        "comments": "7th voltage sensor",
+        "sdn_parameter_name": "ToBeDefined",
+        "sdn_parameter_urn": "ToBeDefined",
+        "bodc_alternative_label": "V6"
     },
     "v7": {
         "long_name": "Voltage 7",
