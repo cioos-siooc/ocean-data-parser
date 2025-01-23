@@ -10,8 +10,8 @@ def update_database_table(
 ):
     """Update database table.
 
-    It first upload to a temporary table, which then update the original table with any new
-    sample that aren't available already.
+    It first upload to a temporary table, which then update the original table with
+    any new sample that aren't available already.
     """
 
     def psql_insert_copy(table, conn, keys, data_iter):

@@ -174,7 +174,7 @@ def variables(
     default=None,
     is_flag=False,
     flag_value="odpy-compile-variables.md",
-    help="Result table output: \n - None = console(default)\n - path to csv or markdown(*.md) file.",
+    help="Result table output:\n default to console otherwise output path[csv or md].",
 )
 @click.option(
     "--output-erddap-xml",
@@ -190,7 +190,7 @@ def variables(
     flag_value="True",
     type=click.Choice(["stop", "True"]),
     default=None,
-    help="Print present argument values. If  stop argument is given, do not run the conversion.",
+    help="Print present argument values. If stop, do not run the conversion.",
 )
 def inspect_variables(**kwargs):
     """Inspect NetCDF files variables and variables attributes."""

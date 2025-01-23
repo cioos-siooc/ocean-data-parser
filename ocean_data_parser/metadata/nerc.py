@@ -28,7 +28,7 @@ class Nerc:
         cached_file = cache_dir / f"nerc_{vocabulary}_vocabulary.json"
         if cached_file.exists() and not overwrite:
             return cached_file
-        url = f"{self.base_url}/{vocabulary}/{version}/?_profile=dd&_mediatype=application/json"
+        url = f"{self.base_url}/{vocabulary}/{version}/?_profile=dd&_mediatype=application/json"  # noqa
         logger.info("Dowonload vocabulary: {}", url)
         # Save file locally
         with requests.get(url) as response:
@@ -54,7 +54,7 @@ class Nerc:
         self, vocabulary: str, id: str, version: str = "current"
     ) -> dict:
         """Retrieve a specific NERC vocabulary term."""
-        url = f"{self.base_url}/{vocabulary}/{version}/{id}/?_profile=nvs&_mediatype=application/ld+json"
+        url = f"{self.base_url}/{vocabulary}/{version}/{id}/?_profile=nvs&_mediatype=application/ld+json"  # noqa
         logger.info("Load vocabulary term: {}", url)
         with requests.get(url) as response:
             response.raise_for_status()

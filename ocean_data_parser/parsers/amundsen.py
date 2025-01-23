@@ -50,7 +50,7 @@ def _standardize_attribute_value(value: str, name: str = None):
         name (string, optional): [description]. Defaults to None.
 
     Returns:
-        [str,float,int,pd.Timestamp]: cast attribute value according to the right format.
+        [str,float,int,pd.Timestamp]: cast attribute value to the right format.
     """
     if name in string_attributes or not isinstance(value, str):
         return value
@@ -81,7 +81,8 @@ def int_format(
     Args:
         path (str): file path to parse.
         encoding (str, optional): File encoding. Defaults to "Windows-1252".
-        map_to_vocabulary (bool, optional): Rename variables to vocabulary. Defaults to True.
+        map_to_vocabulary (bool, optional): Rename variables to vocabulary.
+            Defaults to True.
         generate_depth (bool, optional): Generate depth variable. Defaults to True.
 
     Returns:
@@ -91,7 +92,7 @@ def int_format(
     logger.addHandler(nc_handler)
 
     logger.info(
-        "Convert INT file format with python package ocean_data_parser.amundsen.int_format V%s",
+        "Convert INT file format with ocean_data_parser.amundsen.int_format V%s",
         __version__,
     )
     metadata = default_global_attributes.copy()
@@ -128,7 +129,7 @@ def int_format(
                 metadata["D0CT"] = "Potential density TEOS10 (s, t, 0) [kg/m^3]"
             elif re.match(r"% .* \[.+\]", line):
                 logger.warning(
-                    "Unknown variable name will be saved to unknown_variables_information: %s",
+                    "Unknown variable namen: %s",
                     line,
                 )
                 metadata["unknown_variables_information"] += line + "\n"
@@ -204,7 +205,8 @@ def int_format(
                 ds["Latitude"] if "Lat" in ds else ds.attrs["initial_latitude_deg"]
             )
             logger.info(
-                "Generate instrument_depth from TEOS-10: -1 * gsw.z_from_p(ds['Pres'], %s)",
+                "Generate instrument_depth from TEOS-10:"
+                " -1 * gsw.z_from_p(ds['Pres'], %s)",
                 "ds['Lat']" if "Lat" in ds else "ds.attrs['initial_latitude_deg']",
             )
             ds["instrument_depth"] = -z_from_p(ds[pressure[0]], latitude)

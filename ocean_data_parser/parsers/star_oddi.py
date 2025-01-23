@@ -2,7 +2,8 @@
 
 Star-oddi is a company that specializes in manufacturing and providing data
 loggers and sensors for oceanographic research. Their DAT files contain recorded
-data from various oceanographic parameters such as temperature, salinity, conductivity, and sound velocity.
+data from various oceanographic parameters such as temperature, salinity, conductivity,
+and sound velocity.
 """
 
 import logging
@@ -129,7 +130,8 @@ def dat(path: str, encoding: str = "cp1252") -> xarray.Dataset:
 
         if int(n_records) != len(df):
             logger.warning(
-                "Length of data retrieved (=%s) does not match the expected length from the header (=%s).",
+                "Length of data retrieved (=%s) does not match the expected "
+                "length from the header (=%s).",
                 len(df),
                 int(n_records) - 1,
             )

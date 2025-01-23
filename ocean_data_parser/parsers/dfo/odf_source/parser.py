@@ -117,23 +117,25 @@ def history_input(comment, date=None):
 def read(filename, encoding_format="Windows-1252"):
     """Read ODF file format.
 
-    `odf_source.parser.read` parse the odf format used by some DFO organisation to python list of
-    dictionary format and pandas dataframe. Once converted, the output can easily
-    be converted to netcdf format.
+    `odf_source.parser.read` parse the odf format used by some DFO organisation
+    to python list of dictionary format and pandas dataframe. Once converted,
+    the output can easily be converted to netcdf format.
 
     Steps applied:
         1. Read line by line an ODF header and distribute each lines in a list of
            list and dictionaries.
-            a. Lines associated with a character at the beginning are considered a section.
+            a. Lines associated with a character at the beginning
+                are considered a section.
             b. Lines starting white spaces are considered items in preceding section.
             c. Repeated sections are grouped as a list
             d. Each section items are grouped as a dictionary
-            e. dictionary items are converted to datetime (deactivated), string, integer or
-                float format.
-        2. Read the data  following the header with Pandas.read_csv() method
-            a. Use defined separator  to distinguish columns (default multiple white spaces).
-            b. Convert each column of the pandas data frame to the matching format specified in
-            the TYPE attribute of the ODF associated PARAMETER_HEADER
+            e. dictionary items are converted to datetime (deactivated), string, integer
+                or float format.
+        2. Read the data following the header with Pandas.read_csv() method
+            a. Use defined separator to distinguish columns
+                (Default: multiple white spaces).
+            b. Convert each column of the pandas data frame to the matching format
+               specified in the TYPE attribute of the ODF associated PARAMETER_HEADER
 
     read_odf is a simple tool that  parse the header metadata and data from an DFO
     ODF file to a list of dictionaries.
@@ -365,7 +367,10 @@ def add_vocabulary_attributes(
         )
         match_instrument_global = odf_vocabulary["accepted_instruments"].apply(
             lambda x: _review_term(
-                f"{ds.attrs.get('instrument_type')} {ds.attrs.get('instrument_model')}".strip(),
+                (
+                    f"{ds.attrs.get('instrument_type')} "
+                    f"{ds.attrs.get('instrument_model')}"
+                ).strip(),
                 x,
                 regexp=True,
                 search_flag=re.IGNORECASE,
@@ -495,7 +500,9 @@ def add_vocabulary_attributes(
             comment += " LATD_01 is used as latitude, LOND_01 is used as longitude"
         new_variables_mapping.update(
             {
-                var: f"with x={var} -> {item['apply_function']} = {item['variable_name']}"
+                var: (  # noqa
+                    f"with x={var} -> {item['apply_function']} = {item['variable_name']}"  # noqa
+                )
                 if item["apply_function"] != "x"
                 else f"{var} = {item['variable_name']}"
                 for _, item in matching_terms.iterrows()

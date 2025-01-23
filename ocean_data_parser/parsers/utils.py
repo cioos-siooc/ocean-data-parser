@@ -136,8 +136,8 @@ def generate_variables_encoding(
         ds (xr.Dataset): Dataset
         variables (list, optional): List of time variables to encode.
             Defaults to detect automatically datetime/timestamp variables.
-        object_variables_encoding (string, optional): Encoding to apply object variables.
-            Defaults to: dtype: str
+        object_variables_encoding (string, optional): Encoding to apply
+            object variables. Defaults to: dtype: str
         time_variables_encoding (dict, optional): Encoding to apply.
             Defaults to:
                 + units="seconds since 1970-01-01T00:00:00"
@@ -222,7 +222,8 @@ def standardize_dataset(
             Defaults to
                 + units="seconds since 1970-01-01T00:00:00"
                 + dtype="float64"
-        utc (bool, optional): Timestamps are UTC or standardize to UTC. Defaults to True.
+        utc (bool, optional): Timestamps are UTC or standardize to UTC.
+            Defaults to True.
 
     Returns:
         xr.Dataset: Standardized dataset
@@ -244,7 +245,7 @@ def standardize_global_attributes(attrs):
 
 
 def standardize_variable_attributes(ds):
-    """Method to generate simple generic variable attributes and reorder attributes in a consistent order."""
+    """Generate simple generic variable attributes and reorder attributes."""
     for var in ds.variables:
         # Generate min/max values attributes
         if (
@@ -270,7 +271,7 @@ def get_spatial_coverage_attributes(
     depth="depth",
     utc=False,
 ):
-    """This method generates the geospatial and time coverage attributes associated to an xarray dataset."""
+    """Generates geospatial and time coverage attributes."""
     # TODO add resolution attributes
     # time
     if time in ds.variables and ds[time].size > 0:

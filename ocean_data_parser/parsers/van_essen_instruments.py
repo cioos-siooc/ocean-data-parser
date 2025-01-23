@@ -1,4 +1,7 @@
-"""[Van Essen Instruments](https://www.vanessen.com/) manufactures a variety of water-related instrumentation."""
+"""[Van Essen Instruments](https://www.vanessen.com/) manufactures a variety of
+water-related instrumentation.
+
+"""
 
 import json
 import logging
@@ -187,10 +190,16 @@ def mon(
 def _specific_conductivity_to_conductivity(
     spec_cond, temp, theta=1.91 / 100, temp_ref=25
 ):
-    """Apply specific_conductivity conversion to conductivity based on the manufacturer equation."""
+    """Apply specific_conductivity conversion to conductivity.
+
+    Based on the manufacturer equation.
+    """
     return (100 + theta * (temp - temp_ref)) / 100 * spec_cond
 
 
 def _conductivity_to_specific_conductivity(cond, temp, theta=1.91 / 100, temp_ref=25):
-    """Apply conductivity conversion to specific_conductivity based on the manufacturer equation."""
+    """Apply conductivity conversion to specific_conductivity.
+
+    Based on the manufacturer equation.
+    """
     return 100 / (100 + theta * (temp - temp_ref)) * cond

@@ -1,7 +1,8 @@
 """DFO NARC data format parser.
 
 The Fisheries and Oceans Canada - Newfoundland and Labrador Region -
-North Atlantic Fisheries Centre (NAFC) is a research facility located in St. John's, Newfoundland and Labrador.
+North Atlantic Fisheries Centre (NAFC) is a research facility
+located in St. John's, Newfoundland and Labrador.
 """
 
 import inspect
@@ -122,7 +123,7 @@ def _get_dtype(var: str):
 
 
 def _parse_ll(deg: float, min: float) -> float:
-    """Combine deg and min values from latitude and longitude to decimal degrees."""
+    """Convert degrees and minutes to decimal degrees."""
     if pd.isna(deg) or pd.isna(min):
         return
     dir = -1 if deg < 0 else 1
@@ -130,9 +131,12 @@ def _parse_ll(deg: float, min: float) -> float:
 
 
 def _parse_pfile_header_line1(line: str) -> dict:
-    """Parse first row of the p file format which contains location and instrument information."""
+    """Parse first row of the p file format.
+
+    This contains location and instrument information.
+    """
     if line[44:46] == "60":
-        # Fix some dates are using 60 minutes which is not compatible with pandas datetime
+        # Fix some dates are using 60 minutes which is not compatible with pandas
         dt = pd.Timedelta("1min")
         line = line[:44] + "00" + line[46:]
     else:

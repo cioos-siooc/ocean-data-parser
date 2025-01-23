@@ -59,7 +59,8 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
     elif (
         ext == "csv"
         and "time, action, id, version, name, status, code, sampling interval (s), "
-        + "sampling resolution (C), samples, time diff (s), start time, lat, long, accuracy, device"
+        + "sampling resolution (C), samples, time diff (s), start time, "
+        + "lat, long, accuracy, device"
         in header
     ):
         parser = "electricblue.log_csv"
@@ -83,7 +84,7 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
         parser = "dfo.odf.mli_odf"
     elif ext == "ODF":
         logger.warning(
-            "Unable to detect ODF related institution code (IML=1830/CaIML;BIO=1810) from header: %s",
+            "Unable to detect ODF institution code (IML=1830/CaIML;BIO=1810): %s",
             header,
         )
         logger.warning("Default to MLI ODF")

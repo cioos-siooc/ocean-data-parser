@@ -337,7 +337,8 @@ class Processing:
                 self._obj[ancillary] = _get_aggregated_flag(aggregator["tests"])
                 _add_ancillary(ancillary, aggregator["streams"])
                 self.add_to_history(
-                    f"Generate QARTOD Aggregated Tests variable: '{agg}' which applies to {aggregator['streams']}"
+                    f"Generate QARTOD Aggregated Tests variable: '{agg}'"
+                    f" related to {aggregator['streams']}"
                 )
 
         elif agg == "all":
@@ -351,7 +352,8 @@ class Processing:
                 )
                 _add_ancillary(ancillary, result.stream_id)
                 self.add_to_history(
-                    f"Generate QARTOD Test variable '{ancillary}' which applies to {result.stream_id}"
+                    f"Generate QARTOD Test variable '{ancillary}'"
+                    f" related to {result.stream_id}"
                 )
         else:
             raise RuntimeError(f"Unknown test aggregator method: {agg}")

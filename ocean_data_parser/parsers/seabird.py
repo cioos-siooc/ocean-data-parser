@@ -153,7 +153,8 @@ def btl(
     Args:
         file_path (str): file path
         encoding (str, optional): Encoding to use. Defaults to "UTF-8".
-        xml_parsing_error_level (str, optional): Error level for XML parsing. Defaults to "ERROR".
+        xml_parsing_error_level (str, optional): Error level for XML parsing.
+            Defaults to "ERROR".
         save_orginal_header (bool, optional): Save original header. Defaults to False.
 
     Returns:
@@ -164,7 +165,7 @@ def btl(
             f, xml_parsing_error_level=xml_parsing_error_level
         )
 
-        # Retrieve variables from bottle header and lower the first letter of each variable
+        # Retrieve variables from bottle header and lower the first letter
         variable_list = [
             var[0].lower() + var[1:] for var in header["bottle_columns"]
         ] + ["stats"]
@@ -315,7 +316,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
         elif line.startswith("* cast"):
             header["processing"].append({"module": "cast", "message": line[2:]})
         elif sensor_calibration := re.match(
-            r"\* (?P<variable>temperature|conductivity|pressure|rtc):\s*(?P<calibration_date>\d\d-\w\w\w-\d\d)",
+            r"\* (?P<variable>temperature|conductivity|pressure|rtc):\s*(?P<calibration_date>\d\d-\w\w\w-\d\d)",  # noqa
             line,
         ):
             header["calibration"][sensor_calibration["variable"]] = {
@@ -327,7 +328,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             )
         ) or (
             pressure_sensor := re.match(
-                r"\* pressure S\/N = (?P<serial_number>\d+), range = (?P<range>[^:]):(?P<calibration_date>.+)",
+                r"\* pressure S\/N = (?P<serial_number>\d+), range = (?P<range>[^:]):(?P<calibration_date>.+)",  # noqa
                 line,
             )
         ):
@@ -648,7 +649,7 @@ def _generate_binned_attributes(
     apply it to the different related attributes and variable attributes.
     """
     binavg = re.search(
-        r"\# binavg_bintype \= (?P<bintype>.*)\n\# binavg_binsize \= (?P<binsize>\d+)\n",
+        r"\# binavg_bintype \= (?P<bintype>.*)\n\# binavg_binsize \= (?P<binsize>\d+)\n",  # noqa
         seabird_header,
     )
     if binavg:
@@ -683,7 +684,7 @@ def _generate_binned_attributes(
 def _update_attributes_from_seabird_header(
     ds: xarray.Dataset, seabird_header: str, parse_manual_inputs: bool = False
 ) -> xarray.Dataset:
-    """Add Seabird specific attributes parsed from Seabird header into a xarray dataset."""
+    """Add Seabird attributes parsed from Seabird header into a xarray dataset."""
     # sourcery skip: identity-comprehension, remove-redundant-if
     # Instrument
     ds.attrs["instrument"] = _get_seabird_instrument_from_header(seabird_header)
@@ -722,7 +723,7 @@ def _generate_instruments_variables_from_xml(
         return ds, {}
 
     sensors_comments = re.findall(
-        r"\s*\<!--\s*(Frequency \d+|A/D voltage \d+|.* voltage|Count|Serial RS-232){1}, (.*)-->\n",
+        r"\s*\<!--\s*(Frequency \d+|A/D voltage \d+|.* voltage|Count|Serial RS-232){1}, (.*)-->\n",  # noqa
         calibration_xml,
     )
     # Consider only channels with sensor mounted
@@ -769,7 +770,8 @@ def _generate_instruments_variables_from_xml(
             logger.warning("Duplicated instrument variable %s", sensor_var_name)
 
         # Try fit IOOS 1.2 which request to add a instrument variable for each
-        # instruments and link this variable to data variable by using the instrument attribute
+        # instruments and link this variable to data variable by using the instrument
+        # attribute
         # https://ioos.github.io/ioos-metadata/ioos-metadata-profile-v1-2.html#instrument
         ds[sensor_var_name] = json.dumps(attrs)
         ds[sensor_var_name].attrs = {
@@ -794,7 +796,10 @@ def _generate_instruments_variables_from_xml(
 def _generate_instruments_variables_from_sensor(
     dataset: xarray.Dataset, seabird_header: str
 ) -> xarray.Dataset:
-    """Parse older Seabird Header sensor information and generate instrument variables."""
+    """Parse older Seabird Header sensor information.
+
+    Generate instrument variables.
+    """
     sensors = re.findall(r"\# sensor (?P<id>\d+) = (?P<text>.*)\n", seabird_header)
     for index, sensor in sensors:
         if "Voltage" in sensor:
@@ -806,7 +811,7 @@ def _generate_instruments_variables_from_sensor(
             }
         else:
             attrs_dict = re.search(
-                r"(?P<channel>Frequency\s+\d+|Stored Volt\s+\d+|Extrnl Volt  \d+|Pressure Number\,)\s+"
+                r"(?P<channel>Frequency\s+\d+|Stored Volt\s+\d+|Extrnl Volt  \d+|Pressure Number\,)\s+"  # noqa
                 + r"(?P<sensor_description>.*)",
                 sensor,
             )
@@ -880,7 +885,8 @@ def _add_seabird_instruments(
                 # If there's still multiple matches give a warning
                 if len(matched_variables) > 1:
                     logger.warning(
-                        "Unable to link multiple %s instruments via sdn_parameter_urn attribute.",
+                        "Unable to link multiple %s instruments via "
+                        "sdn_parameter_urn attribute.",
                         name,
                     )
 

@@ -231,7 +231,7 @@ def nmea_0183(
     def rename_variable(name):
         """Rename variable based on variable mapping dictionary or return name."""
         if name == ("Heave", "heading"):
-            # fix in https://github.com/Knio/pynmea2/pull/129 but not included in pipy yet
+            # TODO in https://github.com/Knio/pynmea2/pull/129 but not included in pipy
             return ("Heave", "heave")
         return name
 

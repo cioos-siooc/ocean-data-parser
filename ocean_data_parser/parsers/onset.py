@@ -174,7 +174,7 @@ def csv(
             convention
         encoding: File encoding. Defaults to "utf-8"
         errors: Error handling. Defaults to "strict"
-        timezone: Timezone to localize the time variable, overwrites the timezone in header
+        timezone: Timezone to localize the time variable, overwrites the timezone
         ambiguous_timestamps: How to handle ambiguous time stamps. Defaults to "raise"
     Returns:
         xarray.Dataset
@@ -344,7 +344,7 @@ def xlsx(
 
     Args:
         path: The path to the XLSX file
-        timezone: Timezone to localize the time variable, overwrites the timezone in header
+        timezone: Timezone to localize the time variable, overwrites the timezone
         ambiguous_timestamps: How to handle ambiguous time stamps. Defaults to "infer"
     Returns:
         xarray.Dataset

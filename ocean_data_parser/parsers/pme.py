@@ -102,7 +102,8 @@ def txt(
         encoding (str, optional): File encoding. Defaults to 'utf-8'.
         errors (str, optional): Error handling. Defaults to 'strict'.
         timezone (str, optional): Timezone to localize the time. Defaults to 'UTC'.
-        global_attributes (dict, optional): Global attributes to add to the dataset. Defaults to {}.
+        global_attributes (dict, optional): Global attributes to add to the dataset.
+            Defaults to {}.
 
     Returns:
         xarray.Dataset
@@ -256,7 +257,8 @@ def cat(path: str, encoding: str = "utf-8", errors: str = "strict") -> xr.Datase
 
         if header != "MiniDOT Logger Concatenated Data File\n":
             raise RuntimeError(
-                "Can't recognize the CAT file! \nCAT File should start with ''MiniDOT Logger Concatenated Data File'"
+                "Can't recognize the CAT file! \nCAT File should start with "
+                "''MiniDOT Logger Concatenated Data File'"
             )
         # Read header and column names and units
         header = [f.readline() for _ in range(6)]
@@ -279,7 +281,7 @@ def cat(path: str, encoding: str = "utf-8", errors: str = "strict") -> xr.Datase
         (
             r"Sensor:\s*(?P<instrument_sn>.*)\n"
             + r"Concatenation Date:\s*(?P<concatenation_date>.*)\n\n"
-            + r"DO concentration compensated for salinity:\s*(?P<reference_salinity>.*)\n"
+            + r"DO concentration compensated for salinity:\s*(?P<reference_salinity>.*)\n"  # noqa
             + r"Saturation computed at elevation:\s*(?P<elevation>.*)\n"
         ),
         "".join(header),

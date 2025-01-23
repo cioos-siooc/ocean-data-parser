@@ -55,9 +55,9 @@ def parse_odf(
             Defaults to None.
         vocabularies (list, optional): Vocabularies to use ['GF3','BIO','IML'].
             Defaults to None.
-        add_attributes_existing_variables (bool, optional): Append vocabulary attributes.
+        add_attributes_existing_variables (bool, optional): Append attributes.
             Defaults to True.
-        generate_new_vocabulary_variables (bool, optional): Generate vocabulary variables.
+        generate_new_vocabulary_variables (bool, optional): Generate variables.
             Defaults to True.
 
     Returns:

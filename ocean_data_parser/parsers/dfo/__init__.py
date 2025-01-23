@@ -1,4 +1,5 @@
-"""This package contains all the parsers related to the Fisheries and Ocean Canada standard formats.
+"""This package contains all the parsers related to the
+Fisheries and Ocean Canada standard formats.
 
 Modules:
     - __init__.py: Initializes the parsers package.

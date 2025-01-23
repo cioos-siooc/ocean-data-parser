@@ -583,7 +583,8 @@ class IosFile:
                 break
             else:
                 raise Exception(
-                    f"Unknown variable format Format: {info['Format'][i]}, Type: {info['Type'][i]}"
+                    "Unknown Variable Format: "
+                    f"{info['Format'][i]}, Type: {info['Type'][i]}"
                 )
         else:
             info["fmt_struct"] = fmt
@@ -850,7 +851,8 @@ class IosFile:
                 )
 
             logger.info(
-                "Rename duplicated flag 'Quality_Flag:Phos' -> 'Quality_Flag:Phosphate(inorg)'"
+                "Rename duplicated flag "
+                "'Quality_Flag:Phos' -> 'Quality_Flag:Phosphate(inorg)'"
             )
             self.channels["Name"][ids[-1]] = "Quality_Flag:Phosphate(inorg)"
 
@@ -948,7 +950,7 @@ class IosFile:
             "source": self.filename,
             "ios_header_version": self.ios_header_version,
             "ocean_data_transform_version": VERSION,
-            "product_version": f"ios_header={self.ios_header_version}; ocean-data-transform={VERSION}",
+            "product_version": f"ios_header={self.ios_header_version}; ocean-data-transform={VERSION}",  # noqa
             "date_created": self.date_created.isoformat(),
             **global_attributes,
         }

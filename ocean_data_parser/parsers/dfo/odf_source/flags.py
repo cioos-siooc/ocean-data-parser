@@ -77,7 +77,7 @@ def add_flag_attributes(dataset):
 
     def _add_ancillary(ancillary, variable):
         dataset[variable].attrs["ancillary_variables"] = (
-            f"{dataset[variable].attrs.get('ancillary_variables', '')} {ancillary}".strip()
+            f"{dataset[variable].attrs.get('ancillary_variables', '')} {ancillary}".strip()  # noqa
         )
         return dataset[variable]
 
@@ -92,7 +92,7 @@ def add_flag_attributes(dataset):
         elif variable.startswith("Q") and variable[1:] in dataset:
             dataset[variable[1:]] = _add_ancillary(variable, variable[1:])
             dataset[variable].attrs["long_name"] = (
-                f"Quality Flag for Parameter: {dataset[variable[1:]].attrs['long_name']}"
+                f"Quality Flag for Parameter: {dataset[variable[1:]].attrs['long_name']}"  # noqa
             )
         else:
             # ignore normal variables
@@ -135,7 +135,7 @@ def fix_flag_variables(dataset: xr.Dataset) -> xr.Dataset:
             ]
             if len(related_variables_) > 1:
                 logger.error(
-                    "Multiple variables are affected by %s, I'm not sure how to rename it.",
+                    "Multiple variables are affected by %s, unable to rename it?",
                     flag_var,
                 )
             rename = f"Q{related_variables_[0]}"
@@ -148,7 +148,7 @@ def fix_flag_variables(dataset: xr.Dataset) -> xr.Dataset:
             and (dataset[flag_var].values != dataset[rename].values).any()
         ):
             logger.error(
-                "%s is different than %s flag. I'm not sure which one is the right one.",
+                "%s is different than %s flag. Which one is the right one?",
                 flag_var,
                 rename,
             )

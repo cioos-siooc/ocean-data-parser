@@ -64,29 +64,54 @@ class TestPlatformVocabulary:
             f"{column}.notna() and {column}.duplicated(keep=False)"
         )
         assert duplicated.empty, (
-            f"{len(duplicated)} duplicated {column=} found in platform vocabulary: {duplicated[['platform_name', column]]}"
+            f"{len(duplicated)} duplicated {column=} found in platform vocabulary: "
+            f"{duplicated[['platform_name', column]]}"
         )
 
     def test_sdn_urm_prefix(self):
         sdn_prefix = platforms_vocab.query(
-            "sdn_platform_urn.str.startswith('SDN:C17::') == False and sdn_platform_urn.notna()"
+            "sdn_platform_urn.str.startswith('SDN:C17::') == False "
+            "and sdn_platform_urn.notna()"
         )
         assert sdn_prefix.empty, (
-            f"SDN URN prefix not found in platform vocabulary: {sdn_prefix[['platform_name', 'sdn_platform_urn']]}"
+            f"SDN URN prefix not found in platform vocabulary: "
+            f"{sdn_prefix[['platform_name', 'sdn_platform_urn']]}"
         )
 
     def test_matching_id_ices_sdn_codes(self):
         mismatched_codes = platforms_vocab.query(
-            "ices_platform_code != platform_id and (ices_platform_code.notna() or platform_id.notna())"
+            "ices_platform_code != platform_id and (ices_platform_code.notna() "
+            "or platform_id.notna())"
         )
         assert mismatched_codes.empty, (
-            f"mismatched codes found: {mismatched_codes[['platform_name', 'platform_id', 'ices_platform_code', 'sdn_platform_urn']]}"
+            "mismatched codes found: ",
+            str(
+                mismatched_codes[
+                    [
+                        "platform_name",
+                        "platform_id",
+                        "ices_platform_code",
+                        "sdn_platform_urn",
+                    ]
+                ]
+            ),
         )
         mismatched_codes = platforms_vocab.query(
-            "sdn_platform_urn.str.replace('SDN:C17::','') != platform_id and (sdn_platform_urn.notna() or platform_id.notna())"
+            "sdn_platform_urn.str.replace('SDN:C17::','') != platform_id "
+            "and (sdn_platform_urn.notna() or platform_id.notna())"
         )
         assert mismatched_codes.empty, (
-            f"mismatched codes found: {mismatched_codes[['platform_name', 'platform_id', 'ices_platform_code', 'sdn_platform_urn']]}"
+            "mismatched codes found: ",
+            str(
+                mismatched_codes[
+                    [
+                        "platform_name",
+                        "platform_id",
+                        "ices_platform_code",
+                        "sdn_platform_urn",
+                    ]
+                ]
+            ),
         )
 
     @nerc_vocabulary_test
@@ -178,7 +203,9 @@ class TestVocabularies:
             "standard_name.notna() and standard_name not in @standard_names['id']"
         )
         assert unknown_standard_names.empty, (
-            f"{len(unknown_standard_names)} unknown standard names found {unknown_standard_names['standard_name'].unique()}: {unknown_standard_names.to_dict(orient='records')}"
+            f"{len(unknown_standard_names)} unknown standard names found "
+            f"{unknown_standard_names['standard_name'].unique()}: "
+            f"{unknown_standard_names.to_dict(orient='records')}"
         )
 
     def test_sdn_parameter_urn(self, vocabulary):
@@ -191,7 +218,8 @@ class TestVocabularies:
             | vocabulary["sdn_parameter_urn"].str.startswith("SDN:P01::")
         )
         assert not not_p01.any(), (
-            f"Parameter URNs do not start with 'SDN:P01::': {vocabulary['sdn_parameter_urn'][not_p01]}"
+            f"Parameter URNs do not start with 'SDN:P01::': "
+            f"{vocabulary['sdn_parameter_urn'][not_p01]}"
         )
 
         valid_p01_urn = vocabulary["sdn_parameter_urn"].apply(
@@ -199,7 +227,9 @@ class TestVocabularies:
         )
         unknown_urns = vocabulary.loc[~valid_p01_urn]
         assert valid_p01_urn.all(), (
-            f"{len(unknown_urns)} unknown parameter URNs found [{unknown_urns['sdn_parameter_urn'].unique()}]: {unknown_urns.to_dict(orient='records')}"
+            f"{len(unknown_urns)} unknown parameter URNs found "
+            f"[{unknown_urns['sdn_parameter_urn'].unique()}]: "
+            f"{unknown_urns.to_dict(orient='records')}"
         )
         # convert vocabulary sdn_parameter_urn et sdn_parameter_name to a dictionary
         vocabulary["matched_urn"] = vocabulary.apply(
@@ -222,7 +252,9 @@ class TestVocabularies:
         ).dropna(subset=["sdn_parameter_name", "sdn_parameter_urn"], how="all")
         mismatches = comparison[comparison["_merge"] == "left_only"]
         assert mismatches.empty, (
-            f"Bad {len(mismatches)} mismatches found {mismatches['sdn_parameter_urn'].unique()}: {mismatches.to_json(orient='index')}"
+            f"Bad {len(mismatches)} mismatches found "
+            f"{mismatches['sdn_parameter_urn'].unique()}: "
+            f"{mismatches.to_json(orient='index')}"
         )
 
     def test_sdn_parameter_name(self, vocabulary):
@@ -234,10 +266,13 @@ class TestVocabularies:
         if "sdn_parameter_name" not in vocabulary.columns:
             return
         unknown_names = vocabulary.query(
-            "sdn_parameter_name.notna() and sdn_parameter_name not in @nerc_p01['sdn_parameter_name']"
+            "sdn_parameter_name.notna()"
+            " and sdn_parameter_name not in @nerc_p01['sdn_parameter_name']"
         )
         assert unknown_names.empty, (
-            f"{len(unknown_names)} unknown parameter names found [{unknown_names['sdn_parameter_name'].unique()}]: {unknown_names.to_json(orient='index')}"
+            f"{len(unknown_names)} unknown parameter names found "
+            f"[{unknown_names['sdn_parameter_name'].unique()}]: "
+            f"{unknown_names.to_json(orient='index')}"
         )
 
     def test_sdn_uom_urn(self, vocabulary):
@@ -267,7 +302,9 @@ class TestVocabularies:
             "sdn_uom_name.notna() and sdn_uom_name not in @nerc_p06['sdn_uom_name']"
         )
         assert unknown_names.empty, (
-            f"{len(unknown_names)} unknown UOM names found [{set(unknown_names.sdn_uom_name.to_list())}]: {unknown_names.to_records()}"
+            f"{len(unknown_names)} unknown UOM names found "
+            f"[{set(unknown_names.sdn_uom_name.to_list())}]: "
+            f"{unknown_names.to_records()}"
         )
 
         comparison = vocabulary.merge(

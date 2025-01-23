@@ -64,8 +64,8 @@ def _generate_cf_history_from_odf(odf_header) -> dict:
     """Generate CF compatible history from ODF header.
 
     Follow the CF conventions for history attribute: iso timestamp - description.
-    If a Seabird instrument csv header is provided, it will be converted to a CF standard and
-    made available within the instrument_manufacturer_header attribute.
+    If a Seabird instrument csv header is provided, it will be converted to a CF
+    standard and made available within the instrument_manufacturer_header attribute.
     Processing steps associated with the SBE Processing toolbox will also be
     incorporated within the history attribute.
     """
@@ -252,7 +252,7 @@ def _review_station(global_attributes, odf_header):
         "event_number"
     ):
         logger.warning(
-            "Station name is suspicious since its just a number similar to the event_number: %s",
+            "Station name is suspicious since similar to the event_number: %s",
             station,
         )
     return station
@@ -443,7 +443,7 @@ def global_attributes_from_header(dataset, odf_header):
 
 
 def generate_coordinates_variables(dataset):
-    """Method use to generate metadata variables from the ODF Header to a xarray Dataset."""
+    """Generate metadata variables from the ODF Header to a xarray Dataset."""
     if "cdm_data_type" not in dataset.attrs:
         logging.error("No cdm_data_type attribute")
 

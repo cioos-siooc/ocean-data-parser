@@ -121,7 +121,8 @@ def super_co2(path: str, output: str = None) -> xarray.Dataset:
     dt_std = (df["time"] - df["time_doy_utc"]).std().total_seconds()
     if dt > MAXIMUM_TIME_DIFFERENCE_IN_SECONDS:
         logger.warning(
-            "Date + Time and DOY_UTC variables have an average time difference of %ss>%ss with a standard deviation of %ss",
+            "Date + Time and DOY_UTC variables have an average time difference of "
+            "%ss>%ss with a standard deviation of %ss",
             dt,
             MAXIMUM_TIME_DIFFERENCE_IN_SECONDS,
             dt_std,
@@ -168,7 +169,7 @@ def super_co2_notes(path: str) -> xarray.Dataset:
             elif re.match(r"\d\d\d\d\/\d\d\/\d\d \d\d\:\d\d\:\d\d\s+\d+\.\d*", line):
                 # Parse time row
                 note_ensemble = re.match(
-                    r"(?P<time>\d\d\d\d\/\d\d\/\d\d \d\d\:\d\d\:\d\d)\s+(?P<day_of_year>\d+\.\d*)",
+                    r"(?P<time>\d\d\d\d\/\d\d\/\d\d \d\d\:\d\d\:\d\d)\s+(?P<day_of_year>\d+\.\d*)",  # noqa
                     line,
                 ).groupdict()
                 # type row
