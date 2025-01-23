@@ -5,11 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## `0.7.0`
+## `developent`
 
 ### Added
 
 - Add compatibility with PME wipers txt format.
+- Improve Quebec Ocean - Amundsen Vocabulary
+- Include Quebec Ocean - Amundsen Vocabulary to ODF vocabularies.
+- Add tools to work with vocabularies.
+- Add vocabularies tests.
 
 ### Fixed
 
@@ -18,7 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 `pme.txts`, `pme.cat`. Maintain still a placeholder for those functions.
 - Major refactor the whole code base to handle a number of issues raised by Ruff.
 - Use uv as package manager
-- Add vocabularies tests
 - Make tests compatible with windows environment.
 
 ## `0.6.1` - 2024-08-30
