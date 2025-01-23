@@ -78,7 +78,7 @@ def validate_parser_kwargs(ctx, _, value):
     except json.JSONDecodeError:
         raise click.BadParameter(
             click.style("parser-kwargs should be a valid JSON string", fg="bright_red")
-        )
+        ) from None
 
 
 @click.command(name="convert", context_settings={"auto_envvar_prefix": "ODPY_CONVERT"})
