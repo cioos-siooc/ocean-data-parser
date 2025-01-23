@@ -731,7 +731,6 @@ def pcnv(
 
     # Move coordinates to variables
     coords = ["time", "latitude", "longitude"]
-    p_file_vocabulary
     for coord in coords:
         if coord in ds.attrs:
             ds[coord] = ds.attrs[coord]

@@ -294,10 +294,7 @@ class FileConversionRegistry:
 
     def summarize(self, sources=None, by="error_message", output=None):
         """Generate a summary of the file registry errors."""
-        if sources:
-            data = self.data.loc[sources]
-        else:
-            data = self.data
+        data = self.data.loc[sources] if sources else self.data
         succeed = len(data.query("error_message.isna()"))
         logger.info("%s/%s sources were processed", succeed, len(data))
         errors = (

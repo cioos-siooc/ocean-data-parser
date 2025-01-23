@@ -426,10 +426,7 @@ class IosFile:
         # for PST/PDT
         elif "PST" in date_string.upper():
             date_obj = timezone("UTC").localize(date_obj + timedelta(hours=8))
-        elif "PDT" in date_string.upper():
-            date_obj = timezone("UTC").localize(date_obj + timedelta(hours=7))
-        # Canada/Mountain
-        elif "MST" in date_string.upper():
+        elif "PDT" in date_string.upper() or "MST" in date_string.upper():
             date_obj = timezone("UTC").localize(date_obj + timedelta(hours=7))
         elif "MDT" in date_string.upper():
             date_obj = timezone("UTC").localize(date_obj + timedelta(hours=6))
@@ -651,9 +648,7 @@ class IosFile:
             idx += 1
             count += 1
             line = self.lines[idx]
-            if len(line.strip()) == 0:  # skip line if blank
-                continue
-            elif line[0] == "!":
+            if len(line.strip()) == 0 or line[0] == "!":  # skip line if blank
                 continue
             elif line[0] in ["$", "*"]:
                 break

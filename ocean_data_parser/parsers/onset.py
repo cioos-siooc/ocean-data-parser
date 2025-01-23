@@ -285,24 +285,26 @@ def _detect_instrument_type(ds):
 
     if vars_of_interest == {"temperature", "light_intensity"}:
         instrument_type = "Pendant"
-    elif vars_of_interest == {"specific_conductance", "temperature", "low_range"}:
-        instrument_type = "CT"
-    elif vars_of_interest == {"temperature", "specific_conductance"}:
+    elif vars_of_interest == {
+        "specific_conductance",
+        "temperature",
+        "low_range",
+    } or vars_of_interest == {"temperature", "specific_conductance"}:
         instrument_type = "CT"
     elif vars_of_interest == {"temperature"}:
         instrument_type = "Tidbit"
-    elif vars_of_interest == {"temperature", "sensor_depth"}:
-        instrument_type = "PT"
-    elif vars_of_interest == {"temperature", "pressure", "sensor_depth"}:
+    elif vars_of_interest == {"temperature", "sensor_depth"} or vars_of_interest == {
+        "temperature",
+        "pressure",
+        "sensor_depth",
+    }:
         instrument_type = "PT"
     elif vars_of_interest == {
         "temperature",
         "barometric_pressure",
         "pressure",
         "sensor_depth",
-    }:
-        instrument_type = "WL"
-    elif vars_of_interest == {
+    } or vars_of_interest == {
         "temperature",
         "barometric_pressure",
         "pressure",

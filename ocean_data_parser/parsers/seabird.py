@@ -86,10 +86,7 @@ def _add_seabird_vocabulary(variable_attributes: dict) -> dict:
         var_lower = var.lower()
         if var_lower in seabird_variable_attributes:
             variable_attributes[var].update(seabird_variable_attributes[var_lower])
-        elif (
-            var.endswith("_sdev")
-            and var_lower[:-5] in seabird_variable_attributes
-        ):
+        elif var.endswith("_sdev") and var_lower[:-5] in seabird_variable_attributes:
             variable_attributes[var].update(seabird_variable_attributes[var_lower[:-5]])
         else:
             logger.warning("Variable %s is missing from vocabulary dictionary", var)
