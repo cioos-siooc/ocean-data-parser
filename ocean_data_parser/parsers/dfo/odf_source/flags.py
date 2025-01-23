@@ -43,8 +43,10 @@ FLAG_CONVENTION = {
 }
 
 
-def history_input(comment, date=datetime.now(timezone.utc)):
+def history_input(comment, date=None):
     """Genereate a CF standard history line: Timstamp comment."""
+    if date is None:
+        date = datetime.now(timezone.utc)
     return f"{date.strftime('%Y-%m-%dT%H:%M:%SZ')} {comment}\n"
 
 
