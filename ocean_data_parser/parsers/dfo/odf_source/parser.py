@@ -458,11 +458,11 @@ def add_vocabulary_attributes(
             matching_terms.loc[:, "variable_name"] = (
                 matching_terms["variable_name"]
                 .fillna(var)
-                .apply(lambda x: _update_variable_index(x, gf3.index))
+                .apply(lambda x, index=gf3.index: _update_variable_index(x, index))
             )
             matching_terms.loc[:, "sdn_parameter_urn"] = matching_terms[
                 "sdn_parameter_urn"
-            ].apply(lambda x: _update_variable_index(x, gf3.index))
+            ].apply(lambda x, index=gf3.index: _update_variable_index(x, index))
             if gf3.index > 1:
                 matching_terms.loc[:, "long_name"] += f", {gf3.index}"
 
