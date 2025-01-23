@@ -762,13 +762,12 @@ class IosFile:
         def match_term(reference, value):
             if reference in (None, np.nan):
                 return False
-            if (
-                ("None" in reference.split("|") and value in (None, "n/a", ""))
+            return bool(
+                "None" in reference.split("|")
+                and value in (None, "n/a", "")
                 or re.fullmatch(reference, value)
                 or value in reference.split("|")
-            ):
-                return True
-            return False
+            )
 
         # Filter vocabulary to handle only file extension and global terms
         vocab = (
