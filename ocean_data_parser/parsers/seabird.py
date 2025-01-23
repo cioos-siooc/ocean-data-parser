@@ -130,9 +130,7 @@ def cnv(
             f,
             delimiter=r"\s+",
             names=header["variables"].keys(),
-            dtype={
-                var: var_dtypes.get(var, float) for var in header["variables"].keys()
-            },
+            dtype={var: var_dtypes.get(var, float) for var in header["variables"]},
             na_values=["-1.#IO", "-9.99E-29"],
             encoding_errors=encoding_errors,
         )
