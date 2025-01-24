@@ -13,8 +13,7 @@ import pandas as pd
 import xarray as xr
 from gsw import z_from_p
 
-from ocean_data_parser import __version__
-from ocean_data_parser.parsers.utils import get_history_handler, standardize_dataset
+from ocean_data_parser.parsers.utils import standardize_dataset
 from ocean_data_parser.vocabularies.load import amundsen_vocabulary
 
 logger = logging.getLogger(__name__)
@@ -189,7 +188,7 @@ def int_format(
     # Parse data
     if separator == r"\s+":
         # Split by one space and a capital letter
-        line = line.replace('Wind',"  Wind")
+        line = line.replace("Wind", "  Wind")
         names = re.split(r"\s\s+", line.strip())
     elif separator == ",":
         names = line.strip().split(",")
