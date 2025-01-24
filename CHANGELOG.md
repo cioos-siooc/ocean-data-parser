@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Include Quebec Ocean - Amundsen Vocabulary to ODF vocabularies.
 - Add tools to work with vocabularies.
 - Add vocabularies tests.
+- Add Amundsen CSV format parser
 
 ### Fixed
 

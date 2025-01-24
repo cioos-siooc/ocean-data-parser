@@ -13,8 +13,7 @@ import pandas as pd
 import xarray as xr
 from gsw import z_from_p
 
-from ocean_data_parser import __version__
-from ocean_data_parser.parsers.utils import get_history_handler, standardize_dataset
+from ocean_data_parser.parsers.utils import standardize_dataset
 from ocean_data_parser.vocabularies.load import amundsen_vocabulary
 
 logger = logging.getLogger(__name__)
@@ -22,6 +21,13 @@ string_attributes = ["Cruise_Number", "Cruise_Name", "Station"]
 amundsen_variable_attributes = amundsen_vocabulary()
 
 default_global_attributes = {"unknown_variables_information": "", "history": ""}
+VARIABLE_MAPPING_FIXES = {
+    "% Fluorescence [ug/L]": "Fluo",
+    "% Conservative Temperature (TEOS-10) [deg C]": "CONT",
+    "% In situ density TEOS10 ((s, t, p) - 1000) [kg/m^3]": "D_CT",
+    "% Potential density TEOS10 ((s, t, 0) - 1000) [kg/m^3]": "D0CT",
+    "% Potential density TEOS10 (s, t, 0) [kg/m^3]": "D0CT",
+}
 
 
 def _standardize_attribute_name(name: str) -> str:
@@ -70,30 +76,79 @@ def _standardize_attribute_value(value: str, name: str = None):
         return value
 
 
-def int_format(
+def _extract_variable_attributes_from_header(header: str, variables: list) -> dict:
+    """Extract variable attributes from the header."""
+    return {
+        column: re.search(
+            r"\s*(?P<long_name>[^\[]+)\s*(\[(?P<units>.*)\]){0,1}",
+            header.pop(column[0].upper() + column[1:]),
+        ).groupdict()
+        if column[0].upper() + column[1:] in header
+        else {}
+        for column in variables
+    }
+
+
+def _convert_timestamp(df: pd.DataFrame) -> pd.DataFrame:
+    """Convert Date and Hour columns to a single time column.
+
+    Fix the issue with the 60 seconds in the Hour column
+    which is not supported by pandas.
+    """
+    is_60 = df["Hour"].str.contains(":60$")
+    df.loc[is_60, "Hour"] = df.loc[is_60, "Hour"].str.replace(":60$", ":00", regex=True)
+    df["time"] = pd.to_datetime(df["Date"] + "T" + df["Hour"], utc=True)
+    df.loc[is_60, "time"] += pd.Timedelta(seconds=60)
+    return df
+
+
+def csv_format(
     path: str,
     encoding: str = "Windows-1252",
     map_to_vocabulary: bool = True,
     generate_depth: bool = True,
+    separator: str = ",",
 ) -> xr.Dataset:
-    """Parse Amundsen INT format.
+    """Parse Amundsen CSV format.
 
     Args:
         path (str): file path to parse.
         encoding (str, optional): File encoding. Defaults to "Windows-1252".
         map_to_vocabulary (bool, optional): Rename variables to vocabulary. Defaults to True.
         generate_depth (bool, optional): Generate depth variable. Defaults to True.
+        separator (str, optional): Separator for the data. Defaults to r",".
 
     Returns:
         xr.Dataset
     """
-    nc_logger, nc_handler = get_history_handler()
-    logger.addHandler(nc_handler)
-
-    logger.info(
-        "Convert INT file format with python package ocean_data_parser.amundsen.int_format V%s",
-        __version__,
+    return int_format(
+        path=path,
+        encoding=encoding,
+        map_to_vocabulary=map_to_vocabulary,
+        generate_depth=generate_depth,
+        separator=separator,
     )
+
+
+def int_format(
+    path: str,
+    encoding: str = "Windows-1252",
+    map_to_vocabulary: bool = True,
+    generate_depth: bool = True,
+    separator: str = r"\s+",
+) -> xr.Dataset:
+    r"""Parse Amundsen INT format.
+
+    Args:
+        path (str): file path to parse.
+        encoding (str, optional): File encoding. Defaults to "Windows-1252".
+        map_to_vocabulary (bool, optional): Rename variables to vocabulary. Defaults to True.
+        generate_depth (bool, optional): Generate depth variable. Defaults to True.
+        separator (str, optional): Separator for the data. Defaults to r"\s+".
+
+    Returns:
+        xr.Dataset
+    """
     metadata = default_global_attributes.copy()
 
     # Ignore info.int files
@@ -104,35 +159,25 @@ def int_format(
     logger.debug("Read %s", path)
     with open(path, encoding=encoding) as file:
         # Parse header
-        for line in file:
-            line = line.replace("\n", "")
+        for header_line_idx, line in enumerate(file):
+            line = line.rstrip()
             if re.match(r"^%\s*$", line) or not line:
                 continue
-            elif line and not re.match(r"\s*%", line) and line[0] == " ":
-                last_line = line
+            elif (
+                line and not re.match(r"\s*%", line) and (line[0] == " " or "," in line)
+            ):
                 break
             elif ":" in line:
                 key, value = line.strip()[1:].split(":", 1)
                 metadata[key.strip()] = value.strip()
-            elif line == "% Fluorescence [ug/L]":
-                metadata["Fluo"] = "Fluorescence [ug/L]"
-            elif line == "% Conservative Temperature (TEOS-10) [deg C]":
-                metadata["CONT"] = "Conservative Temperature (TEOS-10) [deg C]"
-            elif line == "% In situ density TEOS10 ((s, t, p) - 1000) [kg/m^3]":
-                metadata["D_CT"] = "In situ density TEOS10 ((s, t, p) - 1000) [kg/m^3]"
-            elif line == "% Potential density TEOS10 ((s, t, 0) - 1000) [kg/m^3]":
-                metadata["D0CT"] = (
-                    "Potential density TEOS10 ((s, t, 0) - 1000) [kg/m^3]"
-                )
-            elif line == "% Potential density TEOS10 (s, t, 0) [kg/m^3]":
-                metadata["D0CT"] = "Potential density TEOS10 (s, t, 0) [kg/m^3]"
+            elif line in VARIABLE_MAPPING_FIXES:
+                metadata[VARIABLE_MAPPING_FIXES[line]] = line[2:]
             elif re.match(r"% .* \[.+\]", line):
                 logger.warning(
                     "Unknown variable name will be saved to unknown_variables_information: %s",
                     line,
                 )
                 metadata["unknown_variables_information"] += line + "\n"
-
             else:
                 logger.warning("Unknown line format: %s", line)
 
@@ -140,132 +185,108 @@ def int_format(
         if metadata == default_global_attributes:
             logger.warning("No metadata was captured in the header of the INT file.")
 
-        # Parse Columne Header by capital letters
-        column_name_line = last_line
-        delimiter_line = file.readline()
-        if not re.match(r"^[\s\-]+$", delimiter_line):
-            logger.error("Delimiter line below the column names isn't the expected one")
+    # Parse data
+    if separator == r"\s+":
+        # Split by one space and a capital letter
+        line = line.replace("Wind", "  Wind")
+        names = re.split(r"\s\s+", line.strip())
+    elif separator == ",":
+        names = line.strip().split(",")
+    df = pd.read_csv(
+        path,
+        encoding=encoding,
+        header=header_line_idx,
+        skiprows=[header_line_idx] if separator == r"\s+" else [],
+        sep=separator,
+        names=names,
+    )
 
-        # Parse column names based on delimiter line below
-        delimited_segments = re.findall(r"\s*\-+", delimiter_line)
-        start_segment = 0
-        column_names = []
-        for segment in delimited_segments:
-            column_names += [
-                column_name_line[start_segment : start_segment + len(segment)].strip()
-            ]
-            start_segment = start_segment + len(segment)
+    # Sort column attributes
+    variables = _extract_variable_attributes_from_header(metadata, df.columns)
+    if "Date" in df and "Hour" in df:
+        df = _convert_timestamp(df)
 
-        # Parse data
-        df = pd.read_csv(
-            file,
-            sep=r"\s+",
-            names=column_names,
+    # Convert to xarray object
+    ds = df.to_xarray()
+
+    # Standardize global attributes
+    ds.attrs = {
+        _standardize_attribute_name(name): _standardize_attribute_value(
+            value, name=name
+        )
+        for name, value in metadata.items()
+    }
+
+    # Generate instrument_depth variable
+    pressure = [var for var in ds if var in ("Pres", "PRES")]
+    if (
+        generate_depth
+        and pressure
+        and ("Lat" in ds or "initial_latitude_deg" in ds.attrs)
+    ):
+        logger.info(
+            "Generate instrument_depth from TEOS-10: -1 * gsw.z_from_p(ds['Pres'], %s)",
+            "ds['Lat']" if "Lat" in ds else "ds.attrs['initial_latitude_deg']",
+        )
+        ds["instrument_depth"] = -z_from_p(
+            ds[pressure[0]],
+            ds["Lat"] if "Lat" in ds else ds.attrs["initial_latitude_deg"],
         )
 
-        # Sort column attributes
-        variables = {
-            column: re.search(
-                r"(?P<long_name>[^\[]+)(\[(?P<units>.*)\]){0,1}",
-                metadata.pop(column[0].upper() + column[1:]),
-            ).groupdict()
-            if column[0].upper() + column[1:] in metadata
-            else {}
-            for column in df
-        }
-        if "Date" in df and "Hour" in df:
-            is_60 = df["Hour"].str.contains(":60$")
-            df.loc[is_60, "Hour"] = df.loc[is_60, "Hour"].str.replace(
-                ":60$", ":00", regex=True
-            )
-            df["time"] = pd.to_datetime(df["Date"] + "T" + df["Hour"], utc=True)
-            df.loc[is_60, "time"] += pd.Timedelta(seconds=60)
+    # Map variables to vocabulary
+    variables_to_rename = {}
+    for var in ds:
+        if var not in variables:
+            continue
 
-        # Convert to xarray object
-        ds = df.to_xarray()
+        ds[var].attrs = variables[var]
+        if "long_name" in ds[var].attrs:
+            ds[var].attrs["long_name"] = ds[var].attrs["long_name"].strip()
 
-        # Standardize global attributes
-        metadata = {
-            _standardize_attribute_name(name): _standardize_attribute_value(
-                value, name=name
-            )
-            for name, value in metadata.items()
-        }
-        ds.attrs = metadata
+        # Include variable attributes from the vocabulary
+        if not map_to_vocabulary:
+            continue
+        elif var not in amundsen_variable_attributes:
+            logger.warning("No vocabulary is available for variable '%s'", var)
+            continue
 
-        # Generate instrument_depth variable
-        pressure = [var for var in ds if var in ("Pres", "PRES")]
-        if (
-            generate_depth
-            and pressure
-            and ("Lat" in ds or "initial_latitude_deg" in ds.attrs)
-        ):
-            latitude = (
-                ds["Latitude"] if "Lat" in ds else ds.attrs["initial_latitude_deg"]
-            )
-            logger.info(
-                "Generate instrument_depth from TEOS-10: -1 * gsw.z_from_p(ds['Pres'], %s)",
-                "ds['Lat']" if "Lat" in ds else "ds.attrs['initial_latitude_deg']",
-            )
-            ds["instrument_depth"] = -z_from_p(ds[pressure[0]], latitude)
+        # Match vocabulary
+        var_units = ds[var].attrs.get("units")
+        for item in amundsen_variable_attributes[var]:
+            accepted_units = item.get("accepted_units")
+            if (
+                var_units is None  # Consider first if no units
+                or var_units == item.get("units")
+                or (accepted_units and re.fullmatch(accepted_units, var_units))
+            ):
+                if "rename" in item:
+                    variables_to_rename[var] = item["rename"]
 
-        # Map variables to vocabulary
-        variables_to_rename = {}
-        for var in ds:
-            if var not in variables:
-                continue
-
-            ds[var].attrs = variables[var]
-            if "long_name" in ds[var].attrs:
-                ds[var].attrs["long_name"] = ds[var].attrs["long_name"].strip()
-
-            # Include variable attributes from the vocabulary
-            if not map_to_vocabulary:
-                continue
-            elif var not in amundsen_variable_attributes:
-                logger.warning("No vocabulary is available for variable '%s'", var)
-                continue
-
-            # Match vocabulary
-            var_units = ds[var].attrs.get("units")
-            for item in amundsen_variable_attributes[var]:
-                accepted_units = item.get("accepted_units")
-                if (
-                    var_units is None  # Consider first if no units
-                    or var_units == item.get("units")
-                    or (accepted_units and re.fullmatch(accepted_units, var_units))
-                ):
-                    if "rename" in item:
-                        variables_to_rename[var] = item["rename"]
-
-                    ds[var].attrs = {
-                        key: value
-                        for key, value in item.items()
-                        if key not in ["accepted_units", "rename"]
-                    }
-                    break
-            else:
-                logger.warning(
-                    "No Vocabulary available for %s: %s", var, str(ds[var].attrs)
-                )
-
-        # Review rename variables
-        already_existing_variables = {
-            var: rename for var, rename in variables_to_rename.items() if rename in ds
-        }
-        if already_existing_variables:
-            logger.error(
-                "Can't rename variable %s since it already exist",
-                already_existing_variables,
+                ds[var].attrs = {
+                    key: value
+                    for key, value in item.items()
+                    if key not in ["accepted_units", "rename"]
+                }
+                break
+        else:
+            logger.warning(
+                "No Vocabulary available for %s: %s", var, str(ds[var].attrs)
             )
 
-        if variables_to_rename:
-            logger.info("Rename variables: %s", variables_to_rename)
-            ds = ds.rename(variables_to_rename)
+    # Review rename variables
+    already_existing_variables = {
+        var: rename for var, rename in variables_to_rename.items() if rename in ds
+    }
+    if already_existing_variables:
+        logger.error(
+            "Can't rename variable %s since it already exist",
+            already_existing_variables,
+        )
 
-        # Generate history
-        ds.attrs["history"] += nc_logger.getvalue()
+    if variables_to_rename:
+        logger.info("Rename variables: %s", variables_to_rename)
+        ds = ds.rename(variables_to_rename)
 
-        # Standardize dataset to be compatible with ERDDAP and NetCDF Classic
-        ds = standardize_dataset(ds)
-        return ds
+    # Standardize dataset to be compatible with ERDDAP and NetCDF Classic
+    ds = standardize_dataset(ds)
+    return ds
