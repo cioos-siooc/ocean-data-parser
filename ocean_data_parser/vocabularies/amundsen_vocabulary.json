@@ -540,6 +540,20 @@
       "sdn_uom_name": "Degrees Celsius"
     }
   ],
+  "T190C": [
+    {
+      "long_name": "Temperature (ITS-90)",
+      "accepted_units": "degC|deg C|degrees C",
+      "units": "degC",
+      "standard_name": "sea_water_temperature",
+      "sdn_parameter_urn": "SDN:P01::TEMPS902",
+      "sdn_uom_urn": "SDN:P06::UPAA",
+      "rename": "CTDTmp90_2",
+      "rename_gf3": "TE90",
+      "sdn_parameter_name": "Temperature (ITS-90) of the water body by CTD or STD",
+      "sdn_uom_name": "Degrees Celsius"
+    }
+  ],
   "WetCDOM": [
     {
       "long_name": "Fluorescence Of CDOM (Colored Dissolved Organic Matter)",
