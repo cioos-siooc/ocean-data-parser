@@ -398,6 +398,7 @@ def add_vocabulary_attributes(
     new_variables = {}
     new_variables_attributes = {}
     variable_order = []
+    comment = ""
     for var in ds:
         # Ignore variables with no attributes and flag variables
         if (
@@ -475,7 +476,6 @@ def add_vocabulary_attributes(
             continue
 
         # Generate vocabulary variables
-        comment = ""
         variable_order += matching_terms["variable_name"].tolist()
         locals_variables = {
             "gsw": gsw,
