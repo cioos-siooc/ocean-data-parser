@@ -22,7 +22,7 @@ def add_vocabularies_dir():
 def get_dfo_pfile_vocab_markdown(
     output="docs/user_guide/vocabularies/dfo-nafc-p-files.md",
 ):
-    """Convert P file vocabulary to markdown table"""
+    """Convert P file vocabulary to markdown table."""
     df = load.dfo_nafc_p_file_vocabulary()
     for column in ["accepted_instruments"]:
         df[column] = quote_column(df[column])
@@ -83,7 +83,7 @@ def get_seabird_vocab_markdown(output="docs/user_guide/vocabularies/seabird.md")
 
 
 def copy_notebooks(output="docs/notebooks"):
-    """Copy notebooks to docs"""
+    """Copy notebooks to docs."""
     notebooks = Path("notebooks").glob("*.ipynb")
     docs_notebooks = Path(output)
     docs_notebooks.mkdir(parents=True, exist_ok=True)
@@ -94,11 +94,11 @@ def copy_notebooks(output="docs/notebooks"):
 def get_parser_list(output="docs/user_guide/parsers/index.md"):
     def _get_parser_page_link(parser):
         if "." not in parser:
-            return parser, f"[{parser}]({parser.replace('_','-')}.md)"
+            return parser, f"[{parser}]({parser.replace('_', '-')}.md)"
         parser_module, _ = parser.rsplit(".", 1)
         return (
             parser_module,
-            f"[{parser}]({parser_module.replace('.','/').replace('_','-')}.md#ocean_data_parser.parsers.{parser})",
+            f"[{parser}]({parser_module.replace('.', '/').replace('_', '-')}.md#ocean_data_parser.parsers.{parser})",
         )
 
     index_html = Path("docs/user_guide/parsers/header-index.md").read_text()
@@ -110,7 +110,7 @@ def get_parser_list(output="docs/user_guide/parsers/index.md"):
         table_parser[parser_module].append(link)
     parsers_toc = ""
     for parser_module in sorted(table_parser):
-        parsers_toc += f"[{parser_module.upper()}]({parser_module.replace('.','/').replace('_','-')}.md)\n\n- "
+        parsers_toc += f"[{parser_module.upper()}]({parser_module.replace('.', '/').replace('_', '-')}.md)\n\n- "
         parsers_toc += "\n- ".join(table_parser[parser_module]) + "\n\n"
     index_html = index_html.replace("{{ parsers_list }}", parsers_toc)
     Path(output).write_text(index_html)

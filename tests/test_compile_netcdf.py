@@ -11,6 +11,8 @@ TEST_FILE_PATH = str(PACKAGE_PATH / "parser_test_files" / "dfo" / "bio")
 
 
 class CompileNetcdfVariablesTests(unittest.TestCase):
+    """Series of tests to check the compile_netcdf_variables function."""
+
     def test_compile_variables_default(self):
         variables(TEST_FILE_PATH, "**/*")
 

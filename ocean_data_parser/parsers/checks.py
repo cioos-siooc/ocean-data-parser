@@ -6,7 +6,7 @@ from pytz.exceptions import AmbiguousTimeError
 def check_daylight_saving(
     time: pd.Series, ambiguous: str = "raise", fix_log_level: str = "info"
 ):
-    """Check if daylight saving issue is present in the time series
+    """Check if daylight saving issue is present in the time series.
 
     Args:
         time (pd.Series): time series

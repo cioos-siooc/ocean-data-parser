@@ -312,7 +312,7 @@
     {
       "long_name": "Salinity From Thermo-Salinometer",
       "units": "1e-3",
-      "standard_name": "sea_surface_practical_salinity",
+      "standard_name": "sea_surface_salinity",
       "accepted_units": "PSU|psu|1e-3"
     }
   ],
@@ -320,12 +320,12 @@
     {
       "long_name": "Vessel Speed",
       "units": "Knt",
-      "standard_name": "platform_speed"
+      "standard_name": "platform_speed_wrt_sea_water"
     },
     {
       "long_name": "Vessel True Speed",
       "units": "Knt",
-      "standard_name": "platform_speed"
+      "standard_name": "platform_speed_wrt_ground"
     }
   ],
   "Tem-Water": [

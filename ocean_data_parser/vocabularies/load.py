@@ -8,13 +8,32 @@ import pandas as pd
 VOCABULARIES_DIRECTORY = Path(__file__).parent
 
 
+def amundsen_vocabulary_df() -> pd.DataFrame:
+    vocabulary = amundsen_vocabulary()
+    vocab = []
+    for name, attrs in vocabulary.items():
+        if name == "VARIABLE_NAME":
+            continue
+        for attr in attrs:
+            vocab += [{"variable_name": name, **attr}]
+    return pd.DataFrame(vocab)
+
+
 def amundsen_vocabulary() -> dict:
     with open(VOCABULARIES_DIRECTORY / "amundsen_vocabulary.json") as file:
         return json.load(file)
 
 
+def seabird_vocabulary_df() -> pd.DataFrame:
+    vocabulary = seabird_vocabulary()
+    vocab = []
+    for name, attrs in vocabulary.items():
+        vocab += [{"variable_name": name, **attrs}]
+    return pd.DataFrame(vocab)
+
+
 def seabird_vocabulary() -> dict:
-    """Load Seabird Vocabulary"""
+    """Load Seabird Vocabulary."""
     with open(
         VOCABULARIES_DIRECTORY / "seabird_vocabulary.json", encoding="UTF-8"
     ) as file:
