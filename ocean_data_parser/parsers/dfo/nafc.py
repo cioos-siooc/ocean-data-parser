@@ -707,7 +707,7 @@ def pcnv(
             ),
             "longitude": _parse_lat_lon(
                 _pop_attribute_from(
-                    ["longitude", "longitude_xx_xx.xx", "longitude _xx_xx.xx_w"]
+                    ["longitude", "longitude_xx_xx.xx", "longitude_xx_xx.xx_w"]
                 )
             ),
             "sounder_depth": ds.attrs.pop("sounding_depth_m", None),
