@@ -123,7 +123,18 @@ def txt(
         while "Time (sec)" not in header[-1]:
             header += [f.readline()]
 
-        # If metadata is null than it's likely not a minidot file
+        # Parse metadata from header
+        metadata = {}
+        metadata["serial_number"] = header[0].replace("\n", "")
+        metadata["software_version"] = re.search(r"OS REV: (\d+\.\d+)\s", header[1])[1]
+        if "Sensor Cal" in header[1]:
+            metadata["instrument_calibration"] = re.search(
+                r"Sensor Cal: (\d*)", header[1]
+            )[1]
+        if len(header) > 2:
+            for key, value in re.findall("(\\w+)\\: ([^,\n]+)", "".join(header[2:-1])):
+                metadata[key.lower()] = value.strip()
+
         if metadata is None:
             warnings.warn("Failed to read: {path}", RuntimeWarning)
             return pd.DataFrame(), None
@@ -229,10 +240,8 @@ def txts(
     return xr.merge(datasets)
 
 
-def minidot_cat(
-    path: str, encoding: str = "utf-8", errors: str = "strict"
-) -> xr.Dataset:
-    """cat reads PME MiniDot concatenated CAT files
+def cat(path: str, encoding: str = "utf-8", errors: str = "strict") -> xr.Dataset:
+    """Cat reads PME MiniDot concatenated CAT files.
 
     Args:
         path (str): File path to read
