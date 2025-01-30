@@ -208,6 +208,20 @@ class TestAmundsenParser:
         ds = amundsen.int_format(path)
         review_parsed_dataset(ds, path, caplog)
 
+    @pytest.mark.parametrize(
+        "path",
+        [
+            path
+            for path in glob(
+                "tests/parsers_test_files/amundsen/**/*.csv", recursive=True
+            )
+            if not path.endswith("info.int")
+        ],
+    )
+    def test_amundsen_csv_parser(self, path, caplog):
+        ds = amundsen.csv_format(path)
+        review_parsed_dataset(ds, path, caplog)
+
 
 class TestIOSShellParser:
     @pytest.mark.parametrize(

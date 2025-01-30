@@ -67,6 +67,8 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
         parser = "star_oddi.dat"
     elif ext == "int" and "% Cruise_Number:" in header:
         parser = "amundsen.int_format"
+    elif ext == "csv" and "% Cruise_Number:" in header:
+        parser = "amundsen.csv_format"
     elif "*IOS HEADER VERSION" in header:
         parser = "dfo.ios.shell"
     elif ext == "pcnv":
