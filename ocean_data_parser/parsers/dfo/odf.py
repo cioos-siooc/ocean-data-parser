@@ -49,6 +49,13 @@ bio_global_attributes = {
 }
 
 
+as_dfo_global_attributes = {
+    "organization": "",
+    "Conventions": "CF-1.6,CF-1.7,CF-1.8,ACDD1.1,ACDD-1.3,IOOS-1.2",
+    "standard_name_vocabulary": "CF Standard Name Table v78",
+}
+
+
 def bio_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
     """Bedford Institute of Ocean ODF format parser.
 
@@ -110,5 +117,5 @@ def odf(path: str, vocabularies: list = None, global_attributes: dict = None):
     return parse_odf(
         path,
         vocabularies=vocabularies,
-        global_attributes={**odf_global_attributes, **(global_attributes or {})},
+        global_attributes={**as_dfo_global_attributes, **(global_attributes or {})},
     )
