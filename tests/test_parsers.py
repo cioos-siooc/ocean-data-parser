@@ -475,6 +475,17 @@ class TestODFMLIParser:
         review_parsed_dataset(ds, path, caplog)
 
 
+class TestAsQoODFParser:
+    @pytest.mark.parametrize(
+        "path",
+        glob("tests/parsers_test_files/dfo/odf/as_qo/**/*.ODF", recursive=True),
+    )
+    def test_as_qo_odf_parser(self, path, caplog):
+        """Test DFO BIO ODF Parser."""
+        ds = dfo.odf.as_qo_odf(path)
+        review_parsed_dataset(ds, path, caplog)
+
+
 class TestDfoNafcPcnvFiles:
     @pytest.mark.parametrize(
         "path",
