@@ -64,7 +64,7 @@ def _standardize_attribute_value(value: str, name: str = None):
         return pd.to_datetime(
             value, utc=(name and "utc" in name), format="%d-%b-%Y %H:%M:%S"
         )
-    elif re.fullmatch(r"\d\d-\w\w\w-\d\d\d\d \d\d\:\d\d\:\d\d.\d", value):
+    elif re.fullmatch(r"\d\d-\w\w\w-\d\d\d\d \d\d\:\d\d\:\d\d.\d+", value):
         return pd.to_datetime(
             value, utc=(name and "utc" in name), format="%d-%b-%Y %H:%M:%S.%f"
         )
