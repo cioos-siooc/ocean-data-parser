@@ -192,6 +192,18 @@ def int_format(
         names = re.split(r"\s\s+", line.strip())
     elif separator == ",":
         names = line.strip().split(",")
+
+    if len(set(names)) != len(names):
+        logger.warning("Duplicate variable names detected: %s",
+        # Add index to duplicate names
+        new_names = []
+        for name in names:
+            if name not in new_names:
+                new_names.append(name)
+            else:
+                new_names.append(f"{name}_{new_names.count(name)}")
+        names = new_names
+
     df = pd.read_csv(
         path,
         encoding=encoding,
