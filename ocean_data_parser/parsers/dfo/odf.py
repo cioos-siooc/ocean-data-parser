@@ -50,7 +50,7 @@ bio_global_attributes = {
 
 
 as_dfo_global_attributes = {
-    "organization": "",
+    "organization": "ULaval",
     "Conventions": "CF-1.6,CF-1.7,CF-1.8,ACDD1.1,ACDD-1.3,IOOS-1.2",
     "standard_name_vocabulary": "CF Standard Name Table v78",
 }
@@ -100,7 +100,7 @@ def as_qo_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
     return odf(
         path,
         vocabularies=["AS_QO"],
-        global_attributes={**odf_global_attributes, **(global_attributes or {})},
+        global_attributes={**as_dfo_global_attributes, **(global_attributes or {})},
     )
 
 
@@ -117,5 +117,5 @@ def odf(path: str, vocabularies: list = None, global_attributes: dict = None):
     return parse_odf(
         path,
         vocabularies=vocabularies,
-        global_attributes={**as_dfo_global_attributes, **(global_attributes or {})},
+        global_attributes={**odf_global_attributes, **(global_attributes or {})},
     )
