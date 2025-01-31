@@ -9,7 +9,7 @@ import logging
 
 import xarray
 
-from ocean_data_parser.parsers.dfo.odf_source.process import parse_odf
+from ocean_data_parser.parsers.dfo.odf_source.process import parse_odf, FILE_NAME_CONVENTIONS
 
 logger = logging.getLogger(__name__)
 
@@ -104,6 +104,7 @@ def as_qo_odf(
         vocabularies=["AS_QO"],
         global_attributes={**as_dfo_global_attributes, **(global_attributes or {})},
         encoding_format=encoding_format,
+        filename_name_convention=None, # TODO there was maybe a convention for AS QO
     )
 
 
@@ -127,4 +128,5 @@ def odf(
         vocabularies=vocabularies,
         global_attributes={**odf_global_attributes, **(global_attributes or {})},
         encoding_format=encoding_format,
+        file_name_convention=FILE_NAME_CONVENTIONS
     )

@@ -47,6 +47,7 @@ def parse_odf(
     add_attributes_existing_variables: bool = True,
     generate_new_vocabulary_variables: bool = True,
     encoding_format: str = "Windows-1252",
+    filename_convention=FILE_NAME_CONVENTIONS,
 ) -> xr.Dataset:
     """Convert an ODF file to an xarray object.
 
@@ -75,11 +76,11 @@ def parse_odf(
         )
 
     # Write global and variable attributes
-    file_name_attributes = re.search(FILE_NAME_CONVENTIONS, Path(odf_path).name)
+    file_name_attributes = re.search(filename_convention, Path(odf_path).name) if filename_convention else None
     if not file_name_attributes:
         logger.warning(
             "The file name doesn't match an expected naming convention: %s",
-            FILE_NAME_CONVENTIONS,
+            filename_convention,
         )
     dataset.attrs = {
         **(file_name_attributes.groupdict() if file_name_attributes else {}),
