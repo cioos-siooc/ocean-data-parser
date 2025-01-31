@@ -78,16 +78,6 @@ def as_qo_odf_vocabulary() -> pd.DataFrame:
         .rename(columns={"variable_name": "name"})
         .assign(Vocabulary="AS_QO")
     )
-    df_gf3_vocab = (
-        df_vocab.query("rename_gf3.notna()")
-        .drop(columns=["rename"])
-        .rename(columns={"rename_gf3": "rename"})
-    )
-    df_gf3_vocab["Vocabulary"] = "AS_DO_GF3"
-    df_vocab = pd.concat([df_vocab, df_gf3_vocab]).rename(
-        columns={"rename_gf3": "legacy_gf3_code"}
-    )
-    df_vocab["legacy_gf3_code"] = df_vocab["legacy_gf3_code"].fillna(df_vocab["name"])
 
     return df_vocab
 
