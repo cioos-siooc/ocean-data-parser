@@ -65,7 +65,7 @@ def bio_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
     Returns:
         dataset (xarray dataset): Parsed xarray dataset
     """
-    return _odf(
+    return odf(
         path,
         vocabularies=["BIO", "GF3"],
         global_attributes={**bio_global_attributes, **(global_attributes or {})},
@@ -81,14 +81,30 @@ def mli_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
     Returns:
         dataset (xarray dataset): Parsed xarray dataset
     """
-    return _odf(
+    return odf(
         path,
         vocabularies=["MLI", "GF3"],
         global_attributes={**mli_global_attributes, **(global_attributes or {})},
     )
 
 
-def _odf(path: str, vocabularies: list = None, global_attributes: dict = None):
+def as_qo_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
+    """AS QO ODF format parser.
+
+    Args:
+        path (str): Path to the odf file to parse
+        global_attributes (dict): file specific global attributes
+    Returns:
+        dataset (xarray dataset): Parsed xarray dataset
+    """
+    return odf(
+        path,
+        vocabularies=["AS_QO"],
+        global_attributes={**odf_global_attributes, **(global_attributes or {})},
+    )
+
+
+def odf(path: str, vocabularies: list = None, global_attributes: dict = None):
     """ODF format parser.
 
     Args:
