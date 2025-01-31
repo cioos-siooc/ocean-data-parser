@@ -127,7 +127,8 @@
       "units": "YYYY-MM-DDThh:mm:ss.sssZ",
       "alternative_label": "time",
       "sdn_parameter_name": "Date and time (UT in ISO8601 format to known precision)",
-      "sdn_uom_name": "Gregorian date (yyyymmdd)"
+      "sdn_uom_name": "Gregorian date (yyyymmdd)",
+      "rename": "time"
     }
   ],
   "Lat": [
@@ -137,7 +138,8 @@
       "sdn_parameter_urn": "SDN:P01::ALATZZ01",
       "sdn_uom_urn": "SDN:P06::DEGN",
       "sdn_parameter_name": "Latitude north",
-      "sdn_uom_name": "Degrees north"
+      "sdn_uom_name": "Degrees north",
+      "rename":"latitude"
     }
   ],
   "Long": [
@@ -148,7 +150,8 @@
       "sdn_uom_urn": "SDN:P06::DEGE",
       "alternative_label": "Lon",
       "sdn_parameter_name": "Longitude east",
-      "sdn_uom_name": "Degrees east"
+      "sdn_uom_name": "Degrees east",
+      "rename":"longitude"
     }
   ],
   "Lon": [
@@ -159,7 +162,8 @@
       "sdn_uom_urn": "SDN:P06::DEGE",
       "alternative_label": "Lon",
       "sdn_parameter_name": "Longitude east",
-      "sdn_uom_name": "Degrees east"
+      "sdn_uom_name": "Degrees east",
+      "rename":"longitude"
     }
   ],
   "Trans": [
@@ -494,7 +498,8 @@
   "Depth": [
     {
       "long_name": "Bottom Depth",
-      "units": "m"
+      "units": "m",
+      "rename": "depth"
     }
   ],
   "pH": [
@@ -666,7 +671,8 @@
       "sdn_parameter_urn": "SDN:P01::ALATZZ01",
       "sdn_uom_urn": "SDN:P06::DEGN",
       "sdn_parameter_name": "Latitude north",
-      "sdn_uom_name": "Degrees north"
+      "sdn_uom_name": "Degrees north",
+      "rename": "latitude"
     }
   ],
   "Longitude": [
@@ -677,7 +683,8 @@
       "sdn_uom_urn": "SDN:P06::DEGE",
       "alternative_label": "Lon",
       "sdn_parameter_name": "Longitude east",
-      "sdn_uom_name": "Degrees east"
+      "sdn_uom_name": "Degrees east",
+      "rename": "longitude"
     }
   ],
   "Upoly0": [
