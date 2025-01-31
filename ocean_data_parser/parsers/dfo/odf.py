@@ -15,13 +15,6 @@ logger = logging.getLogger(__name__)
 
 
 odf_global_attributes = {
-    "organization": "Fisheries and Ocean Canada - Pêche et Océan Canada",
-    "institution": "DFO BIO",
-    "country": "Canada",
-    "ioc_country_code": 18,
-    "iso_3166_country_code": "CA",
-    "platform_vocabulary": "https://vocab.nerc.ac.uk/search_nvs/C17/",
-    "instrument_vocabulary": "https://vocab.nerc.ac.uk/search_nvs/L22/",
     "Conventions": "CF-1.6,CF-1.7,CF-1.8,ACDD1.1,ACDD-1.3,IOOS-1.2",
     "standard_name_vocabulary": "CF Standard Name Table v78",
 }
