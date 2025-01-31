@@ -88,7 +88,9 @@ def mli_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
     )
 
 
-def as_qo_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
+def as_qo_odf(
+    path: str, global_attributes: dict = None, encoding_format="UTF-8"
+) -> xarray.Dataset:
     """AS QO ODF format parser.
 
     Args:
@@ -101,10 +103,16 @@ def as_qo_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
         path,
         vocabularies=["AS_QO"],
         global_attributes={**as_dfo_global_attributes, **(global_attributes or {})},
+        encoding_format=encoding_format,
     )
 
 
-def odf(path: str, vocabularies: list = None, global_attributes: dict = None):
+def odf(
+    path: str,
+    vocabularies: list = None,
+    global_attributes: dict = None,
+    encoding_format: str = "Windows-1252",
+) -> xarray.Dataset:
     """ODF format parser.
 
     Args:
@@ -118,4 +126,5 @@ def odf(path: str, vocabularies: list = None, global_attributes: dict = None):
         path,
         vocabularies=vocabularies,
         global_attributes={**odf_global_attributes, **(global_attributes or {})},
+        encoding_format=encoding_format,
     )

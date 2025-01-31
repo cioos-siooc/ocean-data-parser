@@ -46,6 +46,7 @@ def parse_odf(
     vocabularies: list = None,
     add_attributes_existing_variables: bool = True,
     generate_new_vocabulary_variables: bool = True,
+    encoding_format: str = "Windows-1252",
 ) -> xr.Dataset:
     """Convert an ODF file to an xarray object.
 
@@ -64,7 +65,7 @@ def parse_odf(
         xr.Dataset: Parsed dataset
     """
     # Parse the ODF file with the CIOOS python parsing tool
-    metadata, dataset = odf_parser.read(odf_path)
+    metadata, dataset = odf_parser.read(odf_path, encoding_format=encoding_format)
 
     # Review ODF data type compatible with ODF parser
     if metadata["EVENT_HEADER"]["DATA_TYPE"] not in ODF_COMPATIBLE_DATA_TYPES:
