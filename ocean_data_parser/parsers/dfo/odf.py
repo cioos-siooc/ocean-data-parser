@@ -59,12 +59,16 @@ as_dfo_global_attributes = {
 }
 
 
-def bio_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
+def bio_odf(
+    path: str, global_attributes: dict = None, encoding="Windows-1252"
+) -> xarray.Dataset:
     """Bedford Institute of Ocean ODF format parser.
 
     Args:
         path (str): Path to the odf file to parse
         global_attributes (dict): file specific global attributes
+        encoding (str): Encoding format of the file (default: Windows-1252)
+
     Returns:
         dataset (xarray dataset): Parsed xarray dataset
     """
@@ -72,15 +76,20 @@ def bio_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
         path,
         vocabularies=["BIO", "GF3"],
         global_attributes={**bio_global_attributes, **(global_attributes or {})},
+        encoding=encoding,
     )
 
 
-def mli_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
+def mli_odf(
+    path: str, global_attributes: dict = None, encoding="Windows-1252"
+) -> xarray.Dataset:
     """Maurice Lamontagne Institute ODF format parser.
 
     Args:
         path (str): Path to the odf file to parse
         global_attributes (dict): file specific global attributes
+        encoding (str): Encoding format of the file (default: Windows-1252)
+
     Returns:
         dataset (xarray dataset): Parsed xarray dataset
     """
@@ -88,17 +97,20 @@ def mli_odf(path: str, global_attributes: dict = None) -> xarray.Dataset:
         path,
         vocabularies=["MLI", "GF3"],
         global_attributes={**mli_global_attributes, **(global_attributes or {})},
+        encoding=encoding,
     )
 
 
 def as_qo_odf(
-    path: str, global_attributes: dict = None, encoding_format="UTF-8"
+    path: str, global_attributes: dict = None, encoding="UTF-8"
 ) -> xarray.Dataset:
     """AS QO ODF format parser.
 
     Args:
         path (str): Path to the odf file to parse
         global_attributes (dict): file specific global attributes
+        encoding (str): Encoding format of the file (default: UTF-8)
+
     Returns:
         dataset (xarray dataset): Parsed xarray dataset
     """
@@ -106,8 +118,8 @@ def as_qo_odf(
         path,
         vocabularies=["AS_QO"],
         global_attributes={**as_dfo_global_attributes, **(global_attributes or {})},
-        encoding_format=encoding_format,
-        filename_name_convention=None, # TODO there was maybe a convention for AS QO
+        encoding=encoding,
+        filename_name_convention=None,  # TODO there was maybe a convention for AS QO
     )
 
 
@@ -115,7 +127,7 @@ def odf(
     path: str,
     vocabularies: list = None,
     global_attributes: dict = None,
-    encoding_format: str = "Windows-1252",
+    encoding: str = "Windows-1252",
 ) -> xarray.Dataset:
     """ODF format parser.
 
@@ -123,6 +135,8 @@ def odf(
         path (str): Path to the odf file to parse
         vocabularies (str): Vocabulary list to use for the vocabulary mapping
         global_attributes (dict): file specific global attributes
+        encoding (str): Encoding format of the file (default: Windows-1252)
+
     Returns:
         dataset (xarray dataset): Parsed xarray dataset
     """
@@ -130,6 +144,6 @@ def odf(
         path,
         vocabularies=vocabularies,
         global_attributes={**odf_global_attributes, **(global_attributes or {})},
-        encoding_format=encoding_format,
-        file_name_convention=FILE_NAME_CONVENTIONS
+        encoding=encoding,
+        file_name_convention=FILE_NAME_CONVENTIONS,
     )

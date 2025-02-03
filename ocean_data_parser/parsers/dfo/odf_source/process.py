@@ -46,7 +46,7 @@ def parse_odf(
     vocabularies: list = None,
     add_attributes_existing_variables: bool = True,
     generate_new_vocabulary_variables: bool = True,
-    encoding_format: str = "Windows-1252",
+    encoding: str = "Windows-1252",
     filename_convention=FILE_NAME_CONVENTIONS,
 ) -> xr.Dataset:
     """Convert an ODF file to an xarray object.
@@ -61,12 +61,15 @@ def parse_odf(
             Defaults to True.
         generate_new_vocabulary_variables (bool, optional): Generate vocabulary variables.
             Defaults to True.
+        encoding (str, optional): Encoding format of the file. Defaults to "Windows-1252".
+        filename_convention (str, optional): File name convention to extract attributes.
+            Should be a regex expression.
 
     Returns:
         xr.Dataset: Parsed dataset
     """
     # Parse the ODF file with the CIOOS python parsing tool
-    metadata, dataset = odf_parser.read(odf_path, encoding_format=encoding_format)
+    metadata, dataset = odf_parser.read(odf_path, encoding=encoding)
 
     # Review ODF data type compatible with ODF parser
     if metadata["EVENT_HEADER"]["DATA_TYPE"] not in ODF_COMPATIBLE_DATA_TYPES:
@@ -76,7 +79,11 @@ def parse_odf(
         )
 
     # Write global and variable attributes
-    file_name_attributes = re.search(filename_convention, Path(odf_path).name) if filename_convention else None
+    file_name_attributes = (
+        re.search(filename_convention, Path(odf_path).name)
+        if filename_convention
+        else None
+    )
     if not file_name_attributes:
         logger.warning(
             "The file name doesn't match an expected naming convention: %s",
