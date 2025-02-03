@@ -91,7 +91,7 @@
   ],
   "TRB_": [
     {
-      "long_name": "Turbidity of water in the water body",
+      "long_name": "Turbidity",
       "units": "NTU",
       "accepted_units": "NTU",
       "standard_name": "sea_water_turbidity",
@@ -105,7 +105,7 @@
   ],
   "TURB": [
     {
-      "long_name": "Turbidity of water in the water body",
+      "long_name": "Turbidity",
       "units": "FTU",
       "accepted_units": "FTU",
       "standard_name": "sea_water_turbidity",
