@@ -131,7 +131,7 @@ def as_qo_odf(
         vocabularies=["AS_QO"],
         global_attributes={**as_dfo_global_attributes, **(global_attributes or {})},
         encoding=encoding,
-        filename_name_convention=None,  # TODO there was maybe a convention for AS QO
+        filename_convention=None,  # TODO there was maybe a convention for AS QO
     )
 
 
@@ -140,6 +140,7 @@ def odf(
     vocabularies: list = None,
     global_attributes: dict = None,
     encoding: str = "Windows-1252",
+    filename_convention=FILE_NAME_CONVENTIONS,
 ) -> xarray.Dataset:
     """ODF format parser.
 
@@ -148,6 +149,8 @@ def odf(
         vocabularies (str): Vocabulary list to use for the vocabulary mapping
         global_attributes (dict): file specific global attributes
         encoding (str): Encoding format of the file (default: Windows-1252)
+        filename_convention (str): File name convention to extract attributes.
+            Should be a regex expression.
 
     Returns:
         dataset (xarray dataset): Parsed xarray dataset
@@ -157,5 +160,5 @@ def odf(
         vocabularies=vocabularies,
         global_attributes={**odf_global_attributes, **(global_attributes or {})},
         encoding=encoding,
-        filename_convention=FILE_NAME_CONVENTIONS,
+        filename_convention=filename_convention,
     )
