@@ -287,7 +287,7 @@ class TestAmundsenVocabulary:
     def amundsen(self):
         return load.amundsen_vocabulary_df()
 
-    def test_rename_isnt_same_as_variable_name(self, amundsen):
+    def test_rename_is_not_same_as_variable_name(self, amundsen):
         """Test that the variable_name column is correctly formatted."""
         assert "variable_name" in amundsen.columns
 
