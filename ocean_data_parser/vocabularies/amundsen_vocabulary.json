@@ -199,7 +199,7 @@
   ],
   "Fluo": [
     {
-      "long_name": "Fluorescence of Chlorophyll-a in Sea Water",
+      "long_name": "chl-a fluorescence",
       "units": "ug/L",
       "standard_name": "mass_concentration_of_chlorophyll_a_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::CPHLPR01",
@@ -213,7 +213,7 @@
   ],
   "FLOR": [
     {
-      "long_name": "Fluorescence of Chlorophyll-a in Sea Water",
+      "long_name": "chl-a fluorescence",
       "units": "ug/L",
       "standard_name": "mass_concentration_of_chlorophyll_a_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::CPHLPR01",
