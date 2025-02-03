@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add tools to work with vocabularies.
 - Add vocabularies tests.
 - Add Amundsen CSV format parser
+- Use uv as package manager
+- Add vocabularies tests
 
 ### Fixed
 
@@ -22,8 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rename pme parsers by removing `minidot_`. New functions are called `pme.txt`,
   `pme.txts`, `pme.cat`. Maintain still a placeholder for those functions.
 - Major refactor the whole code base to handle a number of issues raised by Ruff.
-- Use uv as package manager
 - Make tests compatible with windows environment.
+- Fixed typo in NAFC pcnv parser, new sample files added to test files
 
 ## `0.6.1` - 2024-08-30
 
