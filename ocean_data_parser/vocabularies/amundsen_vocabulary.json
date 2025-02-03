@@ -558,7 +558,7 @@
       "sdn_uom_urn": "SDN:P06::UPAA",
       "alternative_label": "CTDTmp90_2",
       "rename": "TE90",
-      "sdn_parameter_name": "Temperature (ITS-90) of the water body by CTD or STD",
+      "sdn_parameter_name": "Temperature (ITS-90) of the water body by CTD or STD (second sensor)",
       "sdn_uom_name": "Degrees Celsius"
     }
   ],
