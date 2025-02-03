@@ -278,7 +278,6 @@
       "sdn_parameter_urn": "SDN:P01::ASLTZZ01",
       "sdn_uom_urn": "SDN:P06::UGKG",
       "alternative_label": "A_sal",
-      "rename": "ASAL",
       "sdn_parameter_name": "Absolute salinity of the water body",
       "sdn_uom_name": "Grams per kilogram"
     }
