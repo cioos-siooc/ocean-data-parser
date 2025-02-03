@@ -475,7 +475,7 @@ class TestODFMLIParser:
         review_parsed_dataset(ds, path, caplog)
 
 
-class TestAsQoODFParser:
+class TestODFAsQoODFParser:
     @pytest.mark.parametrize(
         "path",
         glob("tests/parsers_test_files/dfo/odf/as_qo/**/*.ODF", recursive=True),
