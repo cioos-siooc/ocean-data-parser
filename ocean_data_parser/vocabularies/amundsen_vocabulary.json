@@ -139,7 +139,7 @@
       "sdn_uom_urn": "SDN:P06::DEGN",
       "sdn_parameter_name": "Latitude north",
       "sdn_uom_name": "Degrees north",
-      "rename":"latitude"
+      "rename": "latitude"
     }
   ],
   "Long": [
@@ -151,7 +151,7 @@
       "alternative_label": "Lon",
       "sdn_parameter_name": "Longitude east",
       "sdn_uom_name": "Degrees east",
-      "rename":"longitude"
+      "rename": "longitude"
     }
   ],
   "Lon": [
@@ -163,7 +163,7 @@
       "alternative_label": "Lon",
       "sdn_parameter_name": "Longitude east",
       "sdn_uom_name": "Degrees east",
-      "rename":"longitude"
+      "rename": "longitude"
     }
   ],
   "Trans": [
