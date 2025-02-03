@@ -12,7 +12,7 @@
   },
   "Pres": [
     {
-      "long_name": "Sea Pressure (Sea Surface - 0)",
+      "long_name": "Sea Pressure",
       "units": "decibars",
       "standard_name": "sea_water_pressure_due_to_sea_water",
       "sdn_parameter_urn": "SDN:P01::PRESPR01",
@@ -25,7 +25,7 @@
   ],
   "PRES": [
     {
-      "long_name": "Sea Pressure (Sea Surface - 0)",
+      "long_name": "Sea Pressure",
       "units": "decibars",
       "standard_name": "sea_water_pressure_due_to_sea_water",
       "sdn_parameter_urn": "SDN:P01::PRESPR01",
