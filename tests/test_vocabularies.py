@@ -280,3 +280,19 @@ class TestVocabularies:
         assert mismatches.empty, (
             f"Found mismatched entries: {mismatches.to_dict(orient='records')}"
         )
+
+
+class TestAmundsenVocabulary:
+    @pytest.fixture
+    def amundsen(self):
+        return load.amundsen_vocabulary_df()
+
+    def test_rename_isnt_same_as_variable_name(self, amundsen):
+        """Test that the variable_name column is correctly formatted."""
+        assert "variable_name" in amundsen.columns
+
+        # Compare variable_name and rename and make sure they are not the same
+        same_name = amundsen.query("variable_name == rename")
+        assert same_name.empty, (
+            f"{len(same_name)} variable names are the same as the rename: {same_name['variable_name'].to_dict()}"
+        )
