@@ -309,6 +309,19 @@
       "sdn_uom_name": "Kilograms per cubic metre"
     }
   ],
+   "SIGT": [
+    {
+      "long_name": "Sigma-T Rho(S, T, 0)-1000",
+      "units": "kg/m^3",
+      "standard_name": "sea_water_sigma_t",
+      "sdn_parameter_urn": "SDN:P01::SIGTEQST",
+      "sdn_uom_urn": "SDN:P06::UKMC",
+      "alternative_label": "SigmaT",
+      "rename": "SIGT",
+      "sdn_parameter_name": "Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm",
+      "sdn_uom_name": "Kilograms per cubic metre"
+    }
+  ],
   "sigt": [
     {
       "long_name": "Sigma-T Rho(S, T, 0)-1000",
