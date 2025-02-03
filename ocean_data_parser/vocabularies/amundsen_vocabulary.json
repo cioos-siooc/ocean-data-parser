@@ -308,7 +308,7 @@
       "sdn_uom_name": "Kilograms per cubic metre"
     }
   ],
-   "SIGT": [
+  "SIGT": [
     {
       "long_name": "Sigma-T Rho(S, T, 0)-1000",
       "units": "kg/m^3",
