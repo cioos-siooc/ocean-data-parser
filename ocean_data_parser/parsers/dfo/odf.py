@@ -23,6 +23,7 @@ odf_global_attributes = {
 }
 
 mli_global_attributes = {
+    "organization": "Fisheries and Ocean Canada - Pêche et Océan Canada",
     "institution": "DFO MLI",
     "ices_edmo_code": 4160,
     "sdn_institution_urn": "SDN:EDMO::4160",
@@ -35,8 +36,12 @@ mli_global_attributes = {
     "creator_sector": "gov_federal",
     "creator_url": "info@dfo-mpo.gc.ca",
     "creator_type": "institution",
+    "country": "Canada",
+    "ioc_country_code": 18,
+    "iso_3166_country_code": "CA",
 }
 bio_global_attributes = {
+    "organization": "Fisheries and Ocean Canada - Pêche et Océan Canada",
     "institution": "DFO BIO",
     "ices_edmo_code": 1811,
     "sdn_institution_urn": "SDN:EDMO::1811",
@@ -49,11 +54,14 @@ bio_global_attributes = {
     "creator_sector": "gov_federal",
     "creator_url": "https://www.bio.gc.ca/",
     "creator_type": "institution",
+    "country": "Canada",
+    "ioc_country_code": 18,
+    "iso_3166_country_code": "CA",
 }
 
 
 as_dfo_global_attributes = {
-    "organization": "ULaval",
+    "organization": "Quebec Ocean - Laval University - Amundsen Science",
     "Conventions": "CF-1.6,CF-1.7,CF-1.8,ACDD1.1,ACDD-1.3,IOOS-1.2",
     "standard_name_vocabulary": "CF Standard Name Table v78",
 }
