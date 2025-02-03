@@ -34,7 +34,7 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
 
     with open(file, encoding=encoding, errors="ignore") as file_handle:
         header = ""
-        for _ in range(5):
+        for _ in range(10):
             try:
                 header += next(file_handle)
             except StopIteration:
@@ -75,21 +75,25 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
         parser = "dfo.nafc.pcnv"
     elif ext[0] == "p" and "NAFC_Y2K_HEADER" in header:
         parser = "dfo.nafc.pfile"
-    elif ext == "ODF" and re.search(r"COUNTRY_INSTITUTE_CODE\s*=\s*1810", header):
+    elif ext.upper() == "ODF" and re.search(
+        r"COUNTRY_INSTITUTE_CODE\s*=\s*1810", header
+    ):
         parser = "dfo.odf.bio_odf"
     elif (
-        ext == "ODF"
+        ext.upper() == "ODF"
         and re.search(r"COUNTRY_INSTITUTE_CODE\s*=\s*1830", header)
         or re.search(r"COUNTRY_INSTITUTE_CODE\s*=\s*CaIML", header)
     ):
         parser = "dfo.odf.mli_odf"
-    elif ext == "ODF":
+    elif ext.upper() == "ODF" and re.search(r"Ismer\/Québec-Océan", header):
+        parser = "dfo.odf.as_qo_odf"
+    elif ext.upper() == "ODF":
         logger.warning(
             "Unable to detect ODF related institution code (IML=1830/CaIML;BIO=1810) from header: %s",
             header,
         )
         logger.warning("Default to MLI ODF")
-        parser = "dfo.odf.mli_odf"
+        parser = "dfo.odf.odf"
     elif (
         ext.lower() in ("ctd", "bot", "che", "drf", "cur", "loop", "tob")
         and "*IOS HEADER VERSION" in header
