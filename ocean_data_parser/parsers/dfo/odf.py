@@ -145,5 +145,5 @@ def odf(
         vocabularies=vocabularies,
         global_attributes={**odf_global_attributes, **(global_attributes or {})},
         encoding=encoding,
-        file_name_convention=FILE_NAME_CONVENTIONS,
+        filename_convention=FILE_NAME_CONVENTIONS,
     )
