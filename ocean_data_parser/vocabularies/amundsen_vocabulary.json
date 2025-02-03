@@ -291,7 +291,7 @@
   ],
   "Sigt": [
     {
-      "long_name": "Sigma-T Rho(S, T, 0)-1000",
+      "long_name": "Sigma-T",
       "units": "kg/m^3",
       "standard_name": "sea_water_sigma_t",
       "sdn_parameter_urn": "SDN:P01::SIGTEQST",
@@ -304,7 +304,7 @@
   ],
   "SIGT": [
     {
-      "long_name": "Sigma-T Rho(S, T, 0)-1000",
+      "long_name": "Sigma-T",
       "units": "kg/m^3",
       "standard_name": "sea_water_sigma_t",
       "sdn_parameter_urn": "SDN:P01::SIGTEQST",
@@ -316,7 +316,7 @@
   ],
   "sigt": [
     {
-      "long_name": "Sigma-T Rho(S, T, 0)-1000",
+      "long_name": "Sigma-T",
       "units": "kg/m^3",
       "standard_name": "sea_water_sigma_t",
       "sdn_parameter_urn": "SDN:P01::SIGTEQST",
@@ -385,7 +385,7 @@
   ],
   "CDOM": [
     {
-      "long_name": "Fluorescence Of CDOM (Colored Dissolved Organic Matter)",
+      "long_name": "CDOM fluorescence",
       "units": "mg/m^3",
       "standard_name": "concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate",
       "sdn_parameter_urn": "SDN:P01::CCOMD002",
@@ -397,7 +397,7 @@
   ],
   "Cdom": [
     {
-      "long_name": "Fluorescence Of CDOM (Colored Dissolved Organic Matter)",
+      "long_name": "CDOM fluorescence",
       "units": "mg/m^3",
       "standard_name": "concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate",
       "sdn_uom_urn": "SDN:P06::UMMC",
@@ -408,7 +408,7 @@
   ],
   "NO3": [
     {
-      "long_name": "Nitrate (NO3-N) Content",
+      "long_name": "Nitrate (NO3-N)",
       "units": "mmol/m^3",
       "standard_name": "mole_concentration_of_nitrate_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::NTRAZZXX",
@@ -420,7 +420,7 @@
   ],
   "Ntra": [
     {
-      "long_name": "Nitrate (NO3-N) Content",
+      "long_name": "Nitrate (NO3-N)",
       "units": "mmol/m^3",
       "standard_name": "mole_concentration_of_nitrate_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::NTRAZZXX",
@@ -433,7 +433,7 @@
   ],
   "Nitrate": [
     {
-      "long_name": "Nitrate (NO3-N) Content",
+      "long_name": "Nitrate (NO3-N)",
       "units": "mmol/m^3",
       "standard_name": "mole_concentration_of_nitrate_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::NTRAZZXX",
@@ -446,7 +446,7 @@
   ],
   "Par": [
     {
-      "long_name": "Photosynthetic Active Radiation",
+      "long_name": "Sea Water PAR",
       "units": "uEinsteins/s/m^2",
       "accepted_units": "uEinsteins/s/m\\^2|µeinsteins/s/m\\^2",
       "standard_name": "downwelling_photosynthetic_photon_flux_in_sea_water",
@@ -460,7 +460,7 @@
   ],
   "PSAR": [
     {
-      "long_name": "Photosynthetic Active Radiation",
+      "long_name": "Sea Water PAR",
       "units": "uEinsteins/s/m^2",
       "standard_name": "downwelling_photosynthetic_photon_flux_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::IRRDUV01",
@@ -472,7 +472,7 @@
   ],
   "SPar": [
     {
-      "long_name": "Surface Photosynthetic Active Radiation",
+      "long_name": "Surface PAR",
       "units": "uEinsteins/s/m^2",
       "accepted_units": "uEinsteins/s/m\\^2|µeinsteins/s/m\\^2",
       "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_sea_water",
@@ -486,7 +486,7 @@
   ],
   "SPAR": [
     {
-      "long_name": "Surface Photosynthetic Active Radiation",
+      "long_name": "Surface PAR",
       "units": "uEinsteins/s/m^2",
       "accepted_units": "uEinsteins/s/m\\^2|µeinsteins/s/m\\^2",
       "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_sea_water",
@@ -591,7 +591,7 @@
   ],
   "FlSP": [
     {
-      "long_name": "Fluorescence of Chlorophyll-a in Sea Water",
+      "long_name": "chl-a fluorescence",
       "units": "ug/L",
       "standard_name": "mass_concentration_of_chlorophyll_a_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::CPHLPR01",
@@ -692,7 +692,7 @@
   ],
   "Upoly0": [
     {
-      "long_name": "Nitrate (NO3-N) Content",
+      "long_name": "Nitrate (NO3-N)",
       "units": "mmol/m^3",
       "standard_name": "mole_concentration_of_nitrate_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::NTRAZZXX",
