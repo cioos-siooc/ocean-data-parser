@@ -9,7 +9,10 @@ import logging
 
 import xarray
 
-from ocean_data_parser.parsers.dfo.odf_source.process import parse_odf, FILE_NAME_CONVENTIONS
+from ocean_data_parser.parsers.dfo.odf_source.process import (
+    FILE_NAME_CONVENTIONS,
+    parse_odf,
+)
 
 logger = logging.getLogger(__name__)
 
