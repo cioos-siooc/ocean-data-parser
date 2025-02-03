@@ -507,6 +507,7 @@
   "pH": [
     {
       "long_name": "pH",
+      "units": "1",
       "standard_name": "sea_water_ph_reported_on_total_scale",
       "sdn_parameter_urn": "SDN:P01::PHMASSXX",
       "sdn_uom_urn": "SDN:P06::UUPH",
