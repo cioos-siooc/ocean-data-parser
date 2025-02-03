@@ -40,7 +40,7 @@ mli_global_attributes = {
     "ioc_country_code": 18,
     "iso_3166_country_code": "CA",
     "platform_vocabulary": "https://vocab.nerc.ac.uk/search_nvs/C17/",
-    "instrrument_vocabulary": "https://vocab.nerc.ac.uk/search_nvs/L22/"
+    "instrument_vocabulary": "https://vocab.nerc.ac.uk/search_nvs/L22/",
 }
 bio_global_attributes = {
     "organization": "Fisheries and Ocean Canada - Pêche et Océan Canada",
@@ -60,7 +60,7 @@ bio_global_attributes = {
     "ioc_country_code": 18,
     "iso_3166_country_code": "CA",
     "platform_vocabulary": "https://vocab.nerc.ac.uk/search_nvs/C17/",
-    "instrrument_vocabulary": "https://vocab.nerc.ac.uk/search_nvs/L22/"
+    "instrument_vocabulary": "https://vocab.nerc.ac.uk/search_nvs/L22/",
 }
 
 
