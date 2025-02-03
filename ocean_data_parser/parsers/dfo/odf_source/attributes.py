@@ -318,8 +318,8 @@ def _generate_title_from_global_attributes(attributes):
             if "platform" in attributes
             else ""
         )
-        + (f"by {' '.join(org_inst) if org_inst else ''}")
-        + f"on the {attributes['cruise_name'].title()} "
+        + (f" by {' '.join(org_inst) if org_inst else ''}")
+        + f" on the {attributes['cruise_name'].title()} "
     )
     if (
         pd.notna(attributes["cruise_start_date"])
