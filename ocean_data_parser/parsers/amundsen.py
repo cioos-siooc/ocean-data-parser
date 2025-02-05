@@ -104,7 +104,7 @@ def _convert_timestamp(df: pd.DataFrame) -> pd.DataFrame:
 
 def csv_format(
     path: str,
-    encoding: str = "Windows-1252",
+    encoding: str = "UTF-8",
     map_to_vocabulary: bool = True,
     generate_depth: bool = True,
     separator: str = ",",
