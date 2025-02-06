@@ -194,7 +194,8 @@ def int_format(
         names = line.strip().split(",")
 
     if len(set(names)) != len(names):
-        logger.warning("Duplicate variable names detected: %s", names)
+        duplicated = {name: n  for name,n in Counter(names).items() if n > 1}
+        logger.warning("Duplicated variable names detected: %s", duplicated)
         # Add index to duplicate names
         new_names = []
         for name in names:
