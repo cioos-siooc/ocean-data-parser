@@ -220,14 +220,15 @@ def int_format(
 
     # Parse data
     if separator == r"\s+":
-        # Split by one space and a capital letter
-        line = line.replace("Wind", "  Wind")
-        names = re.split(r"\s\s+", line.strip())
+        # Fix problematic variable names
+        for name, fixed_name in REPLACE_VARIABLES.items():
+            line = line.replace(name, fixed_name)
+        names = re.split(r"\s+", line.strip())
     elif separator == ",":
         names = line.strip().split(",")
 
     if len(set(names)) != len(names):
-        duplicated = {name: n  for name,n in Counter(names).items() if n > 1}
+        duplicated = {name: n for name, n in Counter(names).items() if n > 1}
         logger.warning("Duplicated variable names detected: %s", duplicated)
         # Add index to duplicate names
         new_names = []
@@ -246,6 +247,10 @@ def int_format(
         sep=separator,
         names=names,
     )
+    if len(df.columns) != len(names):
+        raise ValueError(
+            f"Number of columns ({len(df.columns)}) doesn't match the number of variables ({len(names)})"
+        )
 
     # Sort column attributes
     variables = _extract_variable_attributes_from_header(metadata, df.columns)
