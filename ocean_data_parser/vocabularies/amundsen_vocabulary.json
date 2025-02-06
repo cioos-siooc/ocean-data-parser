@@ -242,6 +242,7 @@
     {
       "long_name": "Dissolved Oxygen",
       "units": "uM",
+      "accepted_units": "uM|µM",
       "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::DOXYZZ01",
       "sdn_uom_urn": "SDN:P06::UPOX",
