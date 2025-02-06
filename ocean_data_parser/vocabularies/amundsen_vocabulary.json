@@ -462,6 +462,7 @@
     {
       "long_name": "Sea Water PAR",
       "units": "uEinsteins/s/m^2",
+      "accepted_units": "uEinsteins/s/m\\^2|µeinsteins/s/m\\^2",
       "standard_name": "downwelling_photosynthetic_photon_flux_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::IRRDUV01",
       "sdn_uom_urn": "SDN:P06::UMES",
