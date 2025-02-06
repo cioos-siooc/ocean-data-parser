@@ -386,6 +386,14 @@ def assign_dimensions(ds: xr.Dataset) -> xr.Dataset:
         )
         ds = ds.swap_dims({"index": "PRES"})
         ds = ds.drop_vars("index")
+    elif "Pres_open" in ds:
+        ds.attrs.update(
+            {
+                "cdm_data_type": "Profile",
+            }
+        )
+        ds = ds.swap_dims({"index": "Net"})
+        ds = ds.drop_vars("index")
     else:
         logger.warning("Unknown CDM data type")
     return ds
