@@ -206,7 +206,13 @@ class TestAmundsenParser:
     )
     def test_amundsen_int_parser(self, path, caplog):
         ds = amundsen.int_format(path)
-        review_parsed_dataset(ds, path, caplog)
+        review_parsed_dataset(
+            ds,
+            path,
+            caplog,
+            max_log_levelno=20,
+            ignore_log_records="Duplicated variable",
+        )
 
     @pytest.mark.parametrize(
         "path",
@@ -220,7 +226,13 @@ class TestAmundsenParser:
     )
     def test_amundsen_csv_parser(self, path, caplog):
         ds = amundsen.csv_format(path)
-        review_parsed_dataset(ds, path, caplog)
+        review_parsed_dataset(
+            ds,
+            path,
+            caplog,
+            max_log_levelno=20,
+            ignore_log_records="Duplicated variable",
+        )
 
 
 class TestIOSShellParser:

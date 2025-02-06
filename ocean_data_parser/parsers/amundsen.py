@@ -9,6 +9,7 @@ the [Amundsen Science](https://amundsenscience.com/) and
 import logging
 import re
 from collections import Counter
+from pathlib import Path
 
 import pandas as pd
 import xarray as xr
@@ -28,6 +29,37 @@ VARIABLE_MAPPING_FIXES = {
     "% In situ density TEOS10 ((s, t, p) - 1000) [kg/m^3]": "D_CT",
     "% Potential density TEOS10 ((s, t, 0) - 1000) [kg/m^3]": "D0CT",
     "% Potential density TEOS10 (s, t, 0) [kg/m^3]": "D0CT",
+}
+
+IGNORED_VARIABLES = [
+    "Date",
+    "Hour",
+    "svan",
+    "Svan",
+    "SV",
+    "SVEL",
+    "FreezT",
+    "FreezT-",
+    "CONT",
+    "Cont",
+    "D_CT",
+    "D_ct",
+    "D0CT",
+    "D0ct",
+    "SIGM",
+    "SPVA",
+    "VAIS",
+    "POTM",
+    "FRET",
+    "SIGP",
+    "FLUOV",
+]
+
+REPLACE_VARIABLES = {
+    "Wind dir": "Wind_dir",
+    "Wind speed": "Wind_speed",
+    "Air temp": "Air_temp",
+    "Dew point": "Dew_point",
 }
 
 
@@ -250,7 +282,7 @@ def int_format(
     # Map variables to vocabulary
     variables_to_rename = {}
     for var in ds:
-        if var not in variables:
+        if var not in variables or re.sub(r"_\d+$", "", var) in IGNORED_VARIABLES:
             continue
 
         ds[var].attrs = variables[var]
@@ -260,8 +292,12 @@ def int_format(
         # Include variable attributes from the vocabulary
         if not map_to_vocabulary:
             continue
-        elif var not in amundsen_variable_attributes:
-            logger.warning("No vocabulary is available for variable mapping '%s'", var)
+        elif var not in variables_vocabulary:
+            logger.warning(
+                "No vocabulary is available for variable mapping '%s': %s",
+                var,
+                ds[var].attrs,
+            )
             continue
 
         # Match vocabulary
