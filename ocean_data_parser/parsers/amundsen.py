@@ -282,7 +282,10 @@ def int_format(
                 break
         else:
             logger.warning(
-                "No Vocabulary available for %s: %s", var, str(ds[var].attrs)
+                "No Vocabulary available for %s [%s]: %s",
+                var,
+                var_units,
+                str(ds[var].attrs),
             )
 
     # Review rename variables
