@@ -135,6 +135,11 @@ def _convert_timestamp(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def _get_file_type(path: str) -> str:
+    """Get the file type from the file path."""
+    file_type = re.search("AVOS|TSG|Bioness|NAV|HydroBios", Path(path).name)
+    return file_type.group() if file_type else None
+
 def csv_format(
     path: str,
     encoding: str = "UTF-8",
@@ -285,6 +290,14 @@ def int_format(
         )
 
     # Map variables to vocabulary
+    file_type = _get_file_type(path)
+    variables_vocabulary = [
+        {var: variables[var]}
+        for var, items in amundsen_variable_attributes.items()
+        for item in items
+        if file_type == item.get("file_type")
+        or (not item.get("file_type") and not file_type)
+    ]
     variables_to_rename = {}
     for var in ds:
         if var not in variables or re.sub(r"_\d+$", "", var) in IGNORED_VARIABLES:
@@ -307,7 +320,7 @@ def int_format(
 
         # Match vocabulary
         var_units = ds[var].attrs.get("units")
-        for item in amundsen_variable_attributes[var]:
+        for item in variables_vocabulary[var]:
             accepted_units = item.get("accepted_units")
             if (
                 var_units is None  # Consider first if no units
