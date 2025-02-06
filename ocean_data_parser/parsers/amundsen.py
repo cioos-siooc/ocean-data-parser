@@ -8,6 +8,7 @@ the [Amundsen Science](https://amundsenscience.com/) and
 
 import logging
 import re
+from collections import Counter
 
 import pandas as pd
 import xarray as xr
