@@ -260,7 +260,7 @@ def int_format(
         if not map_to_vocabulary:
             continue
         elif var not in amundsen_variable_attributes:
-            logger.warning("No vocabulary is available for variable '%s'", var)
+            logger.warning("No vocabulary is available for variable mapping '%s'", var)
             continue
 
         # Match vocabulary
