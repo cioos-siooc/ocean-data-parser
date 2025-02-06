@@ -302,6 +302,47 @@ def int_format(
         logger.info("Rename variables: %s", variables_to_rename)
         ds = ds.rename(variables_to_rename)
 
+    # Assign dimensions only after renaming variables
+    ds = assign_dimensions(ds)
+
     # Standardize dataset to be compatible with ERDDAP and NetCDF Classic
     ds = standardize_dataset(ds)
+    return ds
+
+
+COORDINATES_VARIABLES = ["time", "latitude", "longitude", "PRES"]
+
+
+def assign_dimensions(ds: xr.Dataset) -> xr.Dataset:
+    """Assign dimensions to the dataset."""
+    # Assign dimensions
+    ds = ds.set_coords(
+        [coordinate for coordinate in COORDINATES_VARIABLES if coordinate in ds]
+    )
+    if "latitude" in ds and "longitude" in ds and "time" in ds:
+        ds.attrs.update(
+            {
+                "cdm_data_type": "Trajectory",
+            }
+        )
+        ds = ds.swap_dims({"index": "time"})
+        ds = ds.drop_vars("index")
+    elif "time" in ds:
+        ds.attrs.update(
+            {
+                "cdm_data_type": "TimeSeries",
+            }
+        )
+        ds = ds.swap_dims({"index": "time"})
+        ds = ds.drop_vars("index")
+    elif "PRES" in ds:
+        ds.attrs.update(
+            {
+                "cdm_data_type": "Profile",
+            }
+        )
+        ds = ds.swap_dims({"index": "PRES"})
+        ds = ds.drop_vars("index")
+    else:
+        logger.warning("Unknown CDM data type")
     return ds
