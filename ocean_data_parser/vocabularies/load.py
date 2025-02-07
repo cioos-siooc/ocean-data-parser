@@ -12,20 +12,43 @@ def amundsen_vocabulary_df() -> pd.DataFrame:
     vocabulary = amundsen_vocabulary()
     vocab = []
     for name, attrs in vocabulary.items():
-        if name == "VARIABLE_NAME":
-            continue
         for attr in attrs:
             vocab += [{"variable_name": name, **attr}]
     return pd.DataFrame(vocab)
 
 
-def amundsen_vocabulary() -> dict:
-    """Load Amundsen Vocabulary."""
-    with open(VOCABULARIES_DIRECTORY / "amundsen_vocabulary.json") as file:
+def amundsen_vocabulary(instrument_vocabulary:str=None) -> dict:
+    """Load Amundsen Vocabulary.
+    
+    Args:
+        instrument_vocabulary (str): Instrument vocabulary to load. Defaults to None.
+    
+    Returns:
+        dict: Amundsen Vocabulary
+    """
+    if not instrument_vocabulary or instrument_vocabulary == "rosette":
+        vocabulary_file = VOCABULARIES_DIRECTORY / "amundsen_rosette_vocabulary.json"
+    else:
+        vocabulary_file = VOCABULARIES_DIRECTORY / f"amundsen_other_vocabulary.json"
+    
+    with open(vocabulary_file) as file:
         with open(
-            VOCABULARIES_DIRECTORY / "amundsen_vocabulary.json", encoding="UTF-8"
+            vocabulary_file, encoding="UTF-8"
         ) as file:
-            return json.load(file)
+            vocab = json.load(file)
+    
+    vocab.pop("VARIABLE_NAME")
+    if not instrument_vocabulary or instrument_vocabulary == "rosette":
+        return vocab
+
+    sub_vocab = {}
+    for name, items in vocab.items():
+        for item in items:
+            if item.get("file_type") == instrument_vocabulary:
+                if name not in sub_vocab:
+                    sub_vocab[name] = []
+                sub_vocab[name].append(item)
+    return sub_vocab
 
 
 def seabird_vocabulary_df() -> pd.DataFrame:

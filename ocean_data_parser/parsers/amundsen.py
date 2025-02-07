@@ -20,7 +20,6 @@ from ocean_data_parser.vocabularies.load import amundsen_vocabulary
 
 logger = logging.getLogger(__name__)
 string_attributes = ["Cruise_Number", "Cruise_Name", "Station"]
-amundsen_variable_attributes = amundsen_vocabulary()
 
 default_global_attributes = {"unknown_variables_information": "", "history": ""}
 VARIABLE_MAPPING_FIXES = {
@@ -55,6 +54,7 @@ IGNORED_VARIABLES = [
     "FLUOV",
 ]
 
+# Fix variables with white space in the name
 REPLACE_VARIABLES = {
     "Wind dir": "Wind_dir",
     "Wind speed": "Wind_speed",
@@ -137,7 +137,7 @@ def _convert_timestamp(df: pd.DataFrame) -> pd.DataFrame:
 
 def _get_file_type(path: str) -> str:
     """Get the file type from the file path."""
-    file_type = re.search("AVOS|TSG|Bioness|NAV|HydroBios", Path(path).name)
+    file_type = re.search("AVOS|TSG|Bioness|NAV|Hydrobios", Path(path).name)
     return file_type.group() if file_type else None
 
 def csv_format(
@@ -291,13 +291,7 @@ def int_format(
 
     # Map variables to vocabulary
     file_type = _get_file_type(path)
-    variables_vocabulary = [
-        {var: variables[var]}
-        for var, items in amundsen_variable_attributes.items()
-        for item in items
-        if file_type == item.get("file_type")
-        or (not item.get("file_type") and not file_type)
-    ]
+    variables_vocabulary = amundsen_vocabulary(file_type)
     variables_to_rename = {}
     for var in ds:
         if var not in variables or re.sub(r"_\d+$", "", var) in IGNORED_VARIABLES:
@@ -333,7 +327,7 @@ def int_format(
                 ds[var].attrs = {
                     key: value
                     for key, value in item.items()
-                    if key not in ["accepted_units", "rename"]
+                    if key not in ["accepted_units", "rename","file_type"]
                 }
                 break
         else:
@@ -359,7 +353,7 @@ def int_format(
         ds = ds.rename(variables_to_rename)
 
     # Assign dimensions only after renaming variables
-    ds = assign_dimensions(ds)
+    ds = assign_dimensions(ds, instrument=file_type)
 
     # Standardize dataset to be compatible with ERDDAP and NetCDF Classic
     ds = standardize_dataset(ds)
@@ -369,7 +363,7 @@ def int_format(
 COORDINATES_VARIABLES = ["time", "latitude", "longitude", "PRES"]
 
 
-def assign_dimensions(ds: xr.Dataset) -> xr.Dataset:
+def assign_dimensions(ds: xr.Dataset, instrument:str) -> xr.Dataset:
     """Assign dimensions to the dataset."""
     # Assign dimensions
     ds = ds.set_coords(
@@ -399,7 +393,7 @@ def assign_dimensions(ds: xr.Dataset) -> xr.Dataset:
         )
         ds = ds.swap_dims({"index": "PRES"})
         ds = ds.drop_vars("index")
-    elif "Pres_open" in ds:
+    elif instrument in ("Bioness", "Hydrobios"):
         ds.attrs.update(
             {
                 "cdm_data_type": "Profile",
