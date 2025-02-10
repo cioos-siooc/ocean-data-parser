@@ -157,6 +157,7 @@ def csv_format(
         map_to_vocabulary (bool, optional): Rename variables to vocabulary. Defaults to True.
         generate_depth (bool, optional): Generate depth variable. Defaults to True.
         separator (str, optional): Separator for the data. Defaults to r",".
+        encoding_error (str, optional): Encoding error handling. Defaults to "strict".
 
     Returns:
         xr.Dataset
@@ -187,6 +188,7 @@ def int_format(
         map_to_vocabulary (bool, optional): Rename variables to vocabulary. Defaults to True.
         generate_depth (bool, optional): Generate depth variable. Defaults to True.
         separator (str, optional): Separator for the data. Defaults to r"\s+".
+        encoding_error (str, optional): Encoding error handling. Defaults to "strict".
 
     Returns:
         xr.Dataset

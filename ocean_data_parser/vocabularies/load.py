@@ -13,7 +13,9 @@ def amundsen_vocabulary_df(instrument_vocabulary:str=None) -> pd.DataFrame:
 
     Args:
         instrument_vocabulary (str): Instrument vocabulary to load. Defaults to Rosette.
-    
+
+    Returns:
+        pd.DataFrame: Amundsen Vocabulary
     """
     vocabulary = amundsen_vocabulary(instrument_vocabulary)
     vocab = []
