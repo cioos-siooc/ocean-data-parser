@@ -8,8 +8,14 @@ import pandas as pd
 VOCABULARIES_DIRECTORY = Path(__file__).parent
 
 
-def amundsen_vocabulary_df() -> pd.DataFrame:
-    vocabulary = amundsen_vocabulary()
+def amundsen_vocabulary_df(instrument_vocabulary:str=None) -> pd.DataFrame:
+    """Retrieve Amundsen Vocabulary as DataFrame.
+
+    Args:
+        instrument_vocabulary (str): Instrument vocabulary to load. Defaults to Rosette.
+    
+    """
+    vocabulary = amundsen_vocabulary(instrument_vocabulary)
     vocab = []
     for name, attrs in vocabulary.items():
         for attr in attrs:
@@ -29,7 +35,7 @@ def amundsen_vocabulary(instrument_vocabulary: str = None) -> dict:
     if not instrument_vocabulary or instrument_vocabulary == "rosette":
         vocabulary_file = VOCABULARIES_DIRECTORY / "amundsen_rosette_vocabulary.json"
     else:
-        vocabulary_file = VOCABULARIES_DIRECTORY / f"amundsen_other_vocabulary.json"
+        vocabulary_file = VOCABULARIES_DIRECTORY / "amundsen_other_vocabulary.json"
 
     with open(vocabulary_file) as file:
         with open(vocabulary_file, encoding="UTF-8") as file:
