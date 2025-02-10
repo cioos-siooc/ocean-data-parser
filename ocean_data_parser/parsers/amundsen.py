@@ -140,6 +140,7 @@ def _get_file_type(path: str) -> str:
     file_type = re.search("AVOS|TSG|Bioness|NAV|Hydrobios", Path(path).name)
     return file_type.group() if file_type else None
 
+
 def csv_format(
     path: str,
     encoding: str = "UTF-8",
@@ -332,7 +333,7 @@ def int_format(
                 ds[var].attrs = {
                     key: value
                     for key, value in item.items()
-                    if key not in ["accepted_units", "rename","file_type"]
+                    if key not in ["accepted_units", "rename", "file_type"]
                 }
                 break
         else:
@@ -368,7 +369,7 @@ def int_format(
 COORDINATES_VARIABLES = ["time", "latitude", "longitude", "PRES"]
 
 
-def assign_dimensions(ds: xr.Dataset, instrument:str) -> xr.Dataset:
+def assign_dimensions(ds: xr.Dataset, instrument: str) -> xr.Dataset:
     """Assign dimensions to the dataset."""
     # Assign dimensions
     ds = ds.set_coords(

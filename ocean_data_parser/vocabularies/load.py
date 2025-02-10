@@ -17,12 +17,12 @@ def amundsen_vocabulary_df() -> pd.DataFrame:
     return pd.DataFrame(vocab)
 
 
-def amundsen_vocabulary(instrument_vocabulary:str=None) -> dict:
+def amundsen_vocabulary(instrument_vocabulary: str = None) -> dict:
     """Load Amundsen Vocabulary.
-    
+
     Args:
         instrument_vocabulary (str): Instrument vocabulary to load. Defaults to None.
-    
+
     Returns:
         dict: Amundsen Vocabulary
     """
@@ -30,13 +30,11 @@ def amundsen_vocabulary(instrument_vocabulary:str=None) -> dict:
         vocabulary_file = VOCABULARIES_DIRECTORY / "amundsen_rosette_vocabulary.json"
     else:
         vocabulary_file = VOCABULARIES_DIRECTORY / f"amundsen_other_vocabulary.json"
-    
+
     with open(vocabulary_file) as file:
-        with open(
-            vocabulary_file, encoding="UTF-8"
-        ) as file:
+        with open(vocabulary_file, encoding="UTF-8") as file:
             vocab = json.load(file)
-    
+
     vocab.pop("VARIABLE_NAME")
     if not instrument_vocabulary or instrument_vocabulary == "rosette":
         return vocab
