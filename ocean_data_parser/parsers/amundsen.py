@@ -280,6 +280,9 @@ def int_format(
         for name, value in metadata.items()
     }
 
+    # Fix global attribute
+    ds = _fix_station_global_attribute(ds)
+
     # Generate instrument_depth variable
     pressure = [var for var in ds if var in ("Pres", "PRES")]
     if (
@@ -411,4 +414,14 @@ def _assign_dimensions(ds: xr.Dataset, instrument: str) -> xr.Dataset:
         ds = ds.drop_vars("index")
     else:
         logger.warning("Unknown CDM data type")
+    return ds
+
+
+def _fix_station_global_attribute(ds: xr.Dataset):
+    """Fix station global attribute."""
+    if "station" not in ds.attrs:
+        return ds
+    station = ds.attrs["station"]
+    station = re.sub(r"station\s*", "", station, flags=re.IGNORECASE).strip()
+    ds.attrs["station"] = station
     return ds
