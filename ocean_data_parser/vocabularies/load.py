@@ -8,7 +8,7 @@ import pandas as pd
 VOCABULARIES_DIRECTORY = Path(__file__).parent
 
 
-def amundsen_vocabulary_df(instrument_vocabulary:str=None) -> pd.DataFrame:
+def amundsen_vocabulary_df(instrument_vocabulary: str = None) -> pd.DataFrame:
     """Retrieve Amundsen Vocabulary as DataFrame.
 
     Args:
