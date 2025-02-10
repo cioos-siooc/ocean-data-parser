@@ -146,6 +146,7 @@ def csv_format(
     map_to_vocabulary: bool = True,
     generate_depth: bool = True,
     separator: str = ",",
+    encoding_error="strict",
 ) -> xr.Dataset:
     """Parse Amundsen CSV format.
 
@@ -165,6 +166,7 @@ def csv_format(
         map_to_vocabulary=map_to_vocabulary,
         generate_depth=generate_depth,
         separator=separator,
+        encoding_error=encoding_error,
     )
 
 
@@ -174,6 +176,7 @@ def int_format(
     map_to_vocabulary: bool = True,
     generate_depth: bool = True,
     separator: str = r"\s+",
+    encoding_error="strict",
 ) -> xr.Dataset:
     r"""Parse Amundsen INT format.
 
@@ -195,7 +198,7 @@ def int_format(
         return
 
     logger.debug("Read %s", path)
-    with open(path, encoding=encoding) as file:
+    with open(path, encoding=encoding, errors=encoding_error) as file:
         # Parse header
         for header_line_idx, line in enumerate(file):
             line = line.rstrip()
@@ -251,6 +254,7 @@ def int_format(
         skiprows=[header_line_idx] if separator == r"\s+" else [],
         sep=separator,
         names=names,
+        encoding_errors=encoding_error,
     )
     if len(df.columns) != len(names):
         raise ValueError(
@@ -320,6 +324,7 @@ def int_format(
                 var_units is None  # Consider first if no units
                 or var_units == item.get("units")
                 or (accepted_units and re.fullmatch(accepted_units, var_units))
+                or ("None" in accepted_units)
             ):
                 if "rename" in item:
                     variables_to_rename[var] = item["rename"]
