@@ -359,7 +359,7 @@ def int_format(
         ds = ds.rename(variables_to_rename)
 
     # Assign dimensions only after renaming variables
-    ds = assign_dimensions(ds, instrument=file_type)
+    ds = _assign_dimensions(ds, instrument=file_type)
 
     # Standardize dataset to be compatible with ERDDAP and NetCDF Classic
     ds = standardize_dataset(ds)
@@ -369,7 +369,7 @@ def int_format(
 COORDINATES_VARIABLES = ["time", "latitude", "longitude", "PRES"]
 
 
-def assign_dimensions(ds: xr.Dataset, instrument: str) -> xr.Dataset:
+def _assign_dimensions(ds: xr.Dataset, instrument: str) -> xr.Dataset:
     """Assign dimensions to the dataset."""
     # Assign dimensions
     ds = ds.set_coords(
