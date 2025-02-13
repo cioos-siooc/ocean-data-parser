@@ -6,7 +6,6 @@ the [Amundsen Science](https://amundsenscience.com/) and
 [ArcticNet](https://arcticnet.ulaval.ca/) programs.
 """
 
-import logging
 import re
 from collections import Counter
 from pathlib import Path
@@ -14,11 +13,11 @@ from pathlib import Path
 import pandas as pd
 import xarray as xr
 from gsw import z_from_p
+from loguru import logger
 
 from ocean_data_parser.parsers.utils import standardize_dataset
 from ocean_data_parser.vocabularies.load import amundsen_vocabulary
 
-logger = logging.getLogger(__name__)
 string_attributes = ["Cruise_Number", "Cruise_Name", "Station"]
 
 default_global_attributes = {"unknown_variables_information": "", "history": ""}
@@ -197,10 +196,10 @@ def int_format(
 
     # Ignore info.int files
     if path.endswith("_info.int"):
-        logger.warning("Ignore *_info.int files: %s", path)
+        logger.warning("Ignore *_info.int files: {}", path)
         return
 
-    logger.debug("Read %s", path)
+    logger.debug("Read {}", path)
     with open(path, encoding=encoding, errors=encoding_error) as file:
         # Parse header
         for header_line_idx, line in enumerate(file):
@@ -218,12 +217,12 @@ def int_format(
                 metadata[VARIABLE_MAPPING_FIXES[line]] = line[2:]
             elif re.match(r"% .* \[.+\]", line):
                 logger.warning(
-                    "Unknown variable name will be saved to unknown_variables_information: %s",
+                    "Unknown variable name will be saved to unknown_variables_information: {}",
                     line,
                 )
                 metadata["unknown_variables_information"] += line + "\n"
             else:
-                logger.warning("Unknown line format: %s", line)
+                logger.warning("Unknown line format: {}", line)
 
         # Review metadata
         if metadata == default_global_attributes:
@@ -240,7 +239,7 @@ def int_format(
 
     if len(set(names)) != len(names):
         duplicated = {name: n for name, n in Counter(names).items() if n > 1}
-        logger.warning("Duplicated variable names detected: %s", duplicated)
+        logger.warning("Duplicated variable names detected: {}", duplicated)
         # Add index to duplicate names
         new_names = []
         for name in names:
@@ -291,7 +290,7 @@ def int_format(
         and ("Lat" in ds or "initial_latitude_deg" in ds.attrs)
     ):
         logger.info(
-            "Generate instrument_depth from TEOS-10: -1 * gsw.z_from_p(ds['Pres'], %s)",
+            "Generate instrument_depth from TEOS-10: -1 * gsw.z_from_p(ds['Pres'], {})",
             "ds['Lat']" if "Lat" in ds else "ds.attrs['initial_latitude_deg']",
         )
         ds["instrument_depth"] = -z_from_p(
@@ -316,7 +315,7 @@ def int_format(
             continue
         elif var not in variables_vocabulary:
             logger.warning(
-                "No vocabulary is available for variable mapping '%s': %s",
+                "No vocabulary is available for variable mapping '{}': {}",
                 var,
                 ds[var].attrs,
             )
@@ -348,7 +347,7 @@ def int_format(
                 break
         else:
             logger.warning(
-                "No Vocabulary available for %s [%s]: %s",
+                "No Vocabulary available for {} [{}]: {}",
                 var,
                 var_units,
                 str(ds[var].attrs),
@@ -360,12 +359,12 @@ def int_format(
     }
     if already_existing_variables:
         logger.error(
-            "Can't rename variable %s since it already exist",
+            "Can't rename variable {} since it already exist",
             already_existing_variables,
         )
 
     if variables_to_rename:
-        logger.info("Rename variables: %s", variables_to_rename)
+        logger.info("Rename variables: {}", variables_to_rename)
         ds = ds.rename(variables_to_rename)
 
     # Assign dimensions only after renaming variables
