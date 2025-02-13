@@ -254,7 +254,7 @@
     {
       "long_name": "Dissolved Oxygen",
       "units": "uM",
-      "accepted_units": "uM|µM",
+      "accepted_units": "uM|µM|ÂµM",
       "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::DOXYZZ01",
       "sdn_uom_urn": "SDN:P06::UPOX",
@@ -280,7 +280,7 @@
   "OXYM": [
     {
       "long_name": "Dissolved Oxygen",
-      "units": "uM",
+      "units": "uM||µM|ÂµM",
       "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::DOXYZZ01",
       "sdn_uom_urn": "SDN:P06::UPOX",
@@ -499,7 +499,7 @@
     {
       "long_name": "Sea Water PAR",
       "units": "uEinsteins/s/m^2",
-      "accepted_units": "uEinsteins/s/m\\^2|µeinsteins/s/m\\^2",
+      "accepted_units": "uEinsteins/s/m\\^2|µeinsteins/s/m\\^2|Âµeingsteins/s/m^2",
       "standard_name": "downwelling_photosynthetic_photon_flux_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::IRRDUV01",
       "sdn_uom_urn": "SDN:P06::UMES",
@@ -511,7 +511,7 @@
   "SPar": [
     {
       "long_name": "Surface PAR",
-      "units": "uEinsteins/s/m^2",
+      "units": "uEinsteins/s/m^2|Âµeingsteins/s/m^2",
       "accepted_units": "uEinsteins/s/m\\^2|µeinsteins/s/m\\^2",
       "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::IRRDSV01",
@@ -526,7 +526,7 @@
     {
       "long_name": "Surface PAR",
       "units": "uEinsteins/s/m^2",
-      "accepted_units": "uEinsteins/s/m\\^2|µeinsteins/s/m\\^2",
+      "accepted_units": "uEinsteins/s/m\\^2|µeinsteins/s/m\\^2|Âµeingsteins/s/m^2",
       "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::IRRDSV01",
       "sdn_uom_urn": "SDN:P06::UMES",
