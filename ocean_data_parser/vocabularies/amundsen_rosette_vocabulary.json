@@ -25,6 +25,9 @@
       "sdn_uom_name": "Decibars"
     }
   ],
+  "PresPar": [
+    {}
+  ],
   "PRES": [
     {
       "long_name": "Sea Pressure",
