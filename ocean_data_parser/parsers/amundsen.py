@@ -329,8 +329,13 @@ def int_format(
             if (
                 var_units is None  # Consider first if no units
                 or var_units == item.get("units")
-                or (accepted_units and re.fullmatch(accepted_units, var_units))
-                or ("None" in accepted_units)
+                or (
+                    accepted_units
+                    and (
+                        re.fullmatch(accepted_units, var_units)
+                        or "None" in accepted_units.split("|")
+                    )
+                )
             ):
                 if "rename" in item:
                     variables_to_rename[var] = item["rename"]
