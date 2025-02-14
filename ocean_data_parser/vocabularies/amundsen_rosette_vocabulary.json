@@ -382,7 +382,8 @@
     {
       "long_name": "Sigma-T (Rho (S, T, 0) - 1000)",
       "units": "kg/m^3",
-      "standard_name": "sea_water_sigma_t"
+      "standard_name": "sea_water_sigma_t",
+      "accepted_units": "kg/m^3|kg/m**3"
     }
   ],
   "N2": [
@@ -417,7 +418,8 @@
       "sdn_uom_urn": "SDN:P06::UMMC",
       "alternative_label": "CDOM_fluor_WETLabs",
       "sdn_parameter_name": "Concentration of coloured dissolved organic matter {CDOM Gelbstoff} per unit volume of the water body [dissolved plus reactive particulate phase] by in-situ WET Labs FDOM ECO fluorometer",
-      "sdn_uom_name": "Milligrams per cubic metre"
+      "sdn_uom_name": "Milligrams per cubic metre",
+      "accepted_units": "mg/m^3|mg/m**3"
     }
   ],
   "Cdom": [
@@ -440,7 +442,8 @@
       "sdn_uom_urn": "SDN:P06::MMCM",
       "rename": "NTRA",
       "sdn_parameter_name": "Concentration of nitrate {NO3- CAS 14797-55-8} per unit volume of the water body [unknown phase]",
-      "sdn_uom_name": "Millimoles per cubic metre"
+      "sdn_uom_name": "Millimoles per cubic metre",
+      "accepted_units": "mmol/m^3|mmol/m**3"
     }
   ],
   "Ntra": [
@@ -485,7 +488,7 @@
     {
       "long_name": "Sea Water PAR",
       "units": "uEinsteins/s/m^2",
-      "accepted_units": "uEinsteins/s/m\\^2|µeinsteins/s/m\\^2",
+      "accepted_units": "uEinsteins/s/m\\^2|ueinsteins/s/m\\^2|ueinsteins/s/m\\*\\*2|µeinsteins/s/m\\^2|Âµeingsteins/s/m^2",
       "standard_name": "downwelling_photosynthetic_photon_flux_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::IRRDUV01",
       "sdn_uom_urn": "SDN:P06::UMES",
@@ -499,7 +502,7 @@
     {
       "long_name": "Sea Water PAR",
       "units": "uEinsteins/s/m^2",
-      "accepted_units": "uEinsteins/s/m\\^2|µeinsteins/s/m\\^2|Âµeingsteins/s/m^2",
+      "accepted_units": "uEinsteins/s/m\\^2|ueinsteins/s/m\\^2|ueinsteins/s/m\\*\\*2|µeinsteins/s/m\\^2|Âµeingsteins/s/m^2",
       "standard_name": "downwelling_photosynthetic_photon_flux_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::IRRDUV01",
       "sdn_uom_urn": "SDN:P06::UMES",
@@ -511,8 +514,8 @@
   "SPar": [
     {
       "long_name": "Surface PAR",
-      "units": "uEinsteins/s/m^2|Âµeingsteins/s/m^2",
-      "accepted_units": "uEinsteins/s/m\\^2|µeinsteins/s/m\\^2",
+      "units": "uEinsteins/s/m^2",
+      "accepted_units": "uEinsteins/s/m\\^2|ueinsteins/s/m\\^2|ueinsteins/s/m\\*\\*2|µeinsteins/s/m\\^2|Âµeingsteins/s/m^2",
       "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::IRRDSV01",
       "sdn_uom_urn": "SDN:P06::UMES",
@@ -526,7 +529,7 @@
     {
       "long_name": "Surface PAR",
       "units": "uEinsteins/s/m^2",
-      "accepted_units": "uEinsteins/s/m\\^2|µeinsteins/s/m\\^2|Âµeingsteins/s/m^2",
+      "accepted_units": "uEinsteins/s/m\\^2|ueinsteins/s/m\\^2|ueinsteins/s/m\\*\\*2|µeinsteins/s/m\\^2|Âµeingsteins/s/m^2",
       "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::IRRDSV01",
       "sdn_uom_urn": "SDN:P06::UMES",
