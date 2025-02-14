@@ -15,7 +15,7 @@ import xarray as xr
 from gsw import z_from_p
 from loguru import logger
 
-from ocean_data_parser.parsers.utils import standardize_dataset
+from ocean_data_parser.parsers.utils import standardize_dataset, apply_function
 from ocean_data_parser.vocabularies.load import amundsen_vocabulary
 
 string_attributes = ["Cruise_Number", "Cruise_Name", "Station"]
@@ -344,6 +344,8 @@ def int_format(
                     for key, value in item.items()
                     if key not in ["accepted_units", "rename", "file_type"]
                 }
+                if "apply_function" in ds[var].attrs:
+                    ds = apply_function(ds, var)
                 break
         else:
             logger.warning(
