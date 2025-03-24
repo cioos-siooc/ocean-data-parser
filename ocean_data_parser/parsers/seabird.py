@@ -610,6 +610,7 @@ seabird_to_bodc = {
     "User Polynomial": [],
     "User Polynomial, 2": [],
     "User Polynomial, 3": [],
+    "Nitrate": ["NTRAZZXX"]
 }
 
 
