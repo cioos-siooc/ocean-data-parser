@@ -40,6 +40,19 @@
       "sdn_uom_name": "Decibars"
     }
   ],
+  "DEPH": [
+    {
+      "long_name": "Depth",
+      "units": "m",
+      "standard_name": "depth",
+      "sdn_parameter_urn": "SDN:P01::ADEPZZ01",
+      "sdn_uom_urn": "SDN:P06::ULAA",
+      "alternative_label": "Depth",
+      "rename": "depth",
+      "sdn_parameter_name": "Depth below surface of the water body",
+      "sdn_uom_name": "Metres"
+    }
+  ],
   "Temp": [
     {
       "long_name": "Temperature (ITS-90)",
