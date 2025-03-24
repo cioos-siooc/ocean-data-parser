@@ -84,7 +84,7 @@ def parse_odf(
         if filename_convention
         else None
     )
-    if not file_name_attributes:
+    if not file_name_attributes and filename_convention:
         logger.warning(
             "The file name doesn't match an expected naming convention: %s",
             filename_convention,
