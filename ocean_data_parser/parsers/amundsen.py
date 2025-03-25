@@ -15,7 +15,7 @@ import xarray as xr
 from gsw import z_from_p
 from loguru import logger
 
-from ocean_data_parser.parsers.utils import standardize_dataset, apply_function
+from ocean_data_parser.parsers.utils import apply_function, standardize_dataset
 from ocean_data_parser.vocabularies.load import amundsen_vocabulary
 
 string_attributes = ["Cruise_Number", "Cruise_Name", "Station"]
