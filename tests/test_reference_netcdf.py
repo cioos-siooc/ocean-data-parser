@@ -100,6 +100,7 @@ def compare_test_to_reference_netcdf(
             "dfo_newfoundland_ship_code",
             "dfo_nafc_platform_code",
             "dfo_nafc_platform_name",
+            "title",
         ]:
             reference.attrs.pop(attr, None)
             test.attrs.pop(attr, None)

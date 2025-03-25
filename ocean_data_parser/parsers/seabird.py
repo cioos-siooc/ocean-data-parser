@@ -602,6 +602,7 @@ seabird_to_bodc = {
     "pH": ["PHMASS01", "PHXXZZ01"],
     "OBS, WET Labs, ECO-BB": ["TURBXX01", "VSCTXX01"],
     "OBS, Seapoint Turbidity": ["VSCTXX01", "TURBXX01"],
+    "OBS, D & A OBS 3+": ["VSCTZZ01", "TURBZZ01"],
     "SPAR/Surface Irradiance": ["IRRDSV01"],
     "SPAR, Biospherical/Licor": ["IRRDSV01"],
     "SUNA": [],
@@ -609,6 +610,7 @@ seabird_to_bodc = {
     "User Polynomial": [],
     "User Polynomial, 2": [],
     "User Polynomial, 3": [],
+    "Nitrate": ["NTRAZZXX"],
 }
 
 

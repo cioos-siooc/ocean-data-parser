@@ -112,7 +112,7 @@ def history_input(comment, date=datetime.now(timezone.utc)):
     return f"{date.strftime('%Y-%m-%dT%H:%M:%SZ')} {comment}\n"
 
 
-def read(filename, encoding_format="Windows-1252"):
+def read(filename, encoding="Windows-1252"):
     """Read ODF file format.
 
     `odf_source.parser.read` parse the odf format used by some DFO organisation to python list of
@@ -132,13 +132,19 @@ def read(filename, encoding_format="Windows-1252"):
             a. Use defined separator  to distinguish columns (default multiple white spaces).
             b. Convert each column of the pandas data frame to the matching format specified in
             the TYPE attribute of the ODF associated PARAMETER_HEADER
+            c. Convert the SYTM type to datetime object.
+        3. Add vocabulary attributes to the dataset
+            a. Match the variable to the vocabulary
+            b. Generate new vocabulary variables
+            c. Add vocabulary attributes to the dataset
+        4. Return the metadata and the dataset
 
-    read_odf is a simple tool that  parse the header metadata and data from an DFO
-    ODF file to a list of dictionaries.
-    :param filename: ODF file to read
-    :param encoding_format: odf encoding format
-     start of the data.
-    :return:
+    Args:
+        filename (str): ODF file path
+        encoding (str): ODF encoding format
+
+    Returns:
+        tuple: metadata and dataset
     """
 
     def _cast_value(value: str):
@@ -180,7 +186,7 @@ def read(filename, encoding_format="Windows-1252"):
         return value
 
     metadata = {}  # Start with an empty dictionary
-    with open(filename, encoding=encoding_format) as f:
+    with open(filename, encoding=encoding) as f:
         line = ""
         original_header = []
         # Read header one line at the time
@@ -269,7 +275,7 @@ def read(filename, encoding_format="Windows-1252"):
                 key: att.pop("null_value") for key, att in variable_attributes.items()
             },
             converters={var: _convert_odf_time for var in time_columns},
-            encoding=encoding_format,
+            encoding=encoding,
         )
 
     # Review N variables
@@ -398,6 +404,7 @@ def add_vocabulary_attributes(
     new_variables = {}
     new_variables_attributes = {}
     variable_order = []
+    comment = ""
     for var in ds:
         # Ignore variables with no attributes and flag variables
         if (
@@ -475,7 +482,6 @@ def add_vocabulary_attributes(
             continue
 
         # Generate vocabulary variables
-        comment = ""
         variable_order += matching_terms["variable_name"].tolist()
         locals_variables = {
             "gsw": gsw,

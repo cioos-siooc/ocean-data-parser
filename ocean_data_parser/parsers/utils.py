@@ -346,6 +346,38 @@ def convert_datetime_str(time_str: str, **to_datetime_kwargs) -> pd.Timestamp:
     return pd.to_datetime(time_str, **to_datetime_kwargs)
 
 
+def apply_function(ds: xr.Dataset, variable: str) -> xr.Dataset:
+    """Apply a function to a variable based on the apply_function attribute."""
+
+    def _append_to_history(comment, timestamp: pd.Timestamp = None):
+        if "history" not in ds.attrs:
+            ds.attrs["history"] = ""
+        ds.attrs["history"] += (
+            f"\n{timestamp or pd.Timestamp.now(tz='UTC')} {comment}\n"
+        )
+        ds.attrs["history"] = ds.attrs["history"].strip()
+
+    apply_function = ds[variable].attrs.get("apply_function")
+    if not apply_function:
+        return ds
+
+    attributes = ds[variable].attrs
+    if apply_function == "x*44.661":
+        new_variable = ds[variable] * 44.661
+        _append_to_history(
+            f"Convert variable {variable} mL/L to uM units with: {apply_function}"
+        )
+    else:
+        logger.warning("Unknown apply function: %s", apply_function)
+        return ds
+
+    # Integrate modified variable
+    new_variable.attrs = attributes
+    new_variable.attrs.pop("apply_function")
+    ds[variable] = new_variable
+    return ds
+
+
 global_attributes_order = [
     "organization",
     "institution",

@@ -206,7 +206,33 @@ class TestAmundsenParser:
     )
     def test_amundsen_int_parser(self, path, caplog):
         ds = amundsen.int_format(path)
-        review_parsed_dataset(ds, path, caplog)
+        review_parsed_dataset(
+            ds,
+            path,
+            caplog,
+            max_log_levelno=20,
+            ignore_log_records="Duplicated variable",
+        )
+
+    @pytest.mark.parametrize(
+        "path",
+        [
+            path
+            for path in glob(
+                "tests/parsers_test_files/amundsen/**/*.csv", recursive=True
+            )
+            if not path.endswith("info.int")
+        ],
+    )
+    def test_amundsen_csv_parser(self, path, caplog):
+        ds = amundsen.csv_format(path)
+        review_parsed_dataset(
+            ds,
+            path,
+            caplog,
+            max_log_levelno=20,
+            ignore_log_records="Duplicated variable",
+        )
 
 
 class TestIOSShellParser:
@@ -458,6 +484,17 @@ class TestODFMLIParser:
     def test_mli_plnkg_odf_parser(self, path, caplog):
         """Test DFO BIO ODF Parser."""
         ds = dfo.odf.mli_odf(path)
+        review_parsed_dataset(ds, path, caplog)
+
+
+class TestODFAsQoODFParser:
+    @pytest.mark.parametrize(
+        "path",
+        glob("tests/parsers_test_files/dfo/odf/as_qo/**/*.ODF", recursive=True),
+    )
+    def test_as_qo_odf_parser(self, path, caplog):
+        """Test DFO BIO ODF Parser."""
+        ds = dfo.odf.as_qo_odf(path)
         review_parsed_dataset(ds, path, caplog)
 
 

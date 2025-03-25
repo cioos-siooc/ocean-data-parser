@@ -57,17 +57,7 @@ def get_ios_vocab_markdown(
 
 
 def get_amundsen_vocab_markdown(output="docs/user_guide/vocabularies/amundsen-int.md"):
-    with open("ocean_data_parser/vocabularies/amundsen_vocabulary.json") as file_handle:
-        vocab = json.load(file_handle)
-    df = pd.DataFrame(
-        [
-            {"Amundsen Name": name, **(attrs if isinstance(attrs, dict) else {})}
-            for name, options in vocab.items()
-            for attrs in options
-            if attrs and name != "VARIABLE_NAME"
-        ]
-    )
-    df.replace({np.nan: ""}).to_markdown(output, index=False, tablefmt="pipe")
+    load.amundsen_vocabulary_df().to_markdown(output, index=False, tablefmt="pipe")
 
 
 def get_seabird_vocab_markdown(output="docs/user_guide/vocabularies/seabird.md"):

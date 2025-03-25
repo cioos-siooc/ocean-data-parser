@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add compatibility with PME wipers txt format.
+- Improve Quebec Ocean - Amundsen Vocabulary
+- Include Quebec Ocean - Amundsen Vocabulary to ODF vocabularies.
+- Add tools to work with vocabularies.
+- Add vocabularies tests.
+- Add Amundsen CSV format parser
 - Use uv as package manager
 - Add vocabularies tests
 
