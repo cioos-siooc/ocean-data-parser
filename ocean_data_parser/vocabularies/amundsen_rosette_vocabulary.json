@@ -49,7 +49,7 @@
       "sdn_uom_urn": "SDN:P06::ULAA",
       "alternative_label": "Depth",
       "rename": "depth",
-      "sdn_parameter_name": "Depth below surface of the water body",
+      "sdn_parameter_name": "Depth (spatial coordinate) relative to water surface in the water body",
       "sdn_uom_name": "Metres"
     }
   ],
