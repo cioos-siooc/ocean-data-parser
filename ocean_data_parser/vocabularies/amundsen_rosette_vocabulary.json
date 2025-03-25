@@ -551,13 +551,6 @@
       "sdn_uom_name": "MicroEinsteins per square metre per second"
     }
   ],
-  "Depth": [
-    {
-      "long_name": "Bottom Depth",
-      "units": "m",
-      "rename": "depth"
-    }
-  ],
   "pH": [
     {
       "long_name": "Sea water pH",
