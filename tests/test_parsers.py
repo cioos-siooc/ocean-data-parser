@@ -27,7 +27,7 @@ from ocean_data_parser.parsers.dfo.odf_source.parser import _convert_odf_time
 
 
 def search_caplog_records(caplog, message, levelname=None):
-    """Search caplog records for a specific message and log level"""
+    """Search caplog records for a specific message and log level."""
     return [
         record
         for record in caplog.records
@@ -135,7 +135,7 @@ class TestOnsetParser:
 
     @pytest.mark.parametrize("path", glob("tests/parsers_test_files/onset/**/*.xlsx"))
     def test_xlsx_parser(self, path, caplog):
-        """Test Onset XLSX parser"""
+        """Test Onset XLSX parser."""
         ds = onset.xlsx(path)
         review_parsed_dataset(
             ds,
@@ -167,15 +167,15 @@ class TestSunburstParsers:
             if "_notes_" not in path
         ],
     )
-    def test_sunburst_pCO2_parser(self, path, caplog):
-        ds = sunburst.superCO2(path)
+    def test_sunburst_pco2_parser(self, path, caplog):
+        ds = sunburst.super_co2(path)
         review_parsed_dataset(ds, path, caplog)
 
     @pytest.mark.parametrize(
         "path", glob("tests/parsers_test_files/sunburst/superCO2/*pCO2_notes*.txt")
     )
-    def test_sunburst_pCO2_notes_parser(self, path, caplog):
-        ds = sunburst.superCO2_notes(path)
+    def test_sunburst_pco2_notes_parser(self, path, caplog):
+        ds = sunburst.super_co2_notes(path)
         review_parsed_dataset(ds, path, caplog)
 
 
@@ -206,7 +206,33 @@ class TestAmundsenParser:
     )
     def test_amundsen_int_parser(self, path, caplog):
         ds = amundsen.int_format(path)
-        review_parsed_dataset(ds, path, caplog)
+        review_parsed_dataset(
+            ds,
+            path,
+            caplog,
+            max_log_levelno=20,
+            ignore_log_records="Duplicated variable",
+        )
+
+    @pytest.mark.parametrize(
+        "path",
+        [
+            path
+            for path in glob(
+                "tests/parsers_test_files/amundsen/**/*.csv", recursive=True
+            )
+            if not path.endswith("info.int")
+        ],
+    )
+    def test_amundsen_csv_parser(self, path, caplog):
+        ds = amundsen.csv_format(path)
+        review_parsed_dataset(
+            ds,
+            path,
+            caplog,
+            max_log_levelno=20,
+            ignore_log_records="Duplicated variable",
+        )
 
 
 class TestIOSShellParser:
@@ -290,7 +316,7 @@ class TestIOSShellParser:
 
 class TestODFParser:
     @pytest.mark.parametrize(
-        "timestamp,expected_response",
+        ("timestamp", "expected_response"),
         [
             (None, pd.NaT),
             ("17-NOV-1858 00:00:00.00", pd.NaT),
@@ -326,7 +352,7 @@ class TestODFParser:
         assert response is expected_response or response == expected_response
 
     @pytest.mark.parametrize(
-        "timestamp,expected_response",
+        ("timestamp", "expected_response"),
         [
             ("2022-12-11 00:00:00.00", pd.NaT),
             ("2022-20-20 00:00:00.00", pd.NaT),
@@ -340,7 +366,7 @@ class TestODFParser:
         assert "Failed to parse the timestamp" in caplog.text
 
     @pytest.mark.parametrize(
-        "original_header,station",
+        ("original_header", "station"),
         [
             (" station: QU05", "QU05"),
             ("somethinng station: QU05 some more", "QU05"),
@@ -361,7 +387,7 @@ class TestODFParser:
         assert response == station, f"Failed to retrieve station={station}"
 
     @pytest.mark.parametrize(
-        "global_attributes,original_header,station",
+        ("global_attributes", "original_header", "station"),
         [
             ({"station": "ABC04"}, "station: DEF05", "ABC04"),
             ({"station": None}, "station: DEF05", "DEF05"),
@@ -382,7 +408,7 @@ class TestODFBIOParser:
         "path", glob("tests/parsers_test_files/dfo/odf/bio/**/CTD*.ODF", recursive=True)
     )
     def test_bio_odf_ctd_parser(self, path, caplog):
-        """Test DFO BIO ODF Parser"""
+        """Test DFO BIO ODF Parser."""
         ds = dfo.odf.bio_odf(path)
         review_parsed_dataset(ds, path, caplog)
 
@@ -400,7 +426,7 @@ class TestODFMLIParser:
         ],
     )
     def test_mli_profile_odf_parser(self, path, caplog):
-        """Test DFO BIO ODF Parser"""
+        """Test DFO BIO ODF Parser."""
         ds = dfo.odf.mli_odf(path)
         review_parsed_dataset(ds, path, caplog)
 
@@ -416,7 +442,7 @@ class TestODFMLIParser:
         ],
     )
     def test_mli_timeseries_odf_parser(self, path, caplog):
-        """Test DFO BIO ODF Parser"""
+        """Test DFO BIO ODF Parser."""
         ds = dfo.odf.mli_odf(path)
         review_parsed_dataset(ds, path, caplog)
 
@@ -432,7 +458,7 @@ class TestODFMLIParser:
         ],
     )
     def test_mli_trajectory_odf_parser(self, path, caplog):
-        """Test DFO BIO ODF Parser"""
+        """Test DFO BIO ODF Parser."""
         ds = dfo.odf.mli_odf(path)
         review_parsed_dataset(ds, path, caplog)
 
@@ -444,7 +470,7 @@ class TestODFMLIParser:
         ),
     )
     def test_mli_madcp_odf_parser(self, path, caplog):
-        """Test DFO BIO ODF Parser"""
+        """Test DFO BIO ODF Parser."""
         ds = dfo.odf.mli_odf(path)
         review_parsed_dataset(ds, path, caplog)
 
@@ -456,12 +482,23 @@ class TestODFMLIParser:
         ),
     )
     def test_mli_plnkg_odf_parser(self, path, caplog):
-        """Test DFO BIO ODF Parser"""
+        """Test DFO BIO ODF Parser."""
         ds = dfo.odf.mli_odf(path)
         review_parsed_dataset(ds, path, caplog)
 
 
-class TestDFO_NAFC_PcnvFiles:
+class TestODFAsQoODFParser:
+    @pytest.mark.parametrize(
+        "path",
+        glob("tests/parsers_test_files/dfo/odf/as_qo/**/*.ODF", recursive=True),
+    )
+    def test_as_qo_odf_parser(self, path, caplog):
+        """Test DFO BIO ODF Parser."""
+        ds = dfo.odf.as_qo_odf(path)
+        review_parsed_dataset(ds, path, caplog)
+
+
+class TestDfoNafcPcnvFiles:
     @pytest.mark.parametrize(
         "path",
         [
@@ -474,25 +511,25 @@ class TestDFO_NAFC_PcnvFiles:
         ],
     )
     def test_dfo_nafc_ctd_pcnv(self, path, caplog):
-        """Test DFO NAFC Pcnv Parser"""
+        """Test DFO NAFC Pcnv Parser."""
         ds = dfo.nafc.pcnv(path)
         review_parsed_dataset(ds, path, caplog)
 
     def test_dfo_nafc_pcnv_nometqa_warning(self, caplog):
-        """Test DFO NAFC Pcnv Parser without metqa file"""
+        """Test DFO NAFC Pcnv Parser without metqa file."""
         path = "tests/parsers_test_files/dfo/nafc/pcnv/ctd/aqv118_2023_348.pcnv"
         _ = dfo.nafc.pcnv(path, match_metqa_table=True)
         assert search_caplog_records(caplog, "No metqa table file found", "WARNING")
 
     def test_dfo_nafc_pcnv_nometqa_debug(self, caplog):
-        """Test DFO NAFC Pcnv Parser without metqa file return a debug message if match_metqa_table is False"""
+        """Test DFO NAFC Pcnv Parser without metqa file return a debug message if match_metqa_table is False."""
         path = "tests/parsers_test_files/dfo/nafc/pcnv/ctd/aqv118_2023_348.pcnv"
         caplog.set_level("DEBUG")
         _ = dfo.nafc.pcnv(path, match_metqa_table=False)
         assert search_caplog_records(caplog, "No metqa table file found", "DEBUG")
 
     def test_dfo_nafc_pcnv_nometqa_default(self, caplog):
-        """Test DFO NAFC Pcnv Parser without metqa file return a debug message if default match_metqa_table is False"""
+        """Test DFO NAFC Pcnv Parser without metqa file return a debug message if default match_metqa_table is False."""
         path = "tests/parsers_test_files/dfo/nafc/pcnv/ctd/aqv118_2023_348.pcnv"
         caplog.set_level("DEBUG")
         _ = dfo.nafc.pcnv(path)
@@ -510,7 +547,7 @@ class TestDFO_NAFC_PcnvFiles:
         ],
     )
     def test_dfo_nafc_ctd_metqa(self, path):
-        """Test DFO NAFC Load metqa Parser"""
+        """Test DFO NAFC Load metqa Parser."""
         metqa = dfo.nafc._get_metqa_table(path)
 
         assert isinstance(metqa, pd.DataFrame)
@@ -526,7 +563,7 @@ class TestDFO_NAFC_PcnvFiles:
         ["tests/parsers_test_files/dfo/nafc/pcnv/ctd/cab041_2023_012.pcnv"],
     )
     def test_dfo_nafc_ctd_pcnv_with_metqa_file(self, path):
-        """Test DFO NAFC Pcnv Parser with metqa file"""
+        """Test DFO NAFC Pcnv Parser with metqa file."""
         ds = dfo.nafc.pcnv(path, match_metqa_table=True)
         review_parsed_dataset(ds, path)
         assert ds.attrs["swell_height"]
@@ -534,7 +571,7 @@ class TestDFO_NAFC_PcnvFiles:
 
 
 # pylint: disable=W0212
-class TestDFO_NAFC_pFiles:
+class TestDfoNafcPFiles:
     @pytest.mark.parametrize(
         "path",
         [
@@ -547,31 +584,31 @@ class TestDFO_NAFC_pFiles:
         ],
     )
     def test_dfo_nafc_pfile(self, path, caplog):
-        """Test DFO BIO ODF Parser"""
+        """Test DFO BIO ODF Parser."""
         ds = dfo.nafc.pfile(path)
         review_parsed_dataset(ds, path, caplog)
 
     def test_dfo_nafc_platform_code_mapping(self):
-        """Test ship code mapping"""
+        """Test ship code mapping."""
         response = dfo.nafc._get_platform_by_nafc_platform_code(55)
         assert isinstance(response, dict)
         assert response["platform_name"] == "Discovery"
 
     def test_dfo_nafc_platform_code_unknown_mapping(self, caplog):
-        """Test unknown ship code mapping"""
+        """Test unknown ship code mapping."""
         response = dfo.nafc._get_platform_by_nafc_platform_code(9999)
         assert isinstance(response, dict)
         assert "platform_name" not in response
         assert "Unknown dfo_nafc_platform_code=9999" in caplog.text
 
     def test_dfo_nafc_platform_name_mapping(self):
-        """Test nafc platform name mapping"""
+        """Test nafc platform name mapping."""
         response = dfo.nafc._get_platform_by_nafc_platform_name("cab")
         assert isinstance(response, dict)
         assert response["platform_name"] == "John Cabot"
 
     def test_dfo_nafc_platform_name_unknown_mapping(self, caplog):
-        """Test unknown ship name mapping"""
+        """Test unknown ship name mapping."""
         response = dfo.nafc._get_platform_by_nafc_platform_name("unk")
         assert isinstance(response, dict)
         assert "platform_name" not in response
@@ -628,7 +665,7 @@ class TestDFO_NAFC_pFiles:
             response = e
 
     @pytest.mark.parametrize(
-        "deg,min,expected_result",
+        ("deg", "min", "expected_result"),
         [
             (47, 15, 47.25),
             (-47, 15, -47.25),
@@ -639,7 +676,7 @@ class TestDFO_NAFC_pFiles:
         assert result == expected_result
 
     @pytest.mark.parametrize(
-        "deg,min,expected_result",
+        ("deg", "min", "expected_result"),
         [
             (47, None, None),
             (None, 15, None),
@@ -667,8 +704,9 @@ class TestDFO_NAFC_pFiles:
         assert caplog.records[0].levelname == "WARNING"
 
     def test_pfile_with_already_existing_depth(self):
-        """Test pfile with already existing depth variable
-        Make sure that the parser does derive a new depth variable
+        """Test pfile with already existing depth variable.
+
+        Make sure that the parser does derive a new depth variable.
         """
         ds = dfo.nafc.pfile(
             "tests/parsers_test_files/dfo/nafc/pfile/ctd/51705100.p2000",
@@ -678,14 +716,14 @@ class TestDFO_NAFC_pFiles:
         assert "Generated variable" not in ds.attrs.get("history", "")
 
     def test_unknown_nafc_platform_code(self, caplog):
-        """Test missing nafc platform code"""
+        """Test missing nafc platform code."""
         attrs = dfo.nafc._get_platform_by_nafc_platform_code(9999)
         assert not attrs
         assert "Unknown dfo_nafc_platform_code" in caplog.records[0].message
         assert "WARNING" in caplog.records[0].levelname
 
     def test_unknown_nafc_platform_name(self, caplog):
-        """Test missing nafc platform name"""
+        """Test missing nafc platform name."""
         attrs = dfo.nafc._get_platform_by_nafc_platform_name("unknown")
         assert not attrs
         assert "Unknown dfo_nafc_platform_name" in caplog.records[0].message
@@ -749,7 +787,7 @@ class TestBlueElectricParse:
         [
             path
             for path in glob("tests/parsers_test_files/electricblue/*.csv")
-            if "/log" not in path
+            if "log" not in path
         ],
     )
     def test_blue_electric_csv_parser(self, path, caplog):

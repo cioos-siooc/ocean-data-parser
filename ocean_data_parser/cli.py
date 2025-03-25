@@ -1,4 +1,4 @@
-"""This is the ODPY.cli main docstring"""
+"""This is the ODPY.cli main docstring."""
 
 import logging
 import os
@@ -27,9 +27,9 @@ logger.configure(extra={"source_file": ""})
 
 # Redirect logging loggers to loguru
 class InterceptHandler(logging.Handler):
-    """
-    This class is used to redirect logging loggers to loguru
-    # https://stackoverflow.com/questions/66769431/how-to-use-loguru-with-standard-loggers
+    """Redirect logging loggers to loguru.
+
+    # https://stackoverflow.com/questions/66769431/how-to-use-loguru-with-standard-loggers.
     """
 
     @logger.catch(default=True, onerror=lambda _: sys.exit(1))

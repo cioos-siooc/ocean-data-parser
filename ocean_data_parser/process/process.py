@@ -13,6 +13,8 @@ logger = logging.getLogger(__name__)
 
 @xr.register_dataset_accessor("process")
 class Processing:
+    """Processing class to handle batch processing of xarray datasets."""
+
     def __init__(
         self,
         xarray_obj,
@@ -22,6 +24,16 @@ class Processing:
         z="depth",
         file_name_convention=None,
     ):
+        """Create a new processing object.
+
+        Args:
+            xarray_obj (_type_): _description_
+            lat (str, optional): _description_. Defaults to "latitude".
+            lon (str, optional): _description_. Defaults to "longitude".
+            time (str, optional): _description_. Defaults to "time".
+            z (str, optional): _description_. Defaults to "depth".
+            file_name_convention (_type_, optional): _description_. Defaults to None.
+        """
         self._obj = xarray_obj
         self.lat = lat
         self.lon = lon
@@ -59,7 +71,7 @@ class Processing:
         )
 
     def get_filename_from_convention(self, suffix=None):
-        return eval('f"{}"'.format(self.filename_convention), {}, {"ds": self._obj}) + (
+        return eval(f'f"{self.filename_convention}"', {}, {"ds": self._obj}) + (
             suffix or ""
         )
 
@@ -188,7 +200,6 @@ class Processing:
         Returns:
             xr.DataArray: New
         """
-
         try:
             import gsw_xarray as gsw
         except ImportError:
@@ -221,7 +232,7 @@ class Processing:
     def qartod(
         self, config: Union[dict, str], agg: Union[dict, str] = "all"
     ) -> xr.Dataset:
-        """Run ioos_qc tests on datasets
+        """Run ioos_qc tests on datasets.
 
         Args:
             config (dict,str): Path to a file (*.yaml or *.json) or
@@ -252,25 +263,22 @@ class Processing:
                 "Optional package ioos_qc is required: run `pip install ioos_qc`"
             )
 
-        QARTOD_FLAGS = {
+        qartod_flags = {
             name: value
             for name, value in QartodFlags.__dict__.items()
             if not name.startswith("__")
         }
-        QARTOD_ATTRIBUTES = {
-            "flag_meaning": " ".join(QARTOD_FLAGS.keys()),
-            "flag_value": list(QARTOD_FLAGS.values()),
+        qartod_attributes = {
+            "flag_meaning": " ".join(qartod_flags.keys()),
+            "flag_value": list(qartod_flags.values()),
         }
 
         def _get_test_result(var, module, test):
-            """
-            Retrieve a specific test from ioos_qc collection
-            of results in dict format
-            """
+            """Retrieve a specific test from ioos_qc collection of results in dict format."""
             return results[var][module][test]
 
         def _get_aggregated_flag(tests: list) -> xr.DataArray:
-            """Aggregate multiple QARTOD tests
+            """Aggregate multiple QARTOD tests.
 
             Args:
                 tests (list): List of same size numpy.arrays
@@ -285,17 +293,17 @@ class Processing:
                 {
                     "long_name": "Aggregated Flag",
                     "standard_name": "aggregate_quality_flag",
-                    **QARTOD_ATTRIBUTES,
+                    **qartod_attributes,
                     "ioos_qc_tests": ";".join("-".join(test) for test in tests),
                 },
             )
 
         def _add_ancillary(ancillary, variables):
-            """Append too variable ancillary_variables attribute
+            """Append too variable ancillary_variables attribute.
 
             Args:
                 ancillary (str): Ancillary variable, generally a flag variable.
-                variable (list,str): Variables to which to append to ancillary_variables
+                variables (list,str): Variables to which to append to ancillary_variables
             """
             variables = (
                 variables.split(" ") if isinstance(variables, str) else variables
@@ -333,7 +341,7 @@ class Processing:
                 self._obj[ancillary] = (
                     self._obj[result.stream_id].dims,
                     result.results,
-                    {**result.function.__dict__, **QARTOD_ATTRIBUTES},
+                    {**result.function.__dict__, **qartod_attributes},
                 )
                 _add_ancillary(ancillary, result.stream_id)
                 self.add_to_history(

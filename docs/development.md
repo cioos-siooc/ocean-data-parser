@@ -18,24 +18,14 @@ Clone the project locally
   git clone git+https://github.com/cioos-siooc/ocean-data-parser.git
 ```
 
-We recommend using [poetry](https://python-poetry.org/) to manage the environment and [pyenv](https://github.com/pyenv/pyenv) to manage the python version:
+Install the package manger uv python environment, see [uv docs](https://docs.astral.sh/uv/getting-started/installation/) for details.
 
-```console
-pyenv install 3.11.2
-pyenv shell 3.11.2
-```
-
-Install poetry python environment with:
-
-```console
-pip install poetry
-```
-
-Go to the project directory and install dependancies in a poetry environment.
+Go to the project directory and install all the development dependancies in a uv environment.
 
 ```console
   cd ocean-data-parser
-  poetry install --with dev
+  uv venv
+  uv pip install ".[dev]"
 ```
 
 ## :material-test-tube: Testing
@@ -48,21 +38,21 @@ The package contains a number of different parsers compatible with different sta
 
 1. Parse test file to an xarray dataset
 2. Parse test file to an xarray dataset and save to a NetCDF4 file.
-3. Parse test file to an xarray dataset and compare to a reference file ('*_reference.nc) if made available. Any differences are flagged
-4. *(in development)* Assess parsed xarray object compliance with the different convention by using the ioos-compliance checker, resulting objects should be to a minimum compliante to ACDD 1.3 and CF 1.6. Other conventions can be added by adding them to the xarray object global attribute `Convention`.
+3. Parse test file to an xarray dataset and compare to a reference file ('\*\_reference.nc) if made available. Any differences are flagged
+4. _(in development)_ Assess parsed xarray object compliance with the different convention by using the ioos-compliance checker, resulting objects should be to a minimum compliante to ACDD 1.3 and CF 1.6. Other conventions can be added by adding them to the xarray object global attribute `Convention`.
 
 ## :octicons-book-24: Documentation Build
 
 To run a local instance of the documentation webpage. Install the dependancies:
 
 ```console
-poetry install --group docs
+uv pip install ".[docs]"
 ```
 
 And run the command:
 
 ```console
-poetry run mkdocs serve
+uv run mkdocs serve
 ```
 
 Any documentation changes to the main and development branches will automatically update respectively the main and dev document pages.

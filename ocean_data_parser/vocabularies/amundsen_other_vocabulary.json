@@ -1,0 +1,387 @@
+{
+  "VARIABLE_NAME": [
+    {
+      "long_name": "Name that describes the variable in a figure",
+      "units": "units",
+      "standard_name": "CF Convention name see https://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html",
+      "sdn_parameter_urn": "SeaDataNet URN (SDN:{listid}::{termid}) for variables following NVS2.0",
+      "sdn_uom_urn": "SeaDataNet URN (SDN:{listid}::{termid}) for variable units following NVS2.0",
+      "accepted_units": "regex of the accepted units, if true, the units attribute will overwrite the present units attribute.",
+      "alternative_label": "Name to rename the variable. It is the corresponding alternative name on BODC.",
+      "notes_SV": "Add filter not to include SV (sound velocity) in all CTD files as there is not any sound sensor installed on the CTD Rosette (SV was derived from Temperature and salinity mostly). However, it should be included in all MVP and TSG data as sound velocity sensors are installed on them.",
+      "notes_O2": "All O2 units from before the year 2018 has mL/L. Since 2018, the units was updated to uM. All Dissolved Oxygen unit before 2018 should be converted into uM. An apply_function x*44.661 has been added in order to help for the conversion from mL/L to the unit uM, where x is the variable representing the Dissolved Oxygen before 2018."
+    }
+  ],
+  "Heading": [
+    {
+      "long_name": "Vessel Heading",
+      "units": "degrees",
+      "accepted_units": "degrees N",
+      "file_type": "NAV"
+    }
+  ],
+  "Depth": [
+    {
+      "long_name": "Bottom Depth",
+      "units": "m",
+      "accepted_units": "m",
+      "file_type": "NAV"
+    }
+  ],
+  "Roll": [
+    {
+      "long_name": "Roll Heading",
+      "units": "degrees_north",
+      "accepted_units": "degrees N",
+      "file_type": "NAV"
+    }
+  ],
+  "Pitch": [
+    {
+      "long_name": "Pitch Heading",
+      "units": "degrees",
+      "accepted_units": "degrees N",
+      "file_type": "NAV"
+    }
+  ],
+  "Heave": [
+    {
+      "long_name": "Heave",
+      "units": "m",
+      "accepted_units": "meter",
+      "file_type": "NAV"
+    }
+  ],
+  "Track": [
+    {
+      "long_name": "True Vessel Direction",
+      "units": "degrees_north",
+      "accepted_units": "degrees N",
+      "file_type": "NAV"
+    }
+  ],
+  "Lat": [
+    {
+      "long_name": "Latitude",
+      "units": "degrees_north",
+      "accepted_units": "degrees N",
+      "file_type": "NAV"
+    },
+    {
+      "long_name": "Latitude",
+      "units": "degrees_north",
+      "accepted_units": "degrees N",
+      "file_type": "AVOS"
+    },
+    {
+      "long_name": "Latitude",
+      "units": "degrees_north",
+      "accepted_units": "degrees N",
+      "file_type": "TSG"
+    }
+  ],
+  "Long": [
+    {
+      "long_name": "Longitude",
+      "units": "degrees_east",
+      "accepted_units": "degrees E",
+      "file_type": "NAV"
+    },
+    {
+      "long_name": "Longitude",
+      "units": "degrees_east",
+      "accepted_units": "degrees E",
+      "file_type": "AVOS"
+    },
+    {
+      "long_name": "Longitude",
+      "units": "degrees_east",
+      "accepted_units": "degrees E",
+      "file_type": "TSG"
+    }
+  ],
+  "Speed": [
+    {
+      "long_name": "Vessel Speed",
+      "units": "knots",
+      "accepted_units": "Knt",
+      "file_type": "NAV"
+    },
+    {
+      "long_name": "Vessel Speed",
+      "units": "knots",
+      "accepted_units": "Knt",
+      "file_type": "TSG"
+    }
+  ],
+  "GPS": [
+    {
+      "long_name": "GPS source",
+      "units": "degrees_north",
+      "accepted_units": "=1 for POS-MV and =0 for CNAV",
+      "comments": "=1 for POS-MV and =0 for CNAV",
+      "file_type": "NAV"
+    }
+  ],
+  "Tem-TSG": [
+    {
+      "long_name": "Temperature (TSG)",
+      "units": "degC",
+      "accepted_units": "degC|deg C|degrees C|.c",
+      "file_type": "TSG"
+    }
+  ],
+  "Tem-Water": [
+    {
+      "long_name": "Temperature (Water)",
+      "units": "degC",
+      "accepted_units": "degC|deg C|degrees C|.*c$",
+      "file_type": "TSG"
+    }
+  ],
+  "Sal-TSG": [
+    {
+      "long_name": "Salinity (TSG)",
+      "units": "1",
+      "accepted_units": "PSU|psu|1e-3",
+      "file_type": "TSG"
+    }
+  ],
+  "Vel": [
+    {
+      "long_name": "Sound Velocity",
+      "units": "m/s",
+      "accepted_units": "m/s",
+      "file_type": "TSG"
+    }
+  ],
+  "Fluo": [
+    {
+      "long_name": "Fluorescence",
+      "units": "ug/l",
+      "accepted_units": "ug/L",
+      "file_type": "TSG"
+    }
+  ],
+  "Flow": [
+    {
+      "long_name": "Flow Rate",
+      "units": "L/min",
+      "accepted_units": "L\/min",
+      "file_type": "TSG"
+    }
+  ],
+  "Net": [
+    {
+      "long_name": "Net Number",
+      "file_type": "Bioness"
+    },
+    {
+      "long_name": "Net Number",
+      "file_type": "Hydrobios",
+      "accepted_units": "None"
+    }
+  ],
+  "Pres_open": [
+    {
+      "long_name": "Net open pressure",
+      "units": "decibars",
+      "accepted_units": "db",
+      "file_type": "Bioness"
+    },
+    {
+      "long_name": "Net open pressure",
+      "units": "decibars",
+      "accepted_units": "db",
+      "file_type": "Hydrobios"
+    }
+  ],
+  "Pres_close": [
+    {
+      "long_name": "Net close pressure",
+      "units": "decibars",
+      "accepted_units": "db",
+      "file_type": "Bioness"
+    },
+    {
+      "long_name": "Net close pressure",
+      "units": "decibars",
+      "accepted_units": "db",
+      "file_type": "Hydrobios"
+    }
+  ],
+  "Duration": [
+    {
+      "long_name": "Duration",
+      "units": "seconds",
+      "accepted_units": "s",
+      "file_type": "Bioness"
+    },
+    {
+      "long_name": "Duration",
+      "units": "seconds",
+      "accepted_units": "s",
+      "file_type": "Hydrobios"
+    }
+  ],
+  "Volume": [
+    {
+      "long_name": "Volume",
+      "units": "m^3",
+      "accepted_units": "m^3",
+      "file_type": "Bioness"
+    },
+    {
+      "long_name": "Volume",
+      "units": "m^3",
+      "accepted_units": "m^3",
+      "file_type": "Hydrobios"
+    }
+  ],
+  "Tem_mean": [
+    {
+      "long_name": "Mean Temperature",
+      "units": "degC",
+      "accepted_units": "degC|deg C|degrees C",
+      "file_type": "Bioness"
+    },
+    {
+      "long_name": "Mean Temperature",
+      "units": "degC",
+      "accepted_units": "degrees C",
+      "file_type": "Hydrobios"
+    }
+  ],
+  "Tem_std": [
+    {
+      "long_name": "Standard Deviation of Temperature",
+      "units": "degC",
+      "accepted_units": "degC|deg C|degrees C",
+      "file_type": "Bioness"
+    },
+    {
+      "long_name": "Standard Deviation of Temperature",
+      "units": "degC",
+      "accepted_units": "degrees C",
+      "file_type": "Hydrobios"
+    }
+  ],
+  "Sal_mean": [
+    {
+      "long_name": "Mean Salinity",
+      "units": "1",
+      "accepted_units": "PSU|psu|1e-3",
+      "file_type": "Bioness"
+    },
+    {
+      "long_name": "Mean Salinity",
+      "units": "1",
+      "accepted_units": "psu",
+      "file_type": "Hydrobios"
+    }
+  ],
+  "Sal_std": [
+    {
+      "long_name": "Standard Deviation of Salinity",
+      "units": "1",
+      "accepted_units": "PSU|psu|1e-3",
+      "file_type": "Bioness"
+    },
+    {
+      "long_name": "Standard Deviation of Salinity",
+      "units": "1",
+      "accepted_units": "psu",
+      "file_type": "Hydrobios"
+    }
+  ],
+  "Pres": [
+    {
+      "long_name": "Pressure",
+      "units": "decibars",
+      "accepted_units": "decibars|db",
+      "file_type": "Bioness"
+    },
+    {
+      "long_name": "Pressure",
+      "units": "decibars",
+      "accepted_units": "decibars",
+      "file_type": "Hydrobios"
+    }
+  ],
+  "Temp": [
+    {
+      "long_name": "Temperature",
+      "units": "degC",
+      "accepted_units": "degC|deg C|degrees C",
+      "file_type": "Bioness"
+    },
+    {
+      "long_name": "Temperature",
+      "units": "degC",
+      "accepted_units": "degrees C",
+      "file_type": "Hydrobios"
+    }
+  ],
+  "Sal": [
+    {
+      "long_name": "Salinity",
+      "units": "1",
+      "accepted_units": "PSU|psu|1e-3",
+      "file_type": "Bioness"
+    },
+    {
+      "long_name": "Salinity",
+      "units": "1",
+      "accepted_units": "psu",
+      "file_type": "Hydrobios"
+    }
+  ],
+  "Wind_speed": [
+    {
+      "long_name": "Wind Speed",
+      "units": "m/s",
+      "accepted_units": "None",
+      "file_type": "AVOS"
+    }
+  ],
+  "Wind_dir": [
+    {
+      "long_name": "Wind Direction",
+      "units": "degrees",
+      "accepted_units": "None",
+      "file_type": "AVOS"
+    }
+  ],
+  "Air_temp": [
+    {
+      "long_name": "Air Temperature",
+      "units": "degC",
+      "accepted_units": "degC|deg C|degrees C|None",
+      "file_type": "AVOS"
+    }
+  ],
+  "Dew_point": [
+    {
+      "long_name": "Dew Point",
+      "units": "degC",
+      "accepted_units": "degC|deg C|degrees C|None",
+      "file_type": "AVOS"
+    }
+  ],
+  "Pressure": [
+    {
+      "long_name": "Atmospheric Pressure",
+      "units": "hPa",
+      "accepted_units": "hPa",
+      "file_type": "AVOS"
+    }
+  ],
+  "Latitude": [
+    {
+      "long_name": "Latitude",
+      "units": "degrees_north",
+      "accepted_units": "degrees N",
+      "file_type": "TSG"
+    }
+  ]
+}

@@ -19,7 +19,7 @@ object_variables_default_encoding = {"dtype": "str"}
 
 
 def test_attribute_names(dataset):
-    """Test if attributes names are valid"""
+    """Test if attributes names are valid."""
     attribute_checker = re.compile(r"[a-zA-Z_\$][a-zA-Z0-9_\.\@\$]*")
     invalid_global_attributes = []
     invalid_variable_attributes = []
@@ -54,7 +54,7 @@ def rename_variables_to_valid_netcdf(dataset):
 
 
 def get_history_handler():
-    """Generate a history handler to be use to generate a CF History attribute"""
+    """Generate a history handler to be use to generate a CF History attribute."""
     nc_logger = StringIO()
     nc_handler = logging.StreamHandler(nc_logger)
     nc_handler.setFormatter(
@@ -76,12 +76,14 @@ def _consider_attribute(value):
 
 
 def standardize_attributes(attrs) -> dict:
-    """Standardize attributes with the following steps:
+    """Standardize attributes.
+
+    The following  dtype mapping is applied:
         - datetime, timestamps -> ISO format text string
         - dict ->  JSON strings
         - list -> np.array
         - bool -> str True/False
-        - Drop empty attributes pd.isna !=0 and ==""
+        - Drop empty attributes pd.isna !=0 and =="".
 
     Args:
         attrs (dict): Attributes dictionary
@@ -128,13 +130,13 @@ def generate_variables_encoding(
     time_variables_encoding: dict = None,
     utc: bool = True,
 ):
-    """Generate time variables encoding
+    """Generate time variables encoding.
 
     Args:
         ds (xr.Dataset): Dataset
         variables (list, optional): List of time variables to encode.
             Defaults to detect automatically datetime/timestamp variables.
-        object_varaibles_encoding = Encoding to apply object variables.
+        object_variables_encoding (string, optional): Encoding to apply object variables.
             Defaults to: dtype: str
         time_variables_encoding (dict, optional): Encoding to apply.
             Defaults to:
@@ -146,7 +148,6 @@ def generate_variables_encoding(
     Returns:
         xr..Dataset: Dataset with encoding attribute generated.
     """
-
     for var in variables or ds.variables:
         ds.encoding[var] = {}
         if "datetime" in ds[var].dtype.name:
@@ -206,13 +207,14 @@ def sort_attributes(attrs: dict, attribute_order: list) -> dict:
 def standardize_dataset(
     ds: xr.Dataset, time_variables_encoding: dict = None, utc: bool = True
 ) -> xr.Dataset:
-    """Standardize dataset to be easily serializable to netcdf
-    and compatible with ERDDAP. Apply the following steps:
+    """Standardize dataset to be easily serializable to netcdf.
+
+    Standardization apply the following steps to be compatible with ERDDAP:
         - Generate geospatial attributes
         - Apply standardize_variable_attributes
         - Apply standardize_global_attributes
         - Define time variables encoding
-        - Verify attribute names
+        - Verify attribute names.
 
     Args:
         ds (xr.Dataset): Dataset to standardized
@@ -225,7 +227,6 @@ def standardize_dataset(
     Returns:
         xr.Dataset: Standardized dataset
     """
-
     ds = get_spatial_coverage_attributes(ds, utc=utc)
     ds = standardize_variable_attributes(ds)
     ds.attrs = standardize_global_attributes(ds.attrs)
@@ -237,15 +238,13 @@ def standardize_dataset(
 
 
 def standardize_global_attributes(attrs):
-    """Standardize global attributes order"""
+    """Standardize global attributes order."""
     attrs = standardize_attributes(attrs)
     return sort_attributes(attrs, global_attributes_order)
 
 
 def standardize_variable_attributes(ds):
-    """
-    Method to generate simple generic variable attributes and reorder attributes in a consistent order.
-    """
+    """Method to generate simple generic variable attributes and reorder attributes in a consistent order."""
     for var in ds.variables:
         # Generate min/max values attributes
         if (
@@ -271,9 +270,7 @@ def get_spatial_coverage_attributes(
     depth="depth",
     utc=False,
 ):
-    """
-    This method generates the geospatial and time coverage attributes associated to an xarray dataset.
-    """
+    """This method generates the geospatial and time coverage attributes associated to an xarray dataset."""
     # TODO add resolution attributes
     # time
     if time in ds.variables and ds[time].size > 0:
@@ -324,7 +321,7 @@ def get_spatial_coverage_attributes(
 
 
 def convert_datetime_str(time_str: str, **to_datetime_kwargs) -> pd.Timestamp:
-    """Parse time stamp string  to a pandas Timestamp"""
+    """Parse time stamp string  to a pandas Timestamp."""
     date_format = None
     if time_str is None:
         return pd.NaT
@@ -347,6 +344,38 @@ def convert_datetime_str(time_str: str, **to_datetime_kwargs) -> pd.Timestamp:
         return time
     logger.warning("Unknown time format: %s", time_str)
     return pd.to_datetime(time_str, **to_datetime_kwargs)
+
+
+def apply_function(ds: xr.Dataset, variable: str) -> xr.Dataset:
+    """Apply a function to a variable based on the apply_function attribute."""
+
+    def _append_to_history(comment, timestamp: pd.Timestamp = None):
+        if "history" not in ds.attrs:
+            ds.attrs["history"] = ""
+        ds.attrs["history"] += (
+            f"\n{timestamp or pd.Timestamp.now(tz='UTC')} {comment}\n"
+        )
+        ds.attrs["history"] = ds.attrs["history"].strip()
+
+    apply_function = ds[variable].attrs.get("apply_function")
+    if not apply_function:
+        return ds
+
+    attributes = ds[variable].attrs
+    if apply_function == "x*44.661":
+        new_variable = ds[variable] * 44.661
+        _append_to_history(
+            f"Convert variable {variable} mL/L to uM units with: {apply_function}"
+        )
+    else:
+        logger.warning("Unknown apply function: %s", apply_function)
+        return ds
+
+    # Integrate modified variable
+    new_variable.attrs = attributes
+    new_variable.attrs.pop("apply_function")
+    ds[variable] = new_variable
+    return ds
 
 
 global_attributes_order = [

@@ -1,0 +1,752 @@
+{
+  "VARIABLE_NAME": [
+    {
+      "long_name": "Name that describes the variable in a figure",
+      "units": "units",
+      "standard_name": "CF Convention name see https://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html",
+      "sdn_parameter_urn": "SeaDataNet URN (SDN:{listid}::{termid}) for variables following NVS2.0",
+      "sdn_uom_urn": "SeaDataNet URN (SDN:{listid}::{termid}) for variable units following NVS2.0",
+      "accepted_units": "regex of the accepted units, if true, the units attribute will overwrite the present units attribute.",
+      "alternative_label": "Name to rename the variable. It is the corresponding alternative name on BODC.",
+      "notes_SV": "Add filter not to include SV (sound velocity) in all CTD files as there is not any sound sensor installed on the CTD Rosette (SV was derived from Temperature and salinity mostly). However, it should be included in all MVP and TSG data as sound velocity sensors are installed on them.",
+      "notes_O2": "All O2 units from before the year 2018 has mL/L. Since 2018, the units was updated to uM. All Dissolved Oxygen unit before 2018 should be converted into uM. An apply_function x*44.661 has been added in order to help for the conversion from mL/L to the unit uM, where x is the variable representing the Dissolved Oxygen before 2018."
+    }
+  ],
+  "Pres": [
+    {
+      "long_name": "Sea Pressure",
+      "units": "decibars",
+      "standard_name": "sea_water_pressure_due_to_sea_water",
+      "sdn_parameter_urn": "SDN:P01::PRESPR01",
+      "sdn_uom_urn": "SDN:P06::UPDB",
+      "alternative_label": "Pres_Z",
+      "rename": "PRES",
+      "sdn_parameter_name": "Pressure (spatial coordinate) exerted by the water body by profiling pressure sensor and correction to read zero at sea level",
+      "sdn_uom_name": "Decibars"
+    }
+  ],
+  "PresPar": [
+    {}
+  ],
+  "PRES": [
+    {
+      "long_name": "Sea Pressure",
+      "units": "decibars",
+      "standard_name": "sea_water_pressure_due_to_sea_water",
+      "sdn_parameter_urn": "SDN:P01::PRESPR01",
+      "sdn_uom_urn": "SDN:P06::UPDB",
+      "alternative_label": "Pres_Z",
+      "sdn_parameter_name": "Pressure (spatial coordinate) exerted by the water body by profiling pressure sensor and correction to read zero at sea level",
+      "sdn_uom_name": "Decibars"
+    }
+  ],
+  "DEPH": [
+    {
+      "long_name": "Depth",
+      "units": "m",
+      "standard_name": "depth",
+      "sdn_parameter_urn": "SDN:P01::ADEPZZ01",
+      "sdn_uom_urn": "SDN:P06::ULAA",
+      "alternative_label": "Depth",
+      "rename": "depth",
+      "sdn_parameter_name": "Depth (spatial coordinate) relative to water surface in the water body",
+      "sdn_uom_name": "Metres"
+    }
+  ],
+  "Temp": [
+    {
+      "long_name": "Temperature (ITS-90)",
+      "accepted_units": "degC|deg C|degrees C",
+      "units": "degC",
+      "standard_name": "sea_water_temperature",
+      "sdn_parameter_urn": "SDN:P01::TEMPS901",
+      "sdn_uom_urn": "SDN:P06::UPAA",
+      "alternative_label": "CTDTmp90",
+      "rename": "TE90",
+      "sdn_parameter_name": "Temperature (ITS-90) of the water body by CTD or STD",
+      "sdn_uom_name": "Degrees Celsius"
+    }
+  ],
+  "TE90": [
+    {
+      "long_name": "Temperature (ITS-90)",
+      "accepted_units": "degC|deg C|degrees C",
+      "units": "degC",
+      "standard_name": "sea_water_temperature",
+      "sdn_parameter_urn": "SDN:P01::TEMPS901",
+      "sdn_uom_urn": "SDN:P06::UPAA",
+      "alternative_label": "CTDTmp90",
+      "sdn_parameter_name": "Temperature (ITS-90) of the water body by CTD or STD",
+      "sdn_uom_name": "Degrees Celsius"
+    }
+  ],
+  "Sal": [
+    {
+      "long_name": "Practical Salinity",
+      "units": "PSU",
+      "accepted_units": "PSU|psu|1e-3",
+      "standard_name": "sea_water_practical_salinity",
+      "sdn_parameter_urn": "SDN:P01::PSALST01",
+      "sdn_uom_urn": "SDN:P06::PSUX",
+      "alternative_label": "P_sal_CTD",
+      "rename": "PSAL",
+      "sdn_parameter_name": "Practical salinity of the water body by CTD and computation using UNESCO 1983 algorithm",
+      "sdn_uom_name": "Practical salinity units"
+    }
+  ],
+  "PSAL": [
+    {
+      "long_name": "Practical Salinity",
+      "units": "PSU",
+      "accepted_units": "PSU|psu|1e-3",
+      "standard_name": "sea_water_practical_salinity",
+      "sdn_parameter_urn": "SDN:P01::PSALST01",
+      "sdn_uom_urn": "SDN:P06::PSUX",
+      "alternative_label": "P_sal_CTD",
+      "sdn_parameter_name": "Practical salinity of the water body by CTD and computation using UNESCO 1983 algorithm",
+      "sdn_uom_name": "Practical salinity units"
+    }
+  ],
+  "TRB_": [
+    {
+      "long_name": "Turbidity",
+      "units": "NTU",
+      "accepted_units": "NTU",
+      "standard_name": "sea_water_turbidity",
+      "sdn_parameter_urn": "SDN:P01::TURBXXXX",
+      "sdn_uom_urn": "SDN:P06::USTU",
+      "alternative_label": "Turbidity",
+      "rename": "TRB",
+      "sdn_parameter_name": "Turbidity of water in the water body",
+      "sdn_uom_name": "Nephelometric Turbidity Units"
+    }
+  ],
+  "TURB": [
+    {
+      "long_name": "Turbidity",
+      "units": "FTU",
+      "accepted_units": "FTU",
+      "standard_name": "sea_water_turbidity",
+      "sdn_parameter_urn": "SDN:P01::TURBXXXX",
+      "sdn_uom_urn": "SDN:P06::UFNU",
+      "alternative_label": "Turbidity",
+      "sdn_parameter_name": "Turbidity of water in the water body",
+      "sdn_uom_name": "Formazin Nephelometric Units"
+    }
+  ],
+  "DateTime": [
+    {
+      "sdn_parameter_urn": "SDN:P01::DTUT8601",
+      "sdn_uom_urn": "SDN:P06::UYMD",
+      "units": "YYYY-MM-DDThh:mm:ss.sssZ",
+      "alternative_label": "time",
+      "sdn_parameter_name": "Date and time (UT in ISO8601 format to known precision)",
+      "sdn_uom_name": "Gregorian date (yyyymmdd)",
+      "rename": "time"
+    }
+  ],
+  "Lat": [
+    {
+      "long_name": "Latitude",
+      "standard_name": "latitude",
+      "sdn_parameter_urn": "SDN:P01::ALATZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGN",
+      "sdn_parameter_name": "Latitude north",
+      "sdn_uom_name": "Degrees north",
+      "rename": "latitude",
+      "units": "degrees_north",
+      "accepted_units": "degrees N"
+    }
+  ],
+  "Long": [
+    {
+      "long_name": "Longitude",
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "alternative_label": "Lon",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east",
+      "rename": "longitude",
+      "units": "degrees_east",
+      "accepted_units": "degrees E"
+    }
+  ],
+  "Lon": [
+    {
+      "long_name": "Longitude",
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "alternative_label": "Lon",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east",
+      "rename": "longitude",
+      "units": "degrees_east",
+      "accepted_units": "degrees E"
+    }
+  ],
+  "Trans": [
+    {
+      "long_name": "Light Transmission",
+      "units": "%",
+      "sdn_parameter_urn": "SDN:P01::POPTDR01",
+      "sdn_uom_urn": "SDN:P06::UPCT",
+      "alternative_label": "Trans_Red_25cm",
+      "rename": "TRAN",
+      "sdn_parameter_name": "Transmittance (red light wavelength) per 25cm of the water body by 25cm path length red light transmissometer",
+      "sdn_uom_name": "Percent"
+    }
+  ],
+  "Tran": [
+    {
+      "long_name": "Light Transmission",
+      "units": "%",
+      "sdn_parameter_urn": "SDN:P01::POPTDR01",
+      "sdn_uom_urn": "SDN:P06::UPCT",
+      "alternative_label": "Trans_Red_25cm",
+      "rename": "TRAN",
+      "sdn_parameter_name": "Transmittance (red light wavelength) per 25cm of the water body by 25cm path length red light transmissometer",
+      "sdn_uom_name": "Percent"
+    }
+  ],
+  "TRAN": [
+    {
+      "long_name": "Light Transmission",
+      "units": "%",
+      "sdn_parameter_urn": "SDN:P01::POPTDR01",
+      "sdn_uom_urn": "SDN:P06::UPCT",
+      "alternative_label": "Trans_Red_25cm",
+      "sdn_parameter_name": "Transmittance (red light wavelength) per 25cm of the water body by 25cm path length red light transmissometer",
+      "sdn_uom_name": "Percent"
+    }
+  ],
+  "Fluo": [
+    {
+      "long_name": "chl-a fluorescence",
+      "units": "ug/L",
+      "standard_name": "mass_concentration_of_chlorophyll_a_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::CPHLPR01",
+      "sdn_uom_urn": "SDN:P06::UGPL",
+      "accepted_units": "ug/L|mg/m\\^3",
+      "alternative_label": "chla_water_ISfluor",
+      "rename": "FLOR",
+      "sdn_parameter_name": "Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate >unknown phase] by in-situ chlorophyll fluorometer",
+      "sdn_uom_name": "Micrograms per litre"
+    }
+  ],
+  "FLOR": [
+    {
+      "long_name": "chl-a fluorescence",
+      "units": "ug/L",
+      "standard_name": "mass_concentration_of_chlorophyll_a_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::CPHLPR01",
+      "sdn_uom_urn": "SDN:P06::UGPL",
+      "accepted_units": "ug/L|mg/m\\^3|mg/m\\*\\*3'",
+      "alternative_label": "chla_water_ISfluor",
+      "sdn_parameter_name": "Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate >unknown phase] by in-situ chlorophyll fluorometer",
+      "sdn_uom_name": "Micrograms per litre"
+    }
+  ],
+  "DOXY": [
+    {
+      "long_name": "Dissolved Oxygen",
+      "units": "uM",
+      "accepted_units": "ml/l",
+      "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::DOXYZZ01",
+      "sdn_uom_urn": "SDN:P06::UPOX",
+      "alternative_label": "WC_dissO2_IS",
+      "rename": "OXYM",
+      "apply_function": "x*44.661",
+      "sdn_parameter_name": "Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase] by in-situ sensor",
+      "sdn_uom_name": "Micromoles per litre"
+    }
+  ],
+  "O2": [
+    {
+      "long_name": "Dissolved Oxygen",
+      "units": "uM",
+      "accepted_units": "uM|µM|ÂµM",
+      "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::DOXYZZ01",
+      "sdn_uom_urn": "SDN:P06::UPOX",
+      "alternative_label": "WC_dissO2_IS",
+      "rename": "OXYM",
+      "sdn_parameter_name": "Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase] by in-situ sensor",
+      "sdn_uom_name": "Micromoles per litre"
+    },
+    {
+      "long_name": "Dissolved Oxygen",
+      "units": "uM",
+      "accepted_units": "ml/l",
+      "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::DOXYZZ01",
+      "sdn_uom_urn": "SDN:P06::UPOX",
+      "alternative_label": "WC_dissO2_IS",
+      "rename": "OXYM",
+      "apply_function": "x*44.661",
+      "sdn_parameter_name": "Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase] by in-situ sensor",
+      "sdn_uom_name": "Micromoles per litre"
+    }
+  ],
+  "OXYM": [
+    {
+      "long_name": "Dissolved Oxygen",
+      "units": "uM||µM|ÂµM",
+      "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::DOXYZZ01",
+      "sdn_uom_urn": "SDN:P06::UPOX",
+      "alternative_label": "WC_dissO2_IS",
+      "sdn_parameter_name": "Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase] by in-situ sensor",
+      "sdn_uom_name": "Micromoles per litre"
+    }
+  ],
+  "ASAL": [
+    {
+      "long_name": "Absolute Salinity (TEOS-10)",
+      "units": "g/kg",
+      "standard_name": "sea_water_absolute_salinity",
+      "sdn_parameter_urn": "SDN:P01::ASLTZZ01",
+      "sdn_uom_urn": "SDN:P06::UGKG",
+      "alternative_label": "A_sal",
+      "sdn_parameter_name": "Absolute salinity of the water body",
+      "sdn_uom_name": "Grams per kilogram"
+    }
+  ],
+  "Asal": [
+    {
+      "long_name": "Absolute Salinity TEOS-10",
+      "units": "g/kg",
+      "standard_name": "sea_water_absolute_salinity",
+      "sdn_parameter_urn": "SDN:P01::ASLTZZ01",
+      "sdn_uom_urn": "SDN:P06::UGKG",
+      "alternative_label": "A_sal",
+      "rename": "ASAL",
+      "sdn_parameter_name": "Absolute salinity of the water body",
+      "sdn_uom_name": "Grams per kilogram"
+    }
+  ],
+  "Sigt": [
+    {
+      "long_name": "Sigma-T",
+      "units": "kg/m^3",
+      "standard_name": "sea_water_sigma_t",
+      "sdn_parameter_urn": "SDN:P01::SIGTEQST",
+      "sdn_uom_urn": "SDN:P06::UKMC",
+      "alternative_label": "SigmaT",
+      "rename": "SIGT",
+      "sdn_parameter_name": "Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm",
+      "sdn_uom_name": "Kilograms per cubic metre"
+    }
+  ],
+  "SIGT": [
+    {
+      "long_name": "Sigma-T",
+      "units": "kg/m^3",
+      "standard_name": "sea_water_sigma_t",
+      "sdn_parameter_urn": "SDN:P01::SIGTEQST",
+      "sdn_uom_urn": "SDN:P06::UKMC",
+      "alternative_label": "SigmaT",
+      "sdn_parameter_name": "Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm",
+      "sdn_uom_name": "Kilograms per cubic metre"
+    }
+  ],
+  "sigt": [
+    {
+      "long_name": "Sigma-T",
+      "units": "kg/m^3",
+      "standard_name": "sea_water_sigma_t",
+      "sdn_parameter_urn": "SDN:P01::SIGTEQST",
+      "sdn_uom_urn": "SDN:P06::UKMC",
+      "alternative_label": "Sigma-T",
+      "rename": "SIGT",
+      "sdn_parameter_name": "Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm",
+      "sdn_uom_name": "Kilograms per cubic metre"
+    }
+  ],
+  "sigthe": [
+    {
+      "long_name": "Sigma-Theta (Rho(S, Theta, 0)-1000)",
+      "units": "kg/m^3",
+      "standard_name": "sea_water_sigma_theta",
+      "sdn_parameter_urn": "SDN:P01::SIGTEQ01",
+      "sdn_uom_urn": "SDN:P06::UKMC",
+      "alternative_label": "SigmaTheta",
+      "rename": "SIGP",
+      "sdn_parameter_name": "Sigma-theta of the water body by computation from salinity and potential temperature using UNESCO algorithm",
+      "sdn_uom_name": "Kilograms per cubic metre"
+    }
+  ],
+  "Sigthe": [
+    {
+      "long_name": "Sigma-Theta (Rho(S, Theta, 0)-1000)",
+      "units": "kg/m^3",
+      "standard_name": "sea_water_sigma_theta",
+      "sdn_parameter_urn": "SDN:P01::SIGTEQ01",
+      "sdn_uom_urn": "SDN:P06::UKMC",
+      "alternative_label": "SigmaTheta",
+      "rename": "SIGP",
+      "sdn_parameter_name": "Sigma-theta of the water body by computation from salinity and potential temperature using UNESCO algorithm",
+      "sdn_uom_name": "Kilograms per cubic metre"
+    }
+  ],
+  "Dens": [
+    {
+      "long_name": "Sigma-T (Rho (S, T, 0) - 1000)",
+      "units": "kg/m^3",
+      "standard_name": "sea_water_sigma_t",
+      "accepted_units": "kg/m^3|kg/m**3"
+    }
+  ],
+  "N2": [
+    {
+      "long_name": "Brunt-Vaisala Frequency",
+      "units": "s^-2",
+      "standard_name": "square_of_brunt_vaisala_frequency_in_sea_water"
+    }
+  ],
+  "Theta": [
+    {
+      "long_name": "Potential Temperature",
+      "units": "degC",
+      "standard_name": "sea_water_potential_temperature",
+      "alternative_label": "theta",
+      "accepted_units": "degC|deg C"
+    }
+  ],
+  "theta": [
+    {
+      "long_name": "Potential Temperature",
+      "units": "degC",
+      "standard_name": "sea_water_potential_temperature"
+    }
+  ],
+  "CDOM": [
+    {
+      "long_name": "CDOM fluorescence",
+      "units": "mg/m^3",
+      "standard_name": "concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate",
+      "sdn_parameter_urn": "SDN:P01::CCOMD002",
+      "sdn_uom_urn": "SDN:P06::UMMC",
+      "alternative_label": "CDOM_fluor_WETLabs",
+      "sdn_parameter_name": "Concentration of coloured dissolved organic matter {CDOM Gelbstoff} per unit volume of the water body [dissolved plus reactive particulate phase] by in-situ WET Labs FDOM ECO fluorometer",
+      "sdn_uom_name": "Milligrams per cubic metre",
+      "accepted_units": "mg/m^3|mg/m**3"
+    }
+  ],
+  "Cdom": [
+    {
+      "long_name": "CDOM fluorescence",
+      "units": "mg/m^3",
+      "standard_name": "concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate",
+      "sdn_uom_urn": "SDN:P06::UMMC",
+      "alternative_label": "CDOM_fluor_WETLabs",
+      "rename": "CDOM",
+      "sdn_uom_name": "Milligrams per cubic metre"
+    }
+  ],
+  "NO3": [
+    {
+      "long_name": "Nitrate (NO3-N)",
+      "units": "mmol/m^3",
+      "standard_name": "mole_concentration_of_nitrate_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::NTRAZZXX",
+      "sdn_uom_urn": "SDN:P06::MMCM",
+      "rename": "NTRA",
+      "sdn_parameter_name": "Concentration of nitrate {NO3- CAS 14797-55-8} per unit volume of the water body [unknown phase]",
+      "sdn_uom_name": "Millimoles per cubic metre",
+      "accepted_units": "mmol/m^3|mmol/m**3"
+    }
+  ],
+  "Ntra": [
+    {
+      "long_name": "Nitrate (NO3-N)",
+      "units": "mmol/m^3",
+      "standard_name": "mole_concentration_of_nitrate_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::NTRAZZXX",
+      "sdn_uom_urn": "SDN:P06::MMCM",
+      "alternative_label": "NO3",
+      "rename": "NTRA",
+      "sdn_parameter_name": "Concentration of nitrate {NO3- CAS 14797-55-8} per unit volume of the water body [unknown phase]",
+      "sdn_uom_name": "Millimoles per cubic metre"
+    }
+  ],
+  "Nitrate": [
+    {
+      "long_name": "Nitrate (NO3-N)",
+      "units": "mmol/m^3",
+      "standard_name": "mole_concentration_of_nitrate_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::NTRAZZXX",
+      "sdn_uom_urn": "SDN:P06::MMCM",
+      "alternative_label": "NO3",
+      "rename": "NTRA",
+      "sdn_parameter_name": "Concentration of nitrate {NO3- CAS 14797-55-8} per unit volume of the water body [unknown phase]",
+      "sdn_uom_name": "Millimoles per cubic metre"
+    }
+  ],
+  "NTRA": [
+    {
+      "long_name": "Nitrate (NO3-N)",
+      "units": "mmol/m^3",
+      "standard_name": "mole_concentration_of_nitrate_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::NTRAZZXX",
+      "sdn_uom_urn": "SDN:P06::MMCM",
+      "alternative_label": "NO3",
+      "sdn_parameter_name": "Concentration of nitrate {NO3- CAS 14797-55-8} per unit volume of the water body [unknown phase]",
+      "sdn_uom_name": "Millimoles per cubic metre"
+    }
+  ],
+  "Par": [
+    {
+      "long_name": "Sea Water PAR",
+      "units": "uEinsteins/s/m^2",
+      "accepted_units": "uEinsteins/s/m\\^2|ueinsteins/s/m\\^2|ueinsteins/s/m\\*\\*2|µeinsteins/s/m\\^2|Âµeingsteins/s/m^2",
+      "standard_name": "downwelling_photosynthetic_photon_flux_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::IRRDUV01",
+      "sdn_uom_urn": "SDN:P06::UMES",
+      "alternative_label": "SubsurVPAR",
+      "rename": "PSAR",
+      "sdn_parameter_name": "Downwelling vector irradiance as photons of electromagnetic radiation (PAR wavelengths) in the water body by cosine-collector radiometer",
+      "sdn_uom_name": "MicroEinsteins per square metre per second"
+    }
+  ],
+  "PSAR": [
+    {
+      "long_name": "Sea Water PAR",
+      "units": "uEinsteins/s/m^2",
+      "accepted_units": "uEinsteins/s/m\\^2|ueinsteins/s/m\\^2|ueinsteins/s/m\\*\\*2|µeinsteins/s/m\\^2|Âµeingsteins/s/m^2",
+      "standard_name": "downwelling_photosynthetic_photon_flux_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::IRRDUV01",
+      "sdn_uom_urn": "SDN:P06::UMES",
+      "alternative_label": "SubsurVPAR",
+      "sdn_parameter_name": "Downwelling vector irradiance as photons of electromagnetic radiation (PAR wavelengths) in the water body by cosine-collector radiometer",
+      "sdn_uom_name": "MicroEinsteins per square metre per second"
+    }
+  ],
+  "SPar": [
+    {
+      "long_name": "Surface PAR",
+      "units": "uEinsteins/s/m^2",
+      "accepted_units": "uEinsteins/s/m\\^2|ueinsteins/s/m\\^2|ueinsteins/s/m\\*\\*2|µeinsteins/s/m\\^2|Âµeingsteins/s/m^2",
+      "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::IRRDSV01",
+      "sdn_uom_urn": "SDN:P06::UMES",
+      "alternative_label": "SurfVPAR",
+      "rename": "SPAR",
+      "sdn_parameter_name": "Downwelling vector irradiance as photons of electromagnetic radiation (PAR wavelengths) in the atmosphere by cosine-collector radiometer",
+      "sdn_uom_name": "MicroEinsteins per square metre per second"
+    }
+  ],
+  "SPAR": [
+    {
+      "long_name": "Surface PAR",
+      "units": "uEinsteins/s/m^2",
+      "accepted_units": "uEinsteins/s/m\\^2|ueinsteins/s/m\\^2|ueinsteins/s/m\\*\\*2|µeinsteins/s/m\\^2|Âµeingsteins/s/m^2",
+      "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::IRRDSV01",
+      "sdn_uom_urn": "SDN:P06::UMES",
+      "alternative_label": "SurfVPAR",
+      "sdn_parameter_name": "Downwelling vector irradiance as photons of electromagnetic radiation (PAR wavelengths) in the atmosphere by cosine-collector radiometer",
+      "sdn_uom_name": "MicroEinsteins per square metre per second"
+    }
+  ],
+  "pH": [
+    {
+      "long_name": "Sea water pH",
+      "units": "1",
+      "standard_name": "sea_water_ph_reported_on_total_scale",
+      "sdn_parameter_urn": "SDN:P01::PHMASSXX",
+      "sdn_uom_urn": "SDN:P06::UUPH",
+      "sdn_parameter_name": "pH (total scale) {pH[T]} of the water body",
+      "sdn_uom_name": "pH units"
+    }
+  ],
+  "Bottle": [
+    {
+      "Units": "None",
+      "alternative_label": "BOPO"
+    }
+  ],
+  "PrDM": [
+    {
+      "long_name": "Sea Pressure (Sea Surface - 0)",
+      "units": "decibars",
+      "standard_name": "sea_water_pressure_due_to_sea_water",
+      "sdn_parameter_urn": "SDN:P01::PRESPR01",
+      "sdn_uom_urn": "SDN:P06::UPDB",
+      "alternative_label": "Pres_Z",
+      "rename": "PRES",
+      "sdn_parameter_name": "Pressure (spatial coordinate) exerted by the water body by profiling pressure sensor and correction to read zero at sea level",
+      "sdn_uom_name": "Decibars"
+    }
+  ],
+  "T090C": [
+    {
+      "long_name": "Temperature (ITS-90)",
+      "accepted_units": "degC|deg C|degrees C",
+      "units": "degC",
+      "standard_name": "sea_water_temperature",
+      "sdn_parameter_urn": "SDN:P01::TEMPS901",
+      "sdn_uom_urn": "SDN:P06::UPAA",
+      "alternative_label": "CTDTmp90",
+      "rename": "TE90",
+      "sdn_parameter_name": "Temperature (ITS-90) of the water body by CTD or STD",
+      "sdn_uom_name": "Degrees Celsius"
+    }
+  ],
+  "T190C": [
+    {
+      "long_name": "Temperature (ITS-90)",
+      "accepted_units": "degC|deg C|degrees C",
+      "units": "degC",
+      "standard_name": "sea_water_temperature",
+      "sdn_parameter_urn": "SDN:P01::TEMPS902",
+      "sdn_uom_urn": "SDN:P06::UPAA",
+      "alternative_label": "CTDTmp90_2",
+      "rename": "TE90",
+      "sdn_parameter_name": "Temperature (ITS-90) of the water body by CTD or STD (second sensor)",
+      "sdn_uom_name": "Degrees Celsius"
+    }
+  ],
+  "WetCDOM": [
+    {
+      "long_name": "CDOM fluorescence",
+      "units": "mg/m^3",
+      "standard_name": "concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate",
+      "sdn_parameter_urn": "SDN:P01::CCOMD002",
+      "sdn_uom_urn": "SDN:P06::UMMC",
+      "alternative_label": "CDOM_fluor_WETLabs",
+      "rename": "CDOM",
+      "sdn_parameter_name": "Concentration of coloured dissolved organic matter {CDOM Gelbstoff} per unit volume of the water body [dissolved plus reactive particulate phase] by in-situ WET Labs FDOM ECO fluorometer",
+      "sdn_uom_name": "Milligrams per cubic metre"
+    }
+  ],
+  "Sal00": [
+    {
+      "long_name": "Practical Salinity",
+      "units": "PSU",
+      "accepted_units": "PSU|psu|1e-3",
+      "standard_name": "sea_water_practical_salinity",
+      "sdn_parameter_urn": "SDN:P01::PSALST01",
+      "sdn_uom_urn": "SDN:P06::PSUX",
+      "alternative_label": "P_sal_CTD",
+      "rename": "PSAL",
+      "sdn_parameter_name": "Practical salinity of the water body by CTD and computation using UNESCO 1983 algorithm",
+      "sdn_uom_name": "Practical salinity units"
+    }
+  ],
+  "FlSP": [
+    {
+      "long_name": "chl-a fluorescence",
+      "units": "ug/L",
+      "standard_name": "mass_concentration_of_chlorophyll_a_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::CPHLPR01",
+      "sdn_uom_urn": "SDN:P06::UGPL",
+      "accepted_units": "ug/L|mg/m\\^3",
+      "alternative_label": "chla_water_ISfluor",
+      "rename": "FLOR",
+      "sdn_parameter_name": "Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate >unknown phase] by in-situ chlorophyll fluorometer",
+      "sdn_uom_name": "Micrograms per litre"
+    }
+  ],
+  "Sigma-t00": [
+    {
+      "long_name": "Sigma-T Rho(S, T, 0)-1000",
+      "units": "kg/m^3",
+      "standard_name": "sea_water_sigma_t",
+      "sdn_parameter_urn": "SDN:P01::SIGTEQST",
+      "sdn_uom_urn": "SDN:P06::UKMC",
+      "alternative_label": "SigmaT",
+      "rename": "SIGT",
+      "sdn_parameter_name": "Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm",
+      "sdn_uom_name": "Kilograms per cubic metre"
+    }
+  ],
+  "Sigma-é00": [
+    {
+      "long_name": "Sigma-Theta (Rho(S, Theta, 0)-1000)",
+      "units": "kg/m^3",
+      "standard_name": "sea_water_sigma_theta",
+      "sdn_parameter_urn": "SDN:P01::SIGTEQ01",
+      "sdn_uom_urn": "SDN:P06::UKMC",
+      "alternative_label": "SigmaTheta",
+      "rename": "SIGP",
+      "sdn_parameter_name": "Sigma-theta of the water body by computation from salinity and potential temperature using UNESCO algorithm",
+      "sdn_uom_name": "Kilograms per cubic metre"
+    }
+  ],
+  "Spar": [
+    {
+      "long_name": "Surface Photosynthetic Active Radiation",
+      "units": "uEinsteins/s/m^2",
+      "accepted_units": "uEinsteins/s/m\\^2|µeinsteins/s/m\\^2",
+      "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::IRRDSV01",
+      "sdn_uom_urn": "SDN:P06::UMES",
+      "alternative_label": "SurfVPAR",
+      "rename": "SPAR",
+      "sdn_parameter_name": "Downwelling vector irradiance as photons of electromagnetic radiation (PAR wavelengths) in the atmosphere by cosine-collector radiometer",
+      "sdn_uom_name": "MicroEinsteins per square metre per second"
+    }
+  ],
+  "Sbeox0Mm/L": [
+    {
+      "long_name": "Dissolved Oxygen",
+      "units": "uM",
+      "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::DOXYZZ01",
+      "sdn_uom_urn": "SDN:P06::UPOX",
+      "alternative_label": "WC_dissO2_IS",
+      "rename": "OXYM",
+      "sdn_parameter_name": "Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase] by in-situ sensor",
+      "sdn_uom_name": "Micromoles per litre"
+    }
+  ],
+  "CStarAt0": [
+    {
+      "long_name": "Light Transmission",
+      "units": "%",
+      "sdn_parameter_urn": "SDN:P01::POPTDR01",
+      "sdn_uom_urn": "SDN:P06::UPCT",
+      "alternative_label": "Trans_Red_25cm",
+      "sdn_parameter_name": "Transmittance (red light wavelength) per 25cm of the water body by 25cm path length red light transmissometer",
+      "sdn_uom_name": "Percent"
+    }
+  ],
+  "Latitude": [
+    {
+      "long_name": "Latitude",
+      "standard_name": "latitude",
+      "sdn_parameter_urn": "SDN:P01::ALATZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGN",
+      "sdn_parameter_name": "Latitude north",
+      "sdn_uom_name": "Degrees north",
+      "rename": "latitude"
+    }
+  ],
+  "Longitude": [
+    {
+      "long_name": "Longitude",
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "alternative_label": "Lon",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east",
+      "rename": "longitude"
+    }
+  ],
+  "Upoly0": [
+    {
+      "long_name": "Nitrate (NO3-N)",
+      "units": "mmol/m^3",
+      "standard_name": "mole_concentration_of_nitrate_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::NTRAZZXX",
+      "sdn_uom_urn": "SDN:P06::MMCM",
+      "rename": "NTRA",
+      "sdn_parameter_name": "Concentration of nitrate {NO3- CAS 14797-55-8} per unit volume of the water body [unknown phase]",
+      "sdn_uom_name": "Millimoles per cubic metre"
+    }
+  ]
+}

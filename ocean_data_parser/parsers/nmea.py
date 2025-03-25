@@ -1,7 +1,8 @@
-"""
+"""NMEA 0183 protocol parser.
+
 The NMEA 0183 protocol is a standard communication protocol used in marine
 and navigation systems to exchange data between different electronic devices.
-It stands for "National Marine Electronics Association 0183."
+It stands for "National Marine Electronics Association 0183.".
 """
 
 import logging
@@ -145,13 +146,14 @@ NMEA_0183_DTYPES = {
 
 
 def _generate_extra_terms(nmea):
-    """Generate extra terms from NMEA information
+    """Generate extra terms from NMEA information.
+
     Output is a dictionary with the keys following the convention:
     Args: pynmea2 object
     Return {
         (long_name, short_name):value,
         ...
-    }
+    }.
     """
     extra = {}
     if nmea["sentence_type"] in ("GGA", "RMC", "GLL"):
@@ -170,7 +172,7 @@ def _generate_extra_terms(nmea):
     if nmea["sentence_type"] == "ZDA":
         extra[("GPS Time", "gps_datetime")] = datetime.strptime(
             f"{nmea['year']}-{nmea['month']}-{nmea['day']}T{nmea['timestamp']} UTC",
-            f"%Y-%m-%dT%H%M%S{'.%f' if len(nmea['timestamp'])>6 else''} %Z",
+            f"%Y-%m-%dT%H%M%S{'.%f' if len(nmea['timestamp']) > 6 else ''} %Z",
         )
     if (
         nmea["sentence_type"] == "RMC"
@@ -179,7 +181,7 @@ def _generate_extra_terms(nmea):
     ):
         extra[("GPS Time", "gps_datetime")] = datetime.strptime(
             f"{nmea['datestamp']}T{nmea['timestamp']} UTC",
-            f"%d%m%yT%H%M%S{'.%f' if len(nmea['timestamp'])>6 else''} %Z",
+            f"%d%m%yT%H%M%S{'.%f' if len(nmea['timestamp']) > 6 else ''} %Z",
         )
 
     if nmea["sentence_type"] == "MWV" and nmea["reference"] == "R":
@@ -214,7 +216,7 @@ global_attributes = {"Convention": "CF-1.6"}
 def nmea_0183(
     path: str, encoding: str = "UTF-8", nmea_delimiter: str = "$"
 ) -> xarray.Dataset:
-    """Parse NMEA 0183 standard protocol file into a pandas dataframe
+    """Parse NMEA 0183 standard protocol file into a pandas dataframe.
 
     Args:
         path (str): [description]
@@ -227,7 +229,7 @@ def nmea_0183(
     """Parse a file containing NMEA information into a pandas dataframe"""
 
     def rename_variable(name):
-        """Rename variable based on variable mapping dictionary or return name"""
+        """Rename variable based on variable mapping dictionary or return name."""
         if name == ("Heave", "heading"):
             # fix in https://github.com/Knio/pynmea2/pull/129 but not included in pipy yet
             return ("Heave", "heave")

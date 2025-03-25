@@ -1,4 +1,5 @@
-"""
+"""ODF Data Format.
+
 odf_parser is a module that regroup a different set of tools used to
 parse the ODF format which is use, maintain and developped
 by the DFO offices BIO and MLI.
@@ -48,12 +49,18 @@ ORIGINAL_PREFIX_VAR_ATTRIBUTE = "original_"
 
 
 class GF3Code:
-    """
-    ODF GF3 Class split terms in their different components and
+    """ODF GF3 Class.
+
+    Class is used to split terms in their different components and
     standardize the convention (CODE_XX).
     """
 
     def __init__(self, code):
+        """Create a GF3 code object.
+
+        Args:
+            code (str): ODF code
+        """
         self.code = re.search(r"^[^_]*", code)[0]
         index = re.search(r"\d+$", code)
         self.index = int(index[0]) if index else 1
@@ -61,7 +68,7 @@ class GF3Code:
 
 
 def _convert_odf_time(time_string: str) -> pd.Timestamp:
-    """Convert ODF timestamps to a datetime object"""
+    """Convert ODF timestamps to a datetime object."""
     if time_string == "17-NOV-1858 00:00:00.00" or time_string is None:
         return pd.NaT
 
@@ -101,14 +108,14 @@ def _convert_odf_time(time_string: str) -> pd.Timestamp:
 
 
 def history_input(comment, date=datetime.now(timezone.utc)):
-    """Genereate a CF standard history line: Timstamp comment"""
+    """Genereate a CF standard history line: Timstamp comment."""
     return f"{date.strftime('%Y-%m-%dT%H:%M:%SZ')} {comment}\n"
 
 
-def read(filename, encoding_format="Windows-1252"):
-    """
-    Read_odf
-    Read_odf parse the odf format used by some DFO organisation to python list of
+def read(filename, encoding="Windows-1252"):
+    """Read ODF file format.
+
+    `odf_source.parser.read` parse the odf format used by some DFO organisation to python list of
     dictionary format and pandas dataframe. Once converted, the output can easily
     be converted to netcdf format.
 
@@ -125,21 +132,29 @@ def read(filename, encoding_format="Windows-1252"):
             a. Use defined separator  to distinguish columns (default multiple white spaces).
             b. Convert each column of the pandas data frame to the matching format specified in
             the TYPE attribute of the ODF associated PARAMETER_HEADER
+            c. Convert the SYTM type to datetime object.
+        3. Add vocabulary attributes to the dataset
+            a. Match the variable to the vocabulary
+            b. Generate new vocabulary variables
+            c. Add vocabulary attributes to the dataset
+        4. Return the metadata and the dataset
 
-    read_odf is a simple tool that  parse the header metadata and data from an DFO
-    ODF file to a list of dictionaries.
-    :param filename: ODF file to read
-    :param encoding_format: odf encoding format
-     start of the data.
-    :return:
+    Args:
+        filename (str): ODF file path
+        encoding (str): ODF encoding format
+
+    Returns:
+        tuple: metadata and dataset
     """
 
     def _cast_value(value: str):
-        """Attemp to cast value in line "key=value" of ODF header:
+        """Cast ODF Header value.
+
+        Cast the value to the appropriate type:
         - integer
         - float
         - date
-        - else string
+        - else string.
         """
         # Drop quotes and comma
         value = re.sub(r"^'|,$|',$|'$", "", value)
@@ -171,7 +186,7 @@ def read(filename, encoding_format="Windows-1252"):
         return value
 
     metadata = {}  # Start with an empty dictionary
-    with open(filename, encoding=encoding_format) as f:
+    with open(filename, encoding=encoding) as f:
         line = ""
         original_header = []
         # Read header one line at the time
@@ -192,7 +207,7 @@ def read(filename, encoding_format="Windows-1252"):
                 continue
 
             elif "=" in line:  # Something=This
-                key, value = [item.strip() for item in line.split("=", 1)]
+                key, value = (item.strip() for item in line.split("=", 1))
             else:
                 logger.error("Unrecognizable line format: %s", line)
                 continue
@@ -260,7 +275,7 @@ def read(filename, encoding_format="Windows-1252"):
                 key: att.pop("null_value") for key, att in variable_attributes.items()
             },
             converters={var: _convert_odf_time for var in time_columns},
-            encoding=encoding_format,
+            encoding=encoding,
         )
 
     # Review N variables
@@ -281,13 +296,14 @@ def add_vocabulary_attributes(
     add_attributes_existing_variables=True,
     generate_new_vocabulary_variables=True,
 ):
-    """
+    """Add vocabulary attributes to the dataset.
+
     This method is use to retrieve from an ODF variable code, units and units,
     matching vocabulary terms available.
     """
 
     def _add_scale_attribute():
-        """Retrieve scale information from  either units or long_name"""
+        """Retrieve scale information from  either units or long_name."""
         scales = {
             "IPTS-48": r"IPTS\-48",
             "IPTS-68": r"IPTS\-68|ITS\-68",
@@ -304,12 +320,13 @@ def add_vocabulary_attributes(
                 ds[var].attrs["scale"] = scale
 
     def _review_term(term, accepted_terms, regexp=False, search_flag=None):
-        """
-        Simple tool to compare "|" separated units in the Vocabulary expected unit list.
+        """Compare term to vocabulary accepted terms.
+
+        Compare "|" separated units in the Vocabulary expected unit list.
         - First unit if any is matching.
         - True if empty or expected to be empty
         - unknown if unit exists but the "accepted_units" input is empty.
-        - False if not matching units
+        - False if not matching units.
         """
         return bool(
             accepted_terms is None
@@ -321,13 +338,15 @@ def add_vocabulary_attributes(
         )
 
     def _get_matching_vocabularies():
-        """Match variable to vocabulary by:
+        """Match variable to vocabulary.
+
+        The matching is done based on the following terms:
         - vocabulary
         - gf3 code
         - units
         - scale
         - long_name
-        - global instrument_type instrument_model
+        - global instrument_type instrument_model.
         """
         # Among these matching terms find matching ones
         match_vocabulary = odf_vocabulary["Vocabulary"].isin(vocabularies)
@@ -365,7 +384,7 @@ def add_vocabulary_attributes(
         ]
 
     def _update_variable_index(varname, index):
-        """Standardize variables trailing number to two digits"""
+        """Standardize variables trailing number to two digits."""
         if not varname:
             return varname
         elif varname.endswith(("XX", "01")):
@@ -385,6 +404,7 @@ def add_vocabulary_attributes(
     new_variables = {}
     new_variables_attributes = {}
     variable_order = []
+    comment = ""
     for var in ds:
         # Ignore variables with no attributes and flag variables
         if (
@@ -462,7 +482,6 @@ def add_vocabulary_attributes(
             continue
 
         # Generate vocabulary variables
-        comment = ""
         variable_order += matching_terms["variable_name"].tolist()
         locals_variables = {
             "gsw": gsw,
