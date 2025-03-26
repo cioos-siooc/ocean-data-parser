@@ -1,0 +1,204 @@
+{
+  "VARIABLE_NAME": {
+    "long_name": "Name that describes the variable in a figure",
+    "units": "units",
+    "standard_name": "CF Convention name see https://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html",
+    "sdn_parameter_urn": "SeaDataNet URN (SDN:{listid}::{termid}) for variables following NVS2.0",
+    "sdn_uom_urn": "SeaDataNet URN (SDN:{listid}::{termid}) for variable units following NVS2.0",
+    "accepted_units": "regex of the accepted units, if true, the units attribute will overwrite the present units attribute.",
+    "P01": "BODC standard variable list",
+    "P07": "CF convention standard variable list"
+  },
+
+  "time": [
+    {
+      "sdn_parameter_urn": "SDN:P01::DTUT8601",
+      "sdn_uom_urn": "SDN:P06::UYMD",
+      "units": "YYYY-MM-DDThh:mm:ss.sssZ",
+      "sdn_parameter_name": "Date and time (UT in ISO8601 format to known precision)",
+      "sdn_uom_name": "Gregorian date (yyyymmdd)"
+    }
+  ],
+  "latitude": [
+    {
+      "long_name": "Latitude",
+      "units":"degrees E",
+      "standard_name": "latitude",
+      "sdn_parameter_urn": "SDN:P01::ALATZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGN",
+      "sdn_parameter_name": "Latitude north",
+      "sdn_uom_name": "Degrees north"
+    }
+  ],
+  "longitude": [
+    {
+      "long_name": "Longitude",
+      "units": "degrees N",
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east"
+    }
+  ],
+  "wind_speed": [
+    {
+      "long_name": "wind_speed",
+      "units": "m/s",
+      "sdn_parameter_urn": "SDN:P01::EWSBSS01",
+      "sdn_uom_urn": "SDN:P06::UVAA"
+    }
+  ],
+  "wind_direction": [
+    {
+      "long_name": " ",
+      "units": "degrees clockwise from north",
+      "sdn_parameter_urn": "SDN:P01::EWDASS01",
+      "sdn_uom_urn": "SDN:P06::UABB"
+    }
+  ],
+  "air_temperature": [
+    {
+      "long_name": " ",
+      "units": "degree Celcius",
+      "sdn_parameter_urn": "SDN:P07::CFSN0023",
+      "sdn_uom_urn": "SDN:P06::UPAA"
+    }
+  ],
+  "air_humidity": [
+    {
+      "long_name": " ",
+      "units": "%",
+      "sdn_parameter_urn": "SDN:P01::CRELZZ01",
+      "sdn_uom_urn": "SDN:P06::UPCT"
+    }
+  ],
+  "air_pressure": [
+    {
+      "long_name": "air_pressure",
+      "units": "hPa",
+      "sdn_parameter_urn": " ",
+      "sdn_uom_urn": " "
+    }
+  ],
+  "surface_temperature": [
+    {
+      "long_name": " ",
+      "units": "degree Celcius",
+      "sdn_parameter_urn": " ",
+      "sdn_uom_urn": " ",
+      "rename": " ",
+      "rename_gf3": " ",
+      "sdn_parameter_name": " ",
+      "sdn_uom_name": " "
+    }
+  ],
+  "visibility_distance": [
+    {
+      "long_name": " ",
+      "units": "m",
+      "sdn_parameter_urn": " ",
+      "sdn_uom_urn": " ",
+      "rename": " ",
+      "rename_gf3": " ",
+      "sdn_parameter_name": " ",
+      "sdn_uom_name": " "
+    }
+  ],
+  "precipitation_counter": [
+    {
+      "long_name": " ",
+      "units": "m",
+      "sdn_parameter_urn": " ",
+      "sdn_uom_urn": " ",
+      "rename": " ",
+      "rename_gf3": " ",
+      "sdn_parameter_name": " ",
+      "sdn_uom_name": " "
+    }
+  ],
+  "precipitation_intensity": [
+    {
+      "long_name": " ",
+      "units": "mm/h",
+      "sdn_parameter_urn": " ",
+      "sdn_uom_urn": " ",
+      "rename": " ",
+      "rename_gf3": " ",
+      "sdn_parameter_name": " ",
+      "sdn_uom_name": " "
+    }
+  ],
+  "synop_code": [
+    {
+      "long_name": " ",
+      "units": "SYNOP",
+      "sdn_parameter_urn": " ",
+      "sdn_uom_urn": " ",
+      "rename": " ",
+      "rename_gf3": " ",
+      "sdn_parameter_name": " ",
+      "sdn_uom_name": " "
+    }
+  ],
+  "photosynthetically_active_radiation": [
+    {
+      "long_name": " ",
+      "units": "umol/s/m^2",
+      "sdn_parameter_urn": " ",
+      "sdn_uom_urn": " ",
+      "rename": " ",
+      "rename_gf3": " ",
+      "sdn_parameter_name": " ",
+      "sdn_uom_name": " "
+    }
+  ],
+  "shortwave_radiation": [
+    {
+      "long_name": " ",
+      "units": "W/m^2",
+      "sdn_parameter_urn": " ",
+      "sdn_uom_urn": " ",
+      "rename": " ",
+      "rename_gf3": " ",
+      "sdn_parameter_name": " ",
+      "sdn_uom_name": " "
+    }
+  ],
+  "total_ultraviolet_radiation": [
+    {
+      "long_name": " ",
+      "units": "W/m^2",
+      "sdn_parameter_urn": " ",
+      "sdn_uom_urn": " ",
+      "rename": " ",
+      "rename_gf3": " ",
+      "sdn_parameter_name": " ",
+      "sdn_uom_name": " "
+    }
+  ],
+  "longwave_radiation": [
+    {
+      "long_name": " ",
+      "units": "W/m^2",
+      "sdn_parameter_urn": " ",
+      "sdn_uom_urn": " ",
+      "rename": " ",
+      "rename_gf3": " ",
+      "sdn_parameter_name": " ",
+      "sdn_uom_name": " "
+    }
+  ],
+  "cloud_cover": [
+    {
+      "long_name": " ",
+      "units": "m",
+      "sdn_parameter_urn": " ",
+      "sdn_uom_urn": " ",
+      "rename": " ",
+      "rename_gf3": " ",
+      "sdn_parameter_name": " ",
+      "sdn_uom_name": " "
+    }
+  ]
+}

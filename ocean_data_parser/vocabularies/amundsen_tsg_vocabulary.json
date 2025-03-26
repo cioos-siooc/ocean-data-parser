@@ -1,0 +1,95 @@
+{
+  "VARIABLE_NAME": {
+    "long_name": "Name that describes the variable in a figure",
+    "units": "units",
+    "standard_name": "CF Convention name see https://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html",
+    "sdn_parameter_urn": "SeaDataNet URN (SDN:{listid}::{termid}) for variables following NVS2.0",
+    "sdn_uom_urn": "SeaDataNet URN (SDN:{listid}::{termid}) for variable units following NVS2.0",
+    "accepted_units": "regex of the accepted units, if true, the units attribute will overwrite the present units attribute.",
+    "rename": "Name to rename the variable. It is the corresponding alternative name on BODC."
+  },
+
+  "time": [
+    {
+      "sdn_parameter_urn": "SDN:P01::DTUT8601",
+      "sdn_uom_urn": "SDN:P06::UYMD",
+      "units": "YYYY-MM-DDThh:mm:ss.sssZ",
+      "rename": "time",
+      "sdn_parameter_name": "Date and time (UT in ISO8601 format to known precision)",
+      "sdn_uom_name": "Gregorian date (yyyymmdd)"
+    }
+  ],
+  "Latitude": [
+    {
+      "long_name": "Latitude",
+      "standard_name": "latitude",
+      "sdn_parameter_urn": "SDN:P01::ALATZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGN",
+      "sdn_parameter_name": "Latitude north",
+      "sdn_uom_name": "Degrees north"
+    }
+  ],
+  "Longitude": [
+    {
+      "long_name": "Longitude",
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "rename": "Lon",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east"
+    }
+  ],
+  "water_temperature": [
+    {
+      "long_name": "Temperature From Sensor SBE38",
+      "units": "degrees_celcius",
+      "accepted_units": "\u00c2\u00b0c|\u00b0c|\u00a1c",
+      "standard_name": "sea_surface_temperature",
+      "sdn_uom_urn": "SDN:P06::UPAA"
+    }
+  ],
+  "water_salinity": [
+    {
+      "long_name": "Salinity From Thermosalinograph",
+      "units": "1e-3",
+      "standard_name": "sea_surface_salinity",
+      "sdn_parameter_urn": "SDN:P01::PSALSZ01",
+      "sdn_uom_urn": "SDN:P06::PSUX",
+      "accepted_units": "PSU|psu|1e-3",
+      "rename": "P_sal_TSG"
+    }
+  ],
+  "water_fluorescence": [
+    {
+      "long_name": "Fluorescence of Chlorophyll-a in Sea Water",
+      "units": "ug/L",
+      "standard_name": "mass_concentration_of_chlorophyll_a_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::CPHLPR01",
+      "sdn_uom_urn": "SDN:P06::UGPL",
+      "accepted_units": "ug/L|mg/m\\^3",
+      "rename": "chla_water_ISfluor",
+      "rename_gf3": "FLOR",
+      "sdn_parameter_name": "Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate >unknown phase] by in-situ chlorophyll fluorometer",
+      "sdn_uom_name": "Micrograms per litre"
+    }
+  ],
+  "Flow": [
+    {
+      "long_name": "Water Flow Rate",
+      "units": "L/min",
+      "sdn_parameter_urn": "SDN:P01::INFLTF01",
+      "sdn_uom_urn": "SDN:P06::ULPM",
+      "rename": "TSG+Fl_Flow"
+    }
+  ],
+  "flow_rate": [
+    {
+      "long_name": "Water Flow Rate",
+      "units": "L/min",
+      "sdn_parameter_urn": "SDN:P01::INFLTF01",
+      "sdn_uom_urn": "SDN:P06::ULPM",
+      "rename": "TSG+Fl_Flow"
+    }
+  ]
+}

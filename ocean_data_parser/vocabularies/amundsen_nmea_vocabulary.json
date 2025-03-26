@@ -1,0 +1,125 @@
+{
+  "VARIABLE_NAME": {
+    "long_name": "Name that describes the variable in a figure",
+    "units": "units",
+    "standard_name": "CF Convention name see https://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html",
+    "sdn_parameter_urn": "SeaDataNet URN (SDN:{listid}::{termid}) for variables following NVS2.0",
+    "sdn_uom_urn": "SeaDataNet URN (SDN:{listid}::{termid}) for variable units following NVS2.0",
+    "accepted_units": "regex of the accepted units, if true, the units attribute will overwrite the present units attribute.",
+    "rename": "Name to rename the variable. It is the corresponding alternative name on BODC."
+  },
+
+  "time": [
+    {
+      "sdn_parameter_urn": "SDN:P01::DTUT8601",
+      "sdn_uom_urn": "SDN:P06::UYMD",
+      "units": "YYYY-MM-DDThh:mm:ss.sssZ",
+      "sdn_parameter_name": "Date and time (UT in ISO8601 format to known precision)",
+      "sdn_uom_name": "Gregorian date (yyyymmdd)"
+    }
+  ],
+  "latitude": [
+    {
+      "long_name": "Latitude",
+      "standard_name": "latitude",
+      "sdn_parameter_urn": "SDN:P01::ALATZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGN",
+      "sdn_parameter_name": "Latitude north",
+      "sdn_uom_name": "Degrees north"
+    }
+  ],
+  "longitude": [
+    {
+      "long_name": "Longitude",
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east"
+    }
+  ],
+  "vessel_heading": [
+    {
+      "long_name": " ",
+      "units": " ",
+      "sdn_parameter_urn": " ",
+      "sdn_uom_urn": " ",
+      "rename": " ",
+      "rename_gf3": " ",
+      "sdn_parameter_name": " ",
+      "sdn_uom_name": " "
+    }
+  ],
+  "vessel_roll": [
+    {
+      "long_name": " ",
+      "units": "degrees",
+      "sdn_parameter_urn": " ",
+      "sdn_uom_urn": " ",
+      "rename": " ",
+      "rename_gf3": " ",
+      "sdn_parameter_name": " ",
+      "sdn_uom_name": " "
+    }
+  ],
+  "vessel_pitch": [
+    {
+      "long_name": " ",
+      "units": "degrees",
+      "sdn_parameter_urn": " ",
+      "sdn_uom_urn": " ",
+      "rename": " ",
+      "rename_gf3": " ",
+      "sdn_parameter_name": " ",
+      "sdn_uom_name": " "
+    }
+  ],
+  "vessel_track": [
+    {
+      "long_name": " ",
+      "units": "degrees N",
+      "sdn_parameter_urn": " ",
+      "sdn_uom_urn": " ",
+      "rename": " ",
+      "rename_gf3": " ",
+      "sdn_parameter_name": " ",
+      "sdn_uom_name": " "
+    }
+  ],
+  "vessel_heave": [
+    {
+      "long_name": " ",
+      "units": "m",
+      "sdn_parameter_urn": " ",
+      "sdn_uom_urn": " ",
+      "rename": " ",
+      "rename_gf3": " ",
+      "sdn_parameter_name": " ",
+      "sdn_uom_name": " "
+    }
+  ],
+  "vessel_speed": [
+    {
+      "long_name": " ",
+      "units": "Knt",
+      "sdn_parameter_urn": " ",
+      "sdn_uom_urn": " ",
+      "rename": " ",
+      "rename_gf3": " ",
+      "sdn_parameter_name": " ",
+      "sdn_uom_name": " "
+    }
+  ],
+  "bottom_depth": [
+    {
+      "long_name": " ",
+      "units": "m",
+      "sdn_parameter_urn": " ",
+      "sdn_uom_urn": " ",
+      "rename": " ",
+      "rename_gf3": " ",
+      "sdn_parameter_name": " ",
+      "sdn_uom_name": " "
+    }
+  ]
+}
