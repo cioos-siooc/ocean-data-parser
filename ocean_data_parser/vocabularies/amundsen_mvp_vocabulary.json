@@ -25,7 +25,10 @@
       "sdn_parameter_urn": "SDN:P01::ALATZZ01",
       "sdn_uom_urn": "SDN:P06::DEGN",
       "sdn_parameter_name": "Latitude north",
-      "sdn_uom_name": "Degrees north"
+      "sdn_uom_name": "Degrees north",
+      "rename": "latitude",
+      "units": "degrees_north",
+      "accepted_units": "degrees N"
     }
   ],
   "longitude": [
@@ -34,47 +37,55 @@
       "standard_name": "longitude",
       "sdn_parameter_urn": "SDN:P01::ALONZZ01",
       "sdn_uom_urn": "SDN:P06::DEGE",
+      "alternative_label": "Lon",
       "sdn_parameter_name": "Longitude east",
-      "sdn_uom_name": "Degrees east"
+      "sdn_uom_name": "Degrees east",
+      "rename": "longitude",
+      "units": "degrees_east",
+      "accepted_units": "degrees E"
     }
   ],
-  "vessel_heading": [
+  "Pres": [
     {
-      "long_name": " ",
-      "units": " ",
-      "sdn_parameter_urn": " ",
-      "sdn_uom_urn": " ",
-      "rename": " ",
-      "rename_gf3": " ",
-      "sdn_parameter_name": " ",
-      "sdn_uom_name": " "
+      "long_name": "Sea Pressure",
+      "units": "decibars",
+      "standard_name": "sea_water_pressure_due_to_sea_water",
+      "sdn_parameter_urn": "SDN:P01::PRESPR01",
+      "sdn_uom_urn": "SDN:P06::UPDB",
+      "alternative_label": "Pres_Z",
+      "sdn_parameter_name": "Pressure (spatial coordinate) exerted by the water body by profiling pressure sensor and correction to read zero at sea level",
+      "sdn_uom_name": "Decibars"
     }
   ],
-  "vessel_roll": [
+  "Temp": [
     {
-      "long_name": " ",
-      "units": "degrees",
-      "sdn_parameter_urn": " ",
-      "sdn_uom_urn": " ",
-      "rename": " ",
-      "rename_gf3": " ",
-      "sdn_parameter_name": " ",
-      "sdn_uom_name": " "
+      "long_name": "Temperature (ITS-90)",
+      "accepted_units": "degC|deg C|degrees C",
+      "units": "degC",
+      "standard_name": "sea_water_temperature",
+      "sdn_parameter_urn": "SDN:P01::TEMPS901",
+      "sdn_uom_urn": "SDN:P06::UPAA",
+      "alternative_label": "CTDTmp90",
+      "rename": "TE90",
+      "sdn_parameter_name": "Temperature (ITS-90) of the water body by CTD or STD",
+      "sdn_uom_name": "Degrees Celsius"
     }
   ],
-  "vessel_pitch": [
+  "Sal": [
     {
-      "long_name": " ",
-      "units": "degrees",
-      "sdn_parameter_urn": " ",
-      "sdn_uom_urn": " ",
-      "rename": " ",
-      "rename_gf3": " ",
-      "sdn_parameter_name": " ",
-      "sdn_uom_name": " "
+      "long_name": "Practical Salinity",
+      "units": "PSU",
+      "accepted_units": "PSU|psu|1e-3",
+      "standard_name": "sea_water_practical_salinity",
+      "sdn_parameter_urn": "SDN:P01::PSALST01",
+      "sdn_uom_urn": "SDN:P06::PSUX",
+      "alternative_label": "P_sal_CTD",
+      "rename": "PSAL",
+      "sdn_parameter_name": "Practical salinity of the water body by CTD and computation using UNESCO 1983 algorithm",
+      "sdn_uom_name": "Practical salinity units"
     }
   ],
-  "vessel_track": [
+  "SV": [
     {
       "long_name": " ",
       "units": "degrees N",
@@ -86,10 +97,64 @@
       "sdn_uom_name": " "
     }
   ],
-  "vessel_heave": [
+  "Trans": [
+    {
+      "long_name": "Light Transmission",
+      "units": "%",
+      "sdn_parameter_urn": "SDN:P01::POPTDR01",
+      "sdn_uom_urn": "SDN:P06::UPCT",
+      "alternative_label": "Trans_Red_25cm",
+      "rename": "TRAN",
+      "sdn_parameter_name": "Transmittance (red light wavelength) per 25cm of the water body by 25cm path length red light transmissometer",
+      "sdn_uom_name": "Percent"
+    }
+  ],
+  "Fluo": [
+    {
+      "long_name": "chl-a fluorescence",
+      "units": "ug/L",
+      "standard_name": "mass_concentration_of_chlorophyll_a_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::CPHLPR01",
+      "sdn_uom_urn": "SDN:P06::UGPL",
+      "accepted_units": "ug/L|mg/m\\^3",
+      "alternative_label": "chla_water_ISfluor",
+      "rename": "FLOR",
+      "sdn_parameter_name": "Concentration of chlorophyll-a {chl-a CAS 479-61-8} per unit volume of the water body [particulate >unknown phase] by in-situ chlorophyll fluorometer",
+      "sdn_uom_name": "Micrograms per litre"
+    }
+  ],
+  "O2": [
+    {
+      "long_name": "Dissolved Oxygen",
+      "units": "uM",
+      "accepted_units": "ml/l",
+      "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
+      "sdn_parameter_urn": "SDN:P01::DOXYZZ01",
+      "sdn_uom_urn": "SDN:P06::UPOX",
+      "alternative_label": "WC_dissO2_IS",
+      "rename": "OXYM",
+      "apply_function": "x*44.661",
+      "sdn_parameter_name": "Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase] by in-situ sensor",
+      "sdn_uom_name": "Micromoles per litre"
+    }
+  ],
+  "ASAL": [
+    {
+      "long_name": "Absolute Salinity TEOS-10",
+      "units": "g/kg",
+      "standard_name": "sea_water_absolute_salinity",
+      "sdn_parameter_urn": "SDN:P01::ASLTZZ01",
+      "sdn_uom_urn": "SDN:P06::UGKG",
+      "alternative_label": "A_sal",
+      "rename": "ASAL",
+      "sdn_parameter_name": "Absolute salinity of the water body",
+      "sdn_uom_name": "Grams per kilogram"
+    }
+  ],
+  "CONT": [
     {
       "long_name": " ",
-      "units": "m",
+      "units": "",
       "sdn_parameter_urn": " ",
       "sdn_uom_urn": " ",
       "rename": " ",
@@ -98,10 +163,10 @@
       "sdn_uom_name": " "
     }
   ],
-  "vessel_speed": [
+  "D_CT": [
     {
       "long_name": " ",
-      "units": "Knt",
+      "units": "",
       "sdn_parameter_urn": " ",
       "sdn_uom_urn": " ",
       "rename": " ",
@@ -110,7 +175,7 @@
       "sdn_uom_name": " "
     }
   ],
-  "bottom_depth": [
+  "D0CT": [
     {
       "long_name": " ",
       "units": "m",
