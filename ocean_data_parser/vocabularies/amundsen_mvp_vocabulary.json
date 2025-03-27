@@ -87,14 +87,15 @@
   ],
   "SV": [
     {
-      "long_name": " ",
-      "units": "degrees N",
-      "sdn_parameter_urn": " ",
-      "sdn_uom_urn": " ",
-      "rename": " ",
+      "long_name": "Speed of Sound in Sea Water",
+      "units": "m/s",
+      "sdn_parameter_urn": "SDN:P01::SVELVP01",
+      "sdn_uom_urn": "SDN:P06::UVAA",
+      "alternative_label": "SndVel",
+      "rename": "SVEL",
       "rename_gf3": " ",
       "sdn_parameter_name": " ",
-      "sdn_uom_name": " "
+      "sdn_uom_name": "Metre per second"
     }
   ],
   "Trans": [
@@ -149,42 +150,6 @@
       "rename": "ASAL",
       "sdn_parameter_name": "Absolute salinity of the water body",
       "sdn_uom_name": "Grams per kilogram"
-    }
-  ],
-  "CONT": [
-    {
-      "long_name": " ",
-      "units": "",
-      "sdn_parameter_urn": " ",
-      "sdn_uom_urn": " ",
-      "rename": " ",
-      "rename_gf3": " ",
-      "sdn_parameter_name": " ",
-      "sdn_uom_name": " "
-    }
-  ],
-  "D_CT": [
-    {
-      "long_name": " ",
-      "units": "",
-      "sdn_parameter_urn": " ",
-      "sdn_uom_urn": " ",
-      "rename": " ",
-      "rename_gf3": " ",
-      "sdn_parameter_name": " ",
-      "sdn_uom_name": " "
-    }
-  ],
-  "D0CT": [
-    {
-      "long_name": " ",
-      "units": "m",
-      "sdn_parameter_urn": " ",
-      "sdn_uom_urn": " ",
-      "rename": " ",
-      "rename_gf3": " ",
-      "sdn_parameter_name": " ",
-      "sdn_uom_name": " "
     }
   ]
 }

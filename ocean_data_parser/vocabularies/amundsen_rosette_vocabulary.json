@@ -737,6 +737,19 @@
       "rename": "longitude"
     }
   ],
+  "SV": [
+    {
+      "long_name": "Speed of Sound in Sea Water",
+      "units": "m/s",
+      "sdn_parameter_urn": "SDN:P01::SVELVP01",
+      "sdn_uom_urn": "SDN:P06::UVAA",
+      "alternative_label": "SndVel",
+      "rename": "SVEL",
+      "rename_gf3": " ",
+      "sdn_parameter_name": " ",
+      "sdn_uom_name": "Metre per second"
+    }
+  ],
   "Upoly0": [
     {
       "long_name": "Nitrate (NO3-N)",
