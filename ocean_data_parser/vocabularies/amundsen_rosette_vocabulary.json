@@ -221,6 +221,17 @@
       "sdn_uom_name": "Percent"
     }
   ],
+  "TRAN_1": [
+    {
+      "long_name": "Light Transmission",
+      "units": "%",
+      "sdn_parameter_urn": "SDN:P01::POPTDR01",
+      "sdn_uom_urn": "SDN:P06::UPCT",
+      "alternative_label": "Trans_Red_25cm",
+      "sdn_parameter_name": "Transmittance (red light wavelength) per 25cm of the water body by 25cm path length red light transmissometer",
+      "sdn_uom_name": "Percent"
+    }
+  ],
   "Fluo": [
     {
       "long_name": "chl-a fluorescence",
@@ -293,7 +304,8 @@
   "OXYM": [
     {
       "long_name": "Dissolved Oxygen",
-      "units": "uM||µM|ÂµM",
+      "units": "uM",
+      "accepted_units": "uM||µM|ÂµM",
       "standard_name": "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::DOXYZZ01",
       "sdn_uom_urn": "SDN:P06::UPOX",
@@ -501,7 +513,7 @@
     {
       "long_name": "Sea Water PAR",
       "units": "uEinsteins/s/m^2",
-      "accepted_units": "uEinsteins/s/m\\^2|ueinsteins/s/m\\^2|ueinsteins/s/m\\*\\*2|µeinsteins/s/m\\^2|Âµeingsteins/s/m^2",
+      "accepted_units": "uEinsteins/s/m\\^2|ueinsteins/s/m\\^2|ueinsteins/s/m\\*\\*2|µeinsteins/s/m\\^2|Âµeinsteins/s/m\\^2",
       "standard_name": "downwelling_photosynthetic_photon_flux_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::IRRDUV01",
       "sdn_uom_urn": "SDN:P06::UMES",
@@ -515,7 +527,7 @@
     {
       "long_name": "Sea Water PAR",
       "units": "uEinsteins/s/m^2",
-      "accepted_units": "uEinsteins/s/m\\^2|ueinsteins/s/m\\^2|ueinsteins/s/m\\*\\*2|µeinsteins/s/m\\^2|Âµeingsteins/s/m^2",
+      "accepted_units": "uEinsteins/s/m\\^2|ueinsteins/s/m\\^2|ueinsteins/s/m\\*\\*2|µeinsteins/s/m\\^2|Âµeinsteins/s/m\\^2",
       "standard_name": "downwelling_photosynthetic_photon_flux_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::IRRDUV01",
       "sdn_uom_urn": "SDN:P06::UMES",
@@ -528,7 +540,7 @@
     {
       "long_name": "Surface PAR",
       "units": "uEinsteins/s/m^2",
-      "accepted_units": "uEinsteins/s/m\\^2|ueinsteins/s/m\\^2|ueinsteins/s/m\\*\\*2|µeinsteins/s/m\\^2|Âµeingsteins/s/m^2",
+      "accepted_units": "uEinsteins/s/m\\^2|ueinsteins/s/m\\^2|ueinsteins/s/m\\*\\*2|µeinsteins/s/m\\^2|Âµeinsteins/s/m\\^2",
       "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::IRRDSV01",
       "sdn_uom_urn": "SDN:P06::UMES",
@@ -542,7 +554,7 @@
     {
       "long_name": "Surface PAR",
       "units": "uEinsteins/s/m^2",
-      "accepted_units": "uEinsteins/s/m\\^2|ueinsteins/s/m\\^2|ueinsteins/s/m\\*\\*2|µeinsteins/s/m\\^2|Âµeingsteins/s/m^2",
+      "accepted_units": "uEinsteins/s/m\\^2|ueinsteins/s/m\\^2|ueinsteins/s/m\\*\\*2|µeinsteins/s/m\\^2|Âµeinsteins/s/m\\^2",
       "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_sea_water",
       "sdn_parameter_urn": "SDN:P01::IRRDSV01",
       "sdn_uom_urn": "SDN:P06::UMES",
