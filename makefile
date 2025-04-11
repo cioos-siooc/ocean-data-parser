@@ -1,4 +1,4 @@
 lint:
-	ruff format .
-	ruff check --fix --select I .
-	ruff check --fix .
+	uv run ruff format .
+	uv run ruff check --fix --select I .
+	uv run ruff check --fix .
