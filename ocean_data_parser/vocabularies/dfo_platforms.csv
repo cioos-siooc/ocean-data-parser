@@ -1,4 +1,4 @@
-platform_name,accepted_platform_name,platform,platform_owner,platform_type,country_of_origin,platform_id,ices_platform_code,wmo_platform_code,call_sign,sdn_platform_urn,dfo_nafc_platform_code,dfo_nafc_platform_name,comments
+platform_name,accepted_platform_name,platform,platform_owner,platform_type,country_of_origin,platform_id,ices_platform_code,wmo_platform_code,call_sign,sdn_platform_urn,dfo_nafc_platform_code,dfo_nafc_platform_name,platform_comments
 Unknown,Unknown,ship,,,,,,,,,0,,
 A. T. Cameron,A. T. Cameron,ship,Fisheries Research Board of Canada,research vessel,Canada,18AT,18AT,5000392,CGBD,SDN:C17::18AT,1,,
 Gadus Atlantica,Gadus Atlantica,ship,Canadian Coast Guard,research vessel,Canada,,,,,,2,,
@@ -141,7 +141,7 @@ Leim,Leim,ship,Canadian Coast Guard,research vessel,Canada,18LO,18LO,9656163,CFN
 Limnos,Limnos,ship,Canadian Coast Guard,research vessel,Canada,18LN,18LN,6804903,CG2350,SDN:C17::18LN,,,
 Louis S. St-Laurent,Louis S. St-Laurent,ship,Canadian Coast Guard,ship,Canada,18SN,18SN,6705937,CGBN,SDN:C17::18SN,,,
 M. Perley,M. Perley,ship,Canadian Coast Guard,research vessel,Canada,18MU,18MU,9656151,CGMP,SDN:C17::18MU,,,
-Macoma,Macoma,ship,,,Denmark,26MK,26MK,,XPA4682,SDN:C17::26MK,,,
+Macoma,Macoma,ship,ISMER,self-propelled small boat,Canada,,,,,,,,
 Maxwell,Maxwell,ship,Canadian Coast Guard,research vessel,Canada,18MX,18MX,5230040,,SDN:C17::18MX,,,
 MESD LAUNCH,MESD LAUNCH,ship,,,,,,,,,,,
 MULTIPLE SHIPS,MULTIPLE SHIPS,ship,,,,,,,,,,,

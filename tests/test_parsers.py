@@ -490,7 +490,7 @@ class TestODFMLIParser:
 class TestODFAsQoODFParser:
     @pytest.mark.parametrize(
         "path",
-        glob("tests/parsers_test_files/dfo/odf/as_qo/**/*.ODF", recursive=True),
+        glob("tests/parsers_test_files/dfo/odf/as_qo/**/*.odf", recursive=True),
     )
     def test_as_qo_odf_parser(self, path, caplog):
         """Test DFO BIO ODF Parser."""
