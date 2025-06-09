@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix Macoma platform in platform vocabulary which is a ISMER platform.
 - Fix makefile to use `uv run` commands
 - Fix Amundsen Vocabularies accepted_units issue, N2 accepted_units
+- Fix event_comments attributes from ODF datasets
 
 ## `0.7.0`
 
