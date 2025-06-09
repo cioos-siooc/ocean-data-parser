@@ -1,4 +1,4 @@
-platform_name,accepted_platform_name,platform,platform_owner,platform_type,country_of_origin,platform_id,ices_platform_code,wmo_platform_code,call_sign,sdn_platform_urn,dfo_nafc_platform_code,dfo_nafc_platform_name,comments
+platform_name,accepted_platform_name,platform,platform_owner,platform_type,country_of_origin,platform_id,ices_platform_code,wmo_platform_code,call_sign,sdn_platform_urn,dfo_nafc_platform_code,dfo_nafc_platform_name,platform_comments
 Unknown,Unknown,ship,,,,,,,,,0,,
 A. T. Cameron,A. T. Cameron,ship,Fisheries Research Board of Canada,research vessel,Canada,18AT,18AT,5000392,CGBD,SDN:C17::18AT,1,,
 Gadus Atlantica,Gadus Atlantica,ship,Canadian Coast Guard,research vessel,Canada,,,,,,2,,

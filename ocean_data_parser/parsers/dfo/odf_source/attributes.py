@@ -29,7 +29,6 @@ section_prefix = {
 }
 
 global_odf_to_cf = {
-    "event_comments": "comments",
     "event_creation_date": "date_modified",
     "event_orig_creation_date": "date_issued",
     "start_date": "cruise_start_date",
