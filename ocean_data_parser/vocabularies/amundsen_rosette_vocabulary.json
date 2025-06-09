@@ -413,7 +413,8 @@
     {
       "long_name": "Brunt-Vaisala Frequency",
       "units": "s^-2",
-      "standard_name": "square_of_brunt_vaisala_frequency_in_sea_water"
+      "standard_name": "square_of_brunt_vaisala_frequency_in_sea_water",
+      "accepted_units": "hertz"
     }
   ],
   "Theta": [
