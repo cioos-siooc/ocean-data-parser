@@ -1371,6 +1371,30 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#080" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.8.0
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="0.8.0">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#070" class="md-nav__link">
     <span class="md-ellipsis">
       0.7.0
@@ -1390,7 +1414,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#fixed" class="md-nav__link">
+  <a href="#fixed_1" class="md-nav__link">
     <span class="md-ellipsis">
       Fixed
     </span>
@@ -1447,7 +1471,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#fixed_1" class="md-nav__link">
+  <a href="#fixed_2" class="md-nav__link">
     <span class="md-ellipsis">
       Fixed
     </span>
@@ -1471,7 +1495,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#fixed_2" class="md-nav__link">
+  <a href="#fixed_3" class="md-nav__link">
     <span class="md-ellipsis">
       Fixed
     </span>
@@ -1495,7 +1519,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#fixed_3" class="md-nav__link">
+  <a href="#fixed_4" class="md-nav__link">
     <span class="md-ellipsis">
       Fixed
     </span>
@@ -1528,7 +1552,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#fixed_4" class="md-nav__link">
+  <a href="#fixed_5" class="md-nav__link">
     <span class="md-ellipsis">
       Fixed
     </span>
@@ -1613,6 +1637,14 @@
 <p>All notable changes to this project will be documented in this file.</p>
 <p>The format is based on <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>,
 and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
+<h2 id="080"><code>0.8.0</code><a class="headerlink" href="#080" title="Permanent link">&para;</a></h2>
+<h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Fix Macoma platform in platform vocabulary which is a ISMER platform.</li>
+<li>Fix makefile to use <code>uv run</code> commands</li>
+<li>Fix Amundsen Vocabularies accepted_units issue, N2 accepted_units</li>
+<li>Fix event_comments attributes from ODF datasets</li>
+</ul>
 <h2 id="070"><code>0.7.0</code><a class="headerlink" href="#070" title="Permanent link">&para;</a></h2>
 <h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">&para;</a></h3>
 <ul>
@@ -1625,7 +1657,7 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <li>Use uv as package manager</li>
 <li>Add vocabularies tests</li>
 </ul>
-<h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
+<h3 id="fixed_1">Fixed<a class="headerlink" href="#fixed_1" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Fixed warning regarding star_oddi dayfirst=True missing input</li>
 <li>Rename pme parsers by removing <code>minidot_</code>. New functions are called <code>pme.txt</code>,
@@ -1653,18 +1685,18 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
   os path seperator list via the command line interface or the configuration</li>
 <li>Add test to test version within package <code>__init__.py</code>, <code>CHANGELOG.md</code>, and <code>pyproject.tom</code></li>
 </ul>
-<h3 id="fixed_1">Fixed<a class="headerlink" href="#fixed_1" title="Permanent link">&para;</a></h3>
+<h3 id="fixed_2">Fixed<a class="headerlink" href="#fixed_2" title="Permanent link">&para;</a></h3>
 <ul>
 <li>seabird parsers module import sorting</li>
 <li>nafc ruff check issues</li>
 </ul>
 <h2 id="052-2024-06-22"><code>0.5.2</code> - 2024-06-22<a class="headerlink" href="#052-2024-06-22" title="Permanent link">&para;</a></h2>
-<h3 id="fixed_2">Fixed<a class="headerlink" href="#fixed_2" title="Permanent link">&para;</a></h3>
+<h3 id="fixed_3">Fixed<a class="headerlink" href="#fixed_3" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Docs build</li>
 </ul>
 <h2 id="051-2024-06-20"><code>0.5.1</code> - 2024-06-20<a class="headerlink" href="#051-2024-06-20" title="Permanent link">&para;</a></h2>
-<h3 id="fixed_3">Fixed<a class="headerlink" href="#fixed_3" title="Permanent link">&para;</a></h3>
+<h3 id="fixed_4">Fixed<a class="headerlink" href="#fixed_4" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Remove default sentry dsn from convert default configuration file.</li>
 <li>Fix deprecation issue in nafc.metqa loader</li>
@@ -1677,7 +1709,7 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <li>Add --parser-kwargs option to odpy convert command line interface to pass
   inputs to parser</li>
 </ul>
-<h3 id="fixed_4">Fixed<a class="headerlink" href="#fixed_4" title="Permanent link">&para;</a></h3>
+<h3 id="fixed_5">Fixed<a class="headerlink" href="#fixed_5" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Fix star_oddi parser time variable to output a datetime dataarray.</li>
 <li>Fix onset parser date time handling.</li>

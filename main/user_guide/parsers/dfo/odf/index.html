@@ -7865,9 +7865,40 @@ Should be a regex expression.</p>
 </tr>
 <tr>
 <td style="text-align: left;">AS_QO</td>
+<td style="text-align: left;">TRAN_1</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Light Transmission</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">SDN:P01::POPTDR01</td>
+<td style="text-align: left;">Transmittance (red light wavelength) per 25cm of the water body by 25cm path length red light transmissometer</td>
+<td style="text-align: left;">SDN:P06::UPCT</td>
+<td style="text-align: left;">Percent</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Trans_Red_25cm</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">AS_QO</td>
 <td style="text-align: left;">Fluo</td>
 <td style="text-align: left;"></td>
-<td style="text-align: left;"><code>ug/L|mg/m\^3</code></td>
+<td style="text-align: left;"><code>ug/L|mg/m\^3|mg/m\*\*3</code></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
@@ -8022,7 +8053,7 @@ Should be a regex expression.</p>
 <td style="text-align: left;">AS_QO</td>
 <td style="text-align: left;">OXYM</td>
 <td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;"><code>uM||µM|ÂµM</code></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
@@ -8030,9 +8061,6 @@ Should be a regex expression.</p>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">Dissolved Oxygen</td>
 <td style="text-align: left;">uM</td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;">µM</td>
-<td style="text-align: left;">ÂµM</td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">mole_concentration_of_dissolved_molecular_oxygen_in_sea_water</td>
@@ -8046,6 +8074,9 @@ Should be a regex expression.</p>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">WC_dissO2_IS</td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 </tr>
@@ -8270,7 +8301,7 @@ Should be a regex expression.</p>
 <td style="text-align: left;">AS_QO</td>
 <td style="text-align: left;">Dens</td>
 <td style="text-align: left;"></td>
-<td style="text-align: left;"><code>kg/m^3|kg/m**3</code></td>
+<td style="text-align: left;"><code>kg/m\^3|kg/m\*\*3</code></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
@@ -8301,7 +8332,7 @@ Should be a regex expression.</p>
 <td style="text-align: left;">AS_QO</td>
 <td style="text-align: left;">N2</td>
 <td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;"><code>hertz</code></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
@@ -8394,7 +8425,7 @@ Should be a regex expression.</p>
 <td style="text-align: left;">AS_QO</td>
 <td style="text-align: left;">CDOM</td>
 <td style="text-align: left;"></td>
-<td style="text-align: left;"><code>mg/m^3|mg/m**3</code></td>
+<td style="text-align: left;"><code>mg/m\^3|mg/m\*\*3</code></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
@@ -8456,7 +8487,7 @@ Should be a regex expression.</p>
 <td style="text-align: left;">AS_QO</td>
 <td style="text-align: left;">NO3</td>
 <td style="text-align: left;"></td>
-<td style="text-align: left;"><code>mmol/m^3|mmol/m**3</code></td>
+<td style="text-align: left;"><code>mmol/m\^3|mmol/m\*\*3</code></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
@@ -8580,7 +8611,7 @@ Should be a regex expression.</p>
 <td style="text-align: left;">AS_QO</td>
 <td style="text-align: left;">Par</td>
 <td style="text-align: left;"></td>
-<td style="text-align: left;"><code>uEinsteins/s/m\^2|ueinsteins/s/m\^2|ueinsteins/s/m\*\*2|µeinsteins/s/m\^2|Âµeingsteins/s/m^2</code></td>
+<td style="text-align: left;"><code>uEinsteins/s/m\^2|ueinsteins/s/m\^2|ueinsteins/s/m\*\*2|µeinsteins/s/m\^2|Âµeinsteins/s/m\^2</code></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
@@ -8611,7 +8642,7 @@ Should be a regex expression.</p>
 <td style="text-align: left;">AS_QO</td>
 <td style="text-align: left;">PSAR</td>
 <td style="text-align: left;"></td>
-<td style="text-align: left;"><code>uEinsteins/s/m\^2|ueinsteins/s/m\^2|ueinsteins/s/m\*\*2|µeinsteins/s/m\^2|Âµeingsteins/s/m^2</code></td>
+<td style="text-align: left;"><code>uEinsteins/s/m\^2|ueinsteins/s/m\^2|ueinsteins/s/m\*\*2|µeinsteins/s/m\^2|Âµeinsteins/s/m\^2</code></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
@@ -8642,7 +8673,7 @@ Should be a regex expression.</p>
 <td style="text-align: left;">AS_QO</td>
 <td style="text-align: left;">SPar</td>
 <td style="text-align: left;"></td>
-<td style="text-align: left;"><code>uEinsteins/s/m\^2|ueinsteins/s/m\^2|ueinsteins/s/m\*\*2|µeinsteins/s/m\^2|Âµeingsteins/s/m^2</code></td>
+<td style="text-align: left;"><code>uEinsteins/s/m\^2|ueinsteins/s/m\^2|ueinsteins/s/m\*\*2|µeinsteins/s/m\^2|Âµeinsteins/s/m\^2</code></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
@@ -8673,7 +8704,7 @@ Should be a regex expression.</p>
 <td style="text-align: left;">AS_QO</td>
 <td style="text-align: left;">SPAR</td>
 <td style="text-align: left;"></td>
-<td style="text-align: left;"><code>uEinsteins/s/m\^2|ueinsteins/s/m\^2|ueinsteins/s/m\*\*2|µeinsteins/s/m\^2|Âµeingsteins/s/m^2</code></td>
+<td style="text-align: left;"><code>uEinsteins/s/m\^2|ueinsteins/s/m\^2|ueinsteins/s/m\*\*2|µeinsteins/s/m\^2|Âµeinsteins/s/m\^2</code></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
