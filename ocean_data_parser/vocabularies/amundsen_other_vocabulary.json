@@ -65,18 +65,33 @@
       "long_name": "Latitude",
       "units": "degrees_north",
       "accepted_units": "degrees N",
+      "standard_name": "latitude",
+      "sdn_parameter_urn": "SDN:P01::ALATZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGN",
+      "sdn_parameter_name": "Latitude north",
+      "sdn_uom_name": "Degrees north",
       "file_type": "NAV"
     },
     {
       "long_name": "Latitude",
       "units": "degrees_north",
       "accepted_units": "degrees N",
+      "standard_name": "latitude",
+      "sdn_parameter_urn": "SDN:P01::ALATZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGN",
+      "sdn_parameter_name": "Latitude north",
+      "sdn_uom_name": "Degrees north",
       "file_type": "AVOS"
     },
     {
       "long_name": "Latitude",
       "units": "degrees_north",
       "accepted_units": "degrees N",
+      "standard_name": "latitude",
+      "sdn_parameter_urn": "SDN:P01::ALATZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGN",
+      "sdn_parameter_name": "Latitude north",
+      "sdn_uom_name": "Degrees north",
       "file_type": "TSG"
     }
   ],
@@ -85,18 +100,36 @@
       "long_name": "Longitude",
       "units": "degrees_east",
       "accepted_units": "degrees E",
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "rename": "Lon",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east",
       "file_type": "NAV"
     },
     {
       "long_name": "Longitude",
       "units": "degrees_east",
       "accepted_units": "degrees E",
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "rename": "Lon",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east",
       "file_type": "AVOS"
     },
     {
       "long_name": "Longitude",
       "units": "degrees_east",
       "accepted_units": "degrees E",
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "rename": "Lon",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east",
       "file_type": "TSG"
     }
   ],
@@ -125,25 +158,43 @@
   ],
   "Tem-TSG": [
     {
-      "long_name": "Temperature (TSG)",
-      "units": "degC",
-      "accepted_units": "degC|deg C|degrees C|.c",
+      "long_name": "Temperature From Sensor SBE38",
+      "units": "degrees_celcius",
+      "accepted_units": "degC|deg C|degrees C|.*c$",
+      "standard_name": "sea_surface_temperature",
+      "sdn_uom_urn": "SDN:P06::UPAA",
       "file_type": "TSG"
     }
   ],
   "Tem-Water": [
     {
-      "long_name": "Temperature (Water)",
-      "units": "degC",
+      "long_name": "Temperature From Sensor SBE38",
+      "units": "degrees_celcius",
       "accepted_units": "degC|deg C|degrees C|.*c$",
+      "standard_name": "sea_surface_temperature",
+      "sdn_uom_urn": "SDN:P06::UPAA",
+      "file_type": "TSG"
+    }
+  ],
+  "water_temperature": [
+    {
+      "long_name": "Temperature From Sensor SBE38",
+      "units": "degrees_celcius",
+      "accepted_units": "degC|deg C|degrees C|.*c$",
+      "standard_name": "sea_surface_temperature",
+      "sdn_uom_urn": "SDN:P06::UPAA",
       "file_type": "TSG"
     }
   ],
   "Sal-TSG": [
     {
-      "long_name": "Salinity (TSG)",
-      "units": "1",
+      "long_name": "Salinity From Thermosalinograph",
+      "units": "PSU",
+      "standard_name": "sea_surface_salinity",
+      "sdn_parameter_urn": "SDN:P01::PSALSZ01",
+      "sdn_uom_urn": "SDN:P06::PSUX",
       "accepted_units": "PSU|psu|1e-3",
+      "rename": "P_sal_TSG",
       "file_type": "TSG"
     }
   ],
@@ -165,9 +216,11 @@
   ],
   "Flow": [
     {
-      "long_name": "Flow Rate",
+      "long_name": "Water Flow Rate",
       "units": "L/min",
-      "accepted_units": "L\/min",
+      "sdn_parameter_urn": "SDN:P01::INFLTF01",
+      "sdn_uom_urn": "SDN:P06::ULPM",
+      "rename": "TSG+Fl_Flow",
       "file_type": "TSG"
     }
   ],
