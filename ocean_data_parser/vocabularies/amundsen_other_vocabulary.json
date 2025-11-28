@@ -180,7 +180,7 @@
   "GPS": [
     {
       "long_name": "GPS source",
-      "units": "degrees_north",
+      "units": "1",
       "accepted_units": "=1 for POS-MV and =0 for CNAV",
       "comments": "=1 for POS-MV and =0 for CNAV",
       "file_type": "NAV"
