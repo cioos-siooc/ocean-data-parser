@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix Amundsen Vocabulary for nav variables
+- Migrate Amundsen NAV file type to NMEA
+- Update NMEA Amundsen file type vocabulary
 
 ## `0.8.0`
 
