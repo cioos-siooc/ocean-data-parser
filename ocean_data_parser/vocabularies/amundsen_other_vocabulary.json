@@ -20,12 +20,30 @@
       "file_type": "NAV"
     }
   ],
+  "vessel_heading": [
+    {
+      "long_name": "Vessel Heading",
+      "units": "degree_north",
+      "accepted_units": "degrees N",
+      "file_type": "NAV",
+      "rename_to": "Heading"
+    }
+  ],
   "Depth": [
     {
       "long_name": "Bottom Depth",
       "units": "m",
       "accepted_units": "m",
       "file_type": "NAV"
+    }
+  ],
+  "bottom_depth": [
+    {
+      "long_name": "Bottom Depth",
+      "units": "m",
+      "accepted_units": "m",
+      "file_type": "NAV",
+      "rename_to": "Depth"
     }
   ],
   "Roll": [
@@ -36,12 +54,30 @@
       "file_type": "NAV"
     }
   ],
+  "vessel_roll": [
+    {
+      "long_name": "Vessel Roll",
+      "units": "degree",
+      "accepted_units": "degrees N",
+      "file_type": "NAV",
+      "rename_to": "Roll"
+    }
+  ],
   "Pitch": [
     {
       "long_name": "Pitch Heading",
       "units": "degree",
       "accepted_units": "degrees N",
       "file_type": "NAV"
+    }
+  ],
+  "vessel_pitch": [
+    {
+      "long_name": "Vessel Pitch",
+      "units": "degree",
+      "accepted_units": "degrees N",
+      "file_type": "NAV",
+      "rename_to": "Pitch"
     }
   ],
   "Heave": [
@@ -52,12 +88,30 @@
       "file_type": "NAV"
     }
   ],
+  "vessel_heave": [
+    {
+      "long_name": "Vessel Heave",
+      "units": "m",
+      "accepted_units": "meter",
+      "file_type": "NAV",
+      "rename_to": "Heave"
+    }
+  ],
   "Track": [
     {
       "long_name": "True Vessel Direction",
       "units": "degree_north",
       "accepted_units": "degrees N",
       "file_type": "NAV"
+    }
+  ],
+  "vessel_track": [
+    {
+      "long_name": "Vessel Track",
+      "units": "degree_north",
+      "accepted_units": "degrees N",
+      "file_type": "NAV",
+      "rename_to": "Track"
     }
   ],
   "Lat": [
@@ -112,6 +166,15 @@
       "units": "knots",
       "accepted_units": "Knt",
       "file_type": "TSG"
+    }
+  ],
+  "vessel_speed": [
+    {
+      "long_name": "Vessel Speed",
+      "units": "knots",
+      "accepted_units": "Knt",
+      "file_type": "NAV",
+      "rename_to": "Speed"
     }
   ],
   "GPS": [
