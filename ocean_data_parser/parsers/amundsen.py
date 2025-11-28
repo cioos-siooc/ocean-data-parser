@@ -267,6 +267,8 @@ def int_format(
     variables = _extract_variable_attributes_from_header(metadata, df.columns)
     if "Date" in df and "Hour" in df:
         df = _convert_timestamp(df)
+    elif "time" in df:
+        df["time"] = pd.to_datetime(df["time"], utc=True)
 
     # Convert to xarray object
     ds = df.to_xarray()
