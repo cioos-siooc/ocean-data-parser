@@ -44,7 +44,7 @@
       "long_name": "Vessel Heading",
       "units": "degree_north",
       "accepted_units": "degrees N",
-      "file_type": "NAV"
+      "file_type": "NMEA"
     }
   ],
   "vessel_heading": [
@@ -52,7 +52,7 @@
       "long_name": "Vessel Heading",
       "units": "degree_north",
       "accepted_units": "degrees N",
-      "file_type": "NAV",
+      "file_type": "NMEA",
       "rename_to": "Heading"
     }
   ],
@@ -61,7 +61,7 @@
       "long_name": "Bottom Depth",
       "units": "m",
       "accepted_units": "m",
-      "file_type": "NAV"
+      "file_type": "NMEA"
     }
   ],
   "bottom_depth": [
@@ -69,7 +69,7 @@
       "long_name": "Bottom Depth",
       "units": "m",
       "accepted_units": "m",
-      "file_type": "NAV",
+      "file_type": "NMEA",
       "rename_to": "Depth"
     }
   ],
@@ -78,7 +78,7 @@
       "long_name": "Roll Heading",
       "units": "degree",
       "accepted_units": "degrees N",
-      "file_type": "NAV"
+      "file_type": "NMEA"
     }
   ],
   "vessel_roll": [
@@ -86,7 +86,7 @@
       "long_name": "Vessel Roll",
       "units": "degree",
       "accepted_units": "degrees N",
-      "file_type": "NAV",
+      "file_type": "NMEA",
       "rename_to": "Roll"
     }
   ],
@@ -95,7 +95,7 @@
       "long_name": "Pitch Heading",
       "units": "degree",
       "accepted_units": "degrees N",
-      "file_type": "NAV"
+      "file_type": "NMEA"
     }
   ],
   "vessel_pitch": [
@@ -103,7 +103,7 @@
       "long_name": "Vessel Pitch",
       "units": "degree",
       "accepted_units": "degrees N",
-      "file_type": "NAV",
+      "file_type": "NMEA",
       "rename_to": "Pitch"
     }
   ],
@@ -112,7 +112,7 @@
       "long_name": "Heave",
       "units": "m",
       "accepted_units": "meter",
-      "file_type": "NAV"
+      "file_type": "NMEA"
     }
   ],
   "vessel_heave": [
@@ -120,7 +120,7 @@
       "long_name": "Vessel Heave",
       "units": "m",
       "accepted_units": "meter",
-      "file_type": "NAV",
+      "file_type": "NMEA",
       "rename_to": "Heave"
     }
   ],
@@ -129,7 +129,7 @@
       "long_name": "True Vessel Direction",
       "units": "degree_north",
       "accepted_units": "degrees N",
-      "file_type": "NAV"
+      "file_type": "NMEA"
     }
   ],
   "vessel_track": [
@@ -137,7 +137,7 @@
       "long_name": "Vessel Track",
       "units": "degree_north",
       "accepted_units": "degrees N",
-      "file_type": "NAV",
+      "file_type": "NMEA",
       "rename_to": "Track"
     }
   ],
@@ -146,7 +146,7 @@
       "long_name": "Latitude",
       "units": "degrees_north",
       "accepted_units": "degrees N",
-      "file_type": "NAV"
+      "file_type": "NMEA"
     },
     {
       "long_name": "Latitude",
@@ -166,7 +166,7 @@
       "long_name": "Longitude",
       "units": "degrees_east",
       "accepted_units": "degrees E",
-      "file_type": "NAV"
+      "file_type": "NMEA"
     },
     {
       "long_name": "Longitude",
@@ -186,7 +186,7 @@
       "long_name": "Vessel Speed",
       "units": "knots",
       "accepted_units": "Knt",
-      "file_type": "NAV"
+      "file_type": "NMEA"
     },
     {
       "long_name": "Vessel Speed",
@@ -200,7 +200,7 @@
       "long_name": "Vessel Speed",
       "units": "knots",
       "accepted_units": "Knt",
-      "file_type": "NAV",
+      "file_type": "NMEA",
       "rename_to": "Speed"
     }
   ],
@@ -210,7 +210,7 @@
       "units": "1",
       "accepted_units": "=1 for POS-MV and =0 for CNAV",
       "comments": "=1 for POS-MV and =0 for CNAV",
-      "file_type": "NAV"
+      "file_type": "NMEA"
     }
   ],
   "Tem-TSG": [
