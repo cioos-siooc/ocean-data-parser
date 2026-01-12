@@ -211,7 +211,7 @@ class TestAmundsenParser:
             path,
             caplog,
             max_log_levelno=20,
-            ignore_log_records="Duplicated variable",
+            ignore_log_records="Duplicated variable|'NAV' file type renamed to 'NMEA'",
         )
 
     @pytest.mark.parametrize(
@@ -231,7 +231,7 @@ class TestAmundsenParser:
             path,
             caplog,
             max_log_levelno=20,
-            ignore_log_records="Duplicated variable",
+            ignore_log_records="Duplicated variable|'NAV' file type renamed to 'NMEA'",
         )
 
 
