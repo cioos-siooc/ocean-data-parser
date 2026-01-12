@@ -187,7 +187,6 @@
       "rename": "Lon",
       "sdn_parameter_name": "Longitude east",
       "sdn_uom_name": "Degrees east",
-      "file_type": "NAV"
       "file_type": "NMEA"
     },
     {
