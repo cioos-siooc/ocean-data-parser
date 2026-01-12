@@ -10,10 +10,29 @@ template: home.html
 
 ## :octicons-download-24: Installation
 
-Install the package in a local environment via the following command:
+First, install the [uv package manager](https://github.com/astral-sh/uv)
+```console
+pip install uv
+```
+
+Next, clone the repository to your local machine, enter the project directory and use `uv sync` to setup the package.
 
 ```console
-pip install git+https://github.com/cioos-siooc/ocean-data-parser.git
+git clone https://github.com/cioos-siooc/ocean-data-parser
+cd ocean-data-parser
+uv sync --python 3.9
+```
+
+This process will create a Python 3.9 virtual environment in the a `.venv` directory and populate it with the packages described in the `pyproject.toml` and `uv.lock` files.
+
+Activate the new environment
+```console
+source .venv/bin/activate
+```
+
+Test the install
+```console
+odpy --version
 ```
 
 ## How to 

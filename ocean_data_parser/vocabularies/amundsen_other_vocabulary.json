@@ -15,7 +15,7 @@
   "Heading": [
     {
       "long_name": "Vessel Heading",
-      "units": "degrees",
+      "units": "degree_north",
       "accepted_units": "degrees N",
       "file_type": "NAV"
     }
@@ -31,7 +31,7 @@
   "Roll": [
     {
       "long_name": "Roll Heading",
-      "units": "degrees_north",
+      "units": "degree",
       "accepted_units": "degrees N",
       "file_type": "NAV"
     }
@@ -39,7 +39,7 @@
   "Pitch": [
     {
       "long_name": "Pitch Heading",
-      "units": "degrees",
+      "units": "degree",
       "accepted_units": "degrees N",
       "file_type": "NAV"
     }
@@ -55,7 +55,7 @@
   "Track": [
     {
       "long_name": "True Vessel Direction",
-      "units": "degrees_north",
+      "units": "degree_north",
       "accepted_units": "degrees N",
       "file_type": "NAV"
     }
