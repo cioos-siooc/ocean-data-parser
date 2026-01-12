@@ -12,12 +12,48 @@
       "notes_O2": "All O2 units from before the year 2018 has mL/L. Since 2018, the units was updated to uM. All Dissolved Oxygen unit before 2018 should be converted into uM. An apply_function x*44.661 has been added in order to help for the conversion from mL/L to the unit uM, where x is the variable representing the Dissolved Oxygen before 2018."
     }
   ],
+  "time": [
+    {
+      "long_name": "Time",
+      "units": "",
+      "standard_name": "time",
+      "accepted_units": "yyyymmddTHHMMSSZ",
+      "file_type": "NMEA"
+    }
+  ],
+  "latitude": [
+    {
+      "long_name": "Latitude",
+      "units": "degrees_north",
+      "standard_name": "latitude",
+      "accepted_units": "degrees N",
+      "file_type": "NMEA"
+    }
+  ],
+  "longitude": [
+    {
+      "long_name": "Longitude",
+      "units": "degrees_east",
+      "standard_name": "longitude",
+      "accepted_units": "degrees E",
+      "file_type": "NMEA"
+    }
+  ],
   "Heading": [
     {
       "long_name": "Vessel Heading",
       "units": "degree_north",
       "accepted_units": "degrees N",
-      "file_type": "NAV"
+      "file_type": "NMEA"
+    }
+  ],
+  "vessel_heading": [
+    {
+      "long_name": "Vessel Heading",
+      "units": "degree_north",
+      "accepted_units": "degrees N",
+      "file_type": "NMEA",
+      "rename_to": "Heading"
     }
   ],
   "Depth": [
@@ -25,7 +61,16 @@
       "long_name": "Bottom Depth",
       "units": "m",
       "accepted_units": "m",
-      "file_type": "NAV"
+      "file_type": "NMEA"
+    }
+  ],
+  "bottom_depth": [
+    {
+      "long_name": "Bottom Depth",
+      "units": "m",
+      "accepted_units": "m",
+      "file_type": "NMEA",
+      "rename_to": "Depth"
     }
   ],
   "Roll": [
@@ -33,7 +78,16 @@
       "long_name": "Roll Heading",
       "units": "degree",
       "accepted_units": "degrees N",
-      "file_type": "NAV"
+      "file_type": "NMEA"
+    }
+  ],
+  "vessel_roll": [
+    {
+      "long_name": "Vessel Roll",
+      "units": "degree",
+      "accepted_units": "degrees N",
+      "file_type": "NMEA",
+      "rename_to": "Roll"
     }
   ],
   "Pitch": [
@@ -41,7 +95,16 @@
       "long_name": "Pitch Heading",
       "units": "degree",
       "accepted_units": "degrees N",
-      "file_type": "NAV"
+      "file_type": "NMEA"
+    }
+  ],
+  "vessel_pitch": [
+    {
+      "long_name": "Vessel Pitch",
+      "units": "degree",
+      "accepted_units": "degrees N",
+      "file_type": "NMEA",
+      "rename_to": "Pitch"
     }
   ],
   "Heave": [
@@ -49,7 +112,16 @@
       "long_name": "Heave",
       "units": "m",
       "accepted_units": "meter",
-      "file_type": "NAV"
+      "file_type": "NMEA"
+    }
+  ],
+  "vessel_heave": [
+    {
+      "long_name": "Vessel Heave",
+      "units": "m",
+      "accepted_units": "meter",
+      "file_type": "NMEA",
+      "rename_to": "Heave"
     }
   ],
   "Track": [
@@ -57,7 +129,16 @@
       "long_name": "True Vessel Direction",
       "units": "degree_north",
       "accepted_units": "degrees N",
-      "file_type": "NAV"
+      "file_type": "NMEA"
+    }
+  ],
+  "vessel_track": [
+    {
+      "long_name": "Vessel Track",
+      "units": "degree_north",
+      "accepted_units": "degrees N",
+      "file_type": "NMEA",
+      "rename_to": "Track"
     }
   ],
   "Lat": [
@@ -65,7 +146,7 @@
       "long_name": "Latitude",
       "units": "degrees_north",
       "accepted_units": "degrees N",
-      "file_type": "NAV"
+      "file_type": "NMEA"
     },
     {
       "long_name": "Latitude",
@@ -85,7 +166,7 @@
       "long_name": "Longitude",
       "units": "degrees_east",
       "accepted_units": "degrees E",
-      "file_type": "NAV"
+      "file_type": "NMEA"
     },
     {
       "long_name": "Longitude",
@@ -105,7 +186,7 @@
       "long_name": "Vessel Speed",
       "units": "knots",
       "accepted_units": "Knt",
-      "file_type": "NAV"
+      "file_type": "NMEA"
     },
     {
       "long_name": "Vessel Speed",
@@ -114,13 +195,22 @@
       "file_type": "TSG"
     }
   ],
+  "vessel_speed": [
+    {
+      "long_name": "Vessel Speed",
+      "units": "knots",
+      "accepted_units": "Knt",
+      "file_type": "NMEA",
+      "rename_to": "Speed"
+    }
+  ],
   "GPS": [
     {
       "long_name": "GPS source",
-      "units": "degrees_north",
+      "units": "1",
       "accepted_units": "=1 for POS-MV and =0 for CNAV",
       "comments": "=1 for POS-MV and =0 for CNAV",
-      "file_type": "NAV"
+      "file_type": "NMEA"
     }
   ],
   "Tem-TSG": [
