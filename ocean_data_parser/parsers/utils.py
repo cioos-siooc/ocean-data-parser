@@ -290,7 +290,7 @@ def get_spatial_coverage_attributes(
     # ────────────────────────────────────────────────
     if time in ds.variables and ds[time].size > 0:
         is_utc = ds[time].attrs.get("timezone") == "UTC" or utc
-        attrs_to_add.update(
+        ds.attrs.update(
             {
                 "time_coverage_start": pd.to_datetime(
                     ds[time].min().item(0), utc=is_utc
