@@ -100,6 +100,10 @@ def _standardize_attribute_value(value: str, name: str = None):
         return pd.to_datetime(
             value, utc=(name and "utc" in name), format="%d-%b-%Y %H:%M:%S.%f"
         )
+    elif re.fullmatch(r"\d\d\d\d-\d\d-\d\dT\d\d\d\d\d\dZ+", value):
+        return pd.to_datetime(
+            value, utc=(name and "utc" in name), format="%Y%m%dT%H%M%SZ"
+        )
     elif re.match(r"^-{0,1}\d+\.\d+$", value):
         return float(value)
     elif re.match(r"^-{0,1}\d+$", value):
