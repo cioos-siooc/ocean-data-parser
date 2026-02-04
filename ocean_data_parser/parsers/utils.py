@@ -227,7 +227,6 @@ def standardize_dataset(
     Returns:
         xr.Dataset: Standardized dataset
     """
-
     ds = get_spatial_coverage_attributes(ds, utc=utc)
     ds = standardize_variable_attributes(ds)
     ds.attrs = standardize_global_attributes(ds.attrs)
@@ -293,7 +292,9 @@ def get_spatial_coverage_attributes(
         is_utc = ds[time].attrs.get("timezone") == "UTC" or utc
         attrs_to_add.update(
             {
-                "time_coverage_start": pd.to_datetime(ds[time].min().item(0), utc=is_utc),
+                "time_coverage_start": pd.to_datetime(
+                    ds[time].min().item(0), utc=is_utc
+                ),
                 "time_coverage_end": pd.to_datetime(ds[time].max().item(0), utc=is_utc),
                 "time_coverage_duration": pd.to_timedelta(
                     (ds[time].max() - ds[time].min()).values
@@ -307,7 +308,7 @@ def get_spatial_coverage_attributes(
         and ds[lat].size > 0
         and ds[lon].size > 0
     ):
-         ds.attrs.update(
+        ds.attrs.update(
             {
                 "geospatial_lat_min": float(ds[lat].min().item()),
                 "geospatial_lat_max": float(ds[lat].max().item()),
