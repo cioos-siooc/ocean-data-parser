@@ -280,14 +280,6 @@ def get_spatial_coverage_attributes(
     Stores ISO strings in attributes for safe NetCDF serialization.
     Removes timezone from time coordinate to prevent encoding issues.
     """
-    if not isinstance(ds, xr.Dataset):
-        raise TypeError("Input must be an xarray.Dataset")
-
-    attrs_to_add = {}
-
-    # ────────────────────────────────────────────────
-    # Time coverage
-    # ────────────────────────────────────────────────
     if time in ds.variables and ds[time].size > 0:
         is_utc = ds[time].attrs.get("timezone") == "UTC" or utc
         ds.attrs.update(
