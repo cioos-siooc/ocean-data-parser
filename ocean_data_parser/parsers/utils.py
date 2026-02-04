@@ -1,7 +1,7 @@
 import json
 import logging
 import re
-from datetime import datetime, time
+from datetime import datetime
 from io import StringIO
 
 import numpy as np
@@ -233,10 +233,10 @@ def standardize_dataset(
             dt = pd.to_datetime(time_values, format="%Y%m%dT%H%M%SZ", utc=True)
         except ValueError:
             dt = pd.to_datetime(time_values, utc=True, errors="coerce")
-        
+
         if np.any(pd.isna(dt)):
             print("Warning: some times could not be parsed")
-    
+
     ds = ds.assign_coords(time=("time", dt))
 
     ds = get_spatial_coverage_attributes(ds, utc=utc)
@@ -274,7 +274,6 @@ def standardize_variable_attributes(ds):
     return ds
 
 
-
 def get_spatial_coverage_attributes(
     ds: xr.Dataset,
     time: str = "time",
@@ -283,8 +282,7 @@ def get_spatial_coverage_attributes(
     depth: str = "depth",
     utc: bool = False,
 ) -> xr.Dataset:
-    """
-    Add CF-compliant spatial and temporal coverage attributes to the dataset.
+    """Add CF-compliant spatial and temporal coverage attributes to the dataset.
 
     Handles 'time' variable as:
     - string times (e.g. '20240616T134700Z')
@@ -313,7 +311,9 @@ def get_spatial_coverage_attributes(
             # Already Timestamp → adjust timezone if needed
             if isinstance(val, pd.Timestamp):
                 if is_utc:
-                    return val.tz_convert("UTC") if val.tzinfo else val.tz_localize("UTC")
+                    return (
+                        val.tz_convert("UTC") if val.tzinfo else val.tz_localize("UTC")
+                    )
                 return val.tz_localize(None) if val.tzinfo else val
 
             # numpy datetime64 → Timestamp
@@ -350,11 +350,13 @@ def get_spatial_coverage_attributes(
 
         duration = tmax - tmin
 
-        attrs_to_add.update({
-            "time_coverage_start": tmin.isoformat(),
-            "time_coverage_end": tmax.isoformat(),
-            "time_coverage_duration": pd.to_timedelta(duration).isoformat(),
-        })
+        attrs_to_add.update(
+            {
+                "time_coverage_start": tmin.isoformat(),
+                "time_coverage_end": tmax.isoformat(),
+                "time_coverage_duration": pd.to_timedelta(duration).isoformat(),
+            }
+        )
 
     # ────────────────────────────────────────────────
     # Latitude / Longitude
@@ -365,15 +367,16 @@ def get_spatial_coverage_attributes(
         and ds[lat].size > 0
         and ds[lon].size > 0
     ):
-        attrs_to_add.update({
-            "geospatial_lat_min": float(ds[lat].min().item()),
-            "geospatial_lat_max": float(ds[lat].max().item()),
-            "geospatial_lat_units": ds[lat].attrs.get("units", "degrees_north"),
-
-            "geospatial_lon_min": float(ds[lon].min().item()),
-            "geospatial_lon_max": float(ds[lon].max().item()),
-            "geospatial_lon_units": ds[lon].attrs.get("units", "degrees_east"),
-        })
+        attrs_to_add.update(
+            {
+                "geospatial_lat_min": float(ds[lat].min().item()),
+                "geospatial_lat_max": float(ds[lat].max().item()),
+                "geospatial_lat_units": ds[lat].attrs.get("units", "degrees_north"),
+                "geospatial_lon_min": float(ds[lon].min().item()),
+                "geospatial_lon_max": float(ds[lon].max().item()),
+                "geospatial_lon_units": ds[lon].attrs.get("units", "degrees_east"),
+            }
+        )
 
     # ────────────────────────────────────────────────
     # Vertical (depth/height)
@@ -383,12 +386,14 @@ def get_spatial_coverage_attributes(
         if positive not in {"up", "down"}:
             positive = "down"
 
-        attrs_to_add.update({
-            "geospatial_vertical_min": float(ds[depth].min().item()),
-            "geospatial_vertical_max": float(ds[depth].max().item()),
-            "geospatial_vertical_units": ds[depth].attrs.get("units", "m"),
-            "geospatial_vertical_positive": positive,
-        })
+        attrs_to_add.update(
+            {
+                "geospatial_vertical_min": float(ds[depth].min().item()),
+                "geospatial_vertical_max": float(ds[depth].max().item()),
+                "geospatial_vertical_units": ds[depth].attrs.get("units", "m"),
+                "geospatial_vertical_positive": positive,
+            }
+        )
 
         # Also set on variable (helps some readers)
         ds[depth].attrs["positive"] = positive
