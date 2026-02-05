@@ -140,8 +140,13 @@ def _convert_timestamp(df: pd.DataFrame) -> pd.DataFrame:
 
 def _get_file_type(path: str) -> str:
     """Get the file type from the file path."""
-    file_type = re.search("AVOS|TSG|Bioness|NAV|Hydrobios", Path(path).name)
-    return file_type.group() if file_type else None
+    file_type = re.search("AVOS|TSG|Bioness|NAV|Hydrobios|NMEA", Path(path).name)
+    if not file_type:
+        return
+    if file_type.group() == "NAV":
+        logger.warning("'NAV' file type renamed to 'NMEA'")
+        return "NMEA"
+    return file_type.group()
 
 
 def csv_format(
@@ -273,6 +278,8 @@ def int_format(
         df["time"] = pd.to_datetime(df["time"], utc=True, format="ISO8601")
     elif "Date" in df and "Hour" in df:
         df = _convert_timestamp(df)
+    elif "time" in df:
+        df["time"] = pd.to_datetime(df["time"], utc=True)
 
     # Convert to xarray object
     ds = df.to_xarray()
