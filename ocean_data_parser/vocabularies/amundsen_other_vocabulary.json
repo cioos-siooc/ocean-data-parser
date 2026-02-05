@@ -284,7 +284,7 @@
       "file_type": "TSG"
     }
   ],
-    "water_fluorescence": [
+  "water_fluorescence": [
     {
       "long_name": "Fluorescence",
       "units": "ug/l",
@@ -521,28 +521,48 @@
       "file_type": "TSG"
     }
   ],
-    "latitude": [
+  "latitude": [
     {
       "long_name": "Latitude",
       "units": "degrees_north",
       "accepted_units": "degrees N",
       "file_type": "TSG"
+    },
+    {
+      "long_name": "Latitude",
+      "units": "degrees_north",
+      "accepted_units": "degrees N",
+      "file_type": "NMEA"
     }
   ],
-    "longitude": [
+  "longitude": [
     {
       "long_name": "Longitude",
       "units": "degrees_east",
       "accepted_units": "degrees E",
       "file_type": "TSG"
+    },
+    {
+      "long_name": "Longitude",
+      "units": "degrees_east",
+      "accepted_units": "degrees E",
+      "file_type": "NMEA"
     }
   ],
   "time": [
     {
       "long_name": "Time",
-      "units": "ISO8601",
+      "units": "",
       "accepted_units": "ISO8601",
+      "standard_name": "time",
       "file_type": "TSG"
+    },
+    {
+      "long_name": "Time",
+      "units": "",
+      "accepted_units": "ISO8601",
+      "standard_name": "time",
+      "file_type": "NMEA"
     }
   ]
 }
