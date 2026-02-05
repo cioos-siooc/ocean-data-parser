@@ -200,14 +200,14 @@
       "long_name": "Vessel Speed",
       "units": "knots",
       "accepted_units": "Knt",
-      "file_type": "TSG"
+      "file_type": "TSG",
       "rename_to": "Speed"
     },
     {
       "long_name": "Vessel Speed",
       "units": "knots",
       "accepted_units": "Knt",
-      "file_type": "NMEA"
+      "file_type": "NMEA",
       "rename_to": "Speed"
     }
   ],
