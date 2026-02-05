@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix Amundsen Vocabulary for nav variables
 - Migrate Amundsen NAV file type to NMEA
 - Update NMEA Amundsen file type vocabulary
+- Handle Amundsen NMEA time ISO8601 time format
+- Fix Amundsen NMEA and TSG vocabularies
 
 ## `0.8.0`
 
