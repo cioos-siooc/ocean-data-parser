@@ -227,18 +227,6 @@ def standardize_dataset(
     Returns:
         xr.Dataset: Standardized dataset
     """
-    if "time" in ds and ds["time"].dtype.kind != "M":
-        time_values = ds["time"].values.astype(str)
-        try:
-            dt = pd.to_datetime(time_values, format="%Y%m%dT%H%M%SZ", utc=True)
-        except ValueError:
-            dt = pd.to_datetime(time_values, utc=True, errors="coerce")
-
-        if np.any(pd.isna(dt)):
-            print("Warning: some times could not be parsed")
-
-    ds = ds.assign_coords(time=("time", dt))
-
     ds = get_spatial_coverage_attributes(ds, utc=utc)
     ds = standardize_variable_attributes(ds)
     ds.attrs = standardize_global_attributes(ds.attrs)
@@ -292,101 +280,40 @@ def get_spatial_coverage_attributes(
     Stores ISO strings in attributes for safe NetCDF serialization.
     Removes timezone from time coordinate to prevent encoding issues.
     """
-    if not isinstance(ds, xr.Dataset):
-        raise TypeError("Input must be an xarray.Dataset")
-
-    attrs_to_add = {}
-
-    # ────────────────────────────────────────────────
-    # Time coverage
-    # ────────────────────────────────────────────────
     if time in ds.variables and ds[time].size > 0:
-        time_var = ds[time]
-        is_utc = time_var.attrs.get("timezone", "").upper() == "UTC" or utc
-
-        tmin_raw = time_var.min().item()
-        tmax_raw = time_var.max().item()
-
-        def parse_time(val) -> pd.Timestamp:
-            # Already Timestamp → adjust timezone if needed
-            if isinstance(val, pd.Timestamp):
-                if is_utc:
-                    return (
-                        val.tz_convert("UTC") if val.tzinfo else val.tz_localize("UTC")
-                    )
-                return val.tz_localize(None) if val.tzinfo else val
-
-            # numpy datetime64 → Timestamp
-            if isinstance(val, np.datetime64):
-                ts = pd.Timestamp(val)
-                return ts.tz_localize("UTC") if is_utc else ts
-
-            # bytes → str
-            if isinstance(val, bytes):
-                val = val.decode("utf-8", errors="replace")
-
-            # string parsing
-            if isinstance(val, str):
-                # Priority: your compact format
-                try:
-                    return pd.to_datetime(val, format="%Y%m%dT%H%M%SZ", utc=is_utc)
-                except ValueError:
-                    pass
-                # Fallback: flexible ISO / other formats
-                return pd.to_datetime(val, utc=is_utc, errors="raise")
-
-            raise ValueError(f"Cannot parse time: {val!r} (type: {type(val).__name__})")
-
-        try:
-            tmin = parse_time(tmin_raw)
-            tmax = parse_time(tmax_raw)
-        except Exception as e:
-            raise ValueError(
-                f"Failed to parse time bounds\n"
-                f"  min = {tmin_raw!r} ({type(tmin_raw).__name__})\n"
-                f"  max = {tmax_raw!r} ({type(tmax_raw).__name__})\n"
-                f"Error: {e}"
-            )
-
-        duration = tmax - tmin
-
-        attrs_to_add.update(
+        is_utc = ds[time].attrs.get("timezone") == "UTC" or utc
+        ds.attrs.update(
             {
-                "time_coverage_start": tmin.isoformat(),
-                "time_coverage_end": tmax.isoformat(),
-                "time_coverage_duration": pd.to_timedelta(duration).isoformat(),
+                "time_coverage_start": pd.to_datetime(
+                    ds[time].min().item(0), utc=is_utc
+                ),
+                "time_coverage_end": pd.to_datetime(ds[time].max().item(0), utc=is_utc),
+                "time_coverage_duration": pd.to_timedelta(
+                    (ds[time].max() - ds[time].min()).values
+                ).isoformat(),
             }
         )
 
-    # ────────────────────────────────────────────────
-    # Latitude / Longitude
-    # ────────────────────────────────────────────────
     if (
         lat in ds.variables
         and lon in ds.variables
         and ds[lat].size > 0
         and ds[lon].size > 0
     ):
-        attrs_to_add.update(
+        ds.attrs.update(
             {
                 "geospatial_lat_min": float(ds[lat].min().item()),
                 "geospatial_lat_max": float(ds[lat].max().item()),
-                "geospatial_lat_units": ds[lat].attrs.get("units", "degrees_north"),
+                "geospatial_lat_units": ds[lat].attrs.get("units"),
                 "geospatial_lon_min": float(ds[lon].min().item()),
                 "geospatial_lon_max": float(ds[lon].max().item()),
-                "geospatial_lon_units": ds[lon].attrs.get("units", "degrees_east"),
+                "geospatial_lon_units": ds[lon].attrs.get("units"),
             }
         )
 
-    # ────────────────────────────────────────────────
-    # Vertical (depth/height)
-    # ────────────────────────────────────────────────
     if depth in ds.variables and ds[depth].size > 0:
         positive = ds[depth].attrs.get("positive", "down").lower()
-        if positive not in {"up", "down"}:
-            positive = "down"
-
-        attrs_to_add.update(
+        ds.attrs.update(
             {
                 "geospatial_vertical_min": float(ds[depth].min().item()),
                 "geospatial_vertical_max": float(ds[depth].max().item()),
@@ -397,32 +324,6 @@ def get_spatial_coverage_attributes(
 
         # Also set on variable (helps some readers)
         ds[depth].attrs["positive"] = positive
-
-    # ────────────────────────────────────────────────
-    # Apply attributes
-    # ────────────────────────────────────────────────
-    ds.attrs.update(attrs_to_add)
-
-    # ────────────────────────────────────────────────
-    # Make time coordinate naive (critical for NetCDF encoding compatibility)
-    # ────────────────────────────────────────────────
-    if time in ds.coords:
-        # 1. Convert to pandas Series
-        time_series = ds[time].to_series()
-
-        # 2. Make sure it's actually datetime-like before using .dt
-        if pd.api.types.is_datetime64_any_dtype(time_series.dtype):
-            if time_series.dt.tz is not None:
-                time_series = time_series.dt.tz_localize(None)
-        else:
-            # If it's not recognized as datetime, convert it explicitly
-            time_series = pd.to_datetime(time_series)
-
-            if time_series.dt.tz is not None:
-                time_series = time_series.dt.tz_localize(None)
-
-        # 3. Convert back to numpy array with naive datetime64[ns]
-        ds[time] = ("time", time_series.to_numpy(dtype="datetime64[ns]"))
 
     return ds
 

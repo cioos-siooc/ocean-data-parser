@@ -2,9 +2,6 @@ name: Test package for linter issues and run tests
 
 on:
   pull_request:
-    branches:
-      - main
-      - development
     paths:
       - .github/workflows/test-package.yaml
       - setup.py
