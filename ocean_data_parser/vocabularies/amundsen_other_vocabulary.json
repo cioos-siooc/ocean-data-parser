@@ -16,8 +16,15 @@
     {
       "long_name": "Time",
       "units": "",
+      "accepted_units": "ISO8601",
       "standard_name": "time",
-      "accepted_units": "yyyymmddTHHMMSSZ",
+      "file_type": "TSG"
+    },
+    {
+      "long_name": "Time",
+      "units": "",
+      "accepted_units": "ISO8601|yyyymmddTHHMMSSZ",
+      "standard_name": "time",
       "file_type": "NMEA"
     }
   ],
@@ -28,6 +35,20 @@
       "standard_name": "latitude",
       "accepted_units": "degrees N",
       "file_type": "NMEA"
+    },
+    {
+      "long_name": "Latitude",
+      "units": "degrees_north",
+      "accepted_units": "degrees N",
+      "file_type": "TSG"
+    }
+  ],
+  "Latitude": [
+    {
+      "long_name": "Latitude",
+      "units": "degrees_north",
+      "accepted_units": "degrees N",
+      "file_type": "TSG"
     }
   ],
   "longitude": [
@@ -37,6 +58,12 @@
       "standard_name": "longitude",
       "accepted_units": "degrees E",
       "file_type": "NMEA"
+    },
+    {
+      "long_name": "Longitude",
+      "units": "degrees_east",
+      "accepted_units": "degrees E",
+      "file_type": "TSG"
     }
   ],
   "Heading": [
@@ -511,58 +538,6 @@
       "units": "hPa",
       "accepted_units": "hPa",
       "file_type": "AVOS"
-    }
-  ],
-  "Latitude": [
-    {
-      "long_name": "Latitude",
-      "units": "degrees_north",
-      "accepted_units": "degrees N",
-      "file_type": "TSG"
-    }
-  ],
-  "latitude": [
-    {
-      "long_name": "Latitude",
-      "units": "degrees_north",
-      "accepted_units": "degrees N",
-      "file_type": "TSG"
-    },
-    {
-      "long_name": "Latitude",
-      "units": "degrees_north",
-      "accepted_units": "degrees N",
-      "file_type": "NMEA"
-    }
-  ],
-  "longitude": [
-    {
-      "long_name": "Longitude",
-      "units": "degrees_east",
-      "accepted_units": "degrees E",
-      "file_type": "TSG"
-    },
-    {
-      "long_name": "Longitude",
-      "units": "degrees_east",
-      "accepted_units": "degrees E",
-      "file_type": "NMEA"
-    }
-  ],
-  "time": [
-    {
-      "long_name": "Time",
-      "units": "",
-      "accepted_units": "ISO8601",
-      "standard_name": "time",
-      "file_type": "TSG"
-    },
-    {
-      "long_name": "Time",
-      "units": "",
-      "accepted_units": "ISO8601",
-      "standard_name": "time",
-      "file_type": "NMEA"
     }
   ]
 }
