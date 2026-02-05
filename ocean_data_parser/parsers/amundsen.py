@@ -209,10 +209,10 @@ def int_format(
         return
 
     logger.debug("Read {}", path)
-    with open(path, encoding=encoding, errors=encoding_error, newline='') as file:
+    with open(path, encoding=encoding, errors=encoding_error) as file:
         # Parse header
         for header_line_idx, line in enumerate(file):
-            line = line.rstrip('\r\n')
+            line = line.rstrip()
             if re.match(r"^%\s*$", line) or not line:
                 continue
             elif (
