@@ -15,17 +15,25 @@
   "time": [
     {
       "long_name": "Time",
-      "units": "",
+      "units": "seconds since 1970-01-01T00:00:00Z",
       "accepted_units": "ISO8601",
       "standard_name": "time",
-      "file_type": "TSG"
+      "calendar": "gregorian",
+      "axis": "T",
+      "comments": "Time is represented in ISO8601 format (e.g., 2024-01-01T12:00:00Z). The time variable is renamed to 'time' for consistency across datasets.",
+      "file_type": "TSG",
+      "rename": "time"
     },
     {
       "long_name": "Time",
-      "units": "",
+      "units": "seconds since 1970-01-01T00:00:00Z",
       "accepted_units": "ISO8601|yyyymmddTHHMMSSZ",
       "standard_name": "time",
-      "file_type": "NMEA"
+      "calendar": "gregorian",
+      "axis": "T",
+      "comments": "Time is represented in ISO8601 format (e.g., 2024-01-01T12:00:00Z) or in the format yyyymmddTHHMMSSZ (e.g., 20240101T120000Z). The time variable is renamed to 'time' for consistency across datasets.",
+      "file_type": "NMEA",
+      "rename": "time"
     }
   ],
   "latitude": [
@@ -33,14 +41,19 @@
       "long_name": "Latitude",
       "units": "degrees_north",
       "standard_name": "latitude",
+      "comments": "The latitude is defined as the angular distance north or south of the equator (0 degrees latitude).",
       "accepted_units": "degrees N",
-      "file_type": "NMEA"
+      "file_type": "NMEA",
+      "rename": "lat"
     },
     {
       "long_name": "Latitude",
       "units": "degrees_north",
       "accepted_units": "degrees N",
-      "file_type": "TSG"
+      "standard_name": "latitude",
+      "comments": "The latitude is defined as the angular distance north or south of the equator (0 degrees latitude).",
+      "file_type": "TSG",
+      "rename": "lat"
     }
   ],
   "Latitude": [
@@ -48,7 +61,10 @@
       "long_name": "Latitude",
       "units": "degrees_north",
       "accepted_units": "degrees N",
-      "file_type": "TSG"
+      "standard_name": "latitude",
+      "comments": "The latitude is defined as the angular distance north or south of the equator (0 degrees latitude).",
+      "file_type": "TSG",
+      "rename": "lat"
     }
   ],
   "longitude": [
@@ -56,14 +72,19 @@
       "long_name": "Longitude",
       "units": "degrees_east",
       "standard_name": "longitude",
+      "comments": "The longitude is defined as the angular distance east or west of the prime meridian (0 degrees longitude).",
       "accepted_units": "degrees E",
-      "file_type": "NMEA"
+      "file_type": "NMEA",
+      "rename": "lon"
     },
     {
       "long_name": "Longitude",
       "units": "degrees_east",
       "accepted_units": "degrees E",
-      "file_type": "TSG"
+      "standard_name": "longitude",
+      "comments": "The longitude is defined as the angular distance east or west of the prime meridian (0 degrees longitude).",
+      "file_type": "TSG",
+      "rename": "lon"
     }
   ],
   "Heading": [
@@ -71,7 +92,10 @@
       "long_name": "Vessel Heading",
       "units": "degree_north",
       "accepted_units": "degrees N",
-      "file_type": "NMEA"
+      "standard_name": "platform_orientation",
+      "comments": "The heading is defined as the direction in which the vessel is pointing, measured in degrees from true north.",
+      "file_type": "NMEA",
+      "rename": "heading"
     }
   ],
   "vessel_heading": [
@@ -79,67 +103,94 @@
       "long_name": "Vessel Heading",
       "units": "degree_north",
       "accepted_units": "degrees N",
+      "standard_name": "platform_orientation",
+      "comments": "The heading is defined as the direction in which the vessel is pointing, measured in degrees from true north.",
       "file_type": "NMEA",
-      "rename_to": "Heading"
+      "rename": "heading"
     }
   ],
   "Depth": [
     {
-      "long_name": "Bottom Depth",
+      "long_name": "Sea Floor Depth Below Sea Surface",
       "units": "m",
       "accepted_units": "m",
-      "file_type": "NMEA"
+      "standard_name": "sea_floor_depth_below_sea_surface",
+      "positive": "down",
+      "axis": "Z",
+      "comments": "The depth is measured from the sea surface to the bottom of the ocean floor.",
+      "file_type": "NMEA",
+      "rename": "depth"
     }
   ],
   "bottom_depth": [
     {
-      "long_name": "Bottom Depth",
+      "long_name": "Sea Floor Depth Below Sea Surface",
       "units": "m",
       "accepted_units": "m",
+      "standard_name": "sea_floor_depth_below_sea_surface",
+      "comments": "The depth is measured from the sea surface to the bottom of the ocean floor.",
+      "positive": "down",
+      "axis": "Z",
       "file_type": "NMEA",
-      "rename_to": "Depth"
+      "rename": "depth"
     }
   ],
   "Roll": [
     {
-      "long_name": "Roll Heading",
+      "long_name": "Vessel Roll Angle",
       "units": "degree",
-      "accepted_units": "degrees N",
-      "file_type": "NMEA"
+      "accepted_units": "degrees",
+      "standard_name": "platform_roll_angle",
+      "comments": "The roll angle is defined as the rotation of the vessel around its longitudinal axis (i.e., the axis that runs from bow to stern). The positive direction is defined as rightward rotation.",
+      "file_type": "NMEA",
+      "rename": "roll"
     }
   ],
   "vessel_roll": [
     {
-      "long_name": "Vessel Roll",
+      "long_name": "Vessel Roll Angle",
       "units": "degree",
-      "accepted_units": "degrees N",
+      "accepted_units": "degrees",
+      "standard_name": "platform_roll_angle",
+      "comments": "The roll angle is defined as the rotation of the vessel around its longitudinal axis (i.e., the axis that runs from bow to stern). The positive direction is defined as rightward rotation.",
       "file_type": "NMEA",
-      "rename_to": "Roll"
+      "rename": "roll"
     }
   ],
   "Pitch": [
     {
-      "long_name": "Pitch Heading",
+      "long_name": "Vessel Pitch Angle",
       "units": "degree",
-      "accepted_units": "degrees N",
-      "file_type": "NMEA"
+      "accepted_units": "degrees",
+      "positive": "nose up",
+      "standard_name": "platform_pitch_angle",
+      "comments": "The pitch angle is defined as the rotation of the vessel around its transverse axis (i.e., the axis that runs from port to starboard). The positive direction is defined as forward rotation.",
+      "file_type": "NMEA",
+      "rename": "pitch"
     }
   ],
   "vessel_pitch": [
     {
-      "long_name": "Vessel Pitch",
+      "long_name": "Vessel Pitch Angle",
       "units": "degree",
-      "accepted_units": "degrees N",
+      "accepted_units": "degrees",
+      "positive": "nose up",
+      "standard_name": "platform_pitch_angle",
+      "comments": "The pitch angle is defined as the rotation of the vessel around its transverse axis (i.e., the axis that runs from port to starboard). The positive direction is defined as forward rotation.",
       "file_type": "NMEA",
-      "rename_to": "Pitch"
+      "rename": "pitch"
     }
   ],
   "Heave": [
     {
-      "long_name": "Heave",
+      "long_name": "Vessel Heave",
       "units": "m",
       "accepted_units": "meter",
-      "file_type": "NMEA"
+      "positive": "up",
+      "standard_name": "platform_heave",
+      "comments": "The heave is defined as the vertical displacement of the vessel in the direction of the local vertical axis.",
+      "file_type": "NMEA",
+      "rename": "heave"
     }
   ],
   "vessel_heave": [
@@ -147,8 +198,11 @@
       "long_name": "Vessel Heave",
       "units": "m",
       "accepted_units": "meter",
+      "positive": "up",
+      "standard_name": "platform_heave",
+      "comments": "The heave is defined as the vertical displacement of the vessel in the direction of the local vertical axis.",
       "file_type": "NMEA",
-      "rename_to": "Heave"
+      "rename": "heave"
     }
   ],
   "Track": [
@@ -156,16 +210,21 @@
       "long_name": "True Vessel Direction",
       "units": "degree_north",
       "accepted_units": "degrees N",
-      "file_type": "NMEA"
+      "standard_name": "platform_course",
+      "comments": "The track is defined as the actual path of the vessel over the ground, measured in degrees from true north.",
+      "file_type": "NMEA",
+      "rename": "track"
     }
   ],
   "vessel_track": [
     {
-      "long_name": "Vessel Track",
+      "long_name": "True Vessel Direction",
       "units": "degree_north",
       "accepted_units": "degrees N",
+      "standard_name": "platform_course",
+      "comments": "The track is defined as the actual path of the vessel over the ground, measured in degrees from true north.",
       "file_type": "NMEA",
-      "rename_to": "Track"
+      "rename": "track"
     }
   ],
   "Lat": [
@@ -173,19 +232,31 @@
       "long_name": "Latitude",
       "units": "degrees_north",
       "accepted_units": "degrees N",
-      "file_type": "NMEA"
+      "standard_name": "latitude",
+      "comments": "The latitude is defined as the angular distance north or south of the equator (0 degrees latitude).",
+      "axis": "Y",
+      "file_type": "NMEA",
+      "rename": "lat"
     },
     {
       "long_name": "Latitude",
       "units": "degrees_north",
       "accepted_units": "degrees N",
-      "file_type": "AVOS"
+      "standard_name": "latitude",
+      "comments": "The latitude is defined as the angular distance north or south of the equator (0 degrees latitude).",
+      "axis": "Y",
+      "file_type": "AVOS",
+      "rename": "lat"
     },
     {
       "long_name": "Latitude",
       "units": "degrees_north",
       "accepted_units": "degrees N",
-      "file_type": "TSG"
+      "standard_name": "latitude",
+      "comments": "The latitude is defined as the angular distance north or south of the equator (0 degrees latitude).",
+      "axis": "Y",
+      "file_type": "TSG",
+      "rename": "lat"
     }
   ],
   "Long": [
@@ -193,185 +264,269 @@
       "long_name": "Longitude",
       "units": "degrees_east",
       "accepted_units": "degrees E",
-      "file_type": "NMEA"
+      "standard_name": "longitude",
+      "comments": "The longitude is defined as the angular distance east or west of the prime meridian (0 degrees longitude).",
+      "axis": "X",
+      "file_type": "NMEA",
+      "rename": "lon"
     },
     {
       "long_name": "Longitude",
       "units": "degrees_east",
       "accepted_units": "degrees E",
-      "file_type": "AVOS"
+      "standard_name": "longitude",
+      "comments": "The longitude is defined as the angular distance east or west of the prime meridian (0 degrees longitude).",
+      "axis": "X",
+      "file_type": "AVOS",
+      "rename": "lon"
     },
     {
       "long_name": "Longitude",
       "units": "degrees_east",
       "accepted_units": "degrees E",
-      "file_type": "TSG"
+      "standard_name": "longitude",
+      "comments": "The longitude is defined as the angular distance east or west of the prime meridian (0 degrees longitude).",
+      "axis": "X",
+      "file_type": "TSG",
+      "rename": "lon"
     }
   ],
   "Speed": [
     {
-      "long_name": "Vessel Speed",
+      "long_name": "Vessel Speed Over Ground",
       "units": "knots",
       "accepted_units": "Knt",
-      "file_type": "NMEA"
+      "standard_name": "platform_speed",
+      "comments": "The speed is defined as the speed of the vessel over the ground, measured in knots.",
+      "file_type": "NMEA",
+      "rename": "vessel_speed"
     },
     {
-      "long_name": "Vessel Speed",
+      "long_name": "Vessel Speed Over Ground",
       "units": "knots",
       "accepted_units": "Knt",
+      "standard_name": "platform_speed",
+      "comments": "The speed is defined as the speed of the vessel over the ground, measured in knots.",
       "file_type": "TSG"
     }
   ],
   "vessel_speed": [
     {
-      "long_name": "Vessel Speed",
+      "long_name": "Vessel Speed Over Ground",
       "units": "knots",
       "accepted_units": "Knt",
+      "standard_name": "platform_speed",
+      "comments": "The speed is defined as the speed of the vessel over the ground, measured in knots.",
       "file_type": "TSG",
-      "rename_to": "Speed"
+      "rename": "vessel_speed"
     },
     {
-      "long_name": "Vessel Speed",
+      "long_name": "Vessel speed over ground",
       "units": "knots",
       "accepted_units": "Knt",
+      "standard_name": "platform_speed",
+      "comments": "The speed is defined as the speed of the vessel over the ground, measured in knots.",
       "file_type": "NMEA",
-      "rename_to": "Speed"
+      "rename": "vessel_speed"
     }
   ],
   "GPS": [
     {
-      "long_name": "GPS source",
+      "long_name": "GPS Source Flag",
       "units": "1",
       "accepted_units": "=1 for POS-MV and =0 for CNAV",
-      "comments": "=1 for POS-MV and =0 for CNAV",
-      "file_type": "NMEA"
+      "flag_values": "0, 1",
+      "flag_meanings": "0: CNAV, 1: POS-MV",
+      "comments": "The GPS source is defined as =1 for POS-MV and =0 for CNAV.",
+      "file_type": "NMEA",
+      "rename": "gps_source"
     }
   ],
   "Tem-TSG": [
     {
-      "long_name": "Temperature (TSG)",
+      "long_name": "Sea Surface Temperature From TSG",
       "units": "degC",
       "accepted_units": "degC|deg C|degrees C|.c",
-      "file_type": "TSG"
+      "standard_name": "sea_surface_temperature",
+      "comments": "The sea surface temperature is measured by the TSG sensor, which is typically located near the water intake of the vessel. It represents the temperature of the water at the sea surface.",
+      "file_type": "TSG",
+      "rename": "sst_tsg"
     }
   ],
   "Tem-Water": [
     {
-      "long_name": "Temperature (Water)",
+      "long_name": "Sea Surface Temperature From TSG",
       "units": "degC",
       "accepted_units": "degC|deg C|degrees C|.*c$",
-      "file_type": "TSG"
+      "standard_name": "sea_surface_temperature",
+      "comments": "The sea surface temperature is measured by the TSG sensor, which is typically located near the water intake of the vessel. It represents the temperature of the water at the sea surface.",
+      "file_type": "TSG",
+      "rename": "sst_tsg"
     }
   ],
   "water_temperature": [
     {
-      "long_name": "Temperature (Water)",
+      "long_name": "Sea Surface Temperature From TSG",
       "units": "degC",
       "accepted_units": "degC|deg C|degrees C|.*c$",
-      "file_type": "TSG"
+      "standard_name": "sea_surface_temperature",
+      "comments": "The sea surface temperature is measured by the TSG sensor, which is typically located near the water intake of the vessel. It represents the temperature of the water at the sea surface.",
+      "file_type": "TSG",
+      "rename": "sst_tsg"
     }
   ],
   "Sal-TSG": [
     {
-      "long_name": "Salinity (TSG)",
+      "long_name": "Sea Surface Practical Salinity from TSG",
       "units": "1",
       "accepted_units": "PSU|psu|1e-3",
-      "file_type": "TSG"
+      "standard_name": "sea_water_practical_salinity",
+      "comments": "The sea surface salinity is measured by the TSG sensor, which is typically located near the water intake of the vessel. It represents the salinity of the water at the sea surface.",
+      "file_type": "TSG",
+      "rename": "sss_tsg"
     }
   ],
   "water_salinity": [
     {
-      "long_name": "Salinity (TSG)",
+      "long_name": "Sea Surface Practical Salinity from TSG",
       "units": "1",
       "accepted_units": "PSU|psu|1e-3",
-      "file_type": "TSG"
+      "standard_name": "sea_water_practical_salinity",
+      "comments": "The sea surface salinity is measured by the TSG sensor, which is typically located near the water intake of the vessel. It represents the salinity of the water at the sea surface.",
+      "file_type": "TSG",
+      "rename": "sss_tsg"
     }
   ],
   "Vel": [
     {
-      "long_name": "Sound Velocity",
+      "long_name": "Speed of Sound in Sea Water from TSG",
       "units": "m/s",
       "accepted_units": "m/s",
-      "file_type": "TSG"
+      "standard_name": "speed_of_sound_in_sea_water",
+      "comments": "Calculated from TSG temperature and salinity using UNESCO 1983 (EOS 80) polynomial.",
+      "instrument": "Thermosalinograph (TSG)",
+      "file_type": "TSG",
+      "rename": "sound_velocity"
     }
   ],
   "water_sound_velocity": [
     {
-      "long_name": "Sound Velocity",
+      "long_name": "Speed of Sound in Sea Water from TSG",
       "units": "m/s",
       "accepted_units": "m/s",
-      "file_type": "TSG"
+      "standard_name": "speed_of_sound_in_sea_water",
+      "comments": "Calculated from TSG temperature and salinity using UNESCO 1983 (EOS 80) polynomial.",
+      "instrument": "Thermosalinograph (TSG)",
+      "file_type": "TSG",
+      "rename": "svel"
     }
   ],
   "Fluo": [
     {
-      "long_name": "Fluorescence",
-      "units": "ug/l",
+      "long_name": "Mass Concentration of Chlorophyll-a in Sea Water from TSG Fluorescence",
+      "units": "ug/L",
       "accepted_units": "ug/L",
-      "file_type": "TSG"
+      "standard_name": "mass_concentration_of_chlorophyll_a_in_sea_water",
+      "comments": "Chlorophyll-a concentration derived from TSG fluorometer.",
+      "file_type": "TSG",
+      "rename": "fluo"
     }
   ],
   "water_fluorescence": [
     {
-      "long_name": "Fluorescence",
-      "units": "ug/l",
+      "long_name": "Mass Concentration of Chlorophyll-a in Sea Water from TSG Fluorescence",
+      "units": "ug/L",
       "accepted_units": "ug/L",
-      "file_type": "TSG"
+      "standard_name": "mass_concentration_of_chlorophyll_a_in_sea_water",
+      "comments": "Chlorophyll-a concentration derived from TSG fluorometer.",
+      "file_type": "TSG",
+      "rename": "fluo"
     }
   ],
   "Flow": [
     {
-      "long_name": "Flow Rate",
+      "long_name": "TSG Intake Flow Rate",
       "units": "L/min",
-      "accepted_units": "L\/min",
-      "file_type": "TSG"
+      "accepted_units": "L/min",
+      "standard_name": "sea_water_volume_transport_rate",
+      "comments": "Seawater flow rate through TSG system for monitoring intake.",
+      "file_type": "TSG",
+      "rename": "flow"
     }
   ],
   "flow_rate": [
     {
-      "long_name": "Flow Rate",
+      "long_name": "TSG Intake Flow Rate",
       "units": "L/min",
-      "accepted_units": "L\/min",
-      "file_type": "TSG"
+      "accepted_units": "L/min",
+      "standard_name": "sea_water_volume_transport_rate",
+      "comments": "Seawater flow rate through TSG system for monitoring intake.",
+      "file_type": "TSG",
+      "rename": "flow"
     }
   ],
   "Net": [
     {
       "long_name": "Net Number",
-      "file_type": "Bioness"
+      "units": "1",
+      "accepted_units": "None",
+      "standard_name": "status_flag",
+      "flag_values": "1, 2, 3, 4, 5, 6, 7, 8, 9, 10",
+      "flag_meanings": "Net 1, Net 2, Net 3, Net 4, Net 5, Net 6, Net 7, Net 8, Net 9, Net 10",
+      "comments": "Identifier for the sampling net used at this depth.",
+      "file_type": "Bioness",
+      "rename": "net"
     },
     {
       "long_name": "Net Number",
+      "units": "1",
+      "accepted_units": "None",
+      "standard_name": "status_flag",
+      "flag_values": "1, 2, 3, 4, 5, 6, 7, 8, 9, 10",
+      "flag_meanings": "Net 1, Net 2, Net 3, Net 4, Net 5, Net 6, Net 7, Net 8, Net 9, Net 10",
+      "comments": "Identifier for the sampling net used at this depth.",
       "file_type": "Hydrobios",
-      "accepted_units": "None"
+      "rename": "net"
     }
   ],
   "Pres_open": [
     {
-      "long_name": "Net open pressure",
+      "long_name": "Net Open Pressure",
       "units": "decibars",
-      "accepted_units": "db",
-      "file_type": "Bioness"
+      "accepted_units": "db|decibars|dbar",
+      "standard_name": "sea_water_pressure",
+      "comments": "Pressure at net opening, from CTD sensor",
+      "file_type": "Bioness",
+      "rename": "pres_open"
     },
     {
-      "long_name": "Net open pressure",
+      "long_name": "Net Open Pressure",
       "units": "decibars",
-      "accepted_units": "db",
-      "file_type": "Hydrobios"
+      "accepted_units": "db|decibars|dbar",
+      "standard_name": "sea_water_pressure",
+      "comments": "Pressure at net opening, from CTD sensor",
+      "file_type": "Hydrobios",
+      "rename": "pres_open"
     }
   ],
   "Pres_close": [
     {
-      "long_name": "Net close pressure",
+      "long_name": "Net Close Pressure",
       "units": "decibars",
-      "accepted_units": "db",
-      "file_type": "Bioness"
+      "accepted_units": "db|decibars|dbar",
+      "standard_name": "sea_water_pressure",
+      "comments": "Pressure at net closing, from CTD sensor",
+      "file_type": "Bioness",
+      "rename": "pres_close"
     },
     {
-      "long_name": "Net close pressure",
+      "long_name": "Net Close Pressure",
       "units": "decibars",
-      "accepted_units": "db",
-      "file_type": "Hydrobios"
+      "accepted_units": "db|decibars|dbar",
+      "standard_name": "sea_water_pressure",
+      "comments": "Pressure at net closing, from CTD sensor",
+      "file_type": "Hydrobios",
+      "rename": "pres_close"
     }
   ],
   "Duration": [
@@ -379,165 +534,290 @@
       "long_name": "Duration",
       "units": "seconds",
       "accepted_units": "s",
-      "file_type": "Bioness"
+      "standard_name": "time_duration",
+      "comments": "Duration of net opening or sampling event.",
+      "file_type": "Bioness",
+      "rename": "duration"
     },
     {
       "long_name": "Duration",
       "units": "seconds",
       "accepted_units": "s",
+      "standard_name": "time_duration",
+      "comments": "Duration of net opening or sampling event.",
       "file_type": "Hydrobios"
     }
   ],
   "Volume": [
     {
-      "long_name": "Volume",
+      "long_name": "Volume of Water Filtered",
       "units": "m^3",
       "accepted_units": "m^3",
-      "file_type": "Bioness"
+      "standard_name": "sea_water_volume",
+      "comments": "Volume filtered by net at each depth.",
+      "file_type": "Bioness",
+      "rename": "vol_filt"
     },
     {
-      "long_name": "Volume",
+      "long_name": "Volume of Water Filtered",
       "units": "m^3",
       "accepted_units": "m^3",
-      "file_type": "Hydrobios"
+      "standard_name": "sea_water_volume",
+      "comments": "Volume filtered by net at each depth.",
+      "file_type": "Hydrobios",
+      "rename": "vol_filt"
     }
   ],
   "Tem_mean": [
     {
-      "long_name": "Mean Temperature",
+      "long_name": "Mean Sea Water Temperaturea Sampled by Net",
       "units": "degC",
       "accepted_units": "degC|deg C|degrees C",
-      "file_type": "Bioness"
+      "standard_name": "sea_water_temperature",
+      "comments": "Mean temperature during sampling at each depth.",
+      "instrument": "Bioness CTD sensor",
+      "file_type": "Bioness",
+      "rename": "Temp_mean"
     },
     {
-      "long_name": "Mean Temperature",
+      "long_name": "Mean Sea Water Temperaturea Sampled by Net",
       "units": "degC",
-      "accepted_units": "degrees C",
-      "file_type": "Hydrobios"
+      "accepted_units": "degC|deg C|degrees C",
+      "standard_name": "sea_water_temperature",
+      "comments": "Mean temperature during sampling at each depth.",
+      "instrument": "Hydrobios CTD sensor",
+      "file_type": "Hydrobios",
+      "rename": "Temp_mean"
     }
   ],
   "Tem_std": [
     {
-      "long_name": "Standard Deviation of Temperature",
+      "long_name": "Standard Deviation of Sea Water Temperature Sampled by Net",
       "units": "degC",
       "accepted_units": "degC|deg C|degrees C",
-      "file_type": "Bioness"
+      "standard_name": "sea_water_temperature_standard_deviation",
+      "comments": "Standard deviation of temperature during sampling at each depth.",
+      "instrument": "Bioness CTD sensor",
+      "file_type": "Bioness",
+      "rename": "temp_std"
     },
     {
-      "long_name": "Standard Deviation of Temperature",
+      "long_name": "Standard Deviation of Sea Water Temperature Sampled by Net",
       "units": "degC",
-      "accepted_units": "degrees C",
-      "file_type": "Hydrobios"
+      "accepted_units": "degC|deg C|degrees C",
+      "standard_name": "sea_water_temperature_standard_deviation",
+      "comments": "Standard deviation of temperature during sampling at each depth.",
+      "instrument": "Hydrobios CTD sensor",
+      "file_type": "Hydrobios",
+      "rename": "temp_std"
     }
   ],
   "Sal_mean": [
     {
-      "long_name": "Mean Salinity",
+      "long_name": "Mean Value of Sea Water Practical Salinity Sampled by Net",
       "units": "1",
       "accepted_units": "PSU|psu|1e-3",
-      "file_type": "Bioness"
+      "standard_name": "sea_water_practical_salinity",
+      "comments": "Mean practical salinity during sampling at each depth.",
+      "instrument": "Bioness CTD sensor",
+      "file_type": "Bioness",
+      "rename": "sal_mean"
     },
     {
-      "long_name": "Mean Salinity",
+      "long_name": "Mean Value of Sea Water Practical Salinity Sampled by Net",
       "units": "1",
-      "accepted_units": "psu",
-      "file_type": "Hydrobios"
+      "accepted_units": "PSU|psu|1e-3",
+      "standard_name": "sea_water_practical_salinity",
+      "comments": "Mean practical salinity during sampling at each depth.",
+      "instrument": "Hydrobios CTD sensor",
+      "file_type": "Hydrobios",
+      "rename": "sal_mean"
     }
   ],
   "Sal_std": [
     {
-      "long_name": "Standard Deviation of Salinity",
+      "long_name": "Standard Deviation of Sea Water Practical Salinity Sampled by Net",
       "units": "1",
       "accepted_units": "PSU|psu|1e-3",
-      "file_type": "Bioness"
+      "standard_name": "sea_water_practical_salinity_standard_deviation",
+      "comments": "Standard deviation of practical salinity during sampling at each depth.",
+      "instrument": "Bioness CTD sensor",
+      "file_type": "Bioness",
+      "rename": "sal_std"
     },
     {
-      "long_name": "Standard Deviation of Salinity",
+      "long_name": "Standard Deviation of Sea Water Practical Salinity Sampled by Net",
       "units": "1",
-      "accepted_units": "psu",
-      "file_type": "Hydrobios"
+      "accepted_units": "PSU|psu|1e-3",
+      "standard_name": "sea_water_practical_salinity_standard_deviation",
+      "comments": "Standard deviation of practical salinity during sampling at each depth.",
+      "instrument": "Hydrobios CTD sensor",
+      "file_type": "Hydrobios",
+      "rename": "sal_std"
     }
   ],
   "Pres": [
     {
-      "long_name": "Pressure",
+      "long_name": "Sea Water Pressure",
       "units": "decibars",
       "accepted_units": "decibars|db",
-      "file_type": "Bioness"
+      "standard_name": "sea_water_pressure",
+      "comments": "Pressure measured by the Bioness CTD sensor",
+      "file_type": "Bioness",
+      "rename": "pres"
     },
     {
-      "long_name": "Pressure",
+      "long_name": "Sea Water Pressure",
       "units": "decibars",
       "accepted_units": "decibars",
-      "file_type": "Hydrobios"
+      "standard_name": "sea_water_pressure",
+      "comments": "Pressure measured by the Hydrobios CTD sensor",
+      "file_type": "Hydrobios",
+      "rename": "pres"
     }
   ],
   "Temp": [
     {
-      "long_name": "Temperature",
+      "long_name": "Sea Water Temperature",
       "units": "degC",
       "accepted_units": "degC|deg C|degrees C",
-      "file_type": "Bioness"
+      "standard_name": "sea_water_temperature",
+      "comments": "Temperature from CTD sensor",
+      "instrument": "Bioness CTD sensor",
+      "file_type": "Bioness",
+      "rename": "temp"
     },
     {
-      "long_name": "Temperature",
+      "long_name": "Sea Water Temperature",
       "units": "degC",
-      "accepted_units": "degrees C",
-      "file_type": "Hydrobios"
+      "accepted_units": "degC|deg C|degrees C",
+      "standard_name": "sea_water_temperature",
+      "comments": "Temperature from CTD sensor.",
+      "instrument": "Hydrobios CTD sensor",
+      "file_type": "Hydrobios",
+      "rename": "temp"
     }
   ],
   "Sal": [
     {
-      "long_name": "Salinity",
+      "long_name": "Sea Water Practical Salinity",
       "units": "1",
       "accepted_units": "PSU|psu|1e-3",
-      "file_type": "Bioness"
+      "standard_name": "sea_water_practical_salinity",
+      "comments": "Practical salinity from CTD sensor.",
+      "instrument": "Bioness CTD sensor",
+      "file_type": "Bioness",
+      "rename": "sal"
     },
     {
-      "long_name": "Salinity",
+      "long_name": "Sea Water Practical Salinity",
       "units": "1",
-      "accepted_units": "psu",
-      "file_type": "Hydrobios"
+      "accepted_units": "PSU|psu|1e-3",
+      "standard_name": "sea_water_practical_salinity",
+      "comments": "Practical salinity from CTD sensor.",
+      "instrument": "Hydrobios CTD sensor",
+      "file_type": "Hydrobios",
+      "rename": "sal"
     }
   ],
   "Wind_speed": [
     {
       "long_name": "Wind Speed",
       "units": "m/s",
-      "accepted_units": "None",
-      "file_type": "AVOS"
+      "accepted_units": "m/s",
+      "standard_name": "wind_speed",
+      "comments": "Wind speed measured at vessel meteorological station height.",
+      "file_type": "AVOS",
+      "rename": "wspd"
+    },
+    {
+      "long_name": "Wind Speed",
+      "units": "m/s",
+      "accepted_units": "m/s",
+      "standard_name": "wind_speed",
+      "comments": "Wind speed measured at vessel meteorological station height.",
+      "file_type": "ATS",
+      "rename": "wspd"
     }
   ],
   "Wind_dir": [
     {
-      "long_name": "Wind Direction",
+      "long_name": "Wind From Direction",
       "units": "degrees",
-      "accepted_units": "None",
-      "file_type": "AVOS"
+      "accepted_units": "degrees",
+      "standard_name": "wind_from_direction",
+      "comments": "Direction from which wind is blowing, clockwise from true north (0 to 360 degrees). Measured at vessel meteorological station height.",
+      "file_type": "AVOS",
+      "rename": "wdir"
+    },
+    {
+      "long_name": "Wind From Direction",
+      "units": "degrees",
+      "accepted_units": "degrees",
+      "standard_name": "wind_from_direction",
+      "comments": "Direction from which wind is blowing, clockwise from true north (0 to 360 degrees). Measured at vessel meteorological station height.",
+      "file_type": "ATS",
+      "rename": "wdir"
     }
   ],
   "Air_temp": [
     {
       "long_name": "Air Temperature",
       "units": "degC",
-      "accepted_units": "degC|deg C|degrees C|None",
-      "file_type": "AVOS"
+      "accepted_units": "degC|deg C|degrees C",
+      "standard_name": "air_temperature",
+      "comments": "Air temperature measured at vessel meteorological station height.",
+      "file_type": "AVOS",
+      "rename": "air_temperature"
+    },
+    {
+      "long_name": "Air Temperature",
+      "units": "degC",
+      "accepted_units": "degC|deg C|degrees C",
+      "standard_name": "air_temperature",
+      "comments": "Air temperature measured at vessel meteorological station height.",
+      "file_type": "ATS",
+      "rename": "air_temperature"
     }
   ],
   "Dew_point": [
     {
-      "long_name": "Dew Point",
+      "long_name": "Dew Point Temperature",
       "units": "degC",
-      "accepted_units": "degC|deg C|degrees C|None",
-      "file_type": "AVOS"
+      "accepted_units": "degC|deg C|degrees C",
+      "standard_name": "dew_point_temperature",
+      "comments": "Dew point temperature measured at vessel meteorological station height.",
+      "file_type": "AVOS",
+      "rename": "dew_point_temperature"
+    },
+      {
+      "long_name": "Dew point temperature",
+      "units": "degC",
+      "accepted_units": "degC|deg C|degrees C",
+      "standard_name": "dew_point_temperature",
+      "comments": "Dew point temperature measured at vessel meteorological station height.",
+      "file_type": "ATS",
+      "rename": "dew_point_temperature"
     }
   ],
   "Pressure": [
     {
-      "long_name": "Atmospheric Pressure",
+      "long_name": "Air pressure",
       "units": "hPa",
       "accepted_units": "hPa",
-      "file_type": "AVOS"
+      "standard_name": "air_pressure",
+      "comments": "Atmospheric pressure measured at vessel meteorological station height.",
+      "file_type": "AVOS",
+      "rename": "air_pressure"
+    },
+    {
+      "long_name": "Air pressure",
+      "units": "hPa",
+      "accepted_units": "hPa",
+      "standard_name": "air_pressure",
+      "comments": "Atmospheric pressure measured at vessel meteorological station height.",
+      "file_type": "ATS",
+      "rename": "air_pressure"
     }
   ]
 }
