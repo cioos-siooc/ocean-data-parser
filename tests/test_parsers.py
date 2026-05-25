@@ -234,6 +234,14 @@ class TestAmundsenParser:
             ignore_log_records="Duplicated variable|'NAV' file type renamed to 'NMEA'",
         )
 
+    @pytest.mark.parametrize(
+        "path",
+        glob("tests/parsers_test_files/amundsen/**/*.lad", recursive=True),
+    )
+    def test_amundsen_lad_parser(self, path, caplog):
+        ds = amundsen.lad_format(path)
+        review_parsed_dataset(ds, path, caplog, max_log_levelno=20)
+
 
 class TestIOSShellParser:
     @pytest.mark.parametrize(
