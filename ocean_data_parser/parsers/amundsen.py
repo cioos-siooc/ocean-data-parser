@@ -104,6 +104,14 @@ def _standardize_attribute_value(value: str, name: str = None):
         return float(value)
     elif re.match(r"^-{0,1}\d+$", value):
         return int(value)
+    elif match := re.fullmatch(
+        r"\s*(\d+(?:\.\d+)?)\s*°\s*([NSEW])\s+(\d+(?:\.\d+)?)\s*'?\s*", value
+    ):
+        degrees, hemisphere, minutes = match.groups()
+        decimal = float(degrees) + float(minutes) / 60.0
+        if hemisphere in ("S", "W"):
+            decimal = -decimal
+        return decimal
     else:
         return value
 
@@ -136,6 +144,8 @@ def _convert_timestamp(df: pd.DataFrame) -> pd.DataFrame:
 
 def _get_file_type(path: str) -> str:
     """Get the file type from the file path."""
+    if Path(path).suffix.lower() == ".lad":
+        return "LADCP"
     file_type = re.search("AVOS|TSG|Bioness|NAV|Hydrobios|NMEA", Path(path).name)
     if not file_type:
         return
@@ -172,6 +182,35 @@ def csv_format(
         map_to_vocabulary=map_to_vocabulary,
         generate_depth=generate_depth,
         separator=separator,
+        encoding_error=encoding_error,
+    )
+
+
+def lad_format(
+    path: str,
+    encoding: str = "UTF-8",
+    map_to_vocabulary: bool = True,
+    generate_depth: bool = True,
+    encoding_error="strict",
+) -> xr.Dataset:
+    """Parse Amundsen LADCP `.lad` format.
+
+    Args:
+        path (str): file path to parse.
+        encoding (str, optional): File encoding. Defaults to "UTF-8".
+        map_to_vocabulary (bool, optional): Rename variables to vocabulary. Defaults to True.
+        generate_depth (bool, optional): Generate depth variable. Defaults to True.
+        encoding_error (str, optional): Encoding error handling. Defaults to "strict".
+
+    Returns:
+        xr.Dataset
+    """
+    return int_format(
+        path=path,
+        encoding=encoding,
+        map_to_vocabulary=map_to_vocabulary,
+        generate_depth=generate_depth,
+        separator=r"\s+",
         encoding_error=encoding_error,
     )
 
@@ -254,15 +293,42 @@ def int_format(
                 new_names.append(f"{name}_{new_names.count(name)}")
         names = new_names
 
-    df = pd.read_csv(
-        path,
-        encoding=encoding,
-        header=header_line_idx,
-        skiprows=[header_line_idx] if separator == r"\s+" else [],
-        sep=separator,
-        names=names,
-        encoding_errors=encoding_error,
-    )
+    is_lad = Path(path).suffix.lower() == ".lad"
+    if is_lad:
+        # LAD files include a dashed separator line between the column header
+        # and the data rows (e.g. "-------  ------  ------  ------").
+        # Skip everything through that separator and parse data with no header.
+        with open(path, encoding=encoding, errors=encoding_error) as file:
+            file_lines = file.readlines()
+        data_start = header_line_idx + 1
+        if data_start < len(file_lines) and re.fullmatch(
+            r"[-\s]+", file_lines[data_start].rstrip("\n")
+        ):
+            data_start += 1
+        df = pd.read_csv(
+            path,
+            encoding=encoding,
+            header=None,
+            skiprows=data_start,
+            sep=separator,
+            names=names,
+            encoding_errors=encoding_error,
+        )
+    else:
+        df = pd.read_csv(
+            path,
+            encoding=encoding,
+            header=header_line_idx,
+            skiprows=[header_line_idx] if separator == r"\s+" else [],
+            sep=separator,
+            names=names,
+            encoding_errors=encoding_error,
+        )
+
+    # LAD files use "DEPTH" in the data table header but "DEPH" in the
+    # variable description block, so align the column name with the metadata.
+    if is_lad and "DEPTH" in df.columns and "DEPH" not in df.columns:
+        df = df.rename(columns={"DEPTH": "DEPH"})
     if len(df.columns) != len(names):
         raise ValueError(
             f"Number of columns ({len(df.columns)}) doesn't match the number of variables ({len(names)})"
@@ -384,7 +450,7 @@ def int_format(
     return ds
 
 
-COORDINATES_VARIABLES = ["time", "latitude", "longitude", "PRES"]
+COORDINATES_VARIABLES = ["time", "latitude", "longitude", "PRES", "depth"]
 
 
 def _assign_dimensions(ds: xr.Dataset, instrument: str) -> xr.Dataset:
@@ -416,6 +482,14 @@ def _assign_dimensions(ds: xr.Dataset, instrument: str) -> xr.Dataset:
             }
         )
         ds = ds.swap_dims({"index": "PRES"})
+        ds = ds.drop_vars("index")
+    elif "depth" in ds:
+        ds.attrs.update(
+            {
+                "cdm_data_type": "Profile",
+            }
+        )
+        ds = ds.swap_dims({"index": "depth"})
         ds = ds.drop_vars("index")
     elif instrument in ("Bioness", "Hydrobios"):
         ds.attrs.update(
