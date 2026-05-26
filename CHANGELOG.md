@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `pre-commit` configuration running `ruff` format and lint (mirrors `make lint`) on every commit, with a `make install-hooks` target to install it.
 - Add `ocean_data_parser_version` global attribute to all parsed datasets by routing the NMEA, Star-Oddi DAT, and Sunburst superCO2 notes parsers through `standardize_dataset`.
 
+### Security
+
+- Replace `eval()` of vocabulary `apply_func`/`apply_function` expressions in the DFO IOS, NAFC, and ODF parsers with per-parser allowlists that map each known expression to a real Python callable. Unknown expressions now raise `ValueError` instead of being executed.
+
 ### Fixed
 
 - Fix Amundsen Vocabulary for nav variables
