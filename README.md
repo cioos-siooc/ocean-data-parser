@@ -95,4 +95,20 @@ All contributions are welcome!
 
 Please create a new [discussion](https://github.com/cioos-siooc/ocean-data-parser/discussions) or [issue](https://github.com/cioos-siooc/ocean-data-parser/issues) within the GitHub repository for any questions, ideas and suggestions.
 
+### Pre-commit hooks
+
+The repository ships with a [pre-commit](https://pre-commit.com/) configuration that runs the same `ruff` format and lint checks as `make lint` before every commit. After cloning, install the git hook once:
+
+```console
+make install-hooks
+```
+
+To run the hooks manually across all files:
+
+```console
+uv run pre-commit run --all-files
+```
+
+See the [Development docs](https://cioos-siooc.github.io/ocean-data-parser/development/) for more details.
+
 [^1]: [Xarray package documentation](https://docs.xarray.dev/en/stable/index.html)
