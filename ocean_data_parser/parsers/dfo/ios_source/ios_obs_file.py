@@ -47,6 +47,28 @@ vocabulary_attributes = [
     "apply_func",
 ]
 
+
+def _resolve_apply_func(expr: str, ds: "xr.Dataset"):
+    """Map a vocabulary apply_func string to a real callable.
+
+    Why: avoid eval() on values loaded from CSV vocabularies.
+    """
+    if expr == "lambda x: x/10":
+        return lambda x: x / 10
+    if expr == "lambda x: x*22.319/31.998":
+        return lambda x: x * 22.319 / 31.998
+    if expr == "lambda x: x*0.022391":
+        return lambda x: x * 0.022391
+    if expr == "lambda x: -1*gsw.z_from_p(x,ds.attrs['latitude'])":
+        latitude = ds.attrs["latitude"]
+        return lambda x: -1 * gsw.z_from_p(x, latitude)
+    if expr == "lambda x: gsw.SP_from_SK(x)":
+        return gsw.SP_from_SK
+    if expr == "lambda x: gsw.t90_from_t68(x)":
+        return gsw.t90_from_t68
+    raise ValueError(f"Unknown apply_func in dfo_ios vocabulary: {expr!r}")
+
+
 ios_dtypes_to_python = {
     "R": "float32",
     "F": "float32",
@@ -1152,7 +1174,7 @@ class IosFile:
                         new_var = update_variable_index(new_var, new_index)
 
                 if "apply_func" in new_var_attrs:
-                    ufunc = eval(new_var_attrs["apply_func"], {"ds": ds, "gsw": gsw})
+                    ufunc = _resolve_apply_func(new_var_attrs["apply_func"], ds)
                     new_data = xr.apply_ufunc(ufunc, var)
                     self.add_to_history(
                         f"Generate new variable from {row[col_name]} ->"

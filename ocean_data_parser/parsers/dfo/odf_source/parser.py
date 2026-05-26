@@ -28,6 +28,23 @@ odf_dtypes = {
     "QQQQ": "int32",
 }
 
+
+def _apply_vocabulary_function(expr: str, locals_variables: dict):
+    """Map a vocabulary apply_function string to its computed result.
+
+    Why: avoid eval() on values loaded from CSV vocabularies.
+    """
+    if expr == "x":
+        return locals_variables["x"]
+    if expr == "-1*gsw.z_from_p(x,latitude)":
+        return -1 * gsw.z_from_p(locals_variables["x"], locals_variables["latitude"])
+    if expr == "42.814*x/10":
+        return 42.814 * locals_variables["x"] / 10
+    if expr == "gsw.t90_from_t68(x)":
+        return gsw.t90_from_t68(locals_variables["x"])
+    raise ValueError(f"Unknown apply_function in dfo_odf vocabulary: {expr!r}")
+
+
 odf_vocabulary = dfo_odf_vocabulary()
 vocabulary_attribute_list = [
     "long_name",
@@ -507,8 +524,8 @@ def add_vocabulary_attributes(
         )
         new_variables.update(
             {
-                item["variable_name"]: eval(
-                    item["apply_function"], {}, locals_variables
+                item["variable_name"]: _apply_vocabulary_function(
+                    item["apply_function"], locals_variables
                 )
                 for _, item in matching_terms.iterrows()
             }

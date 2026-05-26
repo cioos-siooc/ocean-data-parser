@@ -23,6 +23,17 @@ from ocean_data_parser.vocabularies.load import (
     dfo_platforms,
 )
 
+
+def _apply_vocabulary_func(expr: str, locals_variables: dict):
+    """Map a vocabulary apply_func string to its computed result.
+
+    Why: avoid eval() on values loaded from CSV vocabularies.
+    """
+    if expr == "-gsw.z_from_p(pres,latitude)":
+        return -gsw.z_from_p(locals_variables["pres"], locals_variables["latitude"])
+    raise ValueError(f"Unknown apply_func in dfo_nafc vocabulary: {expr!r}")
+
+
 MODULE_PATH = Path(__file__).parent
 p_file_vocabulary = dfo_nafc_p_file_vocabulary()
 p_file_shipcode = dfo_platforms().drop(columns=["accepted_platform_name"])
@@ -547,23 +558,14 @@ def pfile(
                 )
                 continue
             apply_func = attrs.pop("apply_func", None)
-            new_data = (
-                eval(
-                    apply_func,
-                    {},
-                    {
-                        "gsw": gsw,
-                        **{
-                            ds[variable].attrs.get("legacy_p_code", variable): ds[
-                                variable
-                            ]
-                            for variable in ds.variables
-                        },
-                    },
-                )
-                if apply_func not in (None, np.nan)
-                else var
-            )
+            if apply_func not in (None, np.nan):
+                locals_variables = {
+                    ds[variable].attrs.get("legacy_p_code", variable): ds[variable]
+                    for variable in ds.variables
+                }
+                new_data = _apply_vocabulary_func(apply_func, locals_variables)
+            else:
+                new_data = var
             ds.attrs["history"] += (
                 f"\n{pd.Timestamp.now()} - Generated variable {name} = {apply_func}"
             )
