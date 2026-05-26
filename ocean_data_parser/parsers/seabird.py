@@ -1,4 +1,5 @@
-"""
+"""Seabird Scientific data parsers.
+
 This page provides functions for parsing data files in Seabird Scientific format.
 The Seabird Scientific format is commonly used for oceanographic data collection
 and is supported by [Seabird Scientific](https://www.seabird.com).
@@ -103,15 +104,17 @@ def cnv(
     generate_instrument_variables: bool = False,
     save_orginal_header: bool = False,
 ) -> xarray.Dataset:
-    """Parse Seabird CNV format
+    """Parse Seabird CNV format.
 
     Args:
         file_path (str): file path
         encoding (str, optional): encoding to use. Defaults to "UTF-8".
+        encoding_errors (str, optional): Error handling. Defaults to "strict".
         xml_parsing_error_level (str, optional): Error level for XML parsing.
             Defaults to "ERROR".
         generate_instrument_variables (bool, optional): Generate instrument
             variables following the IOOS 1.2 standard. Defaults to False.
+        save_orginal_header (bool, optional): Save original header. Defaults to False.
 
     Returns:
         xarray.Dataset: Dataset
@@ -150,17 +153,17 @@ def btl(
     xml_parsing_error_level="ERROR",
     save_orginal_header: bool = False,
 ) -> xarray.Dataset:
-    """Parse Seabird BTL format
+    """Parse Seabird BTL format.
 
     Args:
         file_path (str): file path
         encoding (str, optional): Encoding to use. Defaults to "UTF-8".
         xml_parsing_error_level (str, optional): Error level for XML parsing. Defaults to "ERROR".
+        save_orginal_header (bool, optional): Save original header. Defaults to False.
 
     Returns:
         xarray.Dataset: Dataset
     """
-
     with open(file_path, encoding=encoding) as f:
         header = _parse_seabird_file_header(
             f, xml_parsing_error_level=xml_parsing_error_level
@@ -232,7 +235,7 @@ def btl(
 
 
 def _convert_sbe_dataframe_to_dataset(df, header):
-    """Convert Parsed DataFrame to a dataset"""
+    """Convert Parsed DataFrame to a dataset."""
     # Convert column names to netcdf compatible format
     df.columns = [_convert_to_netcdf_var_name(var) for var in df.columns]
     header["variables"] = {
@@ -251,7 +254,7 @@ def _convert_sbe_dataframe_to_dataset(df, header):
 
 
 def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
-    """Parsed seabird file headers"""
+    """Parsed seabird file headers."""
 
     def standardize_attribute(attribute):
         attribute = re.sub(r"\s+|\(|\||\)|\/", "_", attribute.strip()).lower()
@@ -260,7 +263,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
         return attribute
 
     def read_comments(line):
-        """Read comments(**) in seabird header"""
+        """Read comments(**) in seabird header."""
         if re.match(r"\*\* .*(\:|\=).*", line):
             result = re.match(r"\*\* (?P<key>[^:=]*)(\:|\=)(?P<value>.*)", line)
             key, _, value = result.groups()
@@ -363,7 +366,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             logger.warning("Unknown line format: %s", line.strip())
 
     def read_hash_line(line):
-        """Read hash(#) line in seabird header"""
+        """Read hash(#) line in seabird header."""
         if line.startswith("# name"):
             attrs = re.search(
                 r"\# name (?P<id>\d+) = (?P<sbe_variable>[^\s]+)\: (?P<long_name>.*)"
@@ -424,7 +427,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             logger.warning("Unknown line format: %s", line.strip())
 
     def parse_xml(xml_section, error_level="ERROR"):
-        """Parse XML section"""
+        """Parse XML section."""
         try:
             return xmltodict.parse(f"<temp>{xml_section}</temp>")["temp"]
         except ExpatError:
@@ -435,7 +438,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
             return {}
 
     def _parse_seabird_bottle_header(line):
-        """Parse Seabird Bottle Header"""
+        """Parse Seabird Bottle Header."""
         var_columns = line[22:-1]
         var_width = 11
         header["bottle_columns"] = ["Bottle", "Date"] + [
@@ -540,7 +543,7 @@ def _parse_seabird_file_header(f, xml_parsing_error_level="ERROR"):
 
 
 def _generate_seabird_cf_history(attrs, drop_processing_attrs=False):
-    """Generate CF standard history from Seabird Processing Modules"""
+    """Generate CF standard history from Seabird Processing Modules."""
     history = attrs.get("history")
     for step in attrs["processing"]:
         timestamp = (
@@ -599,6 +602,7 @@ seabird_to_bodc = {
     "pH": ["PHMASS01", "PHXXZZ01"],
     "OBS, WET Labs, ECO-BB": ["TURBXX01", "VSCTXX01"],
     "OBS, Seapoint Turbidity": ["VSCTXX01", "TURBXX01"],
+    "OBS, D & A OBS 3+": ["VSCTZZ01", "TURBZZ01"],
     "SPAR/Surface Irradiance": ["IRRDSV01"],
     "SPAR, Biospherical/Licor": ["IRRDSV01"],
     "SUNA": [],
@@ -606,11 +610,12 @@ seabird_to_bodc = {
     "User Polynomial": [],
     "User Polynomial, 2": [],
     "User Polynomial, 3": [],
+    "Nitrate": ["NTRAZZXX"],
 }
 
 
 def _get_seabird_instrument_from_header(seabird_header: str) -> str:
-    """Retrieve main instrument model from Sea-Bird CNV header"""
+    """Retrieve main instrument model from Sea-Bird CNV header."""
     instrument = re.findall(
         r"\* (?:Sea\-Bird ){0,1}SBE\s*(?P<sensor>\d+[^\s]*)(?P<extra>.*)",
         seabird_header,
@@ -621,16 +626,17 @@ def _get_seabird_instrument_from_header(seabird_header: str) -> str:
 
 
 def _get_sbe_instrument_type(instrument: str) -> str:
-    """Map SBE instrument number a type of instrument"""
+    """Map SBE instrument number a type of instrument."""
     if re.match(r"SBE\s*(9|16|19|25|37)", instrument):
         return "CTD"
     logger.warning("Unknown instrument type for %s", instrument)
 
 
 def _get_seabird_processing_history(seabird_header: str) -> str:
-    """
+    """Retrieve Seabird Processing History.
+
     Retrieve the different rows within a Seabird header associated
-    with the sbe data processing tool
+    with the sbe data processing tool.
     """
     if "# datcnv" in seabird_header:
         sbe_hist = r"\# (" + "|".join(SBE_DATA_PROCESSING_MODULES) + r").*"
@@ -643,9 +649,11 @@ def _get_seabird_processing_history(seabird_header: str) -> str:
 def _generate_binned_attributes(
     ds: xarray.Dataset, seabird_header: str
 ) -> xarray.Dataset:
-    """Retrieve from the Seabird header binned information and
-    apply it to the different related attributes and variable attributes."""
+    """Reterieved Binned Attributes from Seabird header.
 
+    Retrieve from the Seabird header binned information and
+    apply it to the different related attributes and variable attributes.
+    """
     binavg = re.search(
         r"\# binavg_bintype \= (?P<bintype>.*)\n\# binavg_binsize \= (?P<binsize>\d+)\n",
         seabird_header,
@@ -682,7 +690,7 @@ def _generate_binned_attributes(
 def _update_attributes_from_seabird_header(
     ds: xarray.Dataset, seabird_header: str, parse_manual_inputs: bool = False
 ) -> xarray.Dataset:
-    """Add Seabird specific attributes parsed from Seabird header into a xarray dataset"""
+    """Add Seabird specific attributes parsed from Seabird header into a xarray dataset."""
     # sourcery skip: identity-comprehension, remove-redundant-if
     # Instrument
     ds.attrs["instrument"] = _get_seabird_instrument_from_header(seabird_header)
@@ -701,8 +709,11 @@ def _update_attributes_from_seabird_header(
 def _generate_instruments_variables_from_xml(
     ds: xarray.Dataset, seabird_header: str
 ) -> xarray.Dataset:
-    """Generate IOOS 1.2 standard instrument variables and associated variables
-    instrument attribute based on Seabird XML header."""
+    """Generate IOOS 1.2 standard instrument variables.
+
+    Also generate associated variables
+    instrument attribute based on Seabird XML header.
+    """
     # Retrieve Sensors xml section within seabird header
     calibration_xml = re.sub(
         r"\n\#\s",
@@ -790,7 +801,7 @@ def _generate_instruments_variables_from_xml(
 def _generate_instruments_variables_from_sensor(
     dataset: xarray.Dataset, seabird_header: str
 ) -> xarray.Dataset:
-    """Parse older Seabird Header sensor information and generate instrument variables"""
+    """Parse older Seabird Header sensor information and generate instrument variables."""
     sensors = re.findall(r"\# sensor (?P<id>\d+) = (?P<text>.*)\n", seabird_header)
     for index, sensor in sensors:
         if "Voltage" in sensor:
@@ -819,9 +830,10 @@ def _generate_instruments_variables_from_sensor(
 def _add_seabird_instruments(
     ds: xarray.Dataset, seabird_header: str, match_by: str = "long_name"
 ) -> xarray.Dataset:
-    """
-    Extract seabird sensor information and generate instrument variables which
-    follow the IOOS 1.2 convention
+    """Extract seabird sensor information.
+
+    Generate instrument variables which
+    follow the IOOS 1.2 convention.
     """
     # Retrieve sensors information
     if "# <Sensors count" in seabird_header:

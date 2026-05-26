@@ -51,7 +51,7 @@ def get_parser_list_string():
 
 
 def validate_parser(ctx, _, value):
-    """Test if given parser is available within parser list"""
+    """Test if given parser is available within parser list."""
     if value in PARSERS or value is None:
         return value
     raise click.BadParameter(
@@ -70,7 +70,7 @@ def get_parser_list(ctx, _, value):
 
 
 def validate_parser_kwargs(ctx, _, value):
-    """Test if given parser_kwargs is a valid JSON string and return the parsed JSON object"""
+    """Test if given parser_kwargs is a valid JSON string and return the parsed JSON object."""
     if not value:
         return value
     try:
@@ -114,7 +114,7 @@ def validate_parser_kwargs(ctx, _, value):
         "Parser key word arguments to pass to the parser. Expect a JSON string."
         ' (ex: \'{"globa_attributes": {"project": "test"}\')'
     ),
-    default=None,
+    default="{}",
     callback=validate_parser_kwargs,
 )
 @click.option(
@@ -128,8 +128,7 @@ def validate_parser_kwargs(ctx, _, value):
     "--multiprocessing",
     type=int,
     help=(
-        "Run conversion in parallel on N processors."
-        " None == all processors available"
+        "Run conversion in parallel on N processors. None == all processors available"
     ),
 )
 @click.option(
@@ -205,16 +204,27 @@ def convert(**kwargs):
 
 
 class BatchConversion:
+    """Batch Conversion class to convert multiple files via a configuration file."""
+
     def __init__(self, config=None, **kwargs):
+        """Create a batch conversion object.
+
+        Args:
+            config (dict, optional): Configuration use to apply
+                the batch correction. Defaults to None.
+            **kwargs: Key arguments passed to the class which
+                overwrites the configuration file.
+        """
         self.config = self._get_config(config, **kwargs)
         self.registry = FileConversionRegistry(**self.config.get("registry", {}))
 
     @staticmethod
     def _get_config(config: dict = None, **kwargs) -> dict:
-        """Combine configuration dictionary and key arguments passed
+        """Combine configuration dictionary and key arguments passed.
 
         Args:
             config (dict, optional): Batch configuration. Defaults to None.
+            **kwargs: Key arguments passed to the function.
 
         Returns:
             dict: combined configuration
@@ -245,7 +255,7 @@ class BatchConversion:
 
     def get_excluded_files(self) -> list:
         return (
-            glob(self.config["exclude"], recursive=True)
+            [Path(file) for file in glob(self.config["exclude"], recursive=True)]
             if self.config.get("exclude")
             else []
         )
@@ -259,12 +269,11 @@ class BatchConversion:
             Path(file)
             for path in paths
             for file in glob(path, recursive=True)
-            if file not in excluded_files
+            if Path(file) not in excluded_files
         ]
 
     def load_input_table(self, table: dict) -> pd.DataFrame:
-        """Load input table and apply pipe if needed"""
-
+        """Load input table and apply pipe if needed."""
         if "path" not in table:
             raise ValueError("No path detected in input table")
         tables = []
@@ -357,7 +366,7 @@ class BatchConversion:
 
     @logger.catch(reraise=True)
     def run(self):
-        """Run Batch conversion"""
+        """Run Batch conversion."""
         logger.info(
             "Run ocean-data-parser[{}] convert {}",
             __version__,
@@ -426,7 +435,7 @@ class BatchConversion:
 
 
 def _convert_file(args):
-    """Run file conversion while adding logging context
+    """Run file conversion while adding logging context.
 
     Args:
         args (tuple): tuple [input file path, parser and configuration]
@@ -449,12 +458,13 @@ def _convert_file(args):
 
 
 def convert_file(file: str, parser: str, config: dict, global_attributes=None) -> str:
-    """Parse file with given parser and configuration
+    """Parse file with given parser and configuration.
 
     Args:
         file (str): file path
         parser (str): ocean_data_parser.parsers parser.
         config (dict): Configuration use to apply the conversion
+        global_attributes (dict, optional): Global attributes to add to the dataset.
 
     Returns:
         str: output_path where converted file is saved
@@ -492,7 +502,7 @@ def convert_file(file: str, parser: str, config: dict, global_attributes=None) -
     ds = read.file(
         file,
         parser=parser,
-        **config.get("parser_kwargs", {}),
+        **(config.get("parser_kwargs") or {}),
         global_attributes=global_attributes,
     )
     if not isinstance(ds, Dataset):

@@ -1,6 +1,6 @@
-"""
-[Precision Measurement Engineering (PME)](https://www.pme.com/)
-is a company that manufactures instruments to measure different water properties.
+"""[Precision Measurement Engineering (PME)](https://www.pme.com/).
+
+PME is a company that manufactures instruments to measure different water properties.
 """
 
 import logging
@@ -59,19 +59,19 @@ default_global_attributes = {"Conventions": "CF-1.6"}
 
 # Deprecated functions
 def minidot_txt(*args, **kwargs):
-    """Rename minidot_txt to txt"""
+    """Rename minidot_txt to txt."""
     logger.warning("minidot_txt is deprecated, use txt instead")
     return txt(*args, **kwargs)
 
 
 def minidot_txts(*args, **kwargs):
-    """Rename minidot_txts to txts"""
+    """Rename minidot_txts to txts."""
     logger.warning("minidot_txts is deprecated, use txts instead")
     return txts(*args, **kwargs)
 
 
 def minidot_cat(*args, **kwargs):
-    """Rename minidot_cat to cat"""
+    """Rename minidot_cat to cat."""
     logger.warning("minidot_cat is deprecated, use cat instead")
     return cat(*args, **kwargs)
 
@@ -95,7 +95,7 @@ def txt(
     timezone: str = "UTC",
     global_attributes: dict = None,
 ) -> xr.Dataset:
-    """Parse PME MiniDot txt file
+    """Parse PME MiniDot txt file.
 
     Args:
         path (str): txt file path to read
@@ -115,7 +115,6 @@ def txt(
     # Read MiniDot
     with open(
         path,
-        "r",
         encoding=encoding,
         errors=errors,
     ) as f:
@@ -133,7 +132,7 @@ def txt(
                 r"Sensor Cal: (\d*)", header[1]
             )[1]
         if len(header) > 2:
-            for key, value in re.findall("(\w+)\: ([^,\n]+)", "".join(header[2:-1])):
+            for key, value in re.findall("(\\w+)\\: ([^,\n]+)", "".join(header[2:-1])):
                 metadata[key.lower()] = value.strip()
 
         if metadata is None:
@@ -215,7 +214,7 @@ def txt(
 def txts(
     paths: Union[list, str], encoding: str = "utf-8", errors: str = "strict"
 ) -> xr.Dataset:
-    """Parse PME Minidots txt files
+    """Parse PME Minidots txt files.
 
     Args:
         paths (listorstr): List of file paths to read.
@@ -242,7 +241,7 @@ def txts(
 
 
 def cat(path: str, encoding: str = "utf-8", errors: str = "strict") -> xr.Dataset:
-    """cat reads PME MiniDot concatenated CAT files
+    """Cat reads PME MiniDot concatenated CAT files.
 
     Args:
         path (str): File path to read
@@ -252,7 +251,7 @@ def cat(path: str, encoding: str = "utf-8", errors: str = "strict") -> xr.Datase
     Returns:
         xr.Dataset: xarray dataset which is compliant with CF-1.6
     """
-    with open(path, "r", encoding=encoding, errors=errors) as f:
+    with open(path, encoding=encoding, errors=errors) as f:
         header = f.readline()
 
         if header != "MiniDOT Logger Concatenated Data File\n":

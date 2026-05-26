@@ -1,4 +1,5 @@
-"""
+"""DFO NARC data format parser.
+
 The Fisheries and Oceans Canada - Newfoundland and Labrador Region -
 North Atlantic Fisheries Centre (NAFC) is a research facility located in St. John's, Newfoundland and Labrador.
 """
@@ -65,7 +66,7 @@ def _traceback_error_line():
 
 
 def _int(value: str, null_values=None, level="WARNING", match: str = None) -> int:
-    """Attemp to convert string to int, return None if empty or failed"""
+    """Attemp to convert string to int, return None if empty or failed."""
     if not value or not value.strip() or value in (null_values or []):
         return
     if match:
@@ -100,7 +101,7 @@ def _int(value: str, null_values=None, level="WARNING", match: str = None) -> in
 
 
 def _float(value: str, null_values=None, level="WARNING") -> float:
-    """Attemp to convert string to float, return None if empty or failed"""
+    """Attemp to convert string to float, return None if empty or failed."""
     if not value or not value.strip() or value in (null_values or []):
         return
     try:
@@ -121,7 +122,7 @@ def _get_dtype(var: str):
 
 
 def _parse_ll(deg: float, min: float) -> float:
-    """Combine deg and min values from latitude and longitude to decimal degrees"""
+    """Combine deg and min values from latitude and longitude to decimal degrees."""
     if pd.isna(deg) or pd.isna(min):
         return
     dir = -1 if deg < 0 else 1
@@ -130,7 +131,6 @@ def _parse_ll(deg: float, min: float) -> float:
 
 def _parse_pfile_header_line1(line: str) -> dict:
     """Parse first row of the p file format which contains location and instrument information."""
-
     if line[44:46] == "60":
         # Fix some dates are using 60 minutes which is not compatible with pandas datetime
         dt = pd.Timedelta("1min")
@@ -201,7 +201,7 @@ def _parse_pfile_header_line2(line: str) -> dict:
 
 
 def _parse_pfile_header_line3(line: str) -> dict:
-    """Parse P file 3 metadata line which present environment metadata"""
+    """Parse P file 3 metadata line which present environment metadata."""
     if not line or not line.strip() or len(line) < 79:
         logger.warning("Missing pfile header line 3")
         return {}
@@ -259,10 +259,10 @@ def _parse_pfile_header_line3(line: str) -> dict:
 
 
 def _parse_channel_stats(lines: list) -> dict:
-    """Parse p file CHANNEL STATISTIC header section to cf variable dictionary"""
+    """Parse p file CHANNEL STATISTIC header section to cf variable dictionary."""
 
     def _get_range(attrs: dict) -> tuple:
-        """Convert range to the variable dtype"""
+        """Convert range to the variable dtype."""
         dtype = _get_dtype(attrs["name"])
 
         # Use int(float(x)) method because the integers have decimals
@@ -320,7 +320,6 @@ def _pfile_history_to_cf(lines: list) -> str:
     Returns:
         str:
     """
-
     # """Convert history to cf format: 2022-02-02T00:00:00Z - ..."""
     if not lines:
         return ""
@@ -342,7 +341,7 @@ def _pfile_history_to_cf(lines: list) -> str:
 
 
 def _get_pfile_variable_vocabulary(variable: str, instrument: str = None) -> dict:
-    """Retrieve variable vocabulary"""
+    """Retrieve variable vocabulary."""
     if variable == "xxx":
         return []
     matched_legacy_p_code = p_file_vocabulary.apply(
@@ -370,7 +369,7 @@ def pfile(
     generate_extra_variables: bool = True,
     encoding_errors: str = "strict",
 ) -> xr.Dataset:
-    """Parse DFO NAFC oceanography p-file format
+    """Parse DFO NAFC oceanography p-file format.
 
     Args:
         file (str): file path
@@ -379,6 +378,7 @@ def pfile(
             standard. Defaults to True.
         generate_extra_variables (bool, optional): Generate extra
             BODC mapping variables. Defaults to True.
+        encoding_errors (str, optional): Encoding errors handling.
 
     Raises:
         TypeError: File provided isn't a p file.
@@ -388,8 +388,11 @@ def pfile(
     """
 
     def _parse_ship_trip_stn():
-        """Review if the ship,trip,stn string is the same
-        accorss the 3 metadata rows and the file name."""
+        """Review ship,trip,stn string.
+
+        Each pfile should have the same ship,trip,stn
+        in the 3 metadata rows and the file name.
+        """
         ship_trip_stn = [line[:8] for line in metadata_lines[1:] if line.strip()] + [
             file.stem
         ]
@@ -575,7 +578,7 @@ def pfile(
 
 @logger.catch
 def _parse_lat_lon(latlon: str) -> float:
-    """Parse latitude and longitude string to float"""
+    """Parse latitude and longitude string to float."""
     if not latlon:
         logger.error("No latitude or longitude provided")
         return
@@ -586,7 +589,7 @@ def _parse_lat_lon(latlon: str) -> float:
 @logger.catch
 @lru_cache
 def _get_metqa_table(file) -> pd.DataFrame:
-    """Load NAFC metqa table which contains each files assoicated weather data"""
+    """Load NAFC metqa table which contains each files assoicated weather data."""
     df = pd.read_csv(file, sep=r"\s*\,", engine="python")
     df.columns = [
         col.lower().split("[")[0].strip().replace(" ", "_") for col in df.columns
@@ -600,9 +603,8 @@ def _get_metqa_table(file) -> pd.DataFrame:
 
 
 def _add_metqa_info_to_pcvn(file: Path, match_metqa_file) -> Path:
-    """Find the matching metqa table to the pcnv file"""
-
-    glob_expression = f"{file.stem.rsplit('_',1)[0]}_metqa_*.csv"
+    """Find the matching metqa table to the pcnv file."""
+    glob_expression = f"{file.stem.rsplit('_', 1)[0]}_metqa_*.csv"
     metqa_file = list(file.parent.glob(glob_expression))
     if metqa_file and len(metqa_file) == 1:
         logger.debug("Load weather data from metqa file={}", metqa_file[0])
@@ -639,7 +641,7 @@ def pcnv(
     encoding_errors: str = "strict",
     match_metqa_table: bool = False,
 ) -> xr.Dataset:
-    """DFO NAFC pcnv file format parser
+    """DFO NAFC pcnv file format parser.
 
     The pcnv format  essentially a seabird cnv file format
     with NAFC specific inputs within the manual section.
@@ -651,6 +653,8 @@ def pcnv(
         generate_extra_variables (bool, optional): Generate extra
             vocabulary variables. Defaults to True.
         global_attributes (dict, optional): Global attributes to add to the dataset.
+        encoding (str, optional): File encoding. Defaults to "UTF-8".
+        encoding_errors (str, optional): Encoding errors handling.
         match_metqa_table (bool, optional): Match metqa table to the file if
             available within same directory. Defaults to True.
 
@@ -659,7 +663,7 @@ def pcnv(
     """
 
     def _pop_attribute_from(names: list):
-        """Pop attribute from dataset"""
+        """Pop attribute from dataset."""
         for name in names:
             if name in ds.attrs:
                 return ds.attrs.pop(name)
@@ -707,7 +711,7 @@ def pcnv(
             ),
             "longitude": _parse_lat_lon(
                 _pop_attribute_from(
-                    ["longitude", "longitude_xx_xx.xx", "longitude _xx_xx.xx_w"]
+                    ["longitude", "longitude_xx_xx.xx", "longitude_xx_xx.xx_w"]
                 )
             ),
             "sounder_depth": ds.attrs.pop("sounding_depth_m", None),

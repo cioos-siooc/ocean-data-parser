@@ -51,6 +51,8 @@ class StationTests(unittest.TestCase):
 
 
 class GeoJSONTests(unittest.TestCase):
+    """Series of tests to check the geo module."""
+
     def test_geojson_parser(self):
         collections = [geo.read_geojson(file) for file in geojson_files]
         assert collections
