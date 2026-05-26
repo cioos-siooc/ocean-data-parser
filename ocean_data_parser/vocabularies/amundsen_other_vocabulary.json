@@ -271,7 +271,9 @@
       "units": "PSU",
       "standard_name": "sea_surface_salinity",
       "sdn_parameter_urn": "SDN:P01::PSALSZ01",
+      "sdn_parameter_name": "Practical salinity of the water body by thermosalinograph and computation using UNESCO 1983 algorithm",
       "sdn_uom_urn": "SDN:P06::PSUX",
+      "sdn_uom_name": "Practical salinity units",
       "accepted_units": "PSU|psu|1e-3|psu \\(PSS-78\\)",
       "file_type": "TSG",
       "rename_to": "Sal-TSG"
@@ -300,7 +302,9 @@
       "long_name": "Water Flow Rate",
       "units": "L/min",
       "sdn_parameter_urn": "SDN:P01::INFLTF01",
+      "sdn_parameter_name": "Flow rate through instrument",
       "sdn_uom_urn": "SDN:P06::ULPM",
+      "sdn_uom_name": "Litres per minute",
       "accepted_units": "L\/min",
       "file_type": "TSG",
       "rename_to": "Flow"
@@ -321,7 +325,10 @@
       "units": "degrees_celcius",
       "accepted_units": "degC|deg C|degrees C|.*c$",
       "standard_name": "sea_surface_temperature",
+      "sdn_parameter_urn": "SDN:P01::TEMPSZ01",
+      "sdn_parameter_name": "Temperature of the water body by thermosalinograph",
       "sdn_uom_urn": "SDN:P06::UPAA",
+      "sdn_uom_name": "Degrees Celsius",
       "file_type": "TSG"
     }
   ],
@@ -331,7 +338,10 @@
       "units": "degrees_celcius",
       "accepted_units": "degC|deg C|degrees C|.*c$",
       "standard_name": "sea_surface_temperature",
+      "sdn_parameter_urn": "SDN:P01::TEMPSZ01",
+      "sdn_parameter_name": "Temperature of the water body by thermosalinograph",
       "sdn_uom_urn": "SDN:P06::UPAA",
+      "sdn_uom_name": "Degrees Celsius",
       "file_type": "TSG"
     }
   ],
@@ -341,7 +351,10 @@
       "units": "degrees_celcius",
       "accepted_units": "degC|deg C|degrees C|.*c$",
       "standard_name": "sea_surface_temperature",
+      "sdn_parameter_urn": "SDN:P01::TEMPSZ01",
+      "sdn_parameter_name": "Temperature of the water body by thermosalinograph",
       "sdn_uom_urn": "SDN:P06::UPAA",
+      "sdn_uom_name": "Degrees Celsius",
       "file_type": "TSG"
     }
   ],
@@ -351,7 +364,9 @@
       "units": "PSU",
       "standard_name": "sea_surface_salinity",
       "sdn_parameter_urn": "SDN:P01::PSALSZ01",
+      "sdn_parameter_name": "Practical salinity of the water body by thermosalinograph and computation using UNESCO 1983 algorithm",
       "sdn_uom_urn": "SDN:P06::PSUX",
+      "sdn_uom_name": "Practical salinity units",
       "accepted_units": "PSU|psu|1e-3",
       "rename": "P_sal_TSG",
       "file_type": "TSG"
@@ -378,7 +393,9 @@
       "long_name": "Water Flow Rate",
       "units": "L/min",
       "sdn_parameter_urn": "SDN:P01::INFLTF01",
+      "sdn_parameter_name": "Flow rate through instrument",
       "sdn_uom_urn": "SDN:P06::ULPM",
+      "sdn_uom_name": "Litres per minute",
       "rename": "TSG+Fl_Flow",
       "file_type": "TSG"
     }
