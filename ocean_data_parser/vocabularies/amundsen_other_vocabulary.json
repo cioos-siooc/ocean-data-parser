@@ -150,12 +150,14 @@
     },
     {
       "long_name": "Latitude",
+      "standard_name": "latitude",
       "units": "degrees_north",
       "accepted_units": "degrees N",
       "file_type": "AVOS"
     },
     {
       "long_name": "Latitude",
+      "standard_name": "latitude",
       "units": "degrees_north",
       "accepted_units": "degrees N",
       "file_type": "TSG"
@@ -170,12 +172,14 @@
     },
     {
       "long_name": "Longitude",
+      "standard_name": "longitude",
       "units": "degrees_east",
       "accepted_units": "degrees E",
       "file_type": "AVOS"
     },
     {
       "long_name": "Longitude",
+      "standard_name": "longitude",
       "units": "degrees_east",
       "accepted_units": "degrees E",
       "file_type": "TSG"
@@ -185,11 +189,13 @@
     {
       "long_name": "Vessel Speed",
       "units": "knots",
+      "standard_name": "platform_speed_wrt_ground",
       "accepted_units": "Knt",
       "file_type": "NMEA"
     },
     {
       "long_name": "Vessel Speed",
+      "standard_name": "platform_speed_wrt_ground",
       "units": "knots",
       "accepted_units": "Knt",
       "file_type": "TSG"
@@ -200,6 +206,7 @@
       "long_name": "Vessel Speed",
       "units": "knots",
       "accepted_units": "Knt",
+      "standard_name": "platform_speed_wrt_ground",
       "file_type": "NMEA",
       "rename_to": "Speed"
     }
@@ -216,6 +223,7 @@
   "Tem-TSG": [
     {
       "long_name": "Temperature (TSG)",
+      "standard_name": "sea_water_temperature",
       "units": "degC",
       "accepted_units": "degC|deg C|degrees C|.c",
       "file_type": "TSG"
@@ -224,6 +232,7 @@
   "Tem-Water": [
     {
       "long_name": "Temperature (Water)",
+      "standard_name": "sea_water_temperature",
       "units": "degC",
       "accepted_units": "degC|deg C|degrees C|.*c$",
       "file_type": "TSG"
@@ -232,6 +241,7 @@
   "Sal-TSG": [
     {
       "long_name": "Salinity (TSG)",
+      "standard_name": "sea_water_practical_salinity",
       "units": "1",
       "accepted_units": "PSU|psu|1e-3",
       "file_type": "TSG"
@@ -240,6 +250,7 @@
   "Vel": [
     {
       "long_name": "Sound Velocity",
+      "standard_name": "speed_of_sound_in_sea_water",
       "units": "m/s",
       "accepted_units": "m/s",
       "file_type": "TSG"
@@ -248,6 +259,7 @@
   "Fluo": [
     {
       "long_name": "Fluorescence",
+      "standard_name": "mass_concentration_of_chlorophyll_in_sea_water",
       "units": "ug/l",
       "accepted_units": "ug/L",
       "file_type": "TSG"
@@ -331,12 +343,14 @@
   "Tem_mean": [
     {
       "long_name": "Mean Temperature",
+      "standard_name": "sea_water_temperature",
       "units": "degC",
       "accepted_units": "degC|deg C|degrees C",
       "file_type": "Bioness"
     },
     {
       "long_name": "Mean Temperature",
+      "standard_name": "sea_water_temperature",
       "units": "degC",
       "accepted_units": "degrees C",
       "file_type": "Hydrobios"
@@ -345,12 +359,14 @@
   "Tem_std": [
     {
       "long_name": "Standard Deviation of Temperature",
+      "standard_name": "sea_water_temperature",
       "units": "degC",
       "accepted_units": "degC|deg C|degrees C",
       "file_type": "Bioness"
     },
     {
       "long_name": "Standard Deviation of Temperature",
+      "standard_name": "sea_water_temperature",
       "units": "degC",
       "accepted_units": "degrees C",
       "file_type": "Hydrobios"
@@ -359,12 +375,14 @@
   "Sal_mean": [
     {
       "long_name": "Mean Salinity",
+      "standard_name": "sea_water_practical_salinity",
       "units": "1",
       "accepted_units": "PSU|psu|1e-3",
       "file_type": "Bioness"
     },
     {
       "long_name": "Mean Salinity",
+      "standard_name": "sea_water_practical_salinity",
       "units": "1",
       "accepted_units": "psu",
       "file_type": "Hydrobios"
@@ -373,12 +391,14 @@
   "Sal_std": [
     {
       "long_name": "Standard Deviation of Salinity",
+      "standard_name": "sea_water_practical_salinity",
       "units": "1",
       "accepted_units": "PSU|psu|1e-3",
       "file_type": "Bioness"
     },
     {
       "long_name": "Standard Deviation of Salinity",
+      "standard_name": "sea_water_practical_salinity",
       "units": "1",
       "accepted_units": "psu",
       "file_type": "Hydrobios"
@@ -387,12 +407,14 @@
   "Pres": [
     {
       "long_name": "Pressure",
+      "standard_name": "sea_water_pressure",
       "units": "decibars",
       "accepted_units": "decibars|db",
       "file_type": "Bioness"
     },
     {
       "long_name": "Pressure",
+      "standard_name": "sea_water_pressure",
       "units": "decibars",
       "accepted_units": "decibars",
       "file_type": "Hydrobios"
@@ -401,12 +423,14 @@
   "Temp": [
     {
       "long_name": "Temperature",
+      "standard_name": "sea_water_temperature",
       "units": "degC",
       "accepted_units": "degC|deg C|degrees C",
       "file_type": "Bioness"
     },
     {
       "long_name": "Temperature",
+      "standard_name": "sea_water_temperature",
       "units": "degC",
       "accepted_units": "degrees C",
       "file_type": "Hydrobios"
@@ -415,12 +439,14 @@
   "Sal": [
     {
       "long_name": "Salinity",
+      "standard_name": "sea_water_practical_salinity",
       "units": "1",
       "accepted_units": "PSU|psu|1e-3",
       "file_type": "Bioness"
     },
     {
       "long_name": "Salinity",
+      "standard_name": "sea_water_practical_salinity",
       "units": "1",
       "accepted_units": "psu",
       "file_type": "Hydrobios"
@@ -429,6 +455,7 @@
   "Wind_speed": [
     {
       "long_name": "Wind Speed",
+      "standard_name": "wind_speed",
       "units": "m/s",
       "accepted_units": "None",
       "file_type": "AVOS"
@@ -437,6 +464,7 @@
   "Wind_dir": [
     {
       "long_name": "Wind Direction",
+      "standard_name": "wind_from_direction",
       "units": "degrees",
       "accepted_units": "None",
       "file_type": "AVOS"
@@ -445,6 +473,7 @@
   "Air_temp": [
     {
       "long_name": "Air Temperature",
+      "standard_name": "air_temperature",
       "units": "degC",
       "accepted_units": "degC|deg C|degrees C|None",
       "file_type": "AVOS"
@@ -453,6 +482,7 @@
   "Dew_point": [
     {
       "long_name": "Dew Point",
+      "standard_name": "dew_point_temperature",
       "units": "degC",
       "accepted_units": "degC|deg C|degrees C|None",
       "file_type": "AVOS"
@@ -461,6 +491,7 @@
   "Pressure": [
     {
       "long_name": "Atmospheric Pressure",
+      "standard_name": "air_pressure",
       "units": "hPa",
       "accepted_units": "hPa",
       "file_type": "AVOS"
@@ -469,6 +500,7 @@
   "Latitude": [
     {
       "long_name": "Latitude",
+      "standard_name": "latitude",
       "units": "degrees_north",
       "accepted_units": "degrees N",
       "file_type": "TSG"
