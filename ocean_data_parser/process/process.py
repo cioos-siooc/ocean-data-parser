@@ -80,7 +80,7 @@ class Processing:
             self._obj,
             time_variables_encoding=time_variables_encoding
             or utils.time_variables_default_encoding,
-            utc=True,
+            utc=utc,
         )
 
     def add_to_history(self, comment, timestamp=None):
@@ -277,7 +277,7 @@ class Processing:
             """Retrieve a specific test from ioos_qc collection of results in dict format."""
             return results[var][module][test]
 
-        def _get_aggregated_flag(tests: list) -> xr.DataArray:
+        def _get_aggregated_flag(tests: list) -> tuple:
             """Aggregate multiple QARTOD tests.
 
             Args:
@@ -285,7 +285,11 @@ class Processing:
                     containing QARTOD flags
 
             Returns:
-                xarray.DataArray: Aggregated QARTOD Flag DataArray
+                tuple: ``(dims, values, attrs)`` triple suitable for assignment
+                    to an ``xarray.Dataset`` variable, where ``dims`` are the
+                    dimensions of the first test variable, ``values`` is the
+                    aggregated QARTOD flag array, and ``attrs`` is the
+                    associated attribute dictionary.
             """
             return (
                 self._obj[tests[0][0]].dims,
