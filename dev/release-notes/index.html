@@ -1681,6 +1681,7 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <li>Add Amundsen TSG V3 CSV support: vocabulary entries for <code>water_temperature</code>, <code>water_salinity</code>, <code>water_fluorescence</code>, <code>water_sound_velocity</code>, <code>vessel_speed</code>, <code>flow_rate</code>, and TSG variants of <code>time</code>/<code>latitude</code>/<code>longitude</code>.</li>
 <li>Add SDN parameter/UOM URNs and names (TEMPSZ01, PSALSZ01, INFLTF01, UPAA, PSUX, ULPM, etc.) for TSG temperature, salinity, and flow rate vocabulary entries.</li>
 <li>Add <code>pre-commit</code> configuration running <code>ruff</code> format and lint (mirrors <code>make lint</code>) on every commit, with a <code>make install-hooks</code> target to install it.</li>
+<li>Add <code>ocean_data_parser_version</code> global attribute to all parsed datasets by routing the NMEA, Star-Oddi DAT, and Sunburst superCO2 notes parsers through <code>standardize_dataset</code>.</li>
 </ul>
 <h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
 <ul>
@@ -1688,6 +1689,8 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <li>Migrate Amundsen NAV file type to NMEA</li>
 <li>Update NMEA Amundsen file type vocabulary</li>
 <li>Fix off-by-one row drop in Amundsen CSV parser when a blank line precedes the data header (affected NMEA V3 and TSG V3 files).</li>
+<li>Fix broken <code>ocean_data_parser.version</code> import in the DFO ODF parser.</li>
+<li>Fix reference NetCDF comparison test: correct <code>ignore_from_attr</code> call signature, strip the version-stamped history entry, and tolerate timestamps without a trailing <code>Z</code>.</li>
 </ul>
 <h2 id="080"><code>0.8.0</code><a class="headerlink" href="#080" title="Permanent link">&para;</a></h2>
 <h3 id="fixed_1">Fixed<a class="headerlink" href="#fixed_1" title="Permanent link">&para;</a></h3>
