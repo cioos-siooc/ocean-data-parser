@@ -45,9 +45,9 @@ def review_parsed_dataset(
     assert ds.variables, "Dataset has no variables."
 
     assert ds.attrs["ocean_data_parser_version"] == __version__
-    assert isinstance(
-        ds.attrs.get("history", ""), str
-    ), "history attribute is not a string"
+    assert isinstance(ds.attrs.get("history", ""), str), (
+        "history attribute is not a string"
+    )
 
     if caplog:
         for record in caplog.records:
