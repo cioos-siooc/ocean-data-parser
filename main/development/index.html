@@ -1371,6 +1371,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pre-commit-hooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pre-commit hooks
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#testing" class="md-nav__link">
     <span class="md-ellipsis">
       Testing
@@ -1460,6 +1469,17 @@ github repository for any questions, ideas and suggestions.</p>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="go">  uv venv</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="go">  uv pip install &quot;.[dev]&quot;</span>
 </span></code></pre></div>
+<h2 id="pre-commit-hooks"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.944 11h4.306a.75.75 0 0 1 0 1.5h-4.306a5.001 5.001 0 0 1-9.888 0H2.75a.75.75 0 0 1 0-1.5h4.306a5.001 5.001 0 0 1 9.888 0m-1.444.75a3.5 3.5 0 1 0-7 0 3.5 3.5 0 0 0 7 0"/></svg></span> Pre-commit hooks<a class="headerlink" href="#pre-commit-hooks" title="Permanent link">&para;</a></h2>
+<p>The repository ships with a <a href="https://pre-commit.com/">pre-commit</a> configuration that runs the same <code>ruff</code> format and lint steps as <code>make lint</code> before every commit. Install the git hook once after cloning:</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="go">make install-hooks</span>
+</span></code></pre></div>
+<p>This is equivalent to running:</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="go">uv sync</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="go">uv run pre-commit install</span>
+</span></code></pre></div>
+<p>To run the hooks manually against every file in the repo:</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="go">uv run pre-commit run --all-files</span>
+</span></code></pre></div>
 <h2 id="testing"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 2v2h1v14a4 4 0 0 0 4 4 4 4 0 0 0 4-4V4h1V2zm4 14c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1m2-4c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1m1-5h-4V4h4z"/></svg></span> Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
 <p>The package use pytest to run a series of tests in order to help the development of the different aspect of the package. Within a developping environment, to run the different tests, run the pytest commmand through your terminal within the base directory of the repository. Pytest can also be integrated with different IDE and is run on any pushes and PR to the <code>main</code> and <code>development</code> branches.</p>
 <h2 id="parsers-tests"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 2a8 8 0 0 0-8 8 8 8 0 0 0 8 8 8 8 0 0 0 8-8h-2c0 3.32-2.68 6-6 6a6 6 0 0 1-6-6 6 6 0 0 1 6-6c.43 0 .86.05 1.27.14l1.61-1.6Q15.5 2 14 2m6.59 1.58L14 10.17l-2.38-2.38-1.41 1.42L14 13l8-8m-17.07.82A8.01 8.01 0 0 0 2 12a8 8 0 0 0 8 8c.64 0 1.27-.08 1.88-.23-1.76-.39-3.38-1.27-4.71-2.48A6 6 0 0 1 4 12c0-.3.03-.59.07-.89C4.03 10.74 4 10.37 4 10c0-1.44.32-2.87.93-4.18"/></svg></span> Parsers Tests<a class="headerlink" href="#parsers-tests" title="Permanent link">&para;</a></h2>
@@ -1472,10 +1492,10 @@ github repository for any questions, ideas and suggestions.</p>
 </ol>
 <h2 id="documentation-build"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 3.75A.75.75 0 0 1 .75 3h7.497c1.566 0 2.945.8 3.751 2.014A4.5 4.5 0 0 1 15.75 3h7.5a.75.75 0 0 1 .75.75v15.063a.75.75 0 0 1-.755.75l-7.682-.052a3 3 0 0 0-2.142.878l-.89.891a.75.75 0 0 1-1.061 0l-.902-.901a3 3 0 0 0-2.121-.879H.75a.75.75 0 0 1-.75-.75Zm12.75 15.232a4.5 4.5 0 0 1 2.823-.971l6.927.047V4.5h-6.75a3 3 0 0 0-3 3ZM11.247 7.497a3 3 0 0 0-3-2.997H1.5V18h6.947c1.018 0 2.006.346 2.803.98Z"/></svg></span> Documentation Build<a class="headerlink" href="#documentation-build" title="Permanent link">&para;</a></h2>
 <p>To run a local instance of the documentation webpage. Install the dependancies:</p>
-<div class="language-console highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="go">uv pip install &quot;.[docs]&quot;</span>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="go">uv pip install &quot;.[docs]&quot;</span>
 </span></code></pre></div>
 <p>And run the command:</p>
-<div class="language-console highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="go">uv run mkdocs serve</span>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="go">uv run mkdocs serve</span>
 </span></code></pre></div>
 <p>Any documentation changes to the main and development branches will automatically update respectively the main and dev document pages.</p>
 
