@@ -49,9 +49,10 @@ def drop_path_from_header_attributes(header: dict) -> dict:
     Returns:
         dict: Header attributes without the path
     """
+
     def _get_file(file_path: str) -> str:
-        return re.split(r"\\|\/",file_path)[-1]
-    
+        return re.split(r"\\|\/", file_path)[-1]
+
     attributes = [
         ("ODF_HEADER", "FILE_SPECIFICATION"),
         ("INSTRUMENT_HEADER", "DESCRIPTION"),
