@@ -188,4 +188,4 @@ def super_co2_notes(path: str) -> xarray.Dataset:
 
     ds = df.to_xarray()
     ds.attrs = {"Convention": "CF-1.6"}
-    return ds
+    return standardize_dataset(ds)

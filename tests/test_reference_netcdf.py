@@ -108,17 +108,28 @@ def compare_test_to_reference_netcdf(
     # Add placeholders to specific fields in attributes
     ignore_from_attr(
         "history",
+        r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)? "
+        r"Generated with ocean_data_parser v\d+\.\d+\.\d+\n?",
+        "",
+    )
+    ignore_from_attr(
+        "history",
         r"cioos_data_trasform.odf_transform V \d+\.\d+\.\d+|"
         r"ocean_data_parser V \d+\.\d+\.\d+",
         "package_name_version",
     )
     ignore_from_attr(
-        "history", r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.*\d*Z", "TIMESTAMP"
+        "history",
+        r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?Z?",
+        "TIMESTAMP",
     )
     ignore_from_attr("source", ".*", "source")
 
     reference.attrs["date_created"] = "TIMESTAMP"
     test.attrs["date_created"] = "TIMESTAMP"
+
+    reference.attrs.pop("ocean_data_parser_version", None)
+    test.attrs.pop("ocean_data_parser_version", None)
 
     reference = _standardize_dataset(reference)
     test = _standardize_dataset(test)

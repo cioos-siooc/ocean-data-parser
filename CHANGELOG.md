@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Amundsen TSG V3 CSV support: vocabulary entries for `water_temperature`, `water_salinity`, `water_fluorescence`, `water_sound_velocity`, `vessel_speed`, `flow_rate`, and TSG variants of `time`/`latitude`/`longitude`.
 - Add SDN parameter/UOM URNs and names (TEMPSZ01, PSALSZ01, INFLTF01, UPAA, PSUX, ULPM, etc.) for TSG temperature, salinity, and flow rate vocabulary entries.
 - Add `pre-commit` configuration running `ruff` format and lint (mirrors `make lint`) on every commit, with a `make install-hooks` target to install it.
+- Add `ocean_data_parser_version` global attribute to all parsed datasets by routing the NMEA, Star-Oddi DAT, and Sunburst superCO2 notes parsers through `standardize_dataset`.
 
 ### Fixed
 
@@ -24,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Migrate Amundsen NAV file type to NMEA
 - Update NMEA Amundsen file type vocabulary
 - Fix off-by-one row drop in Amundsen CSV parser when a blank line precedes the data header (affected NMEA V3 and TSG V3 files).
+- Fix broken `ocean_data_parser.version` import in the DFO ODF parser.
+- Fix reference NetCDF comparison test: correct `ignore_from_attr` call signature, strip the version-stamped history entry, and tolerate timestamps without a trailing `Z`.
 
 ## `0.8.0`
 
