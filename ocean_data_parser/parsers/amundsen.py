@@ -105,7 +105,8 @@ def _standardize_attribute_value(value: str, name: str = None):
     elif re.match(r"^-{0,1}\d+$", value):
         return int(value)
     elif match := re.fullmatch(
-        r"\s*(\d+(?:\.\d+)?)\s*°\s*([NSEW])\s+(\d+(?:\.\d+)?)\s*'?\s*", value
+        r"\s*(\d+(?:\.\d+)?)\s*(?:°|Â°)\s*([NSEW])\s+(\d+(?:\.\d+)?)\s*'?\s*",
+        value,
     ):
         degrees, hemisphere, minutes = match.groups()
         decimal = float(degrees) + float(minutes) / 60.0
@@ -188,16 +189,21 @@ def csv_format(
 
 def lad_format(
     path: str,
-    encoding: str = "UTF-8",
+    encoding: str = "Windows-1252",
     map_to_vocabulary: bool = True,
     generate_depth: bool = True,
     encoding_error="strict",
 ) -> xr.Dataset:
     """Parse Amundsen LADCP `.lad` format.
 
+    Thin wrapper around :func:`int_format` that handles `.lad`-specific
+    quirks: the dashed separator line between the column header and the
+    data, and the ``DEPTH`` / ``DEPH`` column-name mismatch between the
+    data table and the variable description block.
+
     Args:
         path (str): file path to parse.
-        encoding (str, optional): File encoding. Defaults to "UTF-8".
+        encoding (str, optional): File encoding. Defaults to "Windows-1252".
         map_to_vocabulary (bool, optional): Rename variables to vocabulary. Defaults to True.
         generate_depth (bool, optional): Generate depth variable. Defaults to True.
         encoding_error (str, optional): Encoding error handling. Defaults to "strict".
@@ -212,6 +218,8 @@ def lad_format(
         generate_depth=generate_depth,
         separator=r"\s+",
         encoding_error=encoding_error,
+        skip_data_separator_line=True,
+        column_renames={"DEPTH": "DEPH"},
     )
 
 
@@ -222,6 +230,8 @@ def int_format(
     generate_depth: bool = True,
     separator: str = r"\s+",
     encoding_error="strict",
+    skip_data_separator_line: bool = False,
+    column_renames: dict = None,
 ) -> xr.Dataset:
     r"""Parse Amundsen INT format.
 
@@ -293,11 +303,10 @@ def int_format(
                 new_names.append(f"{name}_{new_names.count(name)}")
         names = new_names
 
-    is_lad = Path(path).suffix.lower() == ".lad"
-    if is_lad:
-        # LAD files include a dashed separator line between the column header
-        # and the data rows (e.g. "-------  ------  ------  ------").
-        # Skip everything through that separator and parse data with no header.
+    if skip_data_separator_line:
+        # Some formats (e.g. `.lad`) include a dashed separator line between
+        # the column header and the data rows (e.g. "------- ------ ------").
+        # Skip everything through that separator and parse with no header.
         with open(path, encoding=encoding, errors=encoding_error) as file:
             file_lines = file.readlines()
         data_start = header_line_idx + 1
@@ -325,10 +334,14 @@ def int_format(
             encoding_errors=encoding_error,
         )
 
-    # LAD files use "DEPTH" in the data table header but "DEPH" in the
-    # variable description block, so align the column name with the metadata.
-    if is_lad and "DEPTH" in df.columns and "DEPH" not in df.columns:
-        df = df.rename(columns={"DEPTH": "DEPH"})
+    if column_renames:
+        df = df.rename(
+            columns={
+                src: dst
+                for src, dst in column_renames.items()
+                if src in df.columns and dst not in df.columns
+            }
+        )
     if len(df.columns) != len(names):
         raise ValueError(
             f"Number of columns ({len(df.columns)}) doesn't match the number of variables ({len(names)})"
