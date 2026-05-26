@@ -1,6 +1,4 @@
-"""
-This module contains all the different tools needed to parse a file.
-"""
+"""This module contains all the different tools needed to parse a file."""
 
 import logging
 import re
@@ -9,6 +7,7 @@ from importlib import import_module
 from pathlib import Path
 from typing import Union
 
+import pandas as pd
 import xarray as xr
 
 logger = logging.getLogger(__name__)
@@ -35,7 +34,7 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
 
     with open(file, encoding=encoding, errors="ignore") as file_handle:
         header = ""
-        for _ in range(5):
+        for _ in range(10):
             try:
                 header += next(file_handle)
             except StopIteration:
@@ -65,30 +64,38 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
     ):
         parser = "electricblue.log_csv"
     elif ext == "DAT" and "Version	SeaStar" in header:
-        parser = "star_oddi.DAT"
+        parser = "star_oddi.dat"
     elif ext == "int" and "% Cruise_Number:" in header:
         parser = "amundsen.int_format"
+    elif ext == "csv" and "% Cruise_Number:" in header:
+        parser = "amundsen.csv_format"
+    elif ext == "lad" and "% Cruise_Number:" in header:
+        parser = "amundsen.lad_format"
     elif "*IOS HEADER VERSION" in header:
         parser = "dfo.ios.shell"
     elif ext == "pcnv":
         parser = "dfo.nafc.pcnv"
     elif ext[0] == "p" and "NAFC_Y2K_HEADER" in header:
         parser = "dfo.nafc.pfile"
-    elif ext == "ODF" and re.search(r"COUNTRY_INSTITUTE_CODE\s*=\s*1810", header):
+    elif ext.upper() == "ODF" and re.search(
+        r"COUNTRY_INSTITUTE_CODE\s*=\s*1810", header
+    ):
         parser = "dfo.odf.bio_odf"
     elif (
-        ext == "ODF"
+        ext.upper() == "ODF"
         and re.search(r"COUNTRY_INSTITUTE_CODE\s*=\s*1830", header)
         or re.search(r"COUNTRY_INSTITUTE_CODE\s*=\s*CaIML", header)
     ):
         parser = "dfo.odf.mli_odf"
-    elif ext == "ODF":
+    elif ext.upper() == "ODF" and re.search(r"Ismer\/Québec-Océan", header):
+        parser = "dfo.odf.as_qo_odf"
+    elif ext.upper() == "ODF":
         logger.warning(
             "Unable to detect ODF related institution code (IML=1830/CaIML;BIO=1810) from header: %s",
             header,
         )
         logger.warning("Default to MLI ODF")
-        parser = "dfo.odf.mli_odf"
+        parser = "dfo.odf.odf"
     elif (
         ext.lower() in ("ctd", "bot", "che", "drf", "cur", "loop", "tob")
         and "*IOS HEADER VERSION" in header
@@ -97,15 +104,24 @@ def detect_file_format(file: str, encoding: str = "UTF-8") -> str:
     elif ext == "MON":
         parser = "van_essen_instruments.mon"
     elif ext == "txt" and re.match(r"\d+\-\d+\s*\nOS REV\:", header):
-        parser = "pme.minidot_txt"
+        parser = "pme.txt"
     elif ext == "txt" and re.match(r"Model\=.*\nFirmware\=.*\nSerial\=.*", header):
         parser = "rbr.rtext"
     elif ext == "txt" and "Front panel parameter change:" in header:
-        parser = "sunburst.superCO2_notes"
+        parser = "sunburst.super_co2_notes"
     elif ext == "txt" and "CO2 surface underway data" in header:
-        parser = "sunburst.superCO2"
+        parser = "sunburst.super_co2"
     elif all(re.search(r"\$.*,.*,", line) for line in header.split("\n") if line):
         parser = "nmea.file"
+    elif ext == "xlsx":
+        excel_file = pd.ExcelFile(file)
+        sheet_names = excel_file.sheet_names
+        if (
+            all(sheet in sheet_names for sheet in ("Data", "Events", "Details"))
+            and "HOBOconnect"
+            in excel_file.parse("Details", names=[0, 1, 2, 3])[3].tolist()
+        ):
+            parser = "onset.xlsx"
     else:
         raise ImportError(f"Unable to match file to a specific data parser: {file}")
 
@@ -148,6 +164,7 @@ def file(
         path (str): File path
         parser (str, optional): Parser to use.
                 Defaults to auto `detect_file_format` output if None
+        global_attributes (dict, optional): Global attributes to add to the dataset.
         **kwargs: Keyword arguments to pass to the parser
 
     Returns:
@@ -159,7 +176,7 @@ def file(
 
     # Load the appropriate parser and read the file
     parser_func = import_parser(parser) if isinstance(parser, str) else parser
-    ds = parser_func(path, **kwargs)
+    ds = parser_func(path, **(kwargs or {}))
     if global_attributes:
         ds.attrs.update(global_attributes)
     return ds

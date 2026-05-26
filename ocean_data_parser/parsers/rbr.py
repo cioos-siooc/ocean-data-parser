@@ -1,5 +1,4 @@
-"""
-RBR Ltd. is a company that specializes in oceanographic instruments and sensors.
+"""RBR Ltd. is a company that specializes in oceanographic instruments and sensors.
 
 They provide a range of instruments for measuring various parameters in the ocean,
 including temperature, salinity, pressure, and more.

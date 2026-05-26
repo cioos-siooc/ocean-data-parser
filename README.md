@@ -8,14 +8,38 @@
 
 [![Build documentation](https://github.com/cioos-siooc/ocean-data-parser/actions/workflows/deploy-docs.yaml/badge.svg)](https://github.com/cioos-siooc/ocean-data-parser/actions/workflows/deploy-docs.yaml)
 
-`ocean-data-parser` - a Python package for parsing oceanographic proprietary data formats to [xarray Dataset](https://docs.xarray.dev/en/stable/). Documentation [here](https://cioos-siooc.github.io/ocean-data-parser/).
+`ocean-data-parser` - a Python package for parsing oceanographic proprietary data formats to xarray Datasets[^1].
+
+<div align = center>
+<a href='https://cioos-siooc.github.io/ocean-data-parser/'><kbd> <br> See Full Documentation Here <br> </kbd></a>
+</div>
 
 ## Installation
 
-Install the package with the following command, ideally within a virtual environment:
+First, install the [uv package manager](https://github.com/astral-sh/uv)
+```console
+pip install uv
+```
+Next, clone the repository to your local machine, enter the project directory and use `uv sync` to setup the package.
 
 ```console
-pip install git+https://github.com/cioos-siooc/ocean-data-parser.git
+git clone https://github.com/cioos-siooc/ocean-data-parser
+cd ocean-data-parser
+uv sync --python 3.9
+```
+
+This process will create a Python 3.9 virtual environment in the a `.venv` directory and populate it with the packages described in the `pyproject.toml` and `uv.lock` files.
+
+Activate the new environment:
+
+```console
+source .venv/bin/activate
+```
+
+Test the install:
+
+```console
+odpy --version
 ```
 
 ### How to
@@ -70,3 +94,21 @@ The `ocean-data-parser` can then be used within either a Python package, script 
 All contributions are welcome!
 
 Please create a new [discussion](https://github.com/cioos-siooc/ocean-data-parser/discussions) or [issue](https://github.com/cioos-siooc/ocean-data-parser/issues) within the GitHub repository for any questions, ideas and suggestions.
+
+### Pre-commit hooks
+
+The repository ships with a [pre-commit](https://pre-commit.com/) configuration that runs the same `ruff` format and lint checks as `make lint` before every commit. After cloning, install the git hook once:
+
+```console
+make install-hooks
+```
+
+To run the hooks manually across all files:
+
+```console
+uv run pre-commit run --all-files
+```
+
+See the [Development docs](https://cioos-siooc.github.io/ocean-data-parser/development/) for more details.
+
+[^1]: [Xarray package documentation](https://docs.xarray.dev/en/stable/index.html)

@@ -1,6 +1,4 @@
-"""
-This test compare the *_reference.nc files made available within the repository
-tests folder to the present associated parser.
+"""Compare *_reference.nc files.
 
 Any differences observed between the generated xarray
 object and the reference netcdf will raise an issue.
@@ -23,7 +21,7 @@ from ocean_data_parser import read
     glob("tests/parsers_test_files/**/*_reference.nc", recursive=True),
 )
 def test_compare_test_to_reference_netcdf(reference_file):
-    """Test DFO BIO ODF conversion to NetCDF vs reference files"""
+    """Test DFO BIO ODF conversion to NetCDF vs reference files."""
     # Generate test bio odf netcdf files
 
     # Run Test conversion
@@ -33,10 +31,9 @@ def test_compare_test_to_reference_netcdf(reference_file):
     # Load test file and reference file
     ref = xr.open_dataset(reference_file)
     difference_detected = compare_test_to_reference_netcdf(ref, test)
-    assert (
-        not difference_detected
-    ), f"Converted file {source_file} is different than the reference: " + "\n".join(
-        difference_detected
+    assert not difference_detected, (
+        f"Converted file {source_file} is different than the reference: "
+        + "\n".join(difference_detected)
     )
 
 
@@ -88,8 +85,7 @@ def compare_test_to_reference_netcdf(
         return ds
 
     def ignore_from_attr(attr, expression, placeholder):
-        """Replace expression in both reference and test files which are
-        expected to be different."""
+        """Replace expression in both reference and test files which are expected to be different."""
         if attr not in reference.attrs or attr not in test.attrs:
             reference[attr] = placeholder
             test[attr] = placeholder
@@ -104,6 +100,7 @@ def compare_test_to_reference_netcdf(
             "dfo_newfoundland_ship_code",
             "dfo_nafc_platform_code",
             "dfo_nafc_platform_name",
+            "title",
         ]:
             reference.attrs.pop(attr, None)
             test.attrs.pop(attr, None)
@@ -111,17 +108,28 @@ def compare_test_to_reference_netcdf(
     # Add placeholders to specific fields in attributes
     ignore_from_attr(
         "history",
+        r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)? "
+        r"Generated with ocean_data_parser v\d+\.\d+\.\d+\n?",
+        "",
+    )
+    ignore_from_attr(
+        "history",
         r"cioos_data_trasform.odf_transform V \d+\.\d+\.\d+|"
         r"ocean_data_parser V \d+\.\d+\.\d+",
         "package_name_version",
     )
     ignore_from_attr(
-        "history", r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.*\d*Z", "TIMESTAMP"
+        "history",
+        r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?Z?",
+        "TIMESTAMP",
     )
     ignore_from_attr("source", ".*", "source")
 
     reference.attrs["date_created"] = "TIMESTAMP"
     test.attrs["date_created"] = "TIMESTAMP"
+
+    reference.attrs.pop("ocean_data_parser_version", None)
+    test.attrs.pop("ocean_data_parser_version", None)
 
     reference = _standardize_dataset(reference)
     test = _standardize_dataset(test)
@@ -203,4 +211,4 @@ def compare_test_to_reference_netcdf(
     differences = compare_xarray_datasets(
         reference, test, fromfile="reference", tofile="test", n=0
     )
-    return "Unknown differences" if not differences else differences
+    return differences

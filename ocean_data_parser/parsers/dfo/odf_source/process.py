@@ -73,6 +73,8 @@ def parse_odf(
     add_attributes_existing_variables: bool = True,
     generate_new_vocabulary_variables: bool = True,
     drop_path_from_attributes: bool = False,
+    encoding: str = "Windows-1252",
+    filename_convention=FILE_NAME_CONVENTIONS,
 ) -> xr.Dataset:
     """Convert an ODF file to an xarray object.
 
@@ -88,12 +90,15 @@ def parse_odf(
             Defaults to True.
         drop_path_from_attributes (bool): Drop the path from the attributes
             ODF_HEADER FILE_SPECIFICATION and INSTRUMENT_HEADER DESCRIPTION
+        encoding (str, optional): Encoding format of the file. Defaults to "Windows-1252".
+        filename_convention (str, optional): File name convention to extract attributes.
+            Should be a regex expression.
 
     Returns:
         xr.Dataset: Parsed dataset
     """
     # Parse the ODF file with the CIOOS python parsing tool
-    metadata, dataset = odf_parser.read(odf_path)
+    metadata, dataset = odf_parser.read(odf_path, encoding=encoding)
 
     # Review ODF data type compatible with ODF parser
     if metadata["EVENT_HEADER"]["DATA_TYPE"] not in ODF_COMPATIBLE_DATA_TYPES:
@@ -106,11 +111,15 @@ def parse_odf(
         metadata = drop_path_from_header_attributes(metadata)
 
     # Write global and variable attributes
-    file_name_attributes = re.search(FILE_NAME_CONVENTIONS, Path(odf_path).name)
-    if not file_name_attributes:
+    file_name_attributes = (
+        re.search(filename_convention, Path(odf_path).name)
+        if filename_convention
+        else None
+    )
+    if not file_name_attributes and filename_convention:
         logger.warning(
             "The file name doesn't match an expected naming convention: %s",
-            FILE_NAME_CONVENTIONS,
+            filename_convention,
         )
     dataset.attrs = {
         **(file_name_attributes.groupdict() if file_name_attributes else {}),
@@ -118,9 +127,9 @@ def parse_odf(
         "source": odf_path,
     }
     dataset = attributes.global_attributes_from_header(dataset, metadata)
-    dataset.attrs[
-        "history"
-    ] += f"# Convert ODF to NetCDF with ocean_data_parser V {__version__}\n"
+    dataset.attrs["history"] += (
+        f"# Convert ODF to NetCDF with ocean_data_parser V {__version__}\n"
+    )
 
     # Handle ODF flag variables
     dataset = flags.rename_qqqq_flags(dataset)

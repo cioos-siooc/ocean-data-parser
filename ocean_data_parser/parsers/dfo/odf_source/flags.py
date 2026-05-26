@@ -44,17 +44,17 @@ FLAG_CONVENTION = {
 
 
 def history_input(comment, date=datetime.now(timezone.utc)):
-    """Genereate a CF standard history line: Timstamp comment"""
+    """Genereate a CF standard history line: Timstamp comment."""
     return f"{date.strftime('%Y-%m-%dT%H:%M:%SZ')} {comment}\n"
 
 
 def rename_qqqq_flags(dataset: xr.Dataset) -> xr.Dataset:
-    """Convert QQQQ flags to Q{GF3} flag convention"""
+    """Convert QQQQ flags to Q{GF3} flag convention."""
     variables = list(dataset.variables)
 
     # Rename QQQQ flag convention
     qqqq_flags = {
-        var: f"Q{variables[id-1]}"
+        var: f"Q{variables[id - 1]}"
         for id, var in enumerate(variables)
         if var.startswith("QQQQ")
     }
@@ -67,15 +67,16 @@ def rename_qqqq_flags(dataset: xr.Dataset) -> xr.Dataset:
 
 
 def add_flag_attributes(dataset):
-    """
+    """Add flag attributes to the dataset.
+
     odf_flag_variables handle the different conventions used within the ODF files
     over the years and map them to the CF standards.
     """
 
     def _add_ancillary(ancillary, variable):
-        dataset[variable].attrs[
-            "ancillary_variables"
-        ] = f"{dataset[variable].attrs.get('ancillary_variables','')} {ancillary}".strip()
+        dataset[variable].attrs["ancillary_variables"] = (
+            f"{dataset[variable].attrs.get('ancillary_variables', '')} {ancillary}".strip()
+        )
         return dataset[variable]
 
     # Add ancillary_variable attribute
@@ -88,9 +89,9 @@ def add_flag_attributes(dataset):
                     _add_ancillary(variable, var)
         elif variable.startswith("Q") and variable[1:] in dataset:
             dataset[variable[1:]] = _add_ancillary(variable, variable[1:])
-            dataset[variable].attrs[
-                "long_name"
-            ] = f"Quality Flag for Parameter: {dataset[variable[1:]].attrs['long_name']}"
+            dataset[variable].attrs["long_name"] = (
+                f"Quality Flag for Parameter: {dataset[variable[1:]].attrs['long_name']}"
+            )
         else:
             # ignore normal variables
             continue

@@ -31,6 +31,8 @@ def generate_registry(sources=None):
 
 
 class FileConversionRegistry:
+    """File registry to keep track of file conversion status."""
+
     def __init__(
         self,
         path: str = None,
@@ -38,6 +40,16 @@ class FileConversionRegistry:
         hashtype: str = "sha256",
         block_size: int = 65536,
     ):
+        """Initialize a file registry.
+
+        Args:
+            path (str, optional): path to save the registry. Defaults to None.
+            data (pd.DataFrame, optional): Dataframe to use as registry.
+                Defaults to generate_registry().
+            hashtype (str, optional): Hash type to use. Defaults to "sha256".
+            block_size (int, optional): Block size to use when hashing.
+                Defaults to 65536.
+        """
         self.path = Path(path) if path else None
         self.data = data
         self.hashtype = hashtype
@@ -47,7 +59,7 @@ class FileConversionRegistry:
             self.load()
 
     def load(self, overwrite=False):
-        """Load file registry if available otherwise return an empty dataframe"""
+        """Load file registry if available otherwise return an empty dataframe."""
 
         def _as_path(path):
             return Path(path) if pd.notna(path) else path
@@ -70,9 +82,14 @@ class FileConversionRegistry:
         self.data["output_path"] = self.data["output_path"].apply(_as_path)
         return self
 
-    def save(self):
-        """_summary_"""
+    def save(self, force_posix=False):
+        """_summary_."""
         df = self.data.drop(columns=[col for col in self.data if col.endswith("_new")])
+
+        if force_posix:
+            df.index = df.index.map(lambda x: x.as_posix())
+            df["output_path"] = df["output_path"].map(lambda x: x.as_posix())
+
         if not self.path:
             return
         elif self.path.suffix == ".csv":
@@ -89,7 +106,7 @@ class FileConversionRegistry:
         return copy.deepcopy(self)
 
     def _get_hash(self, file: Union[str, Path]) -> str:
-        """Retriveve file hash
+        """Retriveve file hash.
 
         Args:
             file (str, Path): path to file
@@ -110,7 +127,7 @@ class FileConversionRegistry:
 
     @staticmethod
     def _get_mtime(source: str) -> float:
-        """Get file modified time
+        """Get file modified time.
 
         Args:
             source (str): source file path
@@ -126,7 +143,7 @@ class FileConversionRegistry:
         return Path(file).exists() if isinstance(file, (str, Path)) else False
 
     def add(self, sources: list):
-        """Add add sources to file registry and ignore already known sources
+        """Add add sources to file registry and ignore already known sources.
 
         Args:
             sources (str): list of files to get parameters form
@@ -192,7 +209,7 @@ class FileConversionRegistry:
         return self.data["error_message"].isna()
 
     def update(self, sources: list = None):
-        """Update registry hash and mtime attributes
+        """Update registry hash and mtime attributes.
 
         Args:
             sources (list, optional): Subset of file sources to update.
@@ -209,7 +226,7 @@ class FileConversionRegistry:
         dataframe: Union[list, pd.DataFrame] = None,
         **kwargs,
     ):
-        """Update registry sources with given values
+        """Update registry sources with given values.
 
         Args:
             sources (list): list of source files to update
@@ -225,7 +242,7 @@ class FileConversionRegistry:
         """
         if dataframe is not None and kwargs:
             raise ValueError(
-                "Can't update fields with a mix of arguments " "and keyword arguments"
+                "Can't update fields with a mix of arguments and keyword arguments"
             )
 
         # If unique source is given convert it to a string
@@ -247,7 +264,7 @@ class FileConversionRegistry:
         self.data.update(dataframe, overwrite=True)
 
     def get_modified_source_files(self, overwrite: bool = True) -> list:
-        """Return the list of files that needs to be parsed
+        """Return the list of files that needs to be parsed.
 
         Args:
             overwrite (bool, optional): overwrite files already parsed
@@ -267,7 +284,7 @@ class FileConversionRegistry:
         return self.data.loc[self._is_new_file() | is_modified].index.to_list()
 
     def get_missing_sources(self) -> list:
-        """Get list of missing sources
+        """Get list of missing sources.
 
         Returns:
             list: missing sources
@@ -276,7 +293,7 @@ class FileConversionRegistry:
         return self.data.loc[is_missing].index.tolist()
 
     def summarize(self, sources=None, by="error_message", output=None):
-        """Generate a summary of the file registry errors"""
+        """Generate a summary of the file registry errors."""
         if sources:
             data = self.data.loc[sources]
         else:

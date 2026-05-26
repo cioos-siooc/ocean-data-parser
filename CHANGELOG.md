@@ -5,15 +5,88 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## `unreleased`
+## `development`
+
+### Added
+
+- Add Amundsen LADCP `.lad` parser (`amundsen.lad_format`) with vocabulary,
+  auto-detection in `ocean_data_parser.read`, and `depth`-based profile
+  support.
+- Parse degree-decimal-minutes lat/lon and ISO 8601 date-time header values
+  in Amundsen files, and warn when those attributes fail to convert.
+- Add Amundsen TSG V3 CSV support: vocabulary entries for `water_temperature`, `water_salinity`, `water_fluorescence`, `water_sound_velocity`, `vessel_speed`, `flow_rate`, and TSG variants of `time`/`latitude`/`longitude`.
+- Add SDN parameter/UOM URNs and names (TEMPSZ01, PSALSZ01, INFLTF01, UPAA, PSUX, ULPM, etc.) for TSG temperature, salinity, and flow rate vocabulary entries.
+- Add `pre-commit` configuration running `ruff` format and lint (mirrors `make lint`) on every commit, with a `make install-hooks` target to install it.
+- Add `ocean_data_parser_version` global attribute to all parsed datasets by routing the NMEA, Star-Oddi DAT, and Sunburst superCO2 notes parsers through `standardize_dataset`.
+- dfo.odf: add option to ignore full paths from ODF_HEADER FILE_DESCRIPTION and
+INSTRUMENT_HEADER DESCRIPTION attributes in odf.
+Default to True for BIO and False for IML.
+
+### Fixed
+
+- Fix Amundsen Vocabulary for nav variables
+- Migrate Amundsen NAV file type to NMEA
+- Update NMEA Amundsen file type vocabulary
+- Fix off-by-one row drop in Amundsen CSV parser when a blank line precedes the data header (affected NMEA V3 and TSG V3 files).
+- Fix broken `ocean_data_parser.version` import in the DFO ODF parser.
+- Fix reference NetCDF comparison test: correct `ignore_from_attr` call signature, strip the version-stamped history entry, and tolerate timestamps without a trailing `Z`.
+
+## `0.8.0`
+
+### Fixed
+
+- Fix Macoma platform in platform vocabulary which is a ISMER platform.
+- Fix makefile to use `uv run` commands
+- Fix Amundsen Vocabularies accepted_units issue, N2 accepted_units
+- Fix event_comments attributes from ODF datasets
+
+## `0.7.0`
+
+### Added
+
+- Add compatibility with PME wipers txt format.
+- Improve Quebec Ocean - Amundsen Vocabulary
+- Include Quebec Ocean - Amundsen Vocabulary to ODF vocabularies.
+- Add tools to work with vocabularies.
+- Add vocabularies tests.
+- Add Amundsen CSV format parser
+- Use uv as package manager
+- Add vocabularies tests
+
+### Fixed
+
+- Fixed warning regarding star_oddi dayfirst=True missing input
+- Rename pme parsers by removing `minidot_`. New functions are called `pme.txt`,
+  `pme.txts`, `pme.cat`. Maintain still a placeholder for those functions.
+- Major refactor the whole code base to handle a number of issues raised by Ruff.
+- Make tests compatible with windows environment.
+- Fixed typo in NAFC pcnv parser, new sample files added to test files
+
+## `0.6.1` - 2024-08-30
+
+### Added
+
+- Add `onset.xlsx` parser.
+- Make `onset.xlsx` and `onset.csv` raise a `pytz.exception.AmbiguousTimeError`
+  when jumps associated with daylight saving time changes are detected.
+- Add `star_oddi.DAT` ctd test file and fix timestamp format handling.
+
+## `0.6.0` - 2024-08-20
 
 ### Added
 
 - Add odpy convert `input_table` input through config file, which gives the
-ability to list multiple file glob expression and associated metadata.
-- dfo.odf: add option to ignore full paths from ODF_HEADER FILE_DESCRIPTION and
-INSTRUMENT_HEADER DESCRIPTION attributes in odf.
-Default to True for BIO and False for IML.
+  ability to list multiple file glob expression and associated metadata.
+- Add Onset.csv timestamp format: "\d+\/\d+\/\d\d\d\d\s+\d+\:\d+\:\d+" = "%m/%d/%Y %H:%M:%S"
+- Rely on ruff for format and linter testing
+- Add option to pass a list of input_path paths via the configuration file or a
+  os path seperator list via the command line interface or the configuration
+- Add test to test version within package `__init__.py`, `CHANGELOG.md`, and `pyproject.tom`
+
+### Fixed
+
+- seabird parsers module import sorting
+- nafc ruff check issues
 
 ## `0.5.2` - 2024-06-22
 
@@ -35,14 +108,14 @@ Default to True for BIO and False for IML.
 - Test get_path_generation_input on all test files and parsers
 - Run all tests in parallel with pytest-xdist
 - Add --parser-kwargs option to odpy convert command line interface to pass
-inputs to parser
+  inputs to parser
 
 ### Fixed
 
 - Fix star_oddi parser time variable to output a datetime dataarray.
 - Fix onset parser date time handling.
 - Avoid reimporting parser if already imported in read.file with parser
-defined via string expression.
+  defined via string expression.
 - Fix Amundsen int timestamp format
 - Drop trip_tag attribute from dfo.nafc.pcnv parser
 - Make dfo.nafc.pcnv parser attempt to retrieve metqa file info by default.

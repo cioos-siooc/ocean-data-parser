@@ -61,8 +61,8 @@ def variables(
     """Compile NetCDF files variables and variables attributes.
 
     Args:
-        input_dir (str, optional): Top directory from where to start
-            looking for netCDF files. Defaults to '.'.
+        input (str, optional): Glob expression of input files. Defaults to "**/*.nc".
+        exclude (str, optional): Glob expression of files to exclude.
         file_regex (str, optional): Glob expression for search NetCDF
             files under subdirectories. Defaults to "**/*.nc".
         groupby (list, optional): List of attributes to regroup the
@@ -73,8 +73,8 @@ def variables(
             table csv or markdown. Defaults console.
         output_erddap_xml (str, optional): Path to where to ouput
             erddap dataset xml. Defaults to console.
+        multiprocessing (int, optional): Number of processors to use.
     """
-
     # Get file list
     logger.debug("Retrieve files to compile")
     files = glob(input, recursive=True)
