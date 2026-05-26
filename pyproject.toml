@@ -53,8 +53,8 @@ docs = [
     "mkdocstrings-python>=1.13.0",
 ]
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "flake8>=7.1.1",
     "ioos-qc>=2.1.0",
     "pytest>=8.3.4",
