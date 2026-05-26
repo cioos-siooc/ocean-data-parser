@@ -1,7 +1,7 @@
 import json
 import logging
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from io import StringIO
 
 import numpy as np
@@ -9,6 +9,9 @@ import pandas as pd
 import xarray as xr
 
 from ocean_data_parser import __version__
+from ocean_data_parser.metadata.cf import DEFAULT_STANDARD_NAMES_VERSION
+
+STANDARD_NAME_VOCABULARY = f"CF Standard Name Table v{DEFAULT_STANDARD_NAMES_VERSION}"
 
 logger = logging.getLogger(__name__)
 
@@ -206,6 +209,19 @@ def sort_attributes(attrs: dict, attribute_order: list) -> dict:
     return {**attrs_output, **unknown_order_attrs}
 
 
+def add_acdd_global_attributes(attrs: dict) -> dict:
+    """Populate ACDD-1.3 high-priority global attributes when missing.
+
+    Adds ``date_created``, ``date_modified``, ``date_metadata_modified``
+    ISO 8601 timestamps and a default ``standard_name_vocabulary`` if not
+    already set. Parsers are responsible for setting ``Conventions``.
+    """
+    now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    attrs.setdefault("date_modified", now_iso)
+    attrs.setdefault("standard_name_vocabulary", STANDARD_NAME_VOCABULARY)
+    return attrs
+
+
 def standardize_dataset(
     ds: xr.Dataset, time_variables_encoding: dict = None, utc: bool = True
 ) -> xr.Dataset:
@@ -234,11 +250,12 @@ def standardize_dataset(
 
     ds.attrs["history"] = ds.attrs.get("history", "")
     ds.attrs["history"] += (
-        f"{datetime.utcnow().isoformat()} Generated with ocean_data_parser v{__version__}\n"
+        f"{datetime.now(timezone.utc).isoformat()} Generated with ocean_data_parser v{__version__}\n"
     )
 
     ds = get_spatial_coverage_attributes(ds, utc=utc)
     ds = standardize_variable_attributes(ds)
+    ds.attrs = add_acdd_global_attributes(ds.attrs)
     ds.attrs = standardize_global_attributes(ds.attrs)
     ds = generate_variables_encoding(
         ds, time_variables_encoding=time_variables_encoding, utc=utc
