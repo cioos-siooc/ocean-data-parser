@@ -100,6 +100,10 @@ def _standardize_attribute_value(value: str, name: str = None):
         return pd.to_datetime(
             value, utc=(name and "utc" in name), format="%d-%b-%Y %H:%M:%S.%f"
         )
+    elif re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?", value):
+        return pd.to_datetime(value, utc=(name and "utc" in name), format="ISO8601")
+    elif re.fullmatch(r"\d{8}T\d{6}(?:\.\d+)?Z?", value):
+        return pd.to_datetime(value, utc=(name and "utc" in name), format="ISO8601")
     elif re.match(r"^-{0,1}\d+\.\d+$", value):
         return float(value)
     elif re.match(r"^-{0,1}\d+$", value):
@@ -117,6 +121,12 @@ def _standardize_attribute_value(value: str, name: str = None):
         if name and re.match(r"(?i)^initial_(latitude|longitude)", name):
             logger.warning(
                 "Failed to convert {} attribute value to decimal degrees: {!r}",
+                name,
+                value,
+            )
+        elif name and re.search(r"(?i)date_time", name):
+            logger.warning(
+                "Failed to convert {} attribute value to a timestamp: {!r}",
                 name,
                 value,
             )
