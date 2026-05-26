@@ -71,7 +71,7 @@ global_attributes = {
     "iso_3166_country_code": "CA",
     "platform_vocabulary": "https://vocab.nerc.ac.uk/search_nvs/C17/",
     "instrument_vocabulary": "https://vocab.nerc.ac.uk/search_nvs/L22/",
-    "Conventions": "CF-1.6,CF-1.7,CF-1.8,ACDD1.1,ACDD-1.3,IOOS-1.2",
+    "Conventions": "CF-1.6, CF-1.7, CF-1.8, ACDD-1.1, ACDD-1.3, IOOS-1.2",
     "standard_name_vocabulary": "CF Standard Name Table v78",
     "creator_name": "Institute of Ocean Sciences (IOS)",
     "creator_institution": "Institute of Ocean Sciences (IOS)",

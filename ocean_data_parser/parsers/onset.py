@@ -19,7 +19,10 @@ import xarray
 from ocean_data_parser.parsers.checks import check_daylight_saving
 from ocean_data_parser.parsers.utils import standardize_dataset
 
-GLOBAL_ATTRIBUTES = {"instrument_manufacturer": "Onset", "Convention": "CF-1.6"}
+GLOBAL_ATTRIBUTES = {
+    "instrument_manufacturer": "Onset",
+    "Conventions": "CF-1.6, ACDD-1.3",
+}
 
 TIMEZONE_MAPPING = {
     "GMT": "UTC",

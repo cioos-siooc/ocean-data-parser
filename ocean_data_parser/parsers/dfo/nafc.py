@@ -28,7 +28,7 @@ p_file_vocabulary = dfo_nafc_p_file_vocabulary()
 p_file_shipcode = dfo_platforms().drop(columns=["accepted_platform_name"])
 
 global_attributes = {
-    "Conventions": "CF-1.6,CF-1.7,CF-1.8,ACDD-1.3,IOOS 1.2",
+    "Conventions": "CF-1.6, CF-1.7, CF-1.8, ACDD-1.3, IOOS-1.2",
     "naming_authority": "ca.gc.nafc",
 }
 

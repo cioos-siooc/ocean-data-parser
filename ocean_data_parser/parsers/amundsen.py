@@ -392,6 +392,7 @@ def int_format(
         )
         for name, value in metadata.items()
     }
+    ds.attrs["Conventions"] = "CF-1.6, ACDD-1.3"
 
     # Fix global attribute
     ds = _fix_station_global_attribute(ds)
