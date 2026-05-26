@@ -243,7 +243,7 @@ class TestAmundsenParser:
         review_parsed_dataset(ds, path, caplog, max_log_levelno=20)
 
     @pytest.mark.parametrize(
-        "path,expected_latitude,expected_longitude",
+        ("path", "expected_latitude", "expected_longitude"),
         [
             (
                 "tests/parsers_test_files/amundsen/ladcp/stn003.lad",
@@ -261,14 +261,26 @@ class TestAmundsenParser:
         self, path, expected_latitude, expected_longitude
     ):
         ds = amundsen.lad_format(path)
-        assert "initial_latitude_deg" in ds.attrs, "initial_latitude_deg attribute is missing"
-        assert "initial_longitude_deg" in ds.attrs, "initial_longitude_deg attribute is missing"
+        assert "initial_latitude_deg" in ds.attrs, (
+            "initial_latitude_deg attribute is missing"
+        )
+        assert "initial_longitude_deg" in ds.attrs, (
+            "initial_longitude_deg attribute is missing"
+        )
 
-        assert ds.attrs["initial_latitude_deg"] is not None, "initial_latitude_deg attribute is None"
-        assert ds.attrs["initial_longitude_deg"] is not None, "initial_longitude_deg attribute is None"
-        
-        assert isinstance(ds.attrs["initial_latitude_deg"], float), "initial_latitude_deg attribute is not a float"
-        assert isinstance(ds.attrs["initial_longitude_deg"], float), "initial_longitude_deg attribute is not a float"
+        assert ds.attrs["initial_latitude_deg"] is not None, (
+            "initial_latitude_deg attribute is None"
+        )
+        assert ds.attrs["initial_longitude_deg"] is not None, (
+            "initial_longitude_deg attribute is None"
+        )
+
+        assert isinstance(ds.attrs["initial_latitude_deg"], float), (
+            "initial_latitude_deg attribute is not a float"
+        )
+        assert isinstance(ds.attrs["initial_longitude_deg"], float), (
+            "initial_longitude_deg attribute is not a float"
+        )
 
         assert ds.attrs["initial_latitude_deg"] == pytest.approx(expected_latitude)
         assert ds.attrs["initial_longitude_deg"] == pytest.approx(expected_longitude)

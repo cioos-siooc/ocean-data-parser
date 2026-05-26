@@ -266,6 +266,10 @@ def int_format(
         generate_depth (bool, optional): Generate depth variable. Defaults to True.
         separator (str, optional): Separator for the data. Defaults to r"\s+".
         encoding_error (str, optional): Encoding error handling. Defaults to "strict".
+        skip_data_separator_line (bool, optional): Skip the dashed separator line
+            between the header and the data. Defaults to False.
+        column_renames (dict, optional): Mapping used to rename columns parsed
+            from the data block before vocabulary mapping. Defaults to None.
 
     Returns:
         xr.Dataset
