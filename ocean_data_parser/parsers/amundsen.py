@@ -520,6 +520,14 @@ def _assign_dimensions(ds: xr.Dataset, instrument: str) -> xr.Dataset:
         )
         ds = ds.swap_dims({"index": "PRES"})
         ds = ds.drop_vars("index")
+    elif "DEPTH" in ds:
+        ds.attrs.update(
+            {
+                "cdm_data_type": "Profile",
+            }
+        )
+        ds = ds.swap_dims({"index": "DEPTH"})
+        ds = ds.drop_vars("index")
     elif "depth" in ds:
         ds.attrs.update(
             {
