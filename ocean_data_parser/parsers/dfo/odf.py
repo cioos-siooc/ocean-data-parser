@@ -72,7 +72,10 @@ as_dfo_global_attributes = {
 
 
 def bio_odf(
-    path: str, global_attributes: dict = None, encoding="Windows-1252"
+    path: str,
+    global_attributes: dict = None,
+    encoding="Windows-1252",
+    drop_path_from_attributes=True,
 ) -> xarray.Dataset:
     """Bedford Institute of Ocean ODF format parser.
 
@@ -80,6 +83,8 @@ def bio_odf(
         path (str): Path to the odf file to parse
         global_attributes (dict): file specific global attributes
         encoding (str): Encoding format of the file (default: Windows-1252)
+        drop_path_from_attributes (bool): Drop the path from the attributes
+            ODF_HEADER FILE_SPECIFICATION and INSTRUMENT_HEADER DESCRIPTION
 
     Returns:
         dataset (xarray dataset): Parsed xarray dataset
@@ -89,17 +94,23 @@ def bio_odf(
         vocabularies=["BIO", "GF3"],
         global_attributes={**bio_global_attributes, **(global_attributes or {})},
         encoding=encoding,
+        drop_path_from_attributes=drop_path_from_attributes,
     )
 
 
 def mli_odf(
-    path: str, global_attributes: dict = None, encoding="Windows-1252"
+    path: str,
+    global_attributes: dict = None,
+    encoding="Windows-1252",
+    drop_path_from_attributes=False,
 ) -> xarray.Dataset:
     """Maurice Lamontagne Institute ODF format parser.
 
     Args:
         path (str): Path to the odf file to parse
         global_attributes (dict): file specific global attributes
+        drop_path_from_attributes (bool): Drop the path from the attributes
+            ODF_HEADER FILE_SPECIFICATION and INSTRUMENT_HEADER DESCRIPTION
         encoding (str): Encoding format of the file (default: Windows-1252)
 
     Returns:
@@ -109,6 +120,7 @@ def mli_odf(
         path,
         vocabularies=["MLI", "GF3"],
         global_attributes={**mli_global_attributes, **(global_attributes or {})},
+        drop_path_from_attributes=drop_path_from_attributes,
         encoding=encoding,
     )
 
@@ -141,6 +153,7 @@ def odf(
     global_attributes: dict = None,
     encoding: str = "Windows-1252",
     filename_convention=FILE_NAME_CONVENTIONS,
+    drop_path_from_attributes: bool = False,
 ) -> xarray.Dataset:
     """ODF format parser.
 
@@ -148,6 +161,9 @@ def odf(
         path (str): Path to the odf file to parse
         vocabularies (str): Vocabulary list to use for the vocabulary mapping
         global_attributes (dict): file specific global attributes
+        drop_path_from_attributes (bool): Drop the path from the attributes
+            ODF_HEADER FILE_SPECIFICATION and INSTRUMENT_HEADER DESCRIPTION
+
         encoding (str): Encoding format of the file (default: Windows-1252)
         filename_convention (str): File name convention to extract attributes.
             Should be a regex expression.
@@ -159,6 +175,7 @@ def odf(
         path,
         vocabularies=vocabularies,
         global_attributes={**odf_global_attributes, **(global_attributes or {})},
+        drop_path_from_attributes=drop_path_from_attributes,
         encoding=encoding,
         filename_convention=filename_convention,
     )

@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add SDN parameter/UOM URNs and names (TEMPSZ01, PSALSZ01, INFLTF01, UPAA, PSUX, ULPM, etc.) for TSG temperature, salinity, and flow rate vocabulary entries.
 - Add `pre-commit` configuration running `ruff` format and lint (mirrors `make lint`) on every commit, with a `make install-hooks` target to install it.
 - Add `ocean_data_parser_version` global attribute to all parsed datasets by routing the NMEA, Star-Oddi DAT, and Sunburst superCO2 notes parsers through `standardize_dataset`.
+- dfo.odf: add option to ignore full paths from ODF_HEADER FILE_DESCRIPTION and
+INSTRUMENT_HEADER DESCRIPTION attributes in odf.
+Default to True for BIO and False for IML.
 
 ### Fixed
 

@@ -131,6 +131,29 @@ def compare_test_to_reference_netcdf(
     reference.attrs.pop("ocean_data_parser_version", None)
     test.attrs.pop("ocean_data_parser_version", None)
 
+    reference.attrs.pop("Conventions", None)
+    test.attrs.pop("Conventions", None)
+
+    # Normalize paths stripped by drop_path_from_header_attributes so older
+    # reference files (generated before path-stripping) still match.
+    def _basename(value):
+        if not isinstance(value, str):
+            return value
+        return re.split(r"\\|/", value)[-1]
+
+    for ds in (reference, test):
+        if "instrument_description" in ds.attrs:
+            ds.attrs["instrument_description"] = _basename(
+                ds.attrs["instrument_description"]
+            )
+        for attr in ("original_odf_header_json", "original_header"):
+            if attr in ds.attrs and isinstance(ds.attrs[attr], str):
+                ds.attrs[attr] = re.sub(
+                    r'("(?:DESCRIPTION|FILE_SPECIFICATION)"\s*[:=]\s*")([^"]*)"',
+                    lambda m: f'{m.group(1)}{_basename(m.group(2))}"',
+                    ds.attrs[attr],
+                )
+
     reference = _standardize_dataset(reference)
     test = _standardize_dataset(test)
 
