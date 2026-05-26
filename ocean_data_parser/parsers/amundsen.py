@@ -262,6 +262,7 @@ def int_format(
         sep=separator,
         names=names,
         encoding_errors=encoding_error,
+        skip_blank_lines=False,
     )
     if len(df.columns) != len(names):
         raise ValueError(
