@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add Amundsen LADCP `.lad` parser (`amundsen.lad_format`) with vocabulary,
+  auto-detection in `ocean_data_parser.read`, and `depth`-based profile
+  support.
+- Parse degree-decimal-minutes lat/lon and ISO 8601 date-time header values
+  in Amundsen files, and warn when those attributes fail to convert.
 - Add Amundsen TSG V3 CSV support: vocabulary entries for `water_temperature`, `water_salinity`, `water_fluorescence`, `water_sound_velocity`, `vessel_speed`, `flow_rate`, and TSG variants of `time`/`latitude`/`longitude`.
 - Add SDN parameter/UOM URNs and names (TEMPSZ01, PSALSZ01, INFLTF01, UPAA, PSUX, ULPM, etc.) for TSG temperature, salinity, and flow rate vocabulary entries.
 - Add `pre-commit` configuration running `ruff` format and lint (mirrors `make lint`) on every commit, with a `make install-hooks` target to install it.

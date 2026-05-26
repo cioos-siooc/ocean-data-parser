@@ -241,6 +241,57 @@ class TestAmundsenParser:
             ignore_log_records="Duplicated variable|'NAV' file type renamed to 'NMEA'",
         )
 
+    @pytest.mark.parametrize(
+        "path",
+        glob("tests/parsers_test_files/amundsen/**/*.lad", recursive=True),
+    )
+    def test_amundsen_lad_parser(self, path, caplog):
+        ds = amundsen.lad_format(path)
+        review_parsed_dataset(ds, path, caplog, max_log_levelno=20)
+
+    @pytest.mark.parametrize(
+        ("path", "expected_latitude", "expected_longitude"),
+        [
+            (
+                "tests/parsers_test_files/amundsen/ladcp/stn003.lad",
+                -(134 + 26.6829 / 60),
+                70 + 55.3728 / 60,
+            ),
+            (
+                "tests/parsers_test_files/amundsen/ladcp/stn005.lad",
+                -(134 + 39.9072 / 60),
+                71 + 0.5952 / 60,
+            ),
+        ],
+    )
+    def test_amundsen_lad_initial_lat_lon_parsing(
+        self, path, expected_latitude, expected_longitude
+    ):
+        ds = amundsen.lad_format(path)
+        assert "initial_latitude_deg" in ds.attrs, (
+            "initial_latitude_deg attribute is missing"
+        )
+        assert "initial_longitude_deg" in ds.attrs, (
+            "initial_longitude_deg attribute is missing"
+        )
+
+        assert ds.attrs["initial_latitude_deg"] is not None, (
+            "initial_latitude_deg attribute is None"
+        )
+        assert ds.attrs["initial_longitude_deg"] is not None, (
+            "initial_longitude_deg attribute is None"
+        )
+
+        assert isinstance(ds.attrs["initial_latitude_deg"], float), (
+            "initial_latitude_deg attribute is not a float"
+        )
+        assert isinstance(ds.attrs["initial_longitude_deg"], float), (
+            "initial_longitude_deg attribute is not a float"
+        )
+
+        assert ds.attrs["initial_latitude_deg"] == pytest.approx(expected_latitude)
+        assert ds.attrs["initial_longitude_deg"] == pytest.approx(expected_longitude)
+
 
 class TestIOSShellParser:
     @pytest.mark.parametrize(
