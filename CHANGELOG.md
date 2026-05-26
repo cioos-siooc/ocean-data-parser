@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `development`
 
+### Added
+
+- Add Amundsen LADCP `.lad` parser (`amundsen.lad_format`) with vocabulary,
+  auto-detection in `ocean_data_parser.read`, and `depth`-based profile
+  support.
+- Parse degree-decimal-minutes lat/lon and ISO 8601 date-time header values
+  in Amundsen files, and warn when those attributes fail to convert.
+
 ### Fixed
 
 - Fix Amundsen Vocabulary for nav variables
