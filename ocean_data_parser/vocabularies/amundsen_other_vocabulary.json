@@ -474,7 +474,7 @@
       "file_type": "TSG"
     }
   ],
-  "DEPTH": [
+  "DEPH": [
     {
       "long_name": "Depth Below Sea Surface",
       "units": "m",
