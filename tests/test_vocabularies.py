@@ -121,8 +121,36 @@ class TestPlatformVocabulary:
         assert nerc_platform == local_platform
 
 
+def _amundsen_other_loader(instrument):
+    def _load():
+        return load.amundsen_vocabulary_df(instrument_vocabulary=instrument)
+
+    _load.__name__ = f"amundsen_{instrument}_vocabulary_df"
+    return _load
+
+
+def _discover_amundsen_other_instruments():
+    import json
+
+    from ocean_data_parser.vocabularies.load import VOCABULARIES_DIRECTORY
+
+    with open(
+        VOCABULARIES_DIRECTORY / "amundsen_other_vocabulary.json", encoding="UTF-8"
+    ) as f:
+        raw = json.load(f)
+    raw.pop("VARIABLE_NAME", None)
+    instruments = {
+        item["file_type"]
+        for items in raw.values()
+        for item in items
+        if item.get("file_type")
+    }
+    return sorted(instruments)
+
+
 vocabularies = [
     load.amundsen_vocabulary_df,
+    *(_amundsen_other_loader(i) for i in _discover_amundsen_other_instruments()),
     load.seabird_vocabulary_df,
     load.dfo_odf_vocabulary,
     load.dfo_nafc_p_file_vocabulary,
@@ -279,6 +307,67 @@ class TestVocabularies:
         mismatches = comparison[comparison["_merge"] == "left_only"]
         assert mismatches.empty, (
             f"Found mismatched entries: {mismatches.to_dict(orient='records')}"
+        )
+
+    def test_sdn_uom_pair(self, vocabulary):
+        """Test that each (sdn_uom_urn, sdn_uom_name) pair matches a NERC P06 entry."""
+        if (
+            "sdn_uom_urn" not in vocabulary.columns
+            or "sdn_uom_name" not in vocabulary.columns
+        ):
+            return
+        pairs = vocabulary[["sdn_uom_urn", "sdn_uom_name"]].dropna(how="all")
+        comparison = pairs.merge(
+            nerc_p06[["sdn_uom_urn", "sdn_uom_name"]],
+            on=["sdn_uom_urn", "sdn_uom_name"],
+            how="left",
+            indicator=True,
+        )
+        mismatches = comparison[comparison["_merge"] == "left_only"]
+        assert mismatches.empty, (
+            f"{len(mismatches)} (sdn_uom_urn, sdn_uom_name) pairs do not match NERC P06: "
+            f"{mismatches[['sdn_uom_urn', 'sdn_uom_name']].to_dict(orient='records')}"
+        )
+
+    def test_sdn_parameter_pair(self, vocabulary):
+        """Test that each (sdn_parameter_urn, sdn_parameter_name) pair matches a NERC P01 entry.
+
+        URNs are first resolved against P01 allowing the accepted numerical
+        variances (XX, X, 1, 01) before checking the name pairing.
+        """
+        if (
+            "sdn_parameter_urn" not in vocabulary.columns
+            or "sdn_parameter_name" not in vocabulary.columns
+        ):
+            return
+        pairs = vocabulary[["sdn_parameter_urn", "sdn_parameter_name"]].dropna(
+            how="all"
+        )
+        urns = nerc_p01["sdn_parameter_urn"].to_list()
+        names = nerc_p01["sdn_parameter_name"].to_list()
+        pairs = pairs.assign(
+            matched_urn=pairs.apply(
+                lambda row: get_matching_urn(
+                    row["sdn_parameter_urn"],
+                    row["sdn_parameter_name"],
+                    urns,
+                    names,
+                ),
+                axis=1,
+            )
+        )
+        comparison = pairs.merge(
+            nerc_p01[["sdn_parameter_urn", "sdn_parameter_name"]],
+            left_on=["matched_urn", "sdn_parameter_name"],
+            right_on=["sdn_parameter_urn", "sdn_parameter_name"],
+            how="left",
+            indicator=True,
+            suffixes=("", "_reference"),
+        )
+        mismatches = comparison[comparison["_merge"] == "left_only"]
+        assert mismatches.empty, (
+            f"{len(mismatches)} (sdn_parameter_urn, sdn_parameter_name) pairs do not match NERC P01: "
+            f"{mismatches[['sdn_parameter_urn', 'sdn_parameter_name']].to_dict(orient='records')}"
         )
 
 
