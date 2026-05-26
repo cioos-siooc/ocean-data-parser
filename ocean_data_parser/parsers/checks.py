@@ -3,9 +3,7 @@ from loguru import logger
 from pytz.exceptions import AmbiguousTimeError
 
 
-def check_daylight_saving(
-    time: pd.Series, ambiguous: str = "raise", fix_log_level: str = "info"
-):
+def check_daylight_saving(time: pd.Series, ambiguous: str = "raise"):
     """Check if daylight saving issue is present in the time series.
 
     Args:
@@ -14,11 +12,10 @@ def check_daylight_saving(
             options:
                 - "raise": raise when we encounter ambiguous dates (default)
                 - else: warn when we encounter ambiguous dates.
-        fix_log_level (str, optional): Log level to use when fixing the issue.
 
-    Returns:
-        bool: True if daylight saving issue is present
-        pd.Series: time series with daylight saving issue fixed
+    Raises:
+        AmbiguousTimeError: If ``ambiguous="raise"`` and a Spring or Fall
+            daylight saving time gap is detected in the time series.
     """
     # Test daylight saving issue
     dt = time.diff()

@@ -8,6 +8,7 @@ import xarray as xr
 from loguru import logger
 from pytz.exceptions import AmbiguousTimeError
 
+from ocean_data_parser import __version__
 from ocean_data_parser.batch.utils import get_path_generation_input
 from ocean_data_parser.parsers import (
     amundsen,
@@ -24,6 +25,9 @@ from ocean_data_parser.parsers import (
 )
 from ocean_data_parser.parsers.dfo.odf_source.attributes import _review_station
 from ocean_data_parser.parsers.dfo.odf_source.parser import _convert_odf_time
+from ocean_data_parser.parsers.dfo.odf_source.process import (
+    drop_path_from_header_attributes,
+)
 
 
 def search_caplog_records(caplog, message, levelname=None):
@@ -42,6 +46,12 @@ def review_parsed_dataset(
     assert isinstance(ds, xr.Dataset)
     assert ds.attrs, "dataset do not contains any global attributes"
     assert ds.variables, "Dataset has no variables."
+
+    assert ds.attrs["ocean_data_parser_version"] == __version__
+    assert isinstance(ds.attrs.get("history", ""), str), (
+        "history attribute is not a string"
+    )
+
     if caplog:
         for record in caplog.records:
             if ignore_log_records and re.search(ignore_log_records, record.message):
@@ -211,7 +221,7 @@ class TestAmundsenParser:
             path,
             caplog,
             max_log_levelno=20,
-            ignore_log_records="Duplicated variable",
+            ignore_log_records="Duplicated variable|'NAV' file type renamed to 'NMEA'",
         )
 
     @pytest.mark.parametrize(
@@ -231,8 +241,59 @@ class TestAmundsenParser:
             path,
             caplog,
             max_log_levelno=20,
-            ignore_log_records="Duplicated variable",
+            ignore_log_records="Duplicated variable|'NAV' file type renamed to 'NMEA'",
         )
+
+    @pytest.mark.parametrize(
+        "path",
+        glob("tests/parsers_test_files/amundsen/**/*.lad", recursive=True),
+    )
+    def test_amundsen_lad_parser(self, path, caplog):
+        ds = amundsen.lad_format(path)
+        review_parsed_dataset(ds, path, caplog, max_log_levelno=20)
+
+    @pytest.mark.parametrize(
+        ("path", "expected_latitude", "expected_longitude"),
+        [
+            (
+                "tests/parsers_test_files/amundsen/ladcp/stn003.lad",
+                -(134 + 26.6829 / 60),
+                70 + 55.3728 / 60,
+            ),
+            (
+                "tests/parsers_test_files/amundsen/ladcp/stn005.lad",
+                -(134 + 39.9072 / 60),
+                71 + 0.5952 / 60,
+            ),
+        ],
+    )
+    def test_amundsen_lad_initial_lat_lon_parsing(
+        self, path, expected_latitude, expected_longitude
+    ):
+        ds = amundsen.lad_format(path)
+        assert "initial_latitude_deg" in ds.attrs, (
+            "initial_latitude_deg attribute is missing"
+        )
+        assert "initial_longitude_deg" in ds.attrs, (
+            "initial_longitude_deg attribute is missing"
+        )
+
+        assert ds.attrs["initial_latitude_deg"] is not None, (
+            "initial_latitude_deg attribute is None"
+        )
+        assert ds.attrs["initial_longitude_deg"] is not None, (
+            "initial_longitude_deg attribute is None"
+        )
+
+        assert isinstance(ds.attrs["initial_latitude_deg"], float), (
+            "initial_latitude_deg attribute is not a float"
+        )
+        assert isinstance(ds.attrs["initial_longitude_deg"], float), (
+            "initial_longitude_deg attribute is not a float"
+        )
+
+        assert ds.attrs["initial_latitude_deg"] == pytest.approx(expected_latitude)
+        assert ds.attrs["initial_longitude_deg"] == pytest.approx(expected_longitude)
 
 
 class TestIOSShellParser:
@@ -401,6 +462,50 @@ class TestODFParser:
             global_attributes, {"original_header": original_header}
         )
         assert response == station, f"Failed to retrieve station={station}"
+
+    @pytest.mark.parametrize(
+        ("path", "expect"),
+        [
+            ("tests/parsers_test_files/dfo/odf/bio/CTD/CTD_001.odf", "CTD_001.odf"),
+            (
+                "tests\\\\parsers_test_files\\\\dfo\\\\odf\\\\bio\\\\CTD\\\\CTD_001.odf",
+                "CTD_001.odf",
+            ),
+            (
+                r"\\tests\\parsers_test_files\\dfo\\odf\\bio\\CTD\\CTD_001.odf",
+                "CTD_001.odf",
+            ),
+        ],
+    )
+    def test_odf_header_file_description_with_no_path(self, path, expect):
+        result = drop_path_from_header_attributes(
+            {"ODF_HEADER": {"FILE_SPECIFICATION": path}}
+        )
+        assert result["ODF_HEADER"]["FILE_SPECIFICATION"] == expect, (
+            "Failed to drop path from header attributes"
+        )
+
+    @pytest.mark.parametrize(
+        ("path", "expect"),
+        [
+            ("tests/parsers_test_files/dfo/odf/bio/CTD/CTD_001.odf", "CTD_001.odf"),
+            (
+                "tests\\\\parsers_test_files\\\\dfo\\\\odf\\\\bio\\\\CTD\\\\CTD_001.odf",
+                "CTD_001.odf",
+            ),
+            (
+                r"\\tests\\parsers_test_files\\dfo\\odf\\bio\\CTD\\CTD_001.odf",
+                "CTD_001.odf",
+            ),
+        ],
+    )
+    def test_instrument_header_description_no_path(self, path, expect):
+        result = drop_path_from_header_attributes(
+            {"INSTRUMENT_HEADER": {"DESCRIPTION": path}}
+        )
+        assert result["INSTRUMENT_HEADER"]["DESCRIPTION"] == expect, (
+            "Failed to drop path from header attributes"
+        )
 
 
 class TestODFBIOParser:

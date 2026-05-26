@@ -13,6 +13,8 @@ import pandas as pd
 import pynmea2
 import xarray
 
+from ocean_data_parser.parsers.utils import standardize_dataset
+
 logger = logging.getLogger(__name__)
 
 
@@ -312,4 +314,4 @@ def nmea_0183(
     for var in ds:
         if var in long_names:
             ds[var].attrs["long_name"] = long_names[var]
-    return ds
+    return standardize_dataset(ds)

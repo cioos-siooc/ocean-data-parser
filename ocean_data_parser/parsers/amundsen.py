@@ -92,19 +92,52 @@ def _standardize_attribute_value(value: str, name: str = None):
     """
     if name in string_attributes or not isinstance(value, str):
         return value
+    # Amundsen long-form date e.g. "08-Aug-2010 22:19:55"
     elif re.fullmatch(r"\d\d-\w\w\w-\d\d\d\d \d\d\:\d\d\:\d\d", value):
         return pd.to_datetime(
             value, utc=(name and "utc" in name), format="%d-%b-%Y %H:%M:%S"
         )
+    # Amundsen long-form date with fractional seconds e.g. "08-Aug-2010 22:19:55.00"
     elif re.fullmatch(r"\d\d-\w\w\w-\d\d\d\d \d\d\:\d\d\:\d\d.\d+", value):
         return pd.to_datetime(
             value, utc=(name and "utc" in name), format="%d-%b-%Y %H:%M:%S.%f"
         )
+    # Extended ISO 8601 date-time e.g. "2021-07-17T13:34:29" (optional .fff, Z)
+    elif re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?", value):
+        return pd.to_datetime(value, utc=(name and "utc" in name), format="ISO8601")
+    # Compact ISO 8601 date-time e.g. "20230803T000001Z" (optional .fff, Z)
+    elif re.fullmatch(r"\d{8}T\d{6}(?:\.\d+)?Z?", value):
+        return pd.to_datetime(value, utc=(name and "utc" in name), format="ISO8601")
+    # Decimal number e.g. "34.806464" or "-91.4579"
     elif re.match(r"^-{0,1}\d+\.\d+$", value):
         return float(value)
+    # Integer e.g. "2013004" or "-3"
     elif re.match(r"^-{0,1}\d+$", value):
         return int(value)
+    # Degrees-decimal-minutes with hemisphere e.g. "134°W 26.6829'"
+    # (also tolerates "Â°" mojibake from Windows-1252-decoded UTF-8 source)
+    elif match := re.fullmatch(
+        r"\s*(\d+(?:\.\d+)?)\s*(?:°|Â°)\s*([NSEW])\s+(\d+(?:\.\d+)?)\s*'?\s*",
+        value,
+    ):
+        degrees, hemisphere, minutes = match.groups()
+        decimal = float(degrees) + float(minutes) / 60.0
+        if hemisphere in ("S", "W"):
+            decimal = -decimal
+        return decimal
     else:
+        if name and re.match(r"(?i)^initial_(latitude|longitude)", name):
+            logger.warning(
+                "Failed to convert {} attribute value to decimal degrees: {!r}",
+                name,
+                value,
+            )
+        elif name and re.search(r"(?i)date_time", name):
+            logger.warning(
+                "Failed to convert {} attribute value to a timestamp: {!r}",
+                name,
+                value,
+            )
         return value
 
 
@@ -136,8 +169,15 @@ def _convert_timestamp(df: pd.DataFrame) -> pd.DataFrame:
 
 def _get_file_type(path: str) -> str:
     """Get the file type from the file path."""
-    file_type = re.search("AVOS|TSG|Bioness|NAV|Hydrobios", Path(path).name)
-    return file_type.group() if file_type else None
+    if Path(path).suffix.lower() == ".lad":
+        return "LADCP"
+    file_type = re.search("AVOS|TSG|Bioness|NAV|Hydrobios|NMEA", Path(path).name)
+    if not file_type:
+        return
+    if file_type.group() == "NAV":
+        logger.warning("'NAV' file type renamed to 'NMEA'")
+        return "NMEA"
+    return file_type.group()
 
 
 def csv_format(
@@ -171,6 +211,42 @@ def csv_format(
     )
 
 
+def lad_format(
+    path: str,
+    encoding: str = "Windows-1252",
+    map_to_vocabulary: bool = True,
+    generate_depth: bool = True,
+    encoding_error="strict",
+) -> xr.Dataset:
+    """Parse Amundsen LADCP `.lad` format.
+
+    Thin wrapper around :func:`int_format` that handles `.lad`-specific
+    quirks: the dashed separator line between the column header and the
+    data, and the ``DEPTH`` / ``DEPH`` column-name mismatch between the
+    data table and the variable description block.
+
+    Args:
+        path (str): file path to parse.
+        encoding (str, optional): File encoding. Defaults to "Windows-1252".
+        map_to_vocabulary (bool, optional): Rename variables to vocabulary. Defaults to True.
+        generate_depth (bool, optional): Generate depth variable. Defaults to True.
+        encoding_error (str, optional): Encoding error handling. Defaults to "strict".
+
+    Returns:
+        xr.Dataset
+    """
+    return int_format(
+        path=path,
+        encoding=encoding,
+        map_to_vocabulary=map_to_vocabulary,
+        generate_depth=generate_depth,
+        separator=r"\s+",
+        encoding_error=encoding_error,
+        skip_data_separator_line=True,
+        column_renames={"DEPTH": "DEPH"},
+    )
+
+
 def int_format(
     path: str,
     encoding: str = "Windows-1252",
@@ -178,6 +254,8 @@ def int_format(
     generate_depth: bool = True,
     separator: str = r"\s+",
     encoding_error="strict",
+    skip_data_separator_line: bool = False,
+    column_renames: dict = None,
 ) -> xr.Dataset:
     r"""Parse Amundsen INT format.
 
@@ -188,6 +266,10 @@ def int_format(
         generate_depth (bool, optional): Generate depth variable. Defaults to True.
         separator (str, optional): Separator for the data. Defaults to r"\s+".
         encoding_error (str, optional): Encoding error handling. Defaults to "strict".
+        skip_data_separator_line (bool, optional): Skip the dashed separator line
+            between the header and the data. Defaults to False.
+        column_renames (dict, optional): Mapping used to rename columns parsed
+            from the data block before vocabulary mapping. Defaults to None.
 
     Returns:
         xr.Dataset
@@ -249,15 +331,45 @@ def int_format(
                 new_names.append(f"{name}_{new_names.count(name)}")
         names = new_names
 
-    df = pd.read_csv(
-        path,
-        encoding=encoding,
-        header=header_line_idx,
-        skiprows=[header_line_idx] if separator == r"\s+" else [],
-        sep=separator,
-        names=names,
-        encoding_errors=encoding_error,
-    )
+    if skip_data_separator_line:
+        # Some formats (e.g. `.lad`) include a dashed separator line between
+        # the column header and the data rows (e.g. "------- ------ ------").
+        # Skip everything through that separator and parse with no header.
+        with open(path, encoding=encoding, errors=encoding_error) as file:
+            file_lines = file.readlines()
+        data_start = header_line_idx + 1
+        if data_start < len(file_lines) and re.fullmatch(
+            r"[-\s]+", file_lines[data_start].rstrip("\n")
+        ):
+            data_start += 1
+        df = pd.read_csv(
+            path,
+            encoding=encoding,
+            header=None,
+            skiprows=data_start,
+            sep=separator,
+            names=names,
+            encoding_errors=encoding_error,
+        )
+    else:
+        df = pd.read_csv(
+            path,
+            encoding=encoding,
+            header=header_line_idx,
+            skiprows=[header_line_idx] if separator == r"\s+" else [],
+            sep=separator,
+            names=names,
+            encoding_errors=encoding_error,
+        )
+
+    if column_renames:
+        df = df.rename(
+            columns={
+                src: dst
+                for src, dst in column_renames.items()
+                if src in df.columns and dst not in df.columns
+            }
+        )
     if len(df.columns) != len(names):
         raise ValueError(
             f"Number of columns ({len(df.columns)}) doesn't match the number of variables ({len(names)})"
@@ -267,6 +379,8 @@ def int_format(
     variables = _extract_variable_attributes_from_header(metadata, df.columns)
     if "Date" in df and "Hour" in df:
         df = _convert_timestamp(df)
+    elif "time" in df:
+        df["time"] = pd.to_datetime(df["time"], utc=True)
 
     # Convert to xarray object
     ds = df.to_xarray()
@@ -377,7 +491,7 @@ def int_format(
     return ds
 
 
-COORDINATES_VARIABLES = ["time", "latitude", "longitude", "PRES"]
+COORDINATES_VARIABLES = ["time", "latitude", "longitude", "PRES", "depth"]
 
 
 def _assign_dimensions(ds: xr.Dataset, instrument: str) -> xr.Dataset:
@@ -409,6 +523,14 @@ def _assign_dimensions(ds: xr.Dataset, instrument: str) -> xr.Dataset:
             }
         )
         ds = ds.swap_dims({"index": "PRES"})
+        ds = ds.drop_vars("index")
+    elif "depth" in ds:
+        ds.attrs.update(
+            {
+                "cdm_data_type": "Profile",
+            }
+        )
+        ds = ds.swap_dims({"index": "depth"})
         ds = ds.drop_vars("index")
     elif instrument in ("Bioness", "Hydrobios"):
         ds.attrs.update(

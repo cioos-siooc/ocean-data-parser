@@ -12,12 +12,69 @@
       "notes_O2": "All O2 units from before the year 2018 has mL/L. Since 2018, the units was updated to uM. All Dissolved Oxygen unit before 2018 should be converted into uM. An apply_function x*44.661 has been added in order to help for the conversion from mL/L to the unit uM, where x is the variable representing the Dissolved Oxygen before 2018."
     }
   ],
+  "time": [
+    {
+      "long_name": "Time",
+      "units": "",
+      "standard_name": "time",
+      "accepted_units": "yyyymmddTHHMMSSZ",
+      "file_type": "NMEA"
+    },
+    {
+      "long_name": "Time",
+      "units": "",
+      "standard_name": "time",
+      "accepted_units": "yyyymmddTHHMMSSZ",
+      "file_type": "TSG"
+    }
+  ],
+  "latitude": [
+    {
+      "long_name": "Latitude",
+      "units": "degrees_north",
+      "standard_name": "latitude",
+      "accepted_units": "degrees N",
+      "file_type": "NMEA"
+    },
+    {
+      "long_name": "Latitude",
+      "units": "degrees_north",
+      "standard_name": "latitude",
+      "accepted_units": "degrees N",
+      "file_type": "TSG"
+    }
+  ],
+  "longitude": [
+    {
+      "long_name": "Longitude",
+      "units": "degrees_east",
+      "standard_name": "longitude",
+      "accepted_units": "degrees E",
+      "file_type": "NMEA"
+    },
+    {
+      "long_name": "Longitude",
+      "units": "degrees_east",
+      "standard_name": "longitude",
+      "accepted_units": "degrees E",
+      "file_type": "TSG"
+    }
+  ],
   "Heading": [
     {
       "long_name": "Vessel Heading",
       "units": "degree_north",
       "accepted_units": "degrees N",
-      "file_type": "NAV"
+      "file_type": "NMEA"
+    }
+  ],
+  "vessel_heading": [
+    {
+      "long_name": "Vessel Heading",
+      "units": "degree_north",
+      "accepted_units": "degrees N",
+      "file_type": "NMEA",
+      "rename_to": "Heading"
     }
   ],
   "Depth": [
@@ -25,7 +82,16 @@
       "long_name": "Bottom Depth",
       "units": "m",
       "accepted_units": "m",
-      "file_type": "NAV"
+      "file_type": "NMEA"
+    }
+  ],
+  "bottom_depth": [
+    {
+      "long_name": "Bottom Depth",
+      "units": "m",
+      "accepted_units": "m",
+      "file_type": "NMEA",
+      "rename_to": "Depth"
     }
   ],
   "Roll": [
@@ -33,7 +99,16 @@
       "long_name": "Roll Heading",
       "units": "degree",
       "accepted_units": "degrees N",
-      "file_type": "NAV"
+      "file_type": "NMEA"
+    }
+  ],
+  "vessel_roll": [
+    {
+      "long_name": "Vessel Roll",
+      "units": "degree",
+      "accepted_units": "degrees N",
+      "file_type": "NMEA",
+      "rename_to": "Roll"
     }
   ],
   "Pitch": [
@@ -41,7 +116,16 @@
       "long_name": "Pitch Heading",
       "units": "degree",
       "accepted_units": "degrees N",
-      "file_type": "NAV"
+      "file_type": "NMEA"
+    }
+  ],
+  "vessel_pitch": [
+    {
+      "long_name": "Vessel Pitch",
+      "units": "degree",
+      "accepted_units": "degrees N",
+      "file_type": "NMEA",
+      "rename_to": "Pitch"
     }
   ],
   "Heave": [
@@ -49,7 +133,16 @@
       "long_name": "Heave",
       "units": "m",
       "accepted_units": "meter",
-      "file_type": "NAV"
+      "file_type": "NMEA"
+    }
+  ],
+  "vessel_heave": [
+    {
+      "long_name": "Vessel Heave",
+      "units": "m",
+      "accepted_units": "meter",
+      "file_type": "NMEA",
+      "rename_to": "Heave"
     }
   ],
   "Track": [
@@ -57,7 +150,16 @@
       "long_name": "True Vessel Direction",
       "units": "degree_north",
       "accepted_units": "degrees N",
-      "file_type": "NAV"
+      "file_type": "NMEA"
+    }
+  ],
+  "vessel_track": [
+    {
+      "long_name": "Vessel Track",
+      "units": "degree_north",
+      "accepted_units": "degrees N",
+      "file_type": "NMEA",
+      "rename_to": "Track"
     }
   ],
   "Lat": [
@@ -65,18 +167,33 @@
       "long_name": "Latitude",
       "units": "degrees_north",
       "accepted_units": "degrees N",
-      "file_type": "NAV"
+      "standard_name": "latitude",
+      "sdn_parameter_urn": "SDN:P01::ALATZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGN",
+      "sdn_parameter_name": "Latitude north",
+      "sdn_uom_name": "Degrees north",
+      "file_type": "NMEA"
     },
     {
       "long_name": "Latitude",
       "units": "degrees_north",
       "accepted_units": "degrees N",
+      "standard_name": "latitude",
+      "sdn_parameter_urn": "SDN:P01::ALATZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGN",
+      "sdn_parameter_name": "Latitude north",
+      "sdn_uom_name": "Degrees north",
       "file_type": "AVOS"
     },
     {
       "long_name": "Latitude",
       "units": "degrees_north",
       "accepted_units": "degrees N",
+      "standard_name": "latitude",
+      "sdn_parameter_urn": "SDN:P01::ALATZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGN",
+      "sdn_parameter_name": "Latitude north",
+      "sdn_uom_name": "Degrees north",
       "file_type": "TSG"
     }
   ],
@@ -85,18 +202,36 @@
       "long_name": "Longitude",
       "units": "degrees_east",
       "accepted_units": "degrees E",
-      "file_type": "NAV"
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "rename": "Lon",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east",
+      "file_type": "NMEA"
     },
     {
       "long_name": "Longitude",
       "units": "degrees_east",
       "accepted_units": "degrees E",
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "rename": "Lon",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east",
       "file_type": "AVOS"
     },
     {
       "long_name": "Longitude",
       "units": "degrees_east",
       "accepted_units": "degrees E",
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "rename": "Lon",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east",
       "file_type": "TSG"
     }
   ],
@@ -105,7 +240,7 @@
       "long_name": "Vessel Speed",
       "units": "knots",
       "accepted_units": "Knt",
-      "file_type": "NAV"
+      "file_type": "NMEA"
     },
     {
       "long_name": "Vessel Speed",
@@ -114,36 +249,126 @@
       "file_type": "TSG"
     }
   ],
+  "vessel_speed": [
+    {
+      "long_name": "Vessel Speed",
+      "units": "knots",
+      "accepted_units": "Knt",
+      "file_type": "NMEA",
+      "rename_to": "Speed"
+    },
+    {
+      "long_name": "Vessel Speed",
+      "units": "knots",
+      "accepted_units": "Knt",
+      "file_type": "TSG",
+      "rename_to": "Speed"
+    }
+  ],
+  "water_salinity": [
+    {
+      "long_name": "Salinity From Thermosalinograph",
+      "units": "PSU",
+      "standard_name": "sea_surface_salinity",
+      "sdn_parameter_urn": "SDN:P01::PSALSZ01",
+      "sdn_parameter_name": "Practical salinity of the water body by thermosalinograph and computation using UNESCO 1983 algorithm",
+      "sdn_uom_urn": "SDN:P06::PSUX",
+      "sdn_uom_name": "Practical salinity units",
+      "accepted_units": "PSU|psu|1e-3|psu \\(PSS-78\\)",
+      "file_type": "TSG",
+      "rename_to": "Sal-TSG"
+    }
+  ],
+  "water_fluorescence": [
+    {
+      "long_name": "Fluorescence",
+      "units": "ug/l",
+      "accepted_units": "ug/L",
+      "file_type": "TSG",
+      "rename_to": "Fluo"
+    }
+  ],
+  "water_sound_velocity": [
+    {
+      "long_name": "Sound Velocity",
+      "units": "m/s",
+      "accepted_units": "m/s",
+      "file_type": "TSG",
+      "rename_to": "Vel"
+    }
+  ],
+  "flow_rate": [
+    {
+      "long_name": "Water Flow Rate",
+      "units": "L/min",
+      "sdn_parameter_urn": "SDN:P01::INFLTF01",
+      "sdn_parameter_name": "Flow rate through instrument",
+      "sdn_uom_urn": "SDN:P06::ULPM",
+      "sdn_uom_name": "Litres per minute",
+      "accepted_units": "L\/min",
+      "file_type": "TSG",
+      "rename_to": "Flow"
+    }
+  ],
   "GPS": [
     {
       "long_name": "GPS source",
-      "units": "degrees_north",
+      "units": "1",
       "accepted_units": "=1 for POS-MV and =0 for CNAV",
       "comments": "=1 for POS-MV and =0 for CNAV",
-      "file_type": "NAV"
+      "file_type": "NMEA"
     }
   ],
   "Tem-TSG": [
     {
-      "long_name": "Temperature (TSG)",
-      "units": "degC",
-      "accepted_units": "degC|deg C|degrees C|.c",
+      "long_name": "Temperature From Sensor SBE38",
+      "units": "degrees_celcius",
+      "accepted_units": "degC|deg C|degrees C|.*c$",
+      "standard_name": "sea_surface_temperature",
+      "sdn_parameter_urn": "SDN:P01::TEMPSZ01",
+      "sdn_parameter_name": "Temperature of the water body by thermosalinograph",
+      "sdn_uom_urn": "SDN:P06::UPAA",
+      "sdn_uom_name": "Degrees Celsius",
       "file_type": "TSG"
     }
   ],
   "Tem-Water": [
     {
-      "long_name": "Temperature (Water)",
-      "units": "degC",
+      "long_name": "Temperature From Sensor SBE38",
+      "units": "degrees_celcius",
       "accepted_units": "degC|deg C|degrees C|.*c$",
+      "standard_name": "sea_surface_temperature",
+      "sdn_parameter_urn": "SDN:P01::TEMPSZ01",
+      "sdn_parameter_name": "Temperature of the water body by thermosalinograph",
+      "sdn_uom_urn": "SDN:P06::UPAA",
+      "sdn_uom_name": "Degrees Celsius",
+      "file_type": "TSG"
+    }
+  ],
+  "water_temperature": [
+    {
+      "long_name": "Temperature From Sensor SBE38",
+      "units": "degrees_celcius",
+      "accepted_units": "degC|deg C|degrees C|.*c$",
+      "standard_name": "sea_surface_temperature",
+      "sdn_parameter_urn": "SDN:P01::TEMPSZ01",
+      "sdn_parameter_name": "Temperature of the water body by thermosalinograph",
+      "sdn_uom_urn": "SDN:P06::UPAA",
+      "sdn_uom_name": "Degrees Celsius",
       "file_type": "TSG"
     }
   ],
   "Sal-TSG": [
     {
-      "long_name": "Salinity (TSG)",
-      "units": "1",
+      "long_name": "Salinity From Thermosalinograph",
+      "units": "PSU",
+      "standard_name": "sea_surface_salinity",
+      "sdn_parameter_urn": "SDN:P01::PSALSZ01",
+      "sdn_parameter_name": "Practical salinity of the water body by thermosalinograph and computation using UNESCO 1983 algorithm",
+      "sdn_uom_urn": "SDN:P06::PSUX",
+      "sdn_uom_name": "Practical salinity units",
       "accepted_units": "PSU|psu|1e-3",
+      "rename": "P_sal_TSG",
       "file_type": "TSG"
     }
   ],
@@ -165,9 +390,13 @@
   ],
   "Flow": [
     {
-      "long_name": "Flow Rate",
+      "long_name": "Water Flow Rate",
       "units": "L/min",
-      "accepted_units": "L\/min",
+      "sdn_parameter_urn": "SDN:P01::INFLTF01",
+      "sdn_parameter_name": "Flow rate through instrument",
+      "sdn_uom_urn": "SDN:P06::ULPM",
+      "sdn_uom_name": "Litres per minute",
+      "rename": "TSG+Fl_Flow",
       "file_type": "TSG"
     }
   ],
@@ -382,6 +611,58 @@
       "units": "degrees_north",
       "accepted_units": "degrees N",
       "file_type": "TSG"
+    }
+  ],
+  "DEPH": [
+    {
+      "long_name": "Depth Below Sea Surface",
+      "units": "m",
+      "standard_name": "depth",
+      "sdn_parameter_urn": "SDN:P01::ADEPZZ01",
+      "sdn_uom_urn": "SDN:P06::ULAA",
+      "alternative_label": "Depth",
+      "rename": "depth",
+      "sdn_parameter_name": "Depth (spatial coordinate) relative to water surface in the water body",
+      "sdn_uom_name": "Metres",
+      "file_type": "LADCP"
+    }
+  ],
+  "EWCT": [
+    {
+      "long_name": "East (true) Component of Current",
+      "units": "m s-1",
+      "accepted_units": "m/s",
+      "standard_name": "eastward_sea_water_velocity",
+      "sdn_parameter_urn": "SDN:P01::LCEWLW01",
+      "sdn_uom_urn": "SDN:P06::UVAA",
+      "sdn_parameter_name": "Eastward velocity of water current (Eulerian measurement) in the water body by lowered acoustic doppler current profiler (ADCP)",
+      "sdn_uom_name": "Metres per second",
+      "file_type": "LADCP"
+    }
+  ],
+  "NSCT": [
+    {
+      "long_name": "North (true) Component of Current",
+      "units": "m s-1",
+      "accepted_units": "m/s",
+      "standard_name": "northward_sea_water_velocity",
+      "sdn_parameter_urn": "SDN:P01::LCNSLW01",
+      "sdn_uom_urn": "SDN:P06::UVAA",
+      "sdn_parameter_name": "Northward velocity of water current (Eulerian measurement) in the water body by lowered acoustic doppler current profiler (ADCP)",
+      "sdn_uom_name": "Metres per second",
+      "file_type": "LADCP"
+    }
+  ],
+  "ERRV": [
+    {
+      "long_name": "Error Velocity",
+      "units": "m s-1",
+      "accepted_units": "m/s",
+      "sdn_parameter_urn": "SDN:P01::ERRVLDCP",
+      "sdn_uom_urn": "SDN:P06::UVAA",
+      "sdn_parameter_name": "Error velocity of water current in the water body by lowered acoustic doppler current profiler (ADCP)",
+      "sdn_uom_name": "Metres per second",
+      "file_type": "LADCP"
     }
   ]
 }

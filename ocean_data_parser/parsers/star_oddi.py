@@ -11,6 +11,8 @@ import re
 import pandas as pd
 import xarray
 
+from ocean_data_parser.parsers.utils import standardize_dataset
+
 logger = logging.getLogger(__name__)
 
 DEFAULT_GLOBAL_ATTRIBUTES = {"instrument_manufacturer": "Star-Oddi", "source": None}
@@ -167,4 +169,4 @@ def dat(path: str, encoding: str = "cp1252") -> xarray.Dataset:
             if var not in VARIABLES_ATTRIBUTES:
                 logger.warning("Unknown variable %s", var)
             ds[var].attrs = {**variables[var], **VARIABLES_ATTRIBUTES.get(var, {})}
-        return ds
+        return standardize_dataset(ds)

@@ -1,0 +1,37 @@
+% Cruise_Number: 2010003
+% Stard_Date_Time [UTC]: 08-Aug-2010 22:19:55
+% Initial_Longitude [deg]: 70°N 55.3728'
+% Initial_Latitude [deg]: 134°W 26.6829'
+% Deviation [deg]: 34.806464
+%
+% DEPH: Depth Below Sea Surface [m]
+% EWCT: East (true) Component of Current [m/s]
+% NSCT: North (true) Component of Current [m/s]
+% ERRV: Error Velocity [m/s]
+%
+  DEPTH    EWCT    NSCT    ERRV
+-------  ------  ------  ------
+    3.8     nan     nan     nan
+    7.7     nan     nan     nan
+   11.5     nan     nan     nan
+   15.4     nan     nan     nan
+   19.2     nan     nan     nan
+   23.1     nan     nan     nan
+   26.9     nan     nan     nan
+   30.8     nan     nan     nan
+   34.6     nan     nan     nan
+   38.4     nan     nan     nan
+   42.3     nan     nan     nan
+   46.1     nan     nan     nan
+   50.0     nan     nan     nan
+   53.8     nan     nan     nan
+   57.7     nan     nan     nan
+   61.5     nan     nan     nan
+   65.4     nan     nan     nan
+   69.2     nan     nan     nan
+   73.0     nan     nan     nan
+   76.9     nan     nan     nan
+   80.7     nan     nan     nan
+   84.6     nan     nan     nan
+   88.4     nan     nan     nan
+   92.3     nan     nan     nan
