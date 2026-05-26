@@ -114,6 +114,12 @@ def _standardize_attribute_value(value: str, name: str = None):
             decimal = -decimal
         return decimal
     else:
+        if name and re.match(r"(?i)^initial_(latitude|longitude)", name):
+            logger.warning(
+                "Failed to convert {} attribute value to decimal degrees: {!r}",
+                name,
+                value,
+            )
         return value
 
 
