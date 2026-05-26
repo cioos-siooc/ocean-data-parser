@@ -16,6 +16,7 @@ Ocean Data Parser includes the following data format parsers:
 
 - [amundsen.int_format](amundsen.md#ocean_data_parser.parsers.amundsen.int_format)
 - [amundsen.csv_format](amundsen.md#ocean_data_parser.parsers.amundsen.csv_format)
+- [amundsen.lad_format](amundsen.md#ocean_data_parser.parsers.amundsen.lad_format)
 
 [DFO.IOS](dfo/ios.md)
 
