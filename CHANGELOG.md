@@ -7,11 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `development`
 
+### Added
+
+- Add Amundsen TSG V3 CSV support: vocabulary entries for `water_temperature`, `water_salinity`, `water_fluorescence`, `water_sound_velocity`, `vessel_speed`, `flow_rate`, and TSG variants of `time`/`latitude`/`longitude`.
+- Add SDN parameter/UOM URNs and names (TEMPSZ01, PSALSZ01, INFLTF01, UPAA, PSUX, ULPM, etc.) for TSG temperature, salinity, and flow rate vocabulary entries.
+
 ### Fixed
 
 - Fix Amundsen Vocabulary for nav variables
 - Migrate Amundsen NAV file type to NMEA
 - Update NMEA Amundsen file type vocabulary
+- Fix off-by-one row drop in Amundsen CSV parser when a blank line precedes the data header (affected NMEA V3 and TSG V3 files).
 
 ## `0.8.0`
 
