@@ -92,22 +92,30 @@ def _standardize_attribute_value(value: str, name: str = None):
     """
     if name in string_attributes or not isinstance(value, str):
         return value
+    # Amundsen long-form date e.g. "08-Aug-2010 22:19:55"
     elif re.fullmatch(r"\d\d-\w\w\w-\d\d\d\d \d\d\:\d\d\:\d\d", value):
         return pd.to_datetime(
             value, utc=(name and "utc" in name), format="%d-%b-%Y %H:%M:%S"
         )
+    # Amundsen long-form date with fractional seconds e.g. "08-Aug-2010 22:19:55.00"
     elif re.fullmatch(r"\d\d-\w\w\w-\d\d\d\d \d\d\:\d\d\:\d\d.\d+", value):
         return pd.to_datetime(
             value, utc=(name and "utc" in name), format="%d-%b-%Y %H:%M:%S.%f"
         )
+    # Extended ISO 8601 date-time e.g. "2021-07-17T13:34:29" (optional .fff, Z)
     elif re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?", value):
         return pd.to_datetime(value, utc=(name and "utc" in name), format="ISO8601")
+    # Compact ISO 8601 date-time e.g. "20230803T000001Z" (optional .fff, Z)
     elif re.fullmatch(r"\d{8}T\d{6}(?:\.\d+)?Z?", value):
         return pd.to_datetime(value, utc=(name and "utc" in name), format="ISO8601")
+    # Decimal number e.g. "34.806464" or "-91.4579"
     elif re.match(r"^-{0,1}\d+\.\d+$", value):
         return float(value)
+    # Integer e.g. "2013004" or "-3"
     elif re.match(r"^-{0,1}\d+$", value):
         return int(value)
+    # Degrees-decimal-minutes with hemisphere e.g. "134°W 26.6829'"
+    # (also tolerates "Â°" mojibake from Windows-1252-decoded UTF-8 source)
     elif match := re.fullmatch(
         r"\s*(\d+(?:\.\d+)?)\s*(?:°|Â°)\s*([NSEW])\s+(\d+(?:\.\d+)?)\s*'?\s*",
         value,
