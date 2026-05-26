@@ -28,6 +28,27 @@ Go to the project directory and install all the development dependancies in a uv
   uv pip install ".[dev]"
 ```
 
+## :octicons-git-commit-24: Pre-commit hooks
+
+The repository ships with a [pre-commit](https://pre-commit.com/) configuration that runs the same `ruff` format and lint steps as `make lint` before every commit. Install the git hook once after cloning:
+
+```console
+make install-hooks
+```
+
+This is equivalent to running:
+
+```console
+uv sync
+uv run pre-commit install
+```
+
+To run the hooks manually against every file in the repo:
+
+```console
+uv run pre-commit run --all-files
+```
+
 ## :material-test-tube: Testing
 
 The package use pytest to run a series of tests in order to help the development of the different aspect of the package. Within a developping environment, to run the different tests, run the pytest commmand through your terminal within the base directory of the repository. Pytest can also be integrated with different IDE and is run on any pushes and PR to the `main` and `development` branches.
