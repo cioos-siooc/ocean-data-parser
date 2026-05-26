@@ -1682,6 +1682,9 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <li>Add SDN parameter/UOM URNs and names (TEMPSZ01, PSALSZ01, INFLTF01, UPAA, PSUX, ULPM, etc.) for TSG temperature, salinity, and flow rate vocabulary entries.</li>
 <li>Add <code>pre-commit</code> configuration running <code>ruff</code> format and lint (mirrors <code>make lint</code>) on every commit, with a <code>make install-hooks</code> target to install it.</li>
 <li>Add <code>ocean_data_parser_version</code> global attribute to all parsed datasets by routing the NMEA, Star-Oddi DAT, and Sunburst superCO2 notes parsers through <code>standardize_dataset</code>.</li>
+<li>dfo.odf: add option to ignore full paths from ODF_HEADER FILE_DESCRIPTION and
+INSTRUMENT_HEADER DESCRIPTION attributes in odf.
+Default to True for BIO and False for IML.</li>
 </ul>
 <h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
 <ul>
