@@ -120,7 +120,7 @@ def mli_odf(
         path,
         vocabularies=["MLI", "GF3"],
         global_attributes={**mli_global_attributes, **(global_attributes or {})},
-        drop_path_from_attributes=False,
+        drop_path_from_attributes=drop_path_from_attributes,
         encoding=encoding,
     )
 
