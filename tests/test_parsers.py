@@ -34,6 +34,8 @@ DEFAULT_COMPLIANCE_IGNORE_MESSAGES = [
     r"\bcoverage_content_type\b",
     r"\btitle not present\b",
     r"\bsummary not present\b",
+    r"\bkeywords not present\b",
+    r"\bdate_metadata_modified\b",
 ]
 
 

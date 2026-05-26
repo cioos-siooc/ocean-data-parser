@@ -26,6 +26,7 @@ import xarray as xr
 from pytz import timezone
 
 from ocean_data_parser import __version__
+from ocean_data_parser.parsers.utils import STANDARD_NAME_VOCABULARY
 from ocean_data_parser.vocabularies.load import dfo_ios_vocabulary
 
 logger = logging.getLogger(__name__)
@@ -72,7 +73,7 @@ global_attributes = {
     "platform_vocabulary": "https://vocab.nerc.ac.uk/search_nvs/C17/",
     "instrument_vocabulary": "https://vocab.nerc.ac.uk/search_nvs/L22/",
     "Conventions": "CF-1.6, CF-1.7, CF-1.8, ACDD-1.1, ACDD-1.3, IOOS-1.2",
-    "standard_name_vocabulary": "CF Standard Name Table v78",
+    "standard_name_vocabulary": STANDARD_NAME_VOCABULARY,
     "creator_name": "Institute of Ocean Sciences (IOS)",
     "creator_institution": "Institute of Ocean Sciences (IOS)",
     "creator_email": "info@dfo-mpo.gc.ca",
