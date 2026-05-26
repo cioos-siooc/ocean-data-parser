@@ -12,3 +12,5 @@ This repo is meant to allow conversion of standard ocean instruments or institut
   - sdn_uom_urn (dfo, amundsen only)
   - sdn_uom_name (dfo, amundsen only)
 - time variables should be translated to UTC
+- make sure all codebase is compliant with ruff
+- use uv to manage dependancies
