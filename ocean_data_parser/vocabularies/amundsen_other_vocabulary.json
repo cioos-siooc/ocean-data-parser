@@ -149,6 +149,7 @@
       "sdn_uom_urn": "SDN:P06::DEGE",
       "sdn_parameter_name": "Longitude east",
       "sdn_uom_name": "Degrees east",
+      "rename": "longitude",
       "file_type": "NMEA"
     },
     {
@@ -160,6 +161,7 @@
       "sdn_uom_urn": "SDN:P06::DEGE",
       "sdn_parameter_name": "Longitude east",
       "sdn_uom_name": "Degrees east",
+      "rename": "longitude",
       "file_type": "AVOS"
     },
     {
@@ -171,6 +173,7 @@
       "sdn_uom_urn": "SDN:P06::DEGE",
       "sdn_parameter_name": "Longitude east",
       "sdn_uom_name": "Degrees east",
+      "rename": "longitude",
       "file_type": "TSG"
     }
   ],
@@ -223,7 +226,7 @@
       "units": "degree_north",
       "accepted_units": "degrees N",
       "file_type": "NMEA",
-      "rename_to": "Heading"
+      "rename": "Heading"
     }
   ],
   "Depth": [
@@ -240,7 +243,7 @@
       "units": "m",
       "accepted_units": "m",
       "file_type": "NMEA",
-      "rename_to": "Depth"
+      "rename": "Depth"
     }
   ],
   "Roll": [
@@ -257,7 +260,7 @@
       "units": "degree",
       "accepted_units": "degrees N",
       "file_type": "NMEA",
-      "rename_to": "Roll"
+      "rename": "Roll"
     }
   ],
   "Pitch": [
@@ -274,7 +277,7 @@
       "units": "degree",
       "accepted_units": "degrees N",
       "file_type": "NMEA",
-      "rename_to": "Pitch"
+      "rename": "Pitch"
     }
   ],
   "Heave": [
@@ -291,7 +294,7 @@
       "units": "m",
       "accepted_units": "meter",
       "file_type": "NMEA",
-      "rename_to": "Heave"
+      "rename": "Heave"
     }
   ],
   "Track": [
@@ -308,7 +311,7 @@
       "units": "degree_north",
       "accepted_units": "degrees N",
       "file_type": "NMEA",
-      "rename_to": "Track"
+      "rename": "Track"
     }
   ],
   "Speed": [
@@ -331,14 +334,14 @@
       "units": "knots",
       "accepted_units": "Knt",
       "file_type": "NMEA",
-      "rename_to": "Speed"
+      "rename": "Speed"
     },
     {
       "long_name": "Vessel Speed",
       "units": "knots",
       "accepted_units": "Knt",
       "file_type": "TSG",
-      "rename_to": "Speed"
+      "rename": "Speed"
     }
   ],
   "flow_rate": [
@@ -351,7 +354,7 @@
       "sdn_uom_name": "Litres per minute",
       "accepted_units": "L\/min",
       "file_type": "TSG",
-      "rename_to": "Flow"
+      "rename": "Flow"
     }
   ],
   "GPS": [
@@ -365,7 +368,7 @@
   ],
   "Tem-TSG": [
     {
-      "long_name": "Temperature From Sensor SBE38",
+      "long_name": "Sea Surface Temperature From Thermosalinograph Sensor SBE38",
       "units": "degrees_celcius",
       "accepted_units": "degC|deg C|degrees C|.*c$",
       "standard_name": "sea_surface_temperature",
@@ -373,12 +376,13 @@
       "sdn_parameter_name": "Temperature of the water body by thermosalinograph",
       "sdn_uom_urn": "SDN:P06::UPAA",
       "sdn_uom_name": "Degrees Celsius",
+      "rename": "SST_TSG",
       "file_type": "TSG"
     }
   ],
   "Tem-Water": [
     {
-      "long_name": "Temperature From Sensor SBE38",
+      "long_name": "Sea Surface Temperature From Thermosalinograph Sensor SBE38",
       "units": "degrees_celcius",
       "accepted_units": "degC|deg C|degrees C|.*c$",
       "standard_name": "sea_surface_temperature",
@@ -386,12 +390,13 @@
       "sdn_parameter_name": "Temperature of the water body by thermosalinograph",
       "sdn_uom_urn": "SDN:P06::UPAA",
       "sdn_uom_name": "Degrees Celsius",
+      "rename": "SST_TSG",
       "file_type": "TSG"
     }
   ],
   "water_temperature": [
     {
-      "long_name": "Temperature From Sensor SBE38",
+      "long_name": "Sea Surface Temperature From Thermosalinograph Sensor SBE38",
       "units": "degrees_celcius",
       "accepted_units": "degC|deg C|degrees C|.*c$",
       "standard_name": "sea_surface_temperature",
@@ -399,6 +404,7 @@
       "sdn_parameter_name": "Temperature of the water body by thermosalinograph",
       "sdn_uom_urn": "SDN:P06::UPAA",
       "sdn_uom_name": "Degrees Celsius",
+      "rename": "SST_TSG",
       "file_type": "TSG"
     }
   ],
@@ -412,7 +418,7 @@
       "sdn_uom_urn": "SDN:P06::PSUX",
       "sdn_uom_name": "Practical salinity units",
       "accepted_units": "PSU|psu|1e-3",
-      "rename_to": "P_sal_TSG",
+      "rename": "P_sal_TSG",
       "file_type": "TSG"
     }
   ],
@@ -426,7 +432,7 @@
       "sdn_uom_urn": "SDN:P06::PSUX",
       "sdn_uom_name": "Practical salinity units",
       "accepted_units": "PSU|psu|1e-3",
-      "rename_to": "P_sal_TSG",
+      "rename": "P_sal_TSG",
       "file_type": "TSG"
     }
   ],
@@ -436,7 +442,7 @@
       "units": "m/s",
       "accepted_units": "m/s",
       "file_type": "TSG",
-      "rename_to": "SVel"
+      "rename": "SVel"
     }
   ],
   "water_sound_velocity": [
@@ -445,7 +451,7 @@
       "units": "m/s",
       "accepted_units": "m/s",
       "file_type": "TSG",
-      "rename_to": "SVel"
+      "rename": "SVel"
     }
   ],
   "Fluo": [
@@ -462,7 +468,7 @@
       "units": "ug/l",
       "accepted_units": "ug/L",
       "file_type": "TSG",
-      "rename_to": "Fluo"
+      "rename": "Fluo"
     }
   ],
   "Flow": [
@@ -473,7 +479,7 @@
       "sdn_parameter_name": "Flow rate through instrument",
       "sdn_uom_urn": "SDN:P06::ULPM",
       "sdn_uom_name": "Litres per minute",
-      "rename_to": "Flow_rate_TSG",
+      "rename": "Flow_rate_TSG",
       "file_type": "TSG"
     }
   ],
