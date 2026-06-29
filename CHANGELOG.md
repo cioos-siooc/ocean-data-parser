@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- latitude and longitude attributes to Amundsen TSG vocabulary (mostly for dataset after 2022). Lat and Long were used on previous Amundsen TSG files.
+- Modified "rename_to" keys to "rename" for consistent naming. ("rename" keys are used to rename variables in the parser output to a consistent name, e.g., "SST_TSG" for sea surface temperature from TSG).
+
+### Added
+
 - Add Amundsen LADCP `.lad` parser (`amundsen.lad_format`) with vocabulary,
   auto-detection in `ocean_data_parser.read`, and `depth`-based profile
   support.
