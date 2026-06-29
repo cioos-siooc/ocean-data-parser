@@ -28,19 +28,149 @@
       "file_type": "TSG"
     }
   ],
-  "latitude": [
+    "Lat": [
     {
       "long_name": "Latitude",
       "units": "degrees_north",
-      "standard_name": "latitude",
       "accepted_units": "degrees N",
+      "standard_name": "latitude",
+      "sdn_parameter_urn": "SDN:P01::ALATZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGN",
+      "sdn_parameter_name": "Latitude north",
+      "sdn_uom_name": "Degrees north",
+      "rename":"latitude",
       "file_type": "NMEA"
     },
     {
       "long_name": "Latitude",
       "units": "degrees_north",
-      "standard_name": "latitude",
       "accepted_units": "degrees N",
+      "standard_name": "latitude",
+      "sdn_parameter_urn": "SDN:P01::ALATZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGN",
+      "sdn_parameter_name": "Latitude north",
+      "sdn_uom_name": "Degrees north",
+      "rename": "latitude",
+      "file_type": "AVOS"
+    },
+    {
+      "long_name": "Latitude",
+      "units": "degrees_north",
+      "accepted_units": "degrees N",
+      "standard_name": "latitude",
+      "sdn_parameter_urn": "SDN:P01::ALATZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGN",
+      "sdn_parameter_name": "Latitude north",
+      "sdn_uom_name": "Degrees north",
+      "rename": "latitude",
+      "file_type": "TSG"
+    }
+  ],
+  "Long": [
+    {
+      "long_name": "Longitude",
+      "units": "degrees_east",
+      "accepted_units": "degrees E",
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "rename": "longitude",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east",
+      "file_type": "NMEA"
+    },
+    {
+      "long_name": "Longitude",
+      "units": "degrees_east",
+      "accepted_units": "degrees E",
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "rename": "longitude",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east",
+      "file_type": "AVOS"
+    },
+    {
+      "long_name": "Longitude",
+      "units": "degrees_east",
+      "accepted_units": "degrees E",
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "rename": "longitude",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east",
+      "file_type": "TSG"
+    }
+  ],
+  "latitude": [
+    {
+      "long_name": "Latitude",
+      "units": "degrees_north",
+      "accepted_units": "degrees N",
+      "standard_name": "latitude",
+      "sdn_parameter_urn": "SDN:P01::ALATZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGN",
+      "sdn_parameter_name": "Latitude north",
+      "sdn_uom_name": "Degrees north",
+      "file_type": "NMEA"
+    },
+    {
+      "long_name": "Latitude",
+      "units": "degrees_north",
+      "accepted_units": "degrees N",
+      "standard_name": "latitude",
+      "sdn_parameter_urn": "SDN:P01::ALATZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGN",
+      "sdn_parameter_name": "Latitude north",
+      "sdn_uom_name": "Degrees north",
+      "file_type": "AVOS"
+    },
+    {
+      "long_name": "Latitude",
+      "units": "degrees_north",
+      "accepted_units": "degrees N",
+      "standard_name": "latitude",
+      "sdn_parameter_urn": "SDN:P01::ALATZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGN",
+      "sdn_parameter_name": "Latitude north",
+      "sdn_uom_name": "Degrees north",
+      "file_type": "TSG"
+    }
+  ],
+    "Lon": [
+    {
+      "long_name": "Longitude",
+      "units": "degrees_east",
+      "accepted_units": "degrees E",
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east",
+      "file_type": "NMEA"
+    },
+    {
+      "long_name": "Longitude",
+      "units": "degrees_east",
+      "accepted_units": "degrees E",
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east",
+      "file_type": "AVOS"
+    },
+    {
+      "long_name": "Longitude",
+      "units": "degrees_east",
+      "accepted_units": "degrees E",
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east",
       "file_type": "TSG"
     }
   ],
@@ -48,15 +178,34 @@
     {
       "long_name": "Longitude",
       "units": "degrees_east",
-      "standard_name": "longitude",
       "accepted_units": "degrees E",
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east",
       "file_type": "NMEA"
     },
     {
       "long_name": "Longitude",
       "units": "degrees_east",
-      "standard_name": "longitude",
       "accepted_units": "degrees E",
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east",
+      "file_type": "AVOS"
+    },
+    {
+      "long_name": "Longitude",
+      "units": "degrees_east",
+      "accepted_units": "degrees E",
+      "standard_name": "longitude",
+      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
+      "sdn_uom_urn": "SDN:P06::DEGE",
+      "sdn_parameter_name": "Longitude east",
+      "sdn_uom_name": "Degrees east",
       "file_type": "TSG"
     }
   ],
@@ -162,79 +311,6 @@
       "rename_to": "Track"
     }
   ],
-  "Lat": [
-    {
-      "long_name": "Latitude",
-      "units": "degrees_north",
-      "accepted_units": "degrees N",
-      "standard_name": "latitude",
-      "sdn_parameter_urn": "SDN:P01::ALATZZ01",
-      "sdn_uom_urn": "SDN:P06::DEGN",
-      "sdn_parameter_name": "Latitude north",
-      "sdn_uom_name": "Degrees north",
-      "file_type": "NMEA"
-    },
-    {
-      "long_name": "Latitude",
-      "units": "degrees_north",
-      "accepted_units": "degrees N",
-      "standard_name": "latitude",
-      "sdn_parameter_urn": "SDN:P01::ALATZZ01",
-      "sdn_uom_urn": "SDN:P06::DEGN",
-      "sdn_parameter_name": "Latitude north",
-      "sdn_uom_name": "Degrees north",
-      "file_type": "AVOS"
-    },
-    {
-      "long_name": "Latitude",
-      "units": "degrees_north",
-      "accepted_units": "degrees N",
-      "standard_name": "latitude",
-      "sdn_parameter_urn": "SDN:P01::ALATZZ01",
-      "sdn_uom_urn": "SDN:P06::DEGN",
-      "sdn_parameter_name": "Latitude north",
-      "sdn_uom_name": "Degrees north",
-      "file_type": "TSG"
-    }
-  ],
-  "Long": [
-    {
-      "long_name": "Longitude",
-      "units": "degrees_east",
-      "accepted_units": "degrees E",
-      "standard_name": "longitude",
-      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
-      "sdn_uom_urn": "SDN:P06::DEGE",
-      "rename": "Lon",
-      "sdn_parameter_name": "Longitude east",
-      "sdn_uom_name": "Degrees east",
-      "file_type": "NMEA"
-    },
-    {
-      "long_name": "Longitude",
-      "units": "degrees_east",
-      "accepted_units": "degrees E",
-      "standard_name": "longitude",
-      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
-      "sdn_uom_urn": "SDN:P06::DEGE",
-      "rename": "Lon",
-      "sdn_parameter_name": "Longitude east",
-      "sdn_uom_name": "Degrees east",
-      "file_type": "AVOS"
-    },
-    {
-      "long_name": "Longitude",
-      "units": "degrees_east",
-      "accepted_units": "degrees E",
-      "standard_name": "longitude",
-      "sdn_parameter_urn": "SDN:P01::ALONZZ01",
-      "sdn_uom_urn": "SDN:P06::DEGE",
-      "rename": "Lon",
-      "sdn_parameter_name": "Longitude east",
-      "sdn_uom_name": "Degrees east",
-      "file_type": "TSG"
-    }
-  ],
   "Speed": [
     {
       "long_name": "Vessel Speed",
@@ -263,38 +339,6 @@
       "accepted_units": "Knt",
       "file_type": "TSG",
       "rename_to": "Speed"
-    }
-  ],
-  "water_salinity": [
-    {
-      "long_name": "Salinity From Thermosalinograph",
-      "units": "PSU",
-      "standard_name": "sea_surface_salinity",
-      "sdn_parameter_urn": "SDN:P01::PSALSZ01",
-      "sdn_parameter_name": "Practical salinity of the water body by thermosalinograph and computation using UNESCO 1983 algorithm",
-      "sdn_uom_urn": "SDN:P06::PSUX",
-      "sdn_uom_name": "Practical salinity units",
-      "accepted_units": "PSU|psu|1e-3|psu \\(PSS-78\\)",
-      "file_type": "TSG",
-      "rename_to": "Sal-TSG"
-    }
-  ],
-  "water_fluorescence": [
-    {
-      "long_name": "Fluorescence",
-      "units": "ug/l",
-      "accepted_units": "ug/L",
-      "file_type": "TSG",
-      "rename_to": "Fluo"
-    }
-  ],
-  "water_sound_velocity": [
-    {
-      "long_name": "Sound Velocity",
-      "units": "m/s",
-      "accepted_units": "m/s",
-      "file_type": "TSG",
-      "rename_to": "Vel"
     }
   ],
   "flow_rate": [
@@ -368,7 +412,21 @@
       "sdn_uom_urn": "SDN:P06::PSUX",
       "sdn_uom_name": "Practical salinity units",
       "accepted_units": "PSU|psu|1e-3",
-      "rename": "P_sal_TSG",
+      "rename_to": "P_sal_TSG",
+      "file_type": "TSG"
+    }
+  ],
+  "water_salinity": [
+    {
+      "long_name": "Salinity From Thermosalinograph",
+      "units": "PSU",
+      "standard_name": "sea_surface_salinity",
+      "sdn_parameter_urn": "SDN:P01::PSALSZ01",
+      "sdn_parameter_name": "Practical salinity of the water body by thermosalinograph and computation using UNESCO 1983 algorithm",
+      "sdn_uom_urn": "SDN:P06::PSUX",
+      "sdn_uom_name": "Practical salinity units",
+      "accepted_units": "PSU|psu|1e-3",
+      "rename_to": "P_sal_TSG",
       "file_type": "TSG"
     }
   ],
@@ -377,7 +435,17 @@
       "long_name": "Sound Velocity",
       "units": "m/s",
       "accepted_units": "m/s",
-      "file_type": "TSG"
+      "file_type": "TSG",
+      "rename_to": "SVel"
+    }
+  ],
+  "water_sound_velocity": [
+    {
+      "long_name": "Sound Velocity",
+      "units": "m/s",
+      "accepted_units": "m/s",
+      "file_type": "TSG",
+      "rename_to": "SVel"
     }
   ],
   "Fluo": [
@@ -388,6 +456,15 @@
       "file_type": "TSG"
     }
   ],
+  "water_fluorescence": [
+    {
+      "long_name": "Fluorescence",
+      "units": "ug/l",
+      "accepted_units": "ug/L",
+      "file_type": "TSG",
+      "rename_to": "Fluo"
+    }
+  ],
   "Flow": [
     {
       "long_name": "Water Flow Rate",
@@ -396,7 +473,7 @@
       "sdn_parameter_name": "Flow rate through instrument",
       "sdn_uom_urn": "SDN:P06::ULPM",
       "sdn_uom_name": "Litres per minute",
-      "rename": "TSG+Fl_Flow",
+      "rename_to": "Flow_rate_TSG",
       "file_type": "TSG"
     }
   ],
@@ -603,14 +680,6 @@
       "units": "hPa",
       "accepted_units": "hPa",
       "file_type": "AVOS"
-    }
-  ],
-  "Latitude": [
-    {
-      "long_name": "Latitude",
-      "units": "degrees_north",
-      "accepted_units": "degrees N",
-      "file_type": "TSG"
     }
   ],
   "DEPH": [
