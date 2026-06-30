@@ -22,6 +22,7 @@ GLOBAL_ATTRIBUTES = {
     "instrument_manufacturer_webpage": "https://electricblue.eu/",
     "source": None,
     "source_file_header": "",
+    "Conventions": "CF-1.6, ACDD-1.3",
 }
 VARIABLE_ATTRIBUTES = {
     "latitude": {

@@ -5,6 +5,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 import xarray as xr
+from compliance_checker.suite import CheckSuite
 from loguru import logger
 from pytz.exceptions import AmbiguousTimeError
 
@@ -29,6 +30,69 @@ from ocean_data_parser.parsers.dfo.odf_source.process import (
     drop_path_from_header_attributes,
 )
 
+_COMPLIANCE_SUITE = CheckSuite()
+_COMPLIANCE_SUITE.load_all_available_checkers()
+COMPLIANCE_CHECKERS = ["cf:1.6", "acdd:1.3"]
+DEFAULT_COMPLIANCE_IGNORE_MESSAGES = [
+    r"\bcoverage_content_type\b",
+    r"\btitle not present\b",
+    r"\bsummary not present\b",
+    r"\bkeywords not present\b",
+    r"\bdate_metadata_modified\b",
+]
+
+
+def _result_passed(result):
+    value = result.value
+    if isinstance(value, tuple):
+        return value[0] >= value[1]
+    return bool(value)
+
+
+def check_compliance(
+    netcdf_path,
+    ignore_checks=None,
+    ignore_messages=None,
+):
+    """Run CF-1.6 and ACDD-1.3 compliance checks.
+
+    Returns the list of high-priority (weight=3) failures after applying
+    ignore filters. Callers should assert the list is empty.
+
+    Parameters
+    ----------
+    netcdf_path : str
+        Path to a netCDF file to check.
+    ignore_checks : iterable of str, optional
+        Check names (matched as regex against ``result.name``) to skip.
+    ignore_messages : iterable of str, optional
+        Regex patterns; any failure whose messages all match one of these
+        patterns is filtered out.
+    """
+    ignore_checks = [re.compile(p) for p in (ignore_checks or [])]
+    ignore_messages = [
+        re.compile(p)
+        for p in (*DEFAULT_COMPLIANCE_IGNORE_MESSAGES, *(ignore_messages or []))
+    ]
+
+    ds = _COMPLIANCE_SUITE.load_dataset(netcdf_path)
+    groups = _COMPLIANCE_SUITE.run_all(ds, COMPLIANCE_CHECKERS)
+
+    failures = []
+    for checker_name, (results, _errs) in groups.items():
+        for result in results:
+            if result.weight != 3 or _result_passed(result):
+                continue
+            if any(p.search(result.name or "") for p in ignore_checks):
+                continue
+            msgs = result.msgs or []
+            if msgs and all(any(p.search(m) for p in ignore_messages) for m in msgs):
+                continue
+            failures.append(
+                f"[{checker_name}] {result.name}: {result.value} :: {'; '.join(msgs)}"
+            )
+    return failures
+
 
 def search_caplog_records(caplog, message, levelname=None):
     """Search caplog records for a specific message and log level."""
@@ -41,7 +105,13 @@ def search_caplog_records(caplog, message, levelname=None):
 
 
 def review_parsed_dataset(
-    ds, source, caplog=None, max_log_levelno=30, ignore_log_records=None
+    ds,
+    source,
+    caplog=None,
+    max_log_levelno=30,
+    ignore_log_records=None,
+    ignore_compliance_checks=None,
+    ignore_compliance_messages=None,
 ):
     assert isinstance(ds, xr.Dataset)
     assert ds.attrs, "dataset do not contains any global attributes"
@@ -58,7 +128,18 @@ def review_parsed_dataset(
                 continue
             assert record.levelno <= max_log_levelno, str(record) % record.args
 
-    ds.to_netcdf(source + "_test.nc", format="NETCDF4")
+    netcdf_path = source + "_test.nc"
+    ds.to_netcdf(netcdf_path, format="NETCDF4")
+
+    failures = check_compliance(
+        netcdf_path,
+        ignore_checks=ignore_compliance_checks,
+        ignore_messages=ignore_compliance_messages,
+    )
+    assert not failures, (
+        "CF-1.6 / ACDD-1.3 high-priority compliance failures for "
+        f"{netcdf_path}:\n  - " + "\n  - ".join(failures)
+    )
 
     # Test path generation input
     path_generation_input = get_path_generation_input(ds, Path(source))

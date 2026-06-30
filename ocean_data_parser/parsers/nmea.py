@@ -212,7 +212,7 @@ def _generate_extra_terms(nmea):
     return extra
 
 
-global_attributes = {"Convention": "CF-1.6"}
+global_attributes = {"Conventions": "CF-1.6, ACDD-1.3"}
 
 
 def nmea_0183(

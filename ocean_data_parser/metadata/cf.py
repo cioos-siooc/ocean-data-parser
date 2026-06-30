@@ -1,10 +1,48 @@
+import re
 from pathlib import Path
 
 import click
 import pandas as pd
+import requests
 from loguru import logger
 
 DEFAULT_STANDARD_NAMES_VERSION = 81
+CURRENT_VERSION_URL = (
+    "https://cfconventions.org/Data/cf-standard-names/current/src/"
+    "cf-standard-name-table.xml"
+)
+
+
+def get_latest_published_version(timeout: float = 5.0) -> int | None:
+    """Return the latest CF Standard Name Table version published online.
+
+    Returns None if the lookup fails (offline, network error, etc.).
+    """
+    try:
+        response = requests.get(CURRENT_VERSION_URL, timeout=timeout)
+        response.raise_for_status()
+        match = re.search(r"<version_number>(\d+)</version_number>", response.text)
+        if match:
+            return int(match.group(1))
+    except (requests.RequestException, ValueError):
+        return None
+    return None
+
+
+def warn_if_outdated(
+    bundled_version: int = DEFAULT_STANDARD_NAMES_VERSION,
+) -> int | None:
+    """Log a warning if a newer CF Standard Name Table is published online."""
+    latest = get_latest_published_version()
+    if latest is not None and latest > bundled_version:
+        logger.warning(
+            "A newer CF Standard Name Table is available: bundled v{bundled}, "
+            "published v{latest}. Re-run `python -m ocean_data_parser.metadata.cf "
+            "--version {latest}` and update DEFAULT_STANDARD_NAMES_VERSION.",
+            bundled=bundled_version,
+            latest=latest,
+        )
+    return latest
 
 
 def get_standard_names(version=DEFAULT_STANDARD_NAMES_VERSION) -> pd.DataFrame:
@@ -15,7 +53,7 @@ def get_standard_names(version=DEFAULT_STANDARD_NAMES_VERSION) -> pd.DataFrame:
 
     unique_value_columns = ["version_number", "last_modified", "institution", "contact"]
 
-    local_file = Path(__file__).parent / "cf_standard_names_v{version}.csv"
+    local_file = Path(__file__).parent / f"cf_standard_names_v{version}.csv"
     if local_file.exists():
         return pd.read_csv(local_file)
 

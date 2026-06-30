@@ -11,7 +11,7 @@ from ocean_data_parser.parsers.utils import standardize_dataset
 
 logger = logging.getLogger(__name__)
 
-GLOBAL_ATTRIBUTES = {"Convention": "CF-1.6"}
+GLOBAL_ATTRIBUTES = {"Conventions": "CF-1.6, ACDD-1.3"}
 
 VARIABLE_NAME_MAPPING = {
     "PRESSURE": "pressure",

@@ -13,13 +13,14 @@ from ocean_data_parser.parsers.dfo.odf_source.process import (
     FILE_NAME_CONVENTIONS,
     parse_odf,
 )
+from ocean_data_parser.parsers.utils import STANDARD_NAME_VOCABULARY
 
 logger = logging.getLogger(__name__)
 
 
 odf_global_attributes = {
-    "Conventions": "CF-1.6,CF-1.7,CF-1.8,ACDD1.1,ACDD-1.3,IOOS-1.2",
-    "standard_name_vocabulary": "CF Standard Name Table v78",
+    "Conventions": "CF-1.6, CF-1.7, CF-1.8, ACDD-1.1, ACDD-1.3, IOOS-1.2",
+    "standard_name_vocabulary": STANDARD_NAME_VOCABULARY,
 }
 
 mli_global_attributes = {
@@ -66,8 +67,8 @@ bio_global_attributes = {
 
 as_dfo_global_attributes = {
     "organization": "Quebec Ocean - Laval University - Amundsen Science",
-    "Conventions": "CF-1.6,CF-1.7,CF-1.8,ACDD1.1,ACDD-1.3,IOOS-1.2",
-    "standard_name_vocabulary": "CF Standard Name Table v78",
+    "Conventions": "CF-1.6, CF-1.7, CF-1.8, ACDD-1.1, ACDD-1.3, IOOS-1.2",
+    "standard_name_vocabulary": STANDARD_NAME_VOCABULARY,
 }
 
 

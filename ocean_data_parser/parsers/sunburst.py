@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 MAXIMUM_TIME_DIFFERENCE_IN_SECONDS = 300
 
-global_attributes = {"Convention": "CF-1.6"}
+global_attributes = {"Conventions": "CF-1.6, ACDD-1.3"}
 
 notes_dtype_mapping = {
     "day_of_year": float,
@@ -187,5 +187,5 @@ def super_co2_notes(path: str) -> xarray.Dataset:
     df = df.astype(dtype=notes_dtype_mapping, errors="ignore")
 
     ds = df.to_xarray()
-    ds.attrs = {"Convention": "CF-1.6"}
+    ds.attrs = {"Conventions": "CF-1.6, ACDD-1.3"}
     return standardize_dataset(ds)
