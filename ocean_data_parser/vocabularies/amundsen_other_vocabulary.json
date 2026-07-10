@@ -33,6 +33,13 @@
       "standard_name": "time",
       "accepted_units": "yyyymmddTHHMMSSZ",
       "file_type": "TSG"
+    },
+    {
+      "long_name": "Time",
+      "units": "",
+      "standard_name": "time",
+      "accepted_units": "yyyymmddTHHMMSSZ",
+      "file_type": "ATS"
     }
   ],
     "Lat": [
@@ -778,21 +785,11 @@
       "long_name": "Error Velocity",
       "units": "m s-1",
       "accepted_units": "m/s",
-      "standard_name": "error_velocity",
       "sdn_parameter_urn": "SDN:P01::ERRVLDCP",
       "sdn_uom_urn": "SDN:P06::UVAA",
       "sdn_parameter_name": "Error velocity of water current in the water body by lowered acoustic doppler current profiler (ADCP)",
       "sdn_uom_name": "Metres per second",
       "file_type": "LADCP"
-    }
-  ],
-  "Time": [
-    {
-      "long_name": "Time",
-      "standard_name": "time",
-      "units": "yyyymmddTHHMMSSZ",
-      "accepted_units": "yyyymmddTHHMMSSZ",
-      "file_type": "ATS"
     }
   ],
   "air_temperature": [
@@ -807,7 +804,7 @@
   "longwave_radiation": [
     {
       "long_name": "Longwave Radiation",
-      "standard_name": "longwave_radiation",
+      "standard_name": "surface_downwelling_longwave_flux_in_air",
       "units": "W m-2",
       "accepted_units": "W/m^2|W m^-2",
       "file_type": "ATS"
@@ -816,7 +813,7 @@
   "shortwave_radiation": [
     {
       "long_name": "Shortwave Radiation",
-      "standard_name": "shortwave_radiation",
+      "standard_name": "surface_downwelling_shortwave_flux_in_air",
       "units": "W m-2",
       "accepted_units": "W/m^2|W m^-2",
       "file_type": "ATS"
@@ -825,7 +822,7 @@
   "photosynthetically_active_radiation": [
     {
       "long_name": "Photosynthetically Active Radiation",
-      "standard_name": "photosynthetically_active_radiation",
+      "standard_name": "surface_downwelling_photosynthetic_photon_flux_in_air",
       "units": "umol m-2 s-1",
       "accepted_units": "umol/m^2/s|umol m^-2 s^-1",
       "file_type": "ATS"
@@ -834,7 +831,7 @@
   "precipitation_intensity": [
     {
       "long_name": "Precipitation Intensity",
-      "standard_name": "precipitation_intensity",
+      "standard_name": "lwe_precipitation_rate",
       "units": "mm/h",
       "accepted_units": "mm/h",
       "file_type": "ATS"
@@ -852,7 +849,7 @@
   "visibility_distance": [
     {
       "long_name": "Visibility Distance",
-      "standard_name": "visibility_distance",
+      "standard_name": "visibility_in_air",
       "units": "m",
       "accepted_units": "m",
       "file_type": "ATS"
@@ -888,16 +885,14 @@
   "total_Ultraviolet_radiation": [
     {
       "long_name": "Total Ultraviolet Radiation",
-      "standard_name": "total_ultraviolet_radiation",
       "units": "W m-2",
       "accepted_units": "W/m^2|W m^-2",
       "file_type": "ATS"
     }
   ],
-  "sinop_code": [
+  "synop_code": [
     {
       "long_name": "Surface synoptic observations",
-      "standard_name": "surface_synoptic_observations",
       "units": "SYNOP",
       "accepted_units": "SYNOP",
       "file_type": "ATS"
@@ -906,7 +901,7 @@
   "cloud_cover": [
     {
       "long_name": "Cloud Cover",
-      "standard_name": "cloud_cover",
+      "standard_name": "cloud_area_fraction",
       "units": "%",
       "accepted_units": "%",
       "file_type": "ATS"
