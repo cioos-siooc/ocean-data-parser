@@ -1399,6 +1399,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#fixed" class="md-nav__link">
     <span class="md-ellipsis">
       Fixed
@@ -1627,7 +1636,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#changed" class="md-nav__link">
+  <a href="#changed_1" class="md-nav__link">
     <span class="md-ellipsis">
       Changed
     </span>
@@ -1699,6 +1708,12 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <li>dfo.odf: add option to ignore full paths from ODF_HEADER FILE_DESCRIPTION and
 INSTRUMENT_HEADER DESCRIPTION attributes in odf.
 Default to True for BIO and False for IML.</li>
+</ul>
+<h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Update default CF Standard Names table from v81 to v95 (adds e.g. <code>concentration_of_colored_dissolved_organic_matter_in_sea_water</code>).</li>
+<li>Store the default CF Standard Names table in the package (<code>metadata/cf_standard_names_v{version}.xml</code>) instead of downloading it on each call. <code>python -m ocean_data_parser.metadata.cf --version N</code> downloads a new version and deletes any other stored one.</li>
+<li>Set the <code>standard_name_vocabulary</code> global attribute (ACDD) to the CF Standard Name Table version in use (e.g. <code>CF Standard Name Table v95</code>) on every parsed dataset via <code>standardize_dataset</code>, replacing the hardcoded <code>v78</code> in the DFO ODF and IOS parsers.</li>
 </ul>
 <h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
 <ul>
@@ -1796,7 +1811,7 @@ Default to True for BIO and False for IML.</li>
 <ul>
 <li>Test platforms vocabulary items and match them to NERC C17 vocabulary.</li>
 </ul>
-<h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
+<h3 id="changed_1">Changed<a class="headerlink" href="#changed_1" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Refactor Seabird Parser</li>
 <li>Handle better processing related attributes<ul>
