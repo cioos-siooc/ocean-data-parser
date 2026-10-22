@@ -250,6 +250,7 @@ def _convert_sbe_dataframe_to_dataset(df, header):
             continue
         ds[var].attrs = attrs
     ds.attrs = header
+    ds.attrs.setdefault("Conventions", "CF-1.6, ACDD-1.3")
     return ds
 
 

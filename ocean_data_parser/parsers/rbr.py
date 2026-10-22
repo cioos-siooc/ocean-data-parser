@@ -85,6 +85,7 @@ def rtext(
             "instrument_manufacturer": "RBR",
             "instrument_model": metadata["Model"],
             "instrument_sn": metadata["Serial"],
+            "Conventions": "CF-1.6, ACDD-1.3",
         }
 
         ds = standardize_dataset(ds)

@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import click
@@ -15,6 +16,35 @@ def _cached_file(version) -> Path:
 
 def _url(version) -> str:
     return f"https://cfconventions.org/Data/cf-standard-names/{version}/src/cf-standard-name-table.xml"
+
+
+def get_latest_published_version(timeout: float = 5.0) -> int | None:
+    """Return the latest CF Standard Name Table version published online.
+
+    Returns None if the lookup fails (offline, network error, etc.).
+    """
+    try:
+        response = requests.get(_url("current"), timeout=timeout)
+        response.raise_for_status()
+    except requests.RequestException:
+        return None
+    match = re.search(r"<version_number>(\d+)</version_number>", response.text)
+    return int(match.group(1)) if match else None
+
+
+def warn_if_outdated(version: int = DEFAULT_STANDARD_NAMES_VERSION) -> int | None:
+    """Log a warning if a newer CF Standard Name Table is published online."""
+    latest = get_latest_published_version()
+    if latest is not None and latest > version:
+        logger.warning(
+            "A newer CF Standard Name Table is available: stored v{}, published v{}. "
+            "Run `python -m ocean_data_parser.metadata.cf --version {}` and update "
+            "DEFAULT_STANDARD_NAMES_VERSION.",
+            version,
+            latest,
+            latest,
+        )
+    return latest
 
 
 def get_standard_names(version=DEFAULT_STANDARD_NAMES_VERSION) -> pd.DataFrame:

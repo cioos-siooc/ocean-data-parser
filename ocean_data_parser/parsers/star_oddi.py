@@ -15,7 +15,11 @@ from ocean_data_parser.parsers.utils import standardize_dataset
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_GLOBAL_ATTRIBUTES = {"instrument_manufacturer": "Star-Oddi", "source": None}
+DEFAULT_GLOBAL_ATTRIBUTES = {
+    "instrument_manufacturer": "Star-Oddi",
+    "source": None,
+    "Conventions": "CF-1.6, ACDD-1.3",
+}
 
 VARIABLES_ATTRIBUTES = {
     "temperature": {

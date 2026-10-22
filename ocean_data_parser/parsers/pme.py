@@ -54,7 +54,7 @@ VARIABLE_RENAMING_MAPPING = {
     "Q ()": "q",
 }
 
-default_global_attributes = {"Conventions": "CF-1.6"}
+default_global_attributes = {"Conventions": "CF-1.6, ACDD-1.3"}
 
 
 # Deprecated functions

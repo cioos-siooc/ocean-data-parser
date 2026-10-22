@@ -1,7 +1,7 @@
 import json
 import logging
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from io import StringIO
 
 import numpy as np
@@ -214,6 +214,7 @@ def standardize_dataset(
 
     Standardization apply the following steps to be compatible with ERDDAP:
         - Set standard_name_vocabulary to the CF Standard Name Table version used
+        - Set date_modified (ACDD) to now if missing
         - Generate geospatial attributes
         - Apply standardize_variable_attributes
         - Apply standardize_global_attributes
@@ -237,9 +238,11 @@ def standardize_dataset(
         f"CF Standard Name Table v{DEFAULT_STANDARD_NAMES_VERSION}"
     )
 
+    now = datetime.now(timezone.utc)
+    ds.attrs.setdefault("date_modified", now.strftime("%Y-%m-%dT%H:%M:%SZ"))
     ds.attrs["history"] = ds.attrs.get("history", "")
     ds.attrs["history"] += (
-        f"{datetime.utcnow().isoformat()} Generated with ocean_data_parser v{__version__}\n"
+        f"{now.replace(tzinfo=None).isoformat()} Generated with ocean_data_parser v{__version__}\n"
     )
 
     ds = get_spatial_coverage_attributes(ds, utc=utc)
