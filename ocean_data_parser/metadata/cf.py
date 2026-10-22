@@ -15,7 +15,7 @@ def get_standard_names(version=DEFAULT_STANDARD_NAMES_VERSION) -> pd.DataFrame:
 
     unique_value_columns = ["version_number", "last_modified", "institution", "contact"]
 
-    local_file = Path(__file__).parent / "cf_standard_names_v{version}.csv"
+    local_file = Path(__file__).parent / f"cf_standard_names_v{version}.csv"
     if local_file.exists():
         return pd.read_csv(local_file)
 

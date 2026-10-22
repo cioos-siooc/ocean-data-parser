@@ -33,6 +33,7 @@ Default to True for BIO and False for IML.
 
 ### Fixed
 
+- Fix `cf.get_standard_names` never loading a locally saved `cf_standard_names_v{version}.csv` (missing f-string).
 - Fix Amundsen Vocabulary for nav variables
 - Migrate Amundsen NAV file type to NMEA
 - Update NMEA Amundsen file type vocabulary
