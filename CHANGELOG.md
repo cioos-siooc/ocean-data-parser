@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Map Amundsen `FDOM` variables reported in Raman units (`R.U. (Raman units)`) to the rosette vocabulary.
+- Set Amundsen `FDOM` `long_name` to "CDOM fluorescence (Raman units)" so the unit is visible alongside the CF dimensionless `units = "1"`.
 
 ## `0.9.0`
 

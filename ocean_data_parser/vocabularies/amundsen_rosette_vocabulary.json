@@ -635,7 +635,7 @@
   ],
   "FDOM": [
     {
-      "long_name": "CDOM fluorescence fraction",
+      "long_name": "CDOM fluorescence (Raman units)",
       "units": "1",
       "standard_name": "concentration_of_colored_dissolved_organic_matter_in_sea_water",
       "sdn_parameter_urn": null,
