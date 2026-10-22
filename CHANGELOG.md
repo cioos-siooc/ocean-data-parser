@@ -30,10 +30,10 @@ Default to True for BIO and False for IML.
 ### Changed
 
 - Update default CF Standard Names table from v81 to v95 (adds e.g. `concentration_of_colored_dissolved_organic_matter_in_sea_water`).
+- Store the default CF Standard Names table in the package (`metadata/cf_standard_names_v{version}.xml`) instead of downloading it on each call. `python -m ocean_data_parser.metadata.cf --version N` downloads a new version and deletes any other stored one.
 
 ### Fixed
 
-- Fix `cf.get_standard_names` never loading a locally saved `cf_standard_names_v{version}.csv` (missing f-string).
 - Fix Amundsen Vocabulary for nav variables
 - Migrate Amundsen NAV file type to NMEA
 - Update NMEA Amundsen file type vocabulary
