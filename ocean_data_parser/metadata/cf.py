@@ -6,11 +6,16 @@ import pandas as pd
 import requests
 from loguru import logger
 
-DEFAULT_STANDARD_NAMES_VERSION = 81
-CURRENT_VERSION_URL = (
-    "https://cfconventions.org/Data/cf-standard-names/current/src/"
-    "cf-standard-name-table.xml"
-)
+DEFAULT_STANDARD_NAMES_VERSION = 95
+CACHE_DIR = Path(__file__).parent
+
+
+def _cached_file(version) -> Path:
+    return CACHE_DIR / f"cf_standard_names_v{version}.xml"
+
+
+def _url(version) -> str:
+    return f"https://cfconventions.org/Data/cf-standard-names/{version}/src/cf-standard-name-table.xml"
 
 
 def get_latest_published_version(timeout: float = 5.0) -> int | None:
@@ -19,49 +24,46 @@ def get_latest_published_version(timeout: float = 5.0) -> int | None:
     Returns None if the lookup fails (offline, network error, etc.).
     """
     try:
-        response = requests.get(CURRENT_VERSION_URL, timeout=timeout)
+        response = requests.get(_url("current"), timeout=timeout)
         response.raise_for_status()
-        match = re.search(r"<version_number>(\d+)</version_number>", response.text)
-        if match:
-            return int(match.group(1))
-    except (requests.RequestException, ValueError):
+    except requests.RequestException:
         return None
-    return None
+    match = re.search(r"<version_number>(\d+)</version_number>", response.text)
+    return int(match.group(1)) if match else None
 
 
-def warn_if_outdated(
-    bundled_version: int = DEFAULT_STANDARD_NAMES_VERSION,
-) -> int | None:
+def warn_if_outdated(version: int = DEFAULT_STANDARD_NAMES_VERSION) -> int | None:
     """Log a warning if a newer CF Standard Name Table is published online."""
     latest = get_latest_published_version()
-    if latest is not None and latest > bundled_version:
+    if latest is not None and latest > version:
         logger.warning(
-            "A newer CF Standard Name Table is available: bundled v{bundled}, "
-            "published v{latest}. Re-run `python -m ocean_data_parser.metadata.cf "
-            "--version {latest}` and update DEFAULT_STANDARD_NAMES_VERSION.",
-            bundled=bundled_version,
-            latest=latest,
+            "A newer CF Standard Name Table is available: stored v{}, published v{}. "
+            "Run `python -m ocean_data_parser.metadata.cf --version {}` and update "
+            "DEFAULT_STANDARD_NAMES_VERSION.",
+            version,
+            latest,
+            latest,
         )
     return latest
 
 
 def get_standard_names(version=DEFAULT_STANDARD_NAMES_VERSION) -> pd.DataFrame:
-    """Load CF convention Standard Names table."""
+    """Load CF convention Standard Names table.
+
+    The table is read from the copy stored in the package if available,
+    otherwise it is retrieved from cfconventions.org.
+    """
 
     def _get_value(column):
         return standard_names[column].dropna().unique()[0]
 
     unique_value_columns = ["version_number", "last_modified", "institution", "contact"]
 
-    local_file = Path(__file__).parent / f"cf_standard_names_v{version}.csv"
-    if local_file.exists():
-        return pd.read_csv(local_file)
-
-    url = f"https://cfconventions.org/Data/cf-standard-names/{version}/src/cf-standard-name-table.xml"
-    logger.info("Load cf-standard-names: {}", url)
-    standard_names = pd.read_xml(
-        f"https://cfconventions.org/Data/cf-standard-names/{version}/src/cf-standard-name-table.xml"
-    )
+    source = _cached_file(version)
+    if not source.exists():
+        source = _url(version)
+    logger.info("Load cf-standard-names: {}", source)
+    standard_names = pd.read_xml(source)
     standard_names.attrs = {item: _get_value(item) for item in unique_value_columns}
     return (
         standard_names.drop(index=[0, 1, 2, 3])
@@ -76,21 +78,23 @@ def get_standard_names(version=DEFAULT_STANDARD_NAMES_VERSION) -> pd.DataFrame:
     default=DEFAULT_STANDARD_NAMES_VERSION,
     help="CF convention Standard Names table version number.",
 )
-@click.option(
-    "--output",
-    default=None,
-    type=click.Path(exists=False),
-    help="Output CSV file path.",
-)
-def save_standard_names(version, output: Path):
-    """Save CF convention Standard Names table to a CSV file."""
-    if output is None:
-        output = Path(__file__).parent / f"cf_standard_names_v{version}.csv"
-    standard_names = get_standard_names(version)
-    if output.suffix != ".csv":
-        output = output.with_suffix(".csv")
-    standard_names.to_csv(output, index=False)
+def update_standard_names(version):
+    """Store CF convention Standard Names table in the package.
+
+    Only one version is kept: any other stored version is deleted.
+    """
+    url = _url(version)
+    logger.info("Download cf-standard-names: {}", url)
+    with requests.get(url) as response:
+        response.raise_for_status()
+        cached_file = _cached_file(version)
+        cached_file.write_bytes(response.content)
+
+    for file in CACHE_DIR.glob("cf_standard_names_v*"):
+        if file != cached_file:
+            logger.info("Delete previous cf-standard-names: {}", file)
+            file.unlink()
 
 
 if __name__ == "__main__":
-    save_standard_names()
+    update_standard_names()

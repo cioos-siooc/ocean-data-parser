@@ -11,6 +11,7 @@ from pytz.exceptions import AmbiguousTimeError
 
 from ocean_data_parser import __version__
 from ocean_data_parser.batch.utils import get_path_generation_input
+from ocean_data_parser.metadata import cf
 from ocean_data_parser.parsers import (
     amundsen,
     dfo,
@@ -118,6 +119,10 @@ def review_parsed_dataset(
     assert ds.variables, "Dataset has no variables."
 
     assert ds.attrs["ocean_data_parser_version"] == __version__
+    assert (
+        ds.attrs["standard_name_vocabulary"]
+        == f"CF Standard Name Table v{cf.DEFAULT_STANDARD_NAMES_VERSION}"
+    )
     assert isinstance(ds.attrs.get("history", ""), str), (
         "history attribute is not a string"
     )
