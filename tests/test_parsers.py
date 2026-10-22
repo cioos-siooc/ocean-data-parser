@@ -10,6 +10,7 @@ from pytz.exceptions import AmbiguousTimeError
 
 from ocean_data_parser import __version__
 from ocean_data_parser.batch.utils import get_path_generation_input
+from ocean_data_parser.metadata import cf
 from ocean_data_parser.parsers import (
     amundsen,
     dfo,
@@ -48,6 +49,10 @@ def review_parsed_dataset(
     assert ds.variables, "Dataset has no variables."
 
     assert ds.attrs["ocean_data_parser_version"] == __version__
+    assert (
+        ds.attrs["standard_name_vocabulary"]
+        == f"CF Standard Name Table v{cf.DEFAULT_STANDARD_NAMES_VERSION}"
+    )
     assert isinstance(ds.attrs.get("history", ""), str), (
         "history attribute is not a string"
     )
@@ -251,6 +256,39 @@ class TestAmundsenParser:
     def test_amundsen_lad_parser(self, path, caplog):
         ds = amundsen.lad_format(path)
         review_parsed_dataset(ds, path, caplog, max_log_levelno=20)
+
+    @pytest.mark.parametrize(
+        "path",
+        glob("tests/parsers_test_files/amundsen/**/*ATS*.csv", recursive=True),
+    )
+    def test_amundsen_ats_csv_parser(self, path, caplog):
+        """Test Amundsen ATS (Atmospheric System) CSV files.
+
+        ATS files use a capitalized ``Time`` column and lower-case variable
+        names that must be mapped through the ``ATS`` vocabulary and served as
+        a trajectory (time, latitude, longitude).
+        """
+        ds = amundsen.csv_format(path)
+        review_parsed_dataset(ds, path, caplog, max_log_levelno=20)
+
+        # ATS files are trajectories keyed on the acquisition time
+        assert ds.attrs["cdm_data_type"] == "Trajectory"
+        assert ds["time"].dims == ("time",), "time should be the trajectory dimension"
+        assert "time" in ds.coords
+        assert "latitude" in ds.coords
+        assert "longitude" in ds.coords
+        assert ds["time"].dtype.kind == "M", "time was not parsed to datetime"
+
+        # Every data variable should be mapped through the ATS vocabulary
+        for name, variable in ds.data_vars.items():
+            assert variable.attrs.get("long_name"), (
+                f"{name} was not mapped to the ATS vocabulary"
+            )
+
+        # Spot check a mapped variable and its standard_name
+        assert ds["surface_temperature"].attrs["standard_name"] == "surface_temperature"
+        # The raw column is "synop_code" (was previously mis-keyed as "sinop_code")
+        assert "synop_code" not in ds or ds["synop_code"].attrs.get("long_name")
 
     @pytest.mark.parametrize(
         ("path", "expected_latitude", "expected_longitude"),

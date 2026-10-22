@@ -171,7 +171,7 @@ def _get_file_type(path: str) -> str:
     """Get the file type from the file path."""
     if Path(path).suffix.lower() == ".lad":
         return "LADCP"
-    file_type = re.search("AVOS|TSG|Bioness|NAV|Hydrobios|NMEA", Path(path).name)
+    file_type = re.search("AVOS|TSG|Bioness|NAV|Hydrobios|NMEA|ATS", Path(path).name)
     if not file_type:
         return
     if file_type.group() == "NAV":
@@ -374,6 +374,11 @@ def int_format(
         raise ValueError(
             f"Number of columns ({len(df.columns)}) doesn't match the number of variables ({len(names)})"
         )
+
+    # Some formats (e.g. ATS) capitalize the time column ("Time"); normalize it
+    # to "time" so it is handled consistently with the other trajectory formats.
+    if "Time" in df.columns and "time" not in df.columns:
+        df = df.rename(columns={"Time": "time"})
 
     # Sort column attributes
     variables = _extract_variable_attributes_from_header(metadata, df.columns)
