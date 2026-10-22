@@ -19,7 +19,6 @@ logger = logging.getLogger(__name__)
 
 odf_global_attributes = {
     "Conventions": "CF-1.6,CF-1.7,CF-1.8,ACDD1.1,ACDD-1.3,IOOS-1.2",
-    "standard_name_vocabulary": "CF Standard Name Table v78",
 }
 
 mli_global_attributes = {
@@ -67,7 +66,6 @@ bio_global_attributes = {
 as_dfo_global_attributes = {
     "organization": "Quebec Ocean - Laval University - Amundsen Science",
     "Conventions": "CF-1.6,CF-1.7,CF-1.8,ACDD1.1,ACDD-1.3,IOOS-1.2",
-    "standard_name_vocabulary": "CF Standard Name Table v78",
 }
 
 
