@@ -633,7 +633,7 @@
       "sdn_uom_name": "Milligrams per cubic metre"
     }
   ],
-  "FDOM": [
+"FDOM": [
   {
     "long_name": "CDOM fluorescence fraction",
     "units": "1",
