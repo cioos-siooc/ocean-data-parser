@@ -2114,7 +2114,12 @@ from the data block before vocabulary mapping. Defaults to None.</p>
 <span class="normal"><a href="#__codelineno-0-488">488</a></span>
 <span class="normal"><a href="#__codelineno-0-489">489</a></span>
 <span class="normal"><a href="#__codelineno-0-490">490</a></span>
-<span class="normal"><a href="#__codelineno-0-491">491</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-250"><a id="__codelineno-0-250" name="__codelineno-0-250"></a><span class="k">def</span><span class="w"> </span><span class="nf">int_format</span><span class="p">(</span>
+<span class="normal"><a href="#__codelineno-0-491">491</a></span>
+<span class="normal"><a href="#__codelineno-0-492">492</a></span>
+<span class="normal"><a href="#__codelineno-0-493">493</a></span>
+<span class="normal"><a href="#__codelineno-0-494">494</a></span>
+<span class="normal"><a href="#__codelineno-0-495">495</a></span>
+<span class="normal"><a href="#__codelineno-0-496">496</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-250"><a id="__codelineno-0-250" name="__codelineno-0-250"></a><span class="k">def</span><span class="w"> </span><span class="nf">int_format</span><span class="p">(</span>
 </span><span id="__span-0-251"><a id="__codelineno-0-251" name="__codelineno-0-251"></a>    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 </span><span id="__span-0-252"><a id="__codelineno-0-252" name="__codelineno-0-252"></a>    <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Windows-1252&quot;</span><span class="p">,</span>
 </span><span id="__span-0-253"><a id="__codelineno-0-253" name="__codelineno-0-253"></a>    <span class="n">map_to_vocabulary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -2242,120 +2247,125 @@ from the data block before vocabulary mapping. Defaults to None.</p>
 </span><span id="__span-0-375"><a id="__codelineno-0-375" name="__codelineno-0-375"></a>            <span class="sa">f</span><span class="s2">&quot;Number of columns (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="si">}</span><span class="s2">) doesn&#39;t match the number of variables (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
 </span><span id="__span-0-376"><a id="__codelineno-0-376" name="__codelineno-0-376"></a>        <span class="p">)</span>
 </span><span id="__span-0-377"><a id="__codelineno-0-377" name="__codelineno-0-377"></a>
-</span><span id="__span-0-378"><a id="__codelineno-0-378" name="__codelineno-0-378"></a>    <span class="c1"># Sort column attributes</span>
-</span><span id="__span-0-379"><a id="__codelineno-0-379" name="__codelineno-0-379"></a>    <span class="n">variables</span> <span class="o">=</span> <span class="n">_extract_variable_attributes_from_header</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-</span><span id="__span-0-380"><a id="__codelineno-0-380" name="__codelineno-0-380"></a>    <span class="k">if</span> <span class="s2">&quot;Date&quot;</span> <span class="ow">in</span> <span class="n">df</span> <span class="ow">and</span> <span class="s2">&quot;Hour&quot;</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
-</span><span id="__span-0-381"><a id="__codelineno-0-381" name="__codelineno-0-381"></a>        <span class="n">df</span> <span class="o">=</span> <span class="n">_convert_timestamp</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-</span><span id="__span-0-382"><a id="__codelineno-0-382" name="__codelineno-0-382"></a>    <span class="k">elif</span> <span class="s2">&quot;time&quot;</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
-</span><span id="__span-0-383"><a id="__codelineno-0-383" name="__codelineno-0-383"></a>        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">],</span> <span class="n">utc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-0-384"><a id="__codelineno-0-384" name="__codelineno-0-384"></a>
-</span><span id="__span-0-385"><a id="__codelineno-0-385" name="__codelineno-0-385"></a>    <span class="c1"># Convert to xarray object</span>
-</span><span id="__span-0-386"><a id="__codelineno-0-386" name="__codelineno-0-386"></a>    <span class="n">ds</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_xarray</span><span class="p">()</span>
-</span><span id="__span-0-387"><a id="__codelineno-0-387" name="__codelineno-0-387"></a>
-</span><span id="__span-0-388"><a id="__codelineno-0-388" name="__codelineno-0-388"></a>    <span class="c1"># Standardize global attributes</span>
-</span><span id="__span-0-389"><a id="__codelineno-0-389" name="__codelineno-0-389"></a>    <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="__span-0-390"><a id="__codelineno-0-390" name="__codelineno-0-390"></a>        <span class="n">_standardize_attribute_name</span><span class="p">(</span><span class="n">name</span><span class="p">):</span> <span class="n">_standardize_attribute_value</span><span class="p">(</span>
-</span><span id="__span-0-391"><a id="__codelineno-0-391" name="__codelineno-0-391"></a>            <span class="n">value</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span>
-</span><span id="__span-0-392"><a id="__codelineno-0-392" name="__codelineno-0-392"></a>        <span class="p">)</span>
-</span><span id="__span-0-393"><a id="__codelineno-0-393" name="__codelineno-0-393"></a>        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-</span><span id="__span-0-394"><a id="__codelineno-0-394" name="__codelineno-0-394"></a>    <span class="p">}</span>
-</span><span id="__span-0-395"><a id="__codelineno-0-395" name="__codelineno-0-395"></a>
-</span><span id="__span-0-396"><a id="__codelineno-0-396" name="__codelineno-0-396"></a>    <span class="c1"># Fix global attribute</span>
-</span><span id="__span-0-397"><a id="__codelineno-0-397" name="__codelineno-0-397"></a>    <span class="n">ds</span> <span class="o">=</span> <span class="n">_fix_station_global_attribute</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
-</span><span id="__span-0-398"><a id="__codelineno-0-398" name="__codelineno-0-398"></a>
-</span><span id="__span-0-399"><a id="__codelineno-0-399" name="__codelineno-0-399"></a>    <span class="c1"># Generate instrument_depth variable</span>
-</span><span id="__span-0-400"><a id="__codelineno-0-400" name="__codelineno-0-400"></a>    <span class="n">pressure</span> <span class="o">=</span> <span class="p">[</span><span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">ds</span> <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;Pres&quot;</span><span class="p">,</span> <span class="s2">&quot;PRES&quot;</span><span class="p">)]</span>
-</span><span id="__span-0-401"><a id="__codelineno-0-401" name="__codelineno-0-401"></a>    <span class="k">if</span> <span class="p">(</span>
-</span><span id="__span-0-402"><a id="__codelineno-0-402" name="__codelineno-0-402"></a>        <span class="n">generate_depth</span>
-</span><span id="__span-0-403"><a id="__codelineno-0-403" name="__codelineno-0-403"></a>        <span class="ow">and</span> <span class="n">pressure</span>
-</span><span id="__span-0-404"><a id="__codelineno-0-404" name="__codelineno-0-404"></a>        <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;Lat&quot;</span> <span class="ow">in</span> <span class="n">ds</span> <span class="ow">or</span> <span class="s2">&quot;initial_latitude_deg&quot;</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
-</span><span id="__span-0-405"><a id="__codelineno-0-405" name="__codelineno-0-405"></a>    <span class="p">):</span>
-</span><span id="__span-0-406"><a id="__codelineno-0-406" name="__codelineno-0-406"></a>        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-</span><span id="__span-0-407"><a id="__codelineno-0-407" name="__codelineno-0-407"></a>            <span class="s2">&quot;Generate instrument_depth from TEOS-10: -1 * gsw.z_from_p(ds[&#39;Pres&#39;], </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="p">,</span>
-</span><span id="__span-0-408"><a id="__codelineno-0-408" name="__codelineno-0-408"></a>            <span class="s2">&quot;ds[&#39;Lat&#39;]&quot;</span> <span class="k">if</span> <span class="s2">&quot;Lat&quot;</span> <span class="ow">in</span> <span class="n">ds</span> <span class="k">else</span> <span class="s2">&quot;ds.attrs[&#39;initial_latitude_deg&#39;]&quot;</span><span class="p">,</span>
-</span><span id="__span-0-409"><a id="__codelineno-0-409" name="__codelineno-0-409"></a>        <span class="p">)</span>
-</span><span id="__span-0-410"><a id="__codelineno-0-410" name="__codelineno-0-410"></a>        <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;instrument_depth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">z_from_p</span><span class="p">(</span>
-</span><span id="__span-0-411"><a id="__codelineno-0-411" name="__codelineno-0-411"></a>            <span class="n">ds</span><span class="p">[</span><span class="n">pressure</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
-</span><span id="__span-0-412"><a id="__codelineno-0-412" name="__codelineno-0-412"></a>            <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;Lat&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;Lat&quot;</span> <span class="ow">in</span> <span class="n">ds</span> <span class="k">else</span> <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;initial_latitude_deg&quot;</span><span class="p">],</span>
-</span><span id="__span-0-413"><a id="__codelineno-0-413" name="__codelineno-0-413"></a>        <span class="p">)</span>
-</span><span id="__span-0-414"><a id="__codelineno-0-414" name="__codelineno-0-414"></a>
-</span><span id="__span-0-415"><a id="__codelineno-0-415" name="__codelineno-0-415"></a>    <span class="c1"># Map variables to vocabulary</span>
-</span><span id="__span-0-416"><a id="__codelineno-0-416" name="__codelineno-0-416"></a>    <span class="n">file_type</span> <span class="o">=</span> <span class="n">_get_file_type</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-</span><span id="__span-0-417"><a id="__codelineno-0-417" name="__codelineno-0-417"></a>    <span class="n">variables_vocabulary</span> <span class="o">=</span> <span class="n">amundsen_vocabulary</span><span class="p">(</span><span class="n">file_type</span><span class="p">)</span>
-</span><span id="__span-0-418"><a id="__codelineno-0-418" name="__codelineno-0-418"></a>    <span class="n">variables_to_rename</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="__span-0-419"><a id="__codelineno-0-419" name="__codelineno-0-419"></a>    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">:</span>
-</span><span id="__span-0-420"><a id="__codelineno-0-420" name="__codelineno-0-420"></a>        <span class="k">if</span> <span class="n">var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">variables</span> <span class="ow">or</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;_\d+$&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span> <span class="ow">in</span> <span class="n">IGNORED_VARIABLES</span><span class="p">:</span>
-</span><span id="__span-0-421"><a id="__codelineno-0-421" name="__codelineno-0-421"></a>            <span class="k">continue</span>
-</span><span id="__span-0-422"><a id="__codelineno-0-422" name="__codelineno-0-422"></a>
-</span><span id="__span-0-423"><a id="__codelineno-0-423" name="__codelineno-0-423"></a>        <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="n">variables</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
-</span><span id="__span-0-424"><a id="__codelineno-0-424" name="__codelineno-0-424"></a>        <span class="k">if</span> <span class="s2">&quot;long_name&quot;</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">:</span>
-</span><span id="__span-0-425"><a id="__codelineno-0-425" name="__codelineno-0-425"></a>            <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-</span><span id="__span-0-426"><a id="__codelineno-0-426" name="__codelineno-0-426"></a>
-</span><span id="__span-0-427"><a id="__codelineno-0-427" name="__codelineno-0-427"></a>        <span class="c1"># Include variable attributes from the vocabulary</span>
-</span><span id="__span-0-428"><a id="__codelineno-0-428" name="__codelineno-0-428"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">map_to_vocabulary</span><span class="p">:</span>
-</span><span id="__span-0-429"><a id="__codelineno-0-429" name="__codelineno-0-429"></a>            <span class="k">continue</span>
-</span><span id="__span-0-430"><a id="__codelineno-0-430" name="__codelineno-0-430"></a>        <span class="k">elif</span> <span class="n">var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">variables_vocabulary</span><span class="p">:</span>
-</span><span id="__span-0-431"><a id="__codelineno-0-431" name="__codelineno-0-431"></a>            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-</span><span id="__span-0-432"><a id="__codelineno-0-432" name="__codelineno-0-432"></a>                <span class="s2">&quot;No vocabulary is available for variable mapping &#39;</span><span class="si">{}</span><span class="s2">&#39;: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="__span-0-433"><a id="__codelineno-0-433" name="__codelineno-0-433"></a>                <span class="n">var</span><span class="p">,</span>
-</span><span id="__span-0-434"><a id="__codelineno-0-434" name="__codelineno-0-434"></a>                <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">,</span>
-</span><span id="__span-0-435"><a id="__codelineno-0-435" name="__codelineno-0-435"></a>            <span class="p">)</span>
-</span><span id="__span-0-436"><a id="__codelineno-0-436" name="__codelineno-0-436"></a>            <span class="k">continue</span>
-</span><span id="__span-0-437"><a id="__codelineno-0-437" name="__codelineno-0-437"></a>
-</span><span id="__span-0-438"><a id="__codelineno-0-438" name="__codelineno-0-438"></a>        <span class="c1"># Match vocabulary</span>
-</span><span id="__span-0-439"><a id="__codelineno-0-439" name="__codelineno-0-439"></a>        <span class="n">var_units</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;units&quot;</span><span class="p">)</span>
-</span><span id="__span-0-440"><a id="__codelineno-0-440" name="__codelineno-0-440"></a>        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">variables_vocabulary</span><span class="p">[</span><span class="n">var</span><span class="p">]:</span>
-</span><span id="__span-0-441"><a id="__codelineno-0-441" name="__codelineno-0-441"></a>            <span class="n">accepted_units</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;accepted_units&quot;</span><span class="p">)</span>
-</span><span id="__span-0-442"><a id="__codelineno-0-442" name="__codelineno-0-442"></a>            <span class="k">if</span> <span class="p">(</span>
-</span><span id="__span-0-443"><a id="__codelineno-0-443" name="__codelineno-0-443"></a>                <span class="n">var_units</span> <span class="ow">is</span> <span class="kc">None</span>  <span class="c1"># Consider first if no units</span>
-</span><span id="__span-0-444"><a id="__codelineno-0-444" name="__codelineno-0-444"></a>                <span class="ow">or</span> <span class="n">var_units</span> <span class="o">==</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;units&quot;</span><span class="p">)</span>
-</span><span id="__span-0-445"><a id="__codelineno-0-445" name="__codelineno-0-445"></a>                <span class="ow">or</span> <span class="p">(</span>
-</span><span id="__span-0-446"><a id="__codelineno-0-446" name="__codelineno-0-446"></a>                    <span class="n">accepted_units</span>
-</span><span id="__span-0-447"><a id="__codelineno-0-447" name="__codelineno-0-447"></a>                    <span class="ow">and</span> <span class="p">(</span>
-</span><span id="__span-0-448"><a id="__codelineno-0-448" name="__codelineno-0-448"></a>                        <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">accepted_units</span><span class="p">,</span> <span class="n">var_units</span><span class="p">)</span>
-</span><span id="__span-0-449"><a id="__codelineno-0-449" name="__codelineno-0-449"></a>                        <span class="ow">or</span> <span class="s2">&quot;None&quot;</span> <span class="ow">in</span> <span class="n">accepted_units</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)</span>
-</span><span id="__span-0-450"><a id="__codelineno-0-450" name="__codelineno-0-450"></a>                    <span class="p">)</span>
-</span><span id="__span-0-451"><a id="__codelineno-0-451" name="__codelineno-0-451"></a>                <span class="p">)</span>
-</span><span id="__span-0-452"><a id="__codelineno-0-452" name="__codelineno-0-452"></a>            <span class="p">):</span>
-</span><span id="__span-0-453"><a id="__codelineno-0-453" name="__codelineno-0-453"></a>                <span class="k">if</span> <span class="s2">&quot;rename&quot;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
-</span><span id="__span-0-454"><a id="__codelineno-0-454" name="__codelineno-0-454"></a>                    <span class="n">variables_to_rename</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;rename&quot;</span><span class="p">]</span>
-</span><span id="__span-0-455"><a id="__codelineno-0-455" name="__codelineno-0-455"></a>
-</span><span id="__span-0-456"><a id="__codelineno-0-456" name="__codelineno-0-456"></a>                <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="__span-0-457"><a id="__codelineno-0-457" name="__codelineno-0-457"></a>                    <span class="n">key</span><span class="p">:</span> <span class="n">value</span>
-</span><span id="__span-0-458"><a id="__codelineno-0-458" name="__codelineno-0-458"></a>                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-</span><span id="__span-0-459"><a id="__codelineno-0-459" name="__codelineno-0-459"></a>                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;accepted_units&quot;</span><span class="p">,</span> <span class="s2">&quot;rename&quot;</span><span class="p">,</span> <span class="s2">&quot;file_type&quot;</span><span class="p">]</span>
-</span><span id="__span-0-460"><a id="__codelineno-0-460" name="__codelineno-0-460"></a>                <span class="p">}</span>
-</span><span id="__span-0-461"><a id="__codelineno-0-461" name="__codelineno-0-461"></a>                <span class="k">if</span> <span class="s2">&quot;apply_function&quot;</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">:</span>
-</span><span id="__span-0-462"><a id="__codelineno-0-462" name="__codelineno-0-462"></a>                    <span class="n">ds</span> <span class="o">=</span> <span class="n">apply_function</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span>
-</span><span id="__span-0-463"><a id="__codelineno-0-463" name="__codelineno-0-463"></a>                <span class="k">break</span>
-</span><span id="__span-0-464"><a id="__codelineno-0-464" name="__codelineno-0-464"></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="__span-0-465"><a id="__codelineno-0-465" name="__codelineno-0-465"></a>            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-</span><span id="__span-0-466"><a id="__codelineno-0-466" name="__codelineno-0-466"></a>                <span class="s2">&quot;No Vocabulary available for </span><span class="si">{}</span><span class="s2"> [</span><span class="si">{}</span><span class="s2">]: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="__span-0-467"><a id="__codelineno-0-467" name="__codelineno-0-467"></a>                <span class="n">var</span><span class="p">,</span>
-</span><span id="__span-0-468"><a id="__codelineno-0-468" name="__codelineno-0-468"></a>                <span class="n">var_units</span><span class="p">,</span>
-</span><span id="__span-0-469"><a id="__codelineno-0-469" name="__codelineno-0-469"></a>                <span class="nb">str</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">),</span>
-</span><span id="__span-0-470"><a id="__codelineno-0-470" name="__codelineno-0-470"></a>            <span class="p">)</span>
-</span><span id="__span-0-471"><a id="__codelineno-0-471" name="__codelineno-0-471"></a>
-</span><span id="__span-0-472"><a id="__codelineno-0-472" name="__codelineno-0-472"></a>    <span class="c1"># Review rename variables</span>
-</span><span id="__span-0-473"><a id="__codelineno-0-473" name="__codelineno-0-473"></a>    <span class="n">already_existing_variables</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="__span-0-474"><a id="__codelineno-0-474" name="__codelineno-0-474"></a>        <span class="n">var</span><span class="p">:</span> <span class="n">rename</span> <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">rename</span> <span class="ow">in</span> <span class="n">variables_to_rename</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">rename</span> <span class="ow">in</span> <span class="n">ds</span>
-</span><span id="__span-0-475"><a id="__codelineno-0-475" name="__codelineno-0-475"></a>    <span class="p">}</span>
-</span><span id="__span-0-476"><a id="__codelineno-0-476" name="__codelineno-0-476"></a>    <span class="k">if</span> <span class="n">already_existing_variables</span><span class="p">:</span>
-</span><span id="__span-0-477"><a id="__codelineno-0-477" name="__codelineno-0-477"></a>        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-</span><span id="__span-0-478"><a id="__codelineno-0-478" name="__codelineno-0-478"></a>            <span class="s2">&quot;Can&#39;t rename variable </span><span class="si">{}</span><span class="s2"> since it already exist&quot;</span><span class="p">,</span>
-</span><span id="__span-0-479"><a id="__codelineno-0-479" name="__codelineno-0-479"></a>            <span class="n">already_existing_variables</span><span class="p">,</span>
-</span><span id="__span-0-480"><a id="__codelineno-0-480" name="__codelineno-0-480"></a>        <span class="p">)</span>
-</span><span id="__span-0-481"><a id="__codelineno-0-481" name="__codelineno-0-481"></a>
-</span><span id="__span-0-482"><a id="__codelineno-0-482" name="__codelineno-0-482"></a>    <span class="k">if</span> <span class="n">variables_to_rename</span><span class="p">:</span>
-</span><span id="__span-0-483"><a id="__codelineno-0-483" name="__codelineno-0-483"></a>        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Rename variables: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">variables_to_rename</span><span class="p">)</span>
-</span><span id="__span-0-484"><a id="__codelineno-0-484" name="__codelineno-0-484"></a>        <span class="n">ds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">variables_to_rename</span><span class="p">)</span>
-</span><span id="__span-0-485"><a id="__codelineno-0-485" name="__codelineno-0-485"></a>
-</span><span id="__span-0-486"><a id="__codelineno-0-486" name="__codelineno-0-486"></a>    <span class="c1"># Assign dimensions only after renaming variables</span>
-</span><span id="__span-0-487"><a id="__codelineno-0-487" name="__codelineno-0-487"></a>    <span class="n">ds</span> <span class="o">=</span> <span class="n">_assign_dimensions</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">file_type</span><span class="p">)</span>
-</span><span id="__span-0-488"><a id="__codelineno-0-488" name="__codelineno-0-488"></a>
-</span><span id="__span-0-489"><a id="__codelineno-0-489" name="__codelineno-0-489"></a>    <span class="c1"># Standardize dataset to be compatible with ERDDAP and NetCDF Classic</span>
-</span><span id="__span-0-490"><a id="__codelineno-0-490" name="__codelineno-0-490"></a>    <span class="n">ds</span> <span class="o">=</span> <span class="n">standardize_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
-</span><span id="__span-0-491"><a id="__codelineno-0-491" name="__codelineno-0-491"></a>    <span class="k">return</span> <span class="n">ds</span>
+</span><span id="__span-0-378"><a id="__codelineno-0-378" name="__codelineno-0-378"></a>    <span class="c1"># Some formats (e.g. ATS) capitalize the time column (&quot;Time&quot;); normalize it</span>
+</span><span id="__span-0-379"><a id="__codelineno-0-379" name="__codelineno-0-379"></a>    <span class="c1"># to &quot;time&quot; so it is handled consistently with the other trajectory formats.</span>
+</span><span id="__span-0-380"><a id="__codelineno-0-380" name="__codelineno-0-380"></a>    <span class="k">if</span> <span class="s2">&quot;Time&quot;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="s2">&quot;time&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+</span><span id="__span-0-381"><a id="__codelineno-0-381" name="__codelineno-0-381"></a>        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Time&quot;</span><span class="p">:</span> <span class="s2">&quot;time&quot;</span><span class="p">})</span>
+</span><span id="__span-0-382"><a id="__codelineno-0-382" name="__codelineno-0-382"></a>
+</span><span id="__span-0-383"><a id="__codelineno-0-383" name="__codelineno-0-383"></a>    <span class="c1"># Sort column attributes</span>
+</span><span id="__span-0-384"><a id="__codelineno-0-384" name="__codelineno-0-384"></a>    <span class="n">variables</span> <span class="o">=</span> <span class="n">_extract_variable_attributes_from_header</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+</span><span id="__span-0-385"><a id="__codelineno-0-385" name="__codelineno-0-385"></a>    <span class="k">if</span> <span class="s2">&quot;Date&quot;</span> <span class="ow">in</span> <span class="n">df</span> <span class="ow">and</span> <span class="s2">&quot;Hour&quot;</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
+</span><span id="__span-0-386"><a id="__codelineno-0-386" name="__codelineno-0-386"></a>        <span class="n">df</span> <span class="o">=</span> <span class="n">_convert_timestamp</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</span><span id="__span-0-387"><a id="__codelineno-0-387" name="__codelineno-0-387"></a>    <span class="k">elif</span> <span class="s2">&quot;time&quot;</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
+</span><span id="__span-0-388"><a id="__codelineno-0-388" name="__codelineno-0-388"></a>        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">],</span> <span class="n">utc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-0-389"><a id="__codelineno-0-389" name="__codelineno-0-389"></a>
+</span><span id="__span-0-390"><a id="__codelineno-0-390" name="__codelineno-0-390"></a>    <span class="c1"># Convert to xarray object</span>
+</span><span id="__span-0-391"><a id="__codelineno-0-391" name="__codelineno-0-391"></a>    <span class="n">ds</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_xarray</span><span class="p">()</span>
+</span><span id="__span-0-392"><a id="__codelineno-0-392" name="__codelineno-0-392"></a>
+</span><span id="__span-0-393"><a id="__codelineno-0-393" name="__codelineno-0-393"></a>    <span class="c1"># Standardize global attributes</span>
+</span><span id="__span-0-394"><a id="__codelineno-0-394" name="__codelineno-0-394"></a>    <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="__span-0-395"><a id="__codelineno-0-395" name="__codelineno-0-395"></a>        <span class="n">_standardize_attribute_name</span><span class="p">(</span><span class="n">name</span><span class="p">):</span> <span class="n">_standardize_attribute_value</span><span class="p">(</span>
+</span><span id="__span-0-396"><a id="__codelineno-0-396" name="__codelineno-0-396"></a>            <span class="n">value</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+</span><span id="__span-0-397"><a id="__codelineno-0-397" name="__codelineno-0-397"></a>        <span class="p">)</span>
+</span><span id="__span-0-398"><a id="__codelineno-0-398" name="__codelineno-0-398"></a>        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+</span><span id="__span-0-399"><a id="__codelineno-0-399" name="__codelineno-0-399"></a>    <span class="p">}</span>
+</span><span id="__span-0-400"><a id="__codelineno-0-400" name="__codelineno-0-400"></a>
+</span><span id="__span-0-401"><a id="__codelineno-0-401" name="__codelineno-0-401"></a>    <span class="c1"># Fix global attribute</span>
+</span><span id="__span-0-402"><a id="__codelineno-0-402" name="__codelineno-0-402"></a>    <span class="n">ds</span> <span class="o">=</span> <span class="n">_fix_station_global_attribute</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+</span><span id="__span-0-403"><a id="__codelineno-0-403" name="__codelineno-0-403"></a>
+</span><span id="__span-0-404"><a id="__codelineno-0-404" name="__codelineno-0-404"></a>    <span class="c1"># Generate instrument_depth variable</span>
+</span><span id="__span-0-405"><a id="__codelineno-0-405" name="__codelineno-0-405"></a>    <span class="n">pressure</span> <span class="o">=</span> <span class="p">[</span><span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">ds</span> <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;Pres&quot;</span><span class="p">,</span> <span class="s2">&quot;PRES&quot;</span><span class="p">)]</span>
+</span><span id="__span-0-406"><a id="__codelineno-0-406" name="__codelineno-0-406"></a>    <span class="k">if</span> <span class="p">(</span>
+</span><span id="__span-0-407"><a id="__codelineno-0-407" name="__codelineno-0-407"></a>        <span class="n">generate_depth</span>
+</span><span id="__span-0-408"><a id="__codelineno-0-408" name="__codelineno-0-408"></a>        <span class="ow">and</span> <span class="n">pressure</span>
+</span><span id="__span-0-409"><a id="__codelineno-0-409" name="__codelineno-0-409"></a>        <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;Lat&quot;</span> <span class="ow">in</span> <span class="n">ds</span> <span class="ow">or</span> <span class="s2">&quot;initial_latitude_deg&quot;</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
+</span><span id="__span-0-410"><a id="__codelineno-0-410" name="__codelineno-0-410"></a>    <span class="p">):</span>
+</span><span id="__span-0-411"><a id="__codelineno-0-411" name="__codelineno-0-411"></a>        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+</span><span id="__span-0-412"><a id="__codelineno-0-412" name="__codelineno-0-412"></a>            <span class="s2">&quot;Generate instrument_depth from TEOS-10: -1 * gsw.z_from_p(ds[&#39;Pres&#39;], </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="p">,</span>
+</span><span id="__span-0-413"><a id="__codelineno-0-413" name="__codelineno-0-413"></a>            <span class="s2">&quot;ds[&#39;Lat&#39;]&quot;</span> <span class="k">if</span> <span class="s2">&quot;Lat&quot;</span> <span class="ow">in</span> <span class="n">ds</span> <span class="k">else</span> <span class="s2">&quot;ds.attrs[&#39;initial_latitude_deg&#39;]&quot;</span><span class="p">,</span>
+</span><span id="__span-0-414"><a id="__codelineno-0-414" name="__codelineno-0-414"></a>        <span class="p">)</span>
+</span><span id="__span-0-415"><a id="__codelineno-0-415" name="__codelineno-0-415"></a>        <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;instrument_depth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">z_from_p</span><span class="p">(</span>
+</span><span id="__span-0-416"><a id="__codelineno-0-416" name="__codelineno-0-416"></a>            <span class="n">ds</span><span class="p">[</span><span class="n">pressure</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+</span><span id="__span-0-417"><a id="__codelineno-0-417" name="__codelineno-0-417"></a>            <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;Lat&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;Lat&quot;</span> <span class="ow">in</span> <span class="n">ds</span> <span class="k">else</span> <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;initial_latitude_deg&quot;</span><span class="p">],</span>
+</span><span id="__span-0-418"><a id="__codelineno-0-418" name="__codelineno-0-418"></a>        <span class="p">)</span>
+</span><span id="__span-0-419"><a id="__codelineno-0-419" name="__codelineno-0-419"></a>
+</span><span id="__span-0-420"><a id="__codelineno-0-420" name="__codelineno-0-420"></a>    <span class="c1"># Map variables to vocabulary</span>
+</span><span id="__span-0-421"><a id="__codelineno-0-421" name="__codelineno-0-421"></a>    <span class="n">file_type</span> <span class="o">=</span> <span class="n">_get_file_type</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</span><span id="__span-0-422"><a id="__codelineno-0-422" name="__codelineno-0-422"></a>    <span class="n">variables_vocabulary</span> <span class="o">=</span> <span class="n">amundsen_vocabulary</span><span class="p">(</span><span class="n">file_type</span><span class="p">)</span>
+</span><span id="__span-0-423"><a id="__codelineno-0-423" name="__codelineno-0-423"></a>    <span class="n">variables_to_rename</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="__span-0-424"><a id="__codelineno-0-424" name="__codelineno-0-424"></a>    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">:</span>
+</span><span id="__span-0-425"><a id="__codelineno-0-425" name="__codelineno-0-425"></a>        <span class="k">if</span> <span class="n">var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">variables</span> <span class="ow">or</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;_\d+$&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span> <span class="ow">in</span> <span class="n">IGNORED_VARIABLES</span><span class="p">:</span>
+</span><span id="__span-0-426"><a id="__codelineno-0-426" name="__codelineno-0-426"></a>            <span class="k">continue</span>
+</span><span id="__span-0-427"><a id="__codelineno-0-427" name="__codelineno-0-427"></a>
+</span><span id="__span-0-428"><a id="__codelineno-0-428" name="__codelineno-0-428"></a>        <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="n">variables</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
+</span><span id="__span-0-429"><a id="__codelineno-0-429" name="__codelineno-0-429"></a>        <span class="k">if</span> <span class="s2">&quot;long_name&quot;</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">:</span>
+</span><span id="__span-0-430"><a id="__codelineno-0-430" name="__codelineno-0-430"></a>            <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="__span-0-431"><a id="__codelineno-0-431" name="__codelineno-0-431"></a>
+</span><span id="__span-0-432"><a id="__codelineno-0-432" name="__codelineno-0-432"></a>        <span class="c1"># Include variable attributes from the vocabulary</span>
+</span><span id="__span-0-433"><a id="__codelineno-0-433" name="__codelineno-0-433"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">map_to_vocabulary</span><span class="p">:</span>
+</span><span id="__span-0-434"><a id="__codelineno-0-434" name="__codelineno-0-434"></a>            <span class="k">continue</span>
+</span><span id="__span-0-435"><a id="__codelineno-0-435" name="__codelineno-0-435"></a>        <span class="k">elif</span> <span class="n">var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">variables_vocabulary</span><span class="p">:</span>
+</span><span id="__span-0-436"><a id="__codelineno-0-436" name="__codelineno-0-436"></a>            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+</span><span id="__span-0-437"><a id="__codelineno-0-437" name="__codelineno-0-437"></a>                <span class="s2">&quot;No vocabulary is available for variable mapping &#39;</span><span class="si">{}</span><span class="s2">&#39;: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="__span-0-438"><a id="__codelineno-0-438" name="__codelineno-0-438"></a>                <span class="n">var</span><span class="p">,</span>
+</span><span id="__span-0-439"><a id="__codelineno-0-439" name="__codelineno-0-439"></a>                <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">,</span>
+</span><span id="__span-0-440"><a id="__codelineno-0-440" name="__codelineno-0-440"></a>            <span class="p">)</span>
+</span><span id="__span-0-441"><a id="__codelineno-0-441" name="__codelineno-0-441"></a>            <span class="k">continue</span>
+</span><span id="__span-0-442"><a id="__codelineno-0-442" name="__codelineno-0-442"></a>
+</span><span id="__span-0-443"><a id="__codelineno-0-443" name="__codelineno-0-443"></a>        <span class="c1"># Match vocabulary</span>
+</span><span id="__span-0-444"><a id="__codelineno-0-444" name="__codelineno-0-444"></a>        <span class="n">var_units</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;units&quot;</span><span class="p">)</span>
+</span><span id="__span-0-445"><a id="__codelineno-0-445" name="__codelineno-0-445"></a>        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">variables_vocabulary</span><span class="p">[</span><span class="n">var</span><span class="p">]:</span>
+</span><span id="__span-0-446"><a id="__codelineno-0-446" name="__codelineno-0-446"></a>            <span class="n">accepted_units</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;accepted_units&quot;</span><span class="p">)</span>
+</span><span id="__span-0-447"><a id="__codelineno-0-447" name="__codelineno-0-447"></a>            <span class="k">if</span> <span class="p">(</span>
+</span><span id="__span-0-448"><a id="__codelineno-0-448" name="__codelineno-0-448"></a>                <span class="n">var_units</span> <span class="ow">is</span> <span class="kc">None</span>  <span class="c1"># Consider first if no units</span>
+</span><span id="__span-0-449"><a id="__codelineno-0-449" name="__codelineno-0-449"></a>                <span class="ow">or</span> <span class="n">var_units</span> <span class="o">==</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;units&quot;</span><span class="p">)</span>
+</span><span id="__span-0-450"><a id="__codelineno-0-450" name="__codelineno-0-450"></a>                <span class="ow">or</span> <span class="p">(</span>
+</span><span id="__span-0-451"><a id="__codelineno-0-451" name="__codelineno-0-451"></a>                    <span class="n">accepted_units</span>
+</span><span id="__span-0-452"><a id="__codelineno-0-452" name="__codelineno-0-452"></a>                    <span class="ow">and</span> <span class="p">(</span>
+</span><span id="__span-0-453"><a id="__codelineno-0-453" name="__codelineno-0-453"></a>                        <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">accepted_units</span><span class="p">,</span> <span class="n">var_units</span><span class="p">)</span>
+</span><span id="__span-0-454"><a id="__codelineno-0-454" name="__codelineno-0-454"></a>                        <span class="ow">or</span> <span class="s2">&quot;None&quot;</span> <span class="ow">in</span> <span class="n">accepted_units</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)</span>
+</span><span id="__span-0-455"><a id="__codelineno-0-455" name="__codelineno-0-455"></a>                    <span class="p">)</span>
+</span><span id="__span-0-456"><a id="__codelineno-0-456" name="__codelineno-0-456"></a>                <span class="p">)</span>
+</span><span id="__span-0-457"><a id="__codelineno-0-457" name="__codelineno-0-457"></a>            <span class="p">):</span>
+</span><span id="__span-0-458"><a id="__codelineno-0-458" name="__codelineno-0-458"></a>                <span class="k">if</span> <span class="s2">&quot;rename&quot;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+</span><span id="__span-0-459"><a id="__codelineno-0-459" name="__codelineno-0-459"></a>                    <span class="n">variables_to_rename</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;rename&quot;</span><span class="p">]</span>
+</span><span id="__span-0-460"><a id="__codelineno-0-460" name="__codelineno-0-460"></a>
+</span><span id="__span-0-461"><a id="__codelineno-0-461" name="__codelineno-0-461"></a>                <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="__span-0-462"><a id="__codelineno-0-462" name="__codelineno-0-462"></a>                    <span class="n">key</span><span class="p">:</span> <span class="n">value</span>
+</span><span id="__span-0-463"><a id="__codelineno-0-463" name="__codelineno-0-463"></a>                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+</span><span id="__span-0-464"><a id="__codelineno-0-464" name="__codelineno-0-464"></a>                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;accepted_units&quot;</span><span class="p">,</span> <span class="s2">&quot;rename&quot;</span><span class="p">,</span> <span class="s2">&quot;file_type&quot;</span><span class="p">]</span>
+</span><span id="__span-0-465"><a id="__codelineno-0-465" name="__codelineno-0-465"></a>                <span class="p">}</span>
+</span><span id="__span-0-466"><a id="__codelineno-0-466" name="__codelineno-0-466"></a>                <span class="k">if</span> <span class="s2">&quot;apply_function&quot;</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">:</span>
+</span><span id="__span-0-467"><a id="__codelineno-0-467" name="__codelineno-0-467"></a>                    <span class="n">ds</span> <span class="o">=</span> <span class="n">apply_function</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span>
+</span><span id="__span-0-468"><a id="__codelineno-0-468" name="__codelineno-0-468"></a>                <span class="k">break</span>
+</span><span id="__span-0-469"><a id="__codelineno-0-469" name="__codelineno-0-469"></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="__span-0-470"><a id="__codelineno-0-470" name="__codelineno-0-470"></a>            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+</span><span id="__span-0-471"><a id="__codelineno-0-471" name="__codelineno-0-471"></a>                <span class="s2">&quot;No Vocabulary available for </span><span class="si">{}</span><span class="s2"> [</span><span class="si">{}</span><span class="s2">]: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="__span-0-472"><a id="__codelineno-0-472" name="__codelineno-0-472"></a>                <span class="n">var</span><span class="p">,</span>
+</span><span id="__span-0-473"><a id="__codelineno-0-473" name="__codelineno-0-473"></a>                <span class="n">var_units</span><span class="p">,</span>
+</span><span id="__span-0-474"><a id="__codelineno-0-474" name="__codelineno-0-474"></a>                <span class="nb">str</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">),</span>
+</span><span id="__span-0-475"><a id="__codelineno-0-475" name="__codelineno-0-475"></a>            <span class="p">)</span>
+</span><span id="__span-0-476"><a id="__codelineno-0-476" name="__codelineno-0-476"></a>
+</span><span id="__span-0-477"><a id="__codelineno-0-477" name="__codelineno-0-477"></a>    <span class="c1"># Review rename variables</span>
+</span><span id="__span-0-478"><a id="__codelineno-0-478" name="__codelineno-0-478"></a>    <span class="n">already_existing_variables</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="__span-0-479"><a id="__codelineno-0-479" name="__codelineno-0-479"></a>        <span class="n">var</span><span class="p">:</span> <span class="n">rename</span> <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">rename</span> <span class="ow">in</span> <span class="n">variables_to_rename</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">rename</span> <span class="ow">in</span> <span class="n">ds</span>
+</span><span id="__span-0-480"><a id="__codelineno-0-480" name="__codelineno-0-480"></a>    <span class="p">}</span>
+</span><span id="__span-0-481"><a id="__codelineno-0-481" name="__codelineno-0-481"></a>    <span class="k">if</span> <span class="n">already_existing_variables</span><span class="p">:</span>
+</span><span id="__span-0-482"><a id="__codelineno-0-482" name="__codelineno-0-482"></a>        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+</span><span id="__span-0-483"><a id="__codelineno-0-483" name="__codelineno-0-483"></a>            <span class="s2">&quot;Can&#39;t rename variable </span><span class="si">{}</span><span class="s2"> since it already exist&quot;</span><span class="p">,</span>
+</span><span id="__span-0-484"><a id="__codelineno-0-484" name="__codelineno-0-484"></a>            <span class="n">already_existing_variables</span><span class="p">,</span>
+</span><span id="__span-0-485"><a id="__codelineno-0-485" name="__codelineno-0-485"></a>        <span class="p">)</span>
+</span><span id="__span-0-486"><a id="__codelineno-0-486" name="__codelineno-0-486"></a>
+</span><span id="__span-0-487"><a id="__codelineno-0-487" name="__codelineno-0-487"></a>    <span class="k">if</span> <span class="n">variables_to_rename</span><span class="p">:</span>
+</span><span id="__span-0-488"><a id="__codelineno-0-488" name="__codelineno-0-488"></a>        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Rename variables: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">variables_to_rename</span><span class="p">)</span>
+</span><span id="__span-0-489"><a id="__codelineno-0-489" name="__codelineno-0-489"></a>        <span class="n">ds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">variables_to_rename</span><span class="p">)</span>
+</span><span id="__span-0-490"><a id="__codelineno-0-490" name="__codelineno-0-490"></a>
+</span><span id="__span-0-491"><a id="__codelineno-0-491" name="__codelineno-0-491"></a>    <span class="c1"># Assign dimensions only after renaming variables</span>
+</span><span id="__span-0-492"><a id="__codelineno-0-492" name="__codelineno-0-492"></a>    <span class="n">ds</span> <span class="o">=</span> <span class="n">_assign_dimensions</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">file_type</span><span class="p">)</span>
+</span><span id="__span-0-493"><a id="__codelineno-0-493" name="__codelineno-0-493"></a>
+</span><span id="__span-0-494"><a id="__codelineno-0-494" name="__codelineno-0-494"></a>    <span class="c1"># Standardize dataset to be compatible with ERDDAP and NetCDF Classic</span>
+</span><span id="__span-0-495"><a id="__codelineno-0-495" name="__codelineno-0-495"></a>    <span class="n">ds</span> <span class="o">=</span> <span class="n">standardize_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+</span><span id="__span-0-496"><a id="__codelineno-0-496" name="__codelineno-0-496"></a>    <span class="k">return</span> <span class="n">ds</span>
 </span></code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -2595,6 +2605,7 @@ data table and the variable description block.</p>
 <th style="text-align: left;">accepted_units</th>
 <th style="text-align: left;">apply_function</th>
 <th style="text-align: left;">Units</th>
+<th style="text-align: left;">comment</th>
 </tr>
 </thead>
 <tbody>
@@ -2609,6 +2620,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">PRES</td>
 <td style="text-align: left;">Pressure (spatial coordinate) exerted by the water body by profiling pressure sensor and correction to read zero at sea level</td>
 <td style="text-align: left;">Decibars</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
@@ -2627,6 +2639,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">PRES</td>
@@ -2639,6 +2652,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">Pressure (spatial coordinate) exerted by the water body by profiling pressure sensor and correction to read zero at sea level</td>
 <td style="text-align: left;">Decibars</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
@@ -2657,6 +2671,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">Temp</td>
@@ -2672,6 +2687,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">degC</td>
 <td style="text-align: left;">deg C</td>
 <td style="text-align: left;">degrees C</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">TE90</td>
@@ -2687,6 +2703,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">degC</td>
 <td style="text-align: left;">deg C</td>
 <td style="text-align: left;">degrees C</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">Sal</td>
@@ -2702,6 +2719,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">PSU</td>
 <td style="text-align: left;">psu</td>
 <td style="text-align: left;">1e-3</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">PSAL</td>
@@ -2717,6 +2735,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">PSU</td>
 <td style="text-align: left;">psu</td>
 <td style="text-align: left;">1e-3</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">TRB_</td>
@@ -2730,6 +2749,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">Turbidity of water in the water body</td>
 <td style="text-align: left;">Nephelometric Turbidity Units</td>
 <td style="text-align: left;">NTU</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 </tr>
@@ -2747,6 +2767,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">FTU</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">DateTime</td>
@@ -2759,6 +2780,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">time</td>
 <td style="text-align: left;">Date and time (UT in ISO8601 format to known precision)</td>
 <td style="text-align: left;">Gregorian date (yyyymmdd)</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
@@ -2777,6 +2799,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">degrees N</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">Long</td>
@@ -2792,6 +2815,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">degrees E</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">Lon</td>
@@ -2807,6 +2831,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">degrees E</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">Trans</td>
@@ -2819,6 +2844,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">TRAN</td>
 <td style="text-align: left;">Transmittance (red light wavelength) per 25cm of the water body by 25cm path length red light transmissometer</td>
 <td style="text-align: left;">Percent</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
@@ -2837,6 +2863,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">TRAN</td>
@@ -2849,6 +2876,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">Transmittance (red light wavelength) per 25cm of the water body by 25cm path length red light transmissometer</td>
 <td style="text-align: left;">Percent</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
@@ -2867,6 +2895,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">Fluo</td>
@@ -2882,6 +2911,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">ug/L</td>
 <td style="text-align: left;">mg/m\^3</td>
 <td style="text-align: left;">mg/m**3</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">FLOR</td>
@@ -2897,6 +2927,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">ug/L</td>
 <td style="text-align: left;">mg/m\^3</td>
 <td style="text-align: left;">mg/m**3'</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">DOXY</td>
@@ -2911,6 +2942,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">Micromoles per litre</td>
 <td style="text-align: left;">ml/l</td>
 <td style="text-align: left;">x*44.661</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 </tr>
 <tr>
@@ -2927,6 +2959,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">uM</td>
 <td style="text-align: left;">µM</td>
 <td style="text-align: left;">ÂµM</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">O2</td>
@@ -2941,6 +2974,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">Micromoles per litre</td>
 <td style="text-align: left;">ml/l</td>
 <td style="text-align: left;">x*44.661</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 </tr>
 <tr>
@@ -2957,6 +2991,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">uM</td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">µM</td>
+<td style="text-align: left;">ÂµM</td>
 </tr>
 <tr>
 <td style="text-align: left;">ASAL</td>
@@ -2969,6 +3004,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">Absolute salinity of the water body</td>
 <td style="text-align: left;">Grams per kilogram</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
@@ -2987,6 +3023,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">Sigt</td>
@@ -3002,6 +3039,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">SIGT</td>
@@ -3014,6 +3052,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm</td>
 <td style="text-align: left;">Kilograms per cubic metre</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
@@ -3032,6 +3071,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">sigthe</td>
@@ -3044,6 +3084,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">SIGP</td>
 <td style="text-align: left;">Sigma-theta of the water body by computation from salinity and potential temperature using UNESCO algorithm</td>
 <td style="text-align: left;">Kilograms per cubic metre</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
@@ -3062,6 +3103,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">Dens</td>
@@ -3077,6 +3119,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">kg/m\^3</td>
 <td style="text-align: left;">kg/m**3</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">N2</td>
@@ -3090,6 +3133,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">hertz</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 </tr>
@@ -3107,12 +3151,14 @@ data table and the variable description block.</p>
 <td style="text-align: left;">degC</td>
 <td style="text-align: left;">deg C</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">theta</td>
 <td style="text-align: left;">Potential Temperature</td>
 <td style="text-align: left;">degC</td>
 <td style="text-align: left;">sea_water_potential_temperature</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
@@ -3137,6 +3183,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">mg/m\^3</td>
 <td style="text-align: left;">mg/m**3</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">Cdom</td>
@@ -3149,6 +3196,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">CDOM</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">Milligrams per cubic metre</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
@@ -3167,6 +3215,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">mmol/m\^3</td>
 <td style="text-align: left;">mmol/m**3</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">Ntra</td>
@@ -3179,6 +3228,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">NTRA</td>
 <td style="text-align: left;">Concentration of nitrate {NO3- CAS 14797-55-8} per unit volume of the water body [unknown phase]</td>
 <td style="text-align: left;">Millimoles per cubic metre</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
@@ -3197,6 +3247,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">NTRA</td>
@@ -3209,6 +3260,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">Concentration of nitrate {NO3- CAS 14797-55-8} per unit volume of the water body [unknown phase]</td>
 <td style="text-align: left;">Millimoles per cubic metre</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
@@ -3227,6 +3279,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">uEinsteins/s/m\^2</td>
 <td style="text-align: left;">ueinsteins/s/m\^2</td>
 <td style="text-align: left;">ueinsteins/s/m**2</td>
+<td style="text-align: left;">µeinsteins/s/m\^2</td>
 </tr>
 <tr>
 <td style="text-align: left;">PSAR</td>
@@ -3242,6 +3295,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">uEinsteins/s/m\^2</td>
 <td style="text-align: left;">ueinsteins/s/m\^2</td>
 <td style="text-align: left;">ueinsteins/s/m**2</td>
+<td style="text-align: left;">µeinsteins/s/m\^2</td>
 </tr>
 <tr>
 <td style="text-align: left;">SPar</td>
@@ -3257,6 +3311,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">uEinsteins/s/m\^2</td>
 <td style="text-align: left;">ueinsteins/s/m\^2</td>
 <td style="text-align: left;">ueinsteins/s/m**2</td>
+<td style="text-align: left;">µeinsteins/s/m\^2</td>
 </tr>
 <tr>
 <td style="text-align: left;">SPAR</td>
@@ -3272,6 +3327,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">uEinsteins/s/m\^2</td>
 <td style="text-align: left;">ueinsteins/s/m\^2</td>
 <td style="text-align: left;">ueinsteins/s/m**2</td>
+<td style="text-align: left;">µeinsteins/s/m\^2</td>
 </tr>
 <tr>
 <td style="text-align: left;">pH</td>
@@ -3284,6 +3340,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">pH (total scale) {pH[T]} of the water body</td>
 <td style="text-align: left;">pH units</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
@@ -3302,6 +3359,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">None</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">PrDM</td>
@@ -3314,6 +3372,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">PRES</td>
 <td style="text-align: left;">Pressure (spatial coordinate) exerted by the water body by profiling pressure sensor and correction to read zero at sea level</td>
 <td style="text-align: left;">Decibars</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
@@ -3332,6 +3391,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">degC</td>
 <td style="text-align: left;">deg C</td>
 <td style="text-align: left;">degrees C</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">T190C</td>
@@ -3347,6 +3407,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">degC</td>
 <td style="text-align: left;">deg C</td>
 <td style="text-align: left;">degrees C</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">WetCDOM</td>
@@ -3362,6 +3423,23 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
+</tr>
+<tr>
+<td style="text-align: left;">FDOM</td>
+<td style="text-align: left;">CDOM fluorescence fraction</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">concentration_of_colored_dissolved_organic_matter_in_sea_water</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">SDN:P06::UUUU</td>
+<td style="text-align: left;">FDOM_RU</td>
+<td style="text-align: left;">nan</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Dimensionless</td>
+<td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
+<td style="text-align: left;">Fluorescence intensity normalised to the integrated Raman scattering peak of pure water (excitation typically 350 nm). Reported in Raman units (R.U. / RU). Wavelengths of measurement should be recorded as a radiation_wavelength attribute (e.g. 'Ex370nm Em460nm').</td>
 </tr>
 <tr>
 <td style="text-align: left;">Sal00</td>
@@ -3377,6 +3455,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">PSU</td>
 <td style="text-align: left;">psu</td>
 <td style="text-align: left;">1e-3</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">FlSP</td>
@@ -3392,6 +3471,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">ug/L</td>
 <td style="text-align: left;">mg/m\^3</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">Sigma-t00</td>
@@ -3404,6 +3484,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">SIGT</td>
 <td style="text-align: left;">Sigma-T of the water body by computation from salinity and temperature using UNESCO algorithm</td>
 <td style="text-align: left;">Kilograms per cubic metre</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
@@ -3422,6 +3503,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">Spar</td>
@@ -3437,6 +3519,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">uEinsteins/s/m\^2</td>
 <td style="text-align: left;">µeinsteins/s/m\^2</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">Sbeox0Mm/L</td>
@@ -3449,6 +3532,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">OXYM</td>
 <td style="text-align: left;">Concentration of oxygen {O2 CAS 7782-44-7} per unit volume of the water body [dissolved plus reactive particulate phase] by in-situ sensor</td>
 <td style="text-align: left;">Micromoles per litre</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
@@ -3467,6 +3551,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">Latitude</td>
@@ -3479,6 +3564,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">latitude</td>
 <td style="text-align: left;">Latitude north</td>
 <td style="text-align: left;">Degrees north</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
@@ -3497,6 +3583,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
 </tr>
 <tr>
 <td style="text-align: left;">Upoly0</td>
@@ -3509,6 +3596,7 @@ data table and the variable description block.</p>
 <td style="text-align: left;">NTRA</td>
 <td style="text-align: left;">Concentration of nitrate {NO3- CAS 14797-55-8} per unit volume of the water body [unknown phase]</td>
 <td style="text-align: left;">Millimoles per cubic metre</td>
+<td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
 <td style="text-align: left;">nan</td>
