@@ -4,7 +4,7 @@ import click
 import pandas as pd
 from loguru import logger
 
-DEFAULT_STANDARD_NAMES_VERSION = 81
+DEFAULT_STANDARD_NAMES_VERSION = 95
 
 
 def get_standard_names(version=DEFAULT_STANDARD_NAMES_VERSION) -> pd.DataFrame:

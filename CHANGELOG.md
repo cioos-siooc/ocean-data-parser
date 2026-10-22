@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 INSTRUMENT_HEADER DESCRIPTION attributes in odf.
 Default to True for BIO and False for IML.
 
+### Changed
+
+- Update default CF Standard Names table from v81 to v95 (adds e.g. `concentration_of_colored_dissolved_organic_matter_in_sea_water`).
+
 ### Fixed
 
 - Fix Amundsen Vocabulary for nav variables
