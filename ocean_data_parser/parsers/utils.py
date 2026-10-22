@@ -9,6 +9,7 @@ import pandas as pd
 import xarray as xr
 
 from ocean_data_parser import __version__
+from ocean_data_parser.metadata.cf import DEFAULT_STANDARD_NAMES_VERSION
 
 logger = logging.getLogger(__name__)
 
@@ -212,6 +213,7 @@ def standardize_dataset(
     """Standardize dataset to be easily serializable to netcdf.
 
     Standardization apply the following steps to be compatible with ERDDAP:
+        - Set standard_name_vocabulary to the CF Standard Name Table version used
         - Generate geospatial attributes
         - Apply standardize_variable_attributes
         - Apply standardize_global_attributes
@@ -231,6 +233,9 @@ def standardize_dataset(
     """
     # Add version to the dataset global attributes and history
     ds.attrs["ocean_data_parser_version"] = __version__  # Add version to the dataset
+    ds.attrs["standard_name_vocabulary"] = (
+        f"CF Standard Name Table v{DEFAULT_STANDARD_NAMES_VERSION}"
+    )
 
     ds.attrs["history"] = ds.attrs.get("history", "")
     ds.attrs["history"] += (

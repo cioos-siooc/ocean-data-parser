@@ -134,6 +134,9 @@ def compare_test_to_reference_netcdf(
     reference.attrs.pop("Conventions", None)
     test.attrs.pop("Conventions", None)
 
+    reference.attrs.pop("standard_name_vocabulary", None)
+    test.attrs.pop("standard_name_vocabulary", None)
+
     # Normalize paths stripped by drop_path_from_header_attributes so older
     # reference files (generated before path-stripping) still match.
     def _basename(value):
