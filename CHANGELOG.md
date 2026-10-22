@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Store the default CF Standard Names table in the package (`metadata/cf_standard_names_v{version}.xml`) instead of downloading it on each call. `python -m ocean_data_parser.metadata.cf --version N` downloads a new version and deletes any other stored one.
 - Set the `standard_name_vocabulary` global attribute (ACDD) to the CF Standard Name Table version in use (e.g. `CF Standard Name Table v95`) on every parsed dataset via `standardize_dataset`, replacing the hardcoded `v78` in the DFO ODF and IOS parsers.
 
+### Fixed
+
+- Map Amundsen `FDOM` variables reported in Raman units (`R.U. (Raman units)`) to the rosette vocabulary.
+- Set Amundsen `FDOM` `long_name` to "CDOM fluorescence (Raman units)" so the unit is visible alongside the CF dimensionless `units = "1"`.
+
 ## `0.9.0`
 
 ### Added
