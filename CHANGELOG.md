@@ -32,6 +32,10 @@ Default to True for BIO and False for IML.
 - Update default CF Standard Names table from v81 to v95 (adds e.g. `concentration_of_colored_dissolved_organic_matter_in_sea_water`).
 - Store the default CF Standard Names table in the package (`metadata/cf_standard_names_v{version}.xml`) instead of downloading it on each call. `python -m ocean_data_parser.metadata.cf --version N` downloads a new version and deletes any other stored one.
 - Set the `standard_name_vocabulary` global attribute (ACDD) to the CF Standard Name Table version in use (e.g. `CF Standard Name Table v95`) on every parsed dataset via `standardize_dataset`, replacing the hardcoded `v78` in the DFO ODF and IOS parsers.
+- Set `Conventions` to include `ACDD-1.3` in all parsers, use consistent `CF-1.6, ACDD-1.3` formatting, and fix the misspelled `Convention` attribute in the NMEA, Onset, Sunburst and Van Essen parsers.
+- Set the `date_modified` global attribute (ACDD) to the conversion time in `standardize_dataset` when not already defined.
+- Add CF-1.6 / ACDD-1.3 compliance checks (`compliance-checker`) to the parser tests. Non-compliant datasets are reported as expected failures (xfail) for now.
+- Add `ocean_data_parser.metadata.cf.warn_if_outdated` to warn when a newer CF Standard Name Table is published, run in the tests with `pytest --cf-version-check`.
 
 ### Fixed
 
