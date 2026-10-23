@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Map Amundsen `FDOM` variables reported in Raman units (`R.U. (Raman units)`) to the rosette vocabulary.
-- Set Amundsen `FDOM` `long_name` to "CDOM fluorescence (Raman units)" so the unit is visible alongside the CF dimensionless `units = "1"`.
+- Set Amundsen `FDOM` `long_name` to "Fluorescent dissolved organic matter (FDOM) (Raman units)" so the unit is visible alongside the CF dimensionless `units = "1"`.
 - Add `radiation_wavelength = "Ex370nm Em460nm"` to Amundsen `FDOM` (sensor excitation/emission wavelengths), as recommended by the CF standard name definition.
 
 ## `0.9.0`
