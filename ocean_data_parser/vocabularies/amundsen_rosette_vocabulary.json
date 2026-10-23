@@ -644,7 +644,8 @@
       "sdn_parameter_name": null,
       "sdn_uom_name": "Dimensionless",
       "accepted_units": "R\\.U\\. \\(Raman units\\)|R\\.?U\\.?|Raman units",
-      "comment": "Fluorescence intensity normalised to the integrated Raman scattering peak of pure water (excitation typically 350 nm). Reported in Raman units (R.U. / RU). Wavelengths of measurement should be recorded as a radiation_wavelength attribute (e.g. 'Ex370nm Em460nm')."
+      "comment": "Fluorescence intensity normalised to the integrated Raman scattering peak of pure water. Reported in Raman units (R.U. / RU).",
+      "radiation_wavelength": "Ex370nm Em460nm"
     }
   ],
   "Sal00": [
